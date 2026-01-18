@@ -17,6 +17,7 @@ MVP Backend: 多學生 + 訂閱 gate + 出題/交卷/報表
 import os
 import json
 import sqlite3
+from contextlib import asynccontextmanager
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Optional, Dict, Any, List
@@ -46,7 +47,18 @@ except Exception:
 
 DB_PATH = os.environ.get("DB_PATH", "app.db")
 
-app = FastAPI(title="Math Practice MVP API", version="0.1")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Ensure DB is initialized on app startup (helps TestClient and other runtimes)
+    try:
+        init_db()
+    except Exception:
+        pass
+
+    yield
+
+
+app = FastAPI(title="Math Practice MVP API", version="0.1", lifespan=lifespan)
 
 # ========= Diagnose: Knowledge base (concept -> prerequisites + resource) =========
 # NOTE: MVP 先用內建 dict；之後可搬到 DB / JSON / 向量庫。
@@ -228,15 +240,6 @@ def init_db():
     conn.close()
 
 init_db()
-
-
-# Ensure DB is initialized on FastAPI startup (helps TestClient and other runtimes)
-@app.on_event("startup")
-def _startup_init_db():
-    try:
-        init_db()
-    except Exception:
-        pass
 
 # ========= 3) Auth + Subscription Gate =========
 def get_account_by_api_key(api_key: str) -> sqlite3.Row:
