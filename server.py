@@ -25,6 +25,11 @@ from fastapi import FastAPI, Header, HTTPException, Request
 from fastapi.responses import JSONResponse, HTMLResponse
 from pydantic import BaseModel, Field
 
+try:
+    import fraction_logic
+except Exception:
+    fraction_logic = None
+
 # ========= 1) 這裡接你的 engine =========
 # 建議你把 math_cli.py 中的：
 # - GENERATORS / get_random_generator / check_correct / gen_* / show_analysis_report(改成回傳結構)
@@ -79,6 +84,14 @@ class QuadraticPipelineValidateRequest(BaseModel):
     difficulty: int = Field(default=3, ge=1, le=5)
     style: str = Field(default="factoring_then_formula", description="standard|factoring_then_formula")
     offline: bool = Field(default=True, description="Force offline mode (no OpenAI calls)")
+
+
+class MixedMultiplyDiagnoseRequest(BaseModel):
+    left: str = Field(..., description="Left operand (mixed number like '2 1/3' or fraction like '7/3')")
+    right: str = Field(..., description="Right operand (integer or fraction)")
+    step1: Optional[str] = Field(default=None, description="Student step1: convert left to improper fraction")
+    step2: Optional[str] = Field(default=None, description="Student step2: raw multiplication result")
+    step3: Optional[str] = Field(default=None, description="Student step3: simplified result")
 
 
 def _is_answer_correct(student_answer: str, correct_answer: str) -> bool:
@@ -491,6 +504,63 @@ def quadratic_offline_page():
         raise HTTPException(status_code=500, detail=f"Failed to read quadratic page: {type(e).__name__}: {e}")
 
     return HTMLResponse(content=html)
+
+
+@app.get("/mixed-multiply", response_class=HTMLResponse, summary="Offline mixed-number multiplication practice page")
+def mixed_multiply_offline_page():
+    """Serve the offline mixed-number multiplication practice page.
+
+    This is a static HTML page that can also be opened directly via file://:
+    - docs/mixed-multiply/index.html
+    """
+
+    path = Path(__file__).resolve().parent / "docs" / "mixed-multiply" / "index.html"
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="Mixed-multiply page not found")
+
+    try:
+        html = path.read_text(encoding="utf-8")
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to read mixed-multiply page: {type(e).__name__}: {e}",
+        )
+
+    return HTMLResponse(content=html)
+
+
+@app.post("/api/mixed-multiply/diagnose", summary="Diagnose mixed-number multiplication steps (G5)")
+def api_mixed_multiply_diagnose(req: MixedMultiplyDiagnoseRequest):
+    if fraction_logic is None:
+        raise HTTPException(status_code=500, detail="fraction_logic module not available")
+
+    try:
+        rep = fraction_logic.diagnose_mixed_multiply(
+            left=req.left,
+            right=req.right,
+            step1=req.step1,
+            step2=req.step2,
+            step3=req.step3,
+        )
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Diagnose failed: {type(e).__name__}: {e}")
+
+    return {
+        "ok": bool(rep.ok),
+        "weak_point": rep.weak_point,
+        "weak_id": rep.weak_id,
+        "diagnosis_code": getattr(rep, "diagnosis_code", ""),
+        "message": rep.message,
+        "next_hint": rep.next_hint,
+        "retry_prompt": getattr(rep, "retry_prompt", ""),
+        "resource_url": rep.resource_url,
+        "expected": {
+            "step1": rep.expected_step1,
+            "step2": rep.expected_step2,
+            "step3": rep.expected_step3,
+            "mixed": rep.expected_mixed,
+        },
+    }
 
 
 @app.get("/static/local", response_class=HTMLResponse, summary="Local browser-only setup notes")

@@ -6,6 +6,12 @@
       "title": "一元二次方程式（練習 + 驗證）",
       "path": "quadratic/",
       "description": "可離線使用（file://）或部署到 GitHub Pages；含出題、提示、解答與題庫驗證。"
+    },
+    {
+      "id": "mixed-multiply",
+      "title": "國小｜帶分數乘法（練習）",
+      "path": "mixed-multiply/",
+      "description": "帶分數 × 整數、帶分數 × 分數；提示由淺入深（化假分數→相乘→約分→轉回帶分數）。"
     }
   ]
 }

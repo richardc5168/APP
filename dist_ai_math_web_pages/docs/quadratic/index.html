@@ -37,7 +37,7 @@
     .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace}
 
     .eq{font-size:22px; padding:10px 12px; border-radius:12px; background:#08102a; border:1px dashed rgba(88,166,255,.4)}
-    .hint{border-left:3px solid rgba(88,166,255,.55); padding:8px 10px; background:rgba(88,166,255,.06); border-radius:10px; margin:8px 0}
+    .hint{border-left:3px solid rgba(88,166,255,.55); padding:8px 10px; background:rgba(88,166,255,.06); border-radius:10px; margin:8px 0; white-space:pre-wrap}
     .sol{border-left:3px solid rgba(46,160,67,.55); padding:8px 10px; background:rgba(46,160,67,.07); border-radius:10px; margin:8px 0}
 
     .remedy{border-left:3px solid rgba(248,81,73,.55); padding:10px 12px; background:rgba(248,81,73,.06); border-radius:10px; margin:10px 0}
@@ -55,6 +55,9 @@
   <header>
     <div class="title">一元二次方程式（離線練習 + 題庫驗證）</div>
     <div class="sub">可直接用瀏覽器開啟（file://），也可由本機 API 提供（例如 http://127.0.0.1:8001/quadratic）。</div>
+    <div class="row" style="margin-top:10px">
+      <a class="btn" href="../">← 回到 AI MATH WEB</a>
+    </div>
   </header>
 
   <main>
@@ -91,6 +94,12 @@
           <button class="btn good" id="btnCheck">送出/檢查</button>
           <button class="btn" id="btnHint">看提示</button>
           <button class="btn" id="btnSolution">看解答</button>
+
+          <label class="small muted" style="margin-left:auto">提示詳細度</label>
+          <select id="hintStyle">
+            <option value="detailed">詳細（含因數對）</option>
+            <option value="short">精簡</option>
+          </select>
         </div>
 
         <div id="practiceBanner" class="banner muted">提示：答案格式支援「逗號或空白分隔」，可輸入分數如 1/2。</div>
@@ -124,6 +133,8 @@
         <div class="row">
           <button class="btn primary" id="btnVerify">驗證</button>
           <button class="btn" id="btnImport">帶入目前題目</button>
+          <button class="btn" id="btnShare">複製分享連結</button>
+          <button class="btn" id="btnUseAsPractice">作為練習題</button>
         </div>
 
         <div id="verifyOut" class="banner muted">（尚未驗證）</div>
@@ -195,6 +206,145 @@
   function sqrtInt(n){
     const r = Math.round(Math.sqrt(n));
     return r*r===n ? r : null;
+  }
+
+  function findMonicFactorPair(B, C){
+    // Find integers m,n such that (x+m)(x+n)=x^2+Bx+C
+    if (!isInt(B) || !isInt(C)) return null;
+    if (C===0) return [0, B];
+    const absC = Math.abs(C);
+    for (let d=1; d<=absC; d++){
+      if (absC % d !== 0) continue;
+      const e = absC / d;
+      const cand = [
+        [ d,  e],
+        [ d, -e],
+        [-d,  e],
+        [-d, -e],
+      ];
+      for (const [m,n] of cand){
+        if (m*n===C && (m+n)===B) return [m,n];
+      }
+    }
+    return null;
+  }
+
+  function formatMonicFactor(m){
+    if (m===0) return '(x)';
+    return `(x ${m<0?'-':'+'} ${Math.abs(m)})`;
+  }
+
+  function formatFactorFromRoots(A, r1, r2){
+    // Show in a readable way (may contain fractions)
+    const f = (r) => {
+      if (r.d===1){
+        if (r.n===0) return '(x)';
+        return `(x ${r.n<0?'+':'-'} ${Math.abs(r.n)})`;
+      }
+      // x - n/d
+      return `(x ${r.n<0?'+':'-'} ${Math.abs(r.n)}/${r.d})`;
+    };
+    const prefix = (A===1) ? '' : String(A);
+    return `${prefix}${f(r1)}${f(r2)}=0`;
+  }
+
+  function buildHintsForQuestion(q, style='detailed'){
+    const {A,B,C,eq,solution} = q;
+    const D = solution.D;
+    const sqrtD = solution.sqrtD;
+    const roots = solution.roots;
+
+    const lines1 = [
+      '先把方程式整理成標準型：ax^2 + bx + c = 0（把右邊移到左邊）。',
+      `本題：${eq}`,
+      `所以 a=${A}, b=${B}, c=${C}。`
+    ];
+
+    const pair = (A===1) ? findMonicFactorPair(B,C) : null;
+    const lines2 = [
+      '關鍵提醒（因式分解，a=1）：',
+      '(x+p)(x+q) = x^2 + (p+q)x + pq',
+      '所以「p+q 就是 x 的係數 b（含正負）」、「pq 就是常數 c」。',
+      `本題 b=${B>=0?'+':''}${B}, c=${C>=0?'+':''}${C}，所以要找 p+q=${B>=0?'+':''}${B}、pq=${C>=0?'+':''}${C}。`
+    ];
+    if (A!==1){
+      lines2.push('（補充）本題 a≠1，因式分解要更小心；可改用「ac 法」或直接用公式解。');
+    }
+
+    const lines3 = [];
+    if (A===1){
+      lines3.push('步驟 1：先看「乘積」決定正負');
+      if (C<0){
+        lines3.push(`因為 pq=${C} 是負數 ⇒ p、q 一正一負。`);
+      }else if (C>0){
+        lines3.push(`因為 pq=${C} 是正數 ⇒ p、q 同號（都正或都負），再看 p+q 的正負決定。`);
+      }else{
+        lines3.push('因為 pq=0 ⇒ p=0 或 q=0（其中一個為 0）。');
+      }
+
+      lines3.push('步驟 2：列出 |c| 的因數對（先只看大小）');
+      const absC = Math.abs(C);
+      if (absC===0){
+        lines3.push('(0)');
+      }else{
+        if (style === 'detailed'){
+          const pairs = [];
+          for (let d=1; d<=absC; d++){
+            if (absC % d !== 0) continue;
+            const e = absC / d;
+            if (d>e) break;
+            pairs.push(`(${d},${e})`);
+          }
+          // keep it readable
+          lines3.push(absC + ' 的配對：' + pairs.join('、'));
+        }else{
+          lines3.push(`${absC} 的配對：先列出因數對，再套正負試加總。`);
+        }
+      }
+
+      lines3.push(`步驟 3：套上正負後試加總要等於 b=${B>=0?'+':''}${B}`);
+      if (pair){
+        const [p,qv] = pair;
+        if (style === 'detailed'){
+          lines3.push(`${p>=0?'+':''}${p} + (${qv>=0?'+':''}${qv}) = ${B>=0?'+':''}${B}`);
+          lines3.push(`${p} × (${qv}) = ${C}`);
+          lines3.push(`所以可取 p=${p>=0?'+':''}${p}, q=${qv>=0?'+':''}${qv}（或對調）。`);
+        }else{
+          lines3.push(`直接選到：p=${p>=0?'+':''}${p}, q=${qv>=0?'+':''}${qv}（符合 p+q=${B}, pq=${C}）。`);
+        }
+      }else{
+        lines3.push('（若找不到整數配對）可用公式解或允許分數/根式的情況。');
+      }
+    }else{
+      lines3.push('因式分解（一般情況）：若不好配對，建議直接用公式解。');
+    }
+
+    const lines4a = [
+      '步驟 4：寫成因式並解（零乘積性質）',
+      '如果整理成 (A)(B)=0，因為相乘=0 表示至少有一個是 0，所以 A=0 或 B=0。'
+    ];
+    if (A===1 && pair){
+      const [p,qv] = pair;
+      const prod = `${formatMonicFactor(p)}${formatMonicFactor(qv)}`;
+      lines4a.push(`${eq.replace(/\s+/g,'')}  ⇒  ${prod}=0`);
+      lines4a.push(`${formatMonicFactor(p)}=0 → x=${-p}`);
+      lines4a.push(`${formatMonicFactor(qv)}=0 → x=${-qv}`);
+    }else{
+      lines4a.push('把分解後的每個一次式設為 0，就能得到兩個根。');
+    }
+
+    const rootsStr = roots.map(fracToString).join(', ');
+    const lines5 = (style === 'short') ? [
+      '快速驗證（公式）：x = (-b ± √(b²-4ac)) / (2a)',
+      `D=${D}，√D=${sqrtD}，根：${rootsStr}`
+    ] : [
+      '快速驗證（公式驗算）：x = (-b ± √(b²-4ac)) / (2a)',
+      `本題：a=${A}, b=${B}, c=${C}`,
+      `判別式 D=b²-4ac=${D}，√D=${sqrtD}`,
+      `所以兩個根為：${rootsStr}`
+    ];
+
+    return [lines1.join('\n'), lines2.join('\n'), lines3.join('\n'), lines4a.join('\n'), lines5.join('\n')];
   }
 
   // --------- generator ---------
@@ -269,25 +419,35 @@
       const f2 = (q2===1) ? `(x ${p2<0?'+':''} ${-p2})` : `(${q2}x ${p2<0?'+':''} ${-p2})`;
       const factor = (k===1) ? `${f1}${f2}=0` : `${k}${f1}${f2}=0`;
 
-      const hints = [
-        '先把方程式整理成標準型：ax^2 + bx + c = 0（把右邊移到左邊）。',
-        '嘗試因式分解：把二次式寫成（一次式）×（一次式）的乘積。',
-        '利用零乘積性質：若 (…)(…)=0，則其中一個因式必為 0。',
-        '最後可用公式解驗算：x = (-b ± √(b²-4ac)) / (2a)，檢查你的答案。'
-      ];
-
       const solution = {
         A,B,C,D, sqrtD:s,
         factor,
         roots:[r1,r2].sort(fracCmp),
       };
 
-      return { A,B,C, eq, hints, solution };
+      const q = { A,B,C, eq, hintsByStyle: {}, solution };
+      q.hintsByStyle = {
+        detailed: buildHintsForQuestion(q, 'detailed'),
+        short: buildHintsForQuestion(q, 'short'),
+      };
+      return q;
     }
   }
 
   // --------- parser & solver (verify panel) ---------
   function normalizeMinus(s){ return String(s||'').replace(/−/g,'-'); }
+
+  function normalizeAnswerText(s){
+    return normalizeMinus(s)
+      .replaceAll('，', ',')
+      .replaceAll('、', ',')
+      .replaceAll('；', ';')
+      .replaceAll('＝', '=')
+      .replaceAll('（', '(')
+      .replaceAll('）', ')')
+      .replaceAll('：', ':')
+      .replace(/\s+/g, '');
+  }
 
   function parsePoly(expr){
     // expr is like: x^2-5x+6 or 2x^2+3x-2 or -x^2+x-1
@@ -357,23 +517,31 @@
   }
 
   function parseAnswerList(ansStr){
-    const s = normalizeMinus(ansStr).trim();
+    const s = normalizeAnswerText(ansStr);
     if (!s) throw new Error('請輸入答案');
 
-    // split by comma/space/semicolon
-    const parts = s.split(/[\s,;]+/).map(x=>x.trim()).filter(Boolean);
-    if (parts.length < 1) throw new Error('答案格式錯誤');
+    // Accept formats like:
+    // - "2,3" / "2 3" / "2、3" / "2，3"
+    // - "x=2 或 x=3" / "x1=2 x2=3"
+    // - fractions: "-1/2, 3" (also tolerates spaces like "1 / 2")
+    const hits = [];
+    const re = /(-?\d+(?:\/\d+)?)/g;
+    let m;
+    while ((m = re.exec(s)) !== null){
+      hits.push(m[1]);
+    }
+    if (!hits.length) throw new Error('答案格式錯誤');
 
     const fracs = [];
-    for (const p of parts){
-      if (p.includes('/')){
-        const [a,b] = p.split('/');
+    for (const token of hits){
+      if (token.includes('/')){
+        const [a,b] = token.split('/');
         const n = parseInt(a,10);
         const d = parseInt(b,10);
-        if (!Number.isFinite(n) || !Number.isFinite(d)) throw new Error('分數格式錯誤');
+        if (!Number.isFinite(n) || !Number.isFinite(d) || d===0) throw new Error('分數格式錯誤');
         fracs.push(frac(n,d));
       }else{
-        const n = parseInt(p,10);
+        const n = parseInt(token,10);
         if (!Number.isFinite(n)) throw new Error('答案必須是整數或分數');
         fracs.push(frac(n,1));
       }
@@ -406,6 +574,7 @@
     btnCheck: document.getElementById('btnCheck'),
     btnHint: document.getElementById('btnHint'),
     btnSolution: document.getElementById('btnSolution'),
+    hintStyle: document.getElementById('hintStyle'),
     practiceBanner: document.getElementById('practiceBanner'),
     hints: document.getElementById('hints'),
     solution: document.getElementById('solution'),
@@ -414,6 +583,8 @@
     tbAns: document.getElementById('tbAns'),
     btnVerify: document.getElementById('btnVerify'),
     btnImport: document.getElementById('btnImport'),
+    btnShare: document.getElementById('btnShare'),
+    btnUseAsPractice: document.getElementById('btnUseAsPractice'),
     verifyOut: document.getElementById('verifyOut'),
   };
 
@@ -421,7 +592,25 @@
     q: null,
     hintLevel: 0,
     solved: false,
+    hintStyle: 'detailed',
   };
+
+  function loadHintStyle(){
+    try{
+      const v = localStorage.getItem('aimath_hint_style');
+      return (v === 'short' || v === 'detailed') ? v : 'detailed';
+    }catch(_){
+      return 'detailed';
+    }
+  }
+  function getHintStyle(){
+    const v = String(els.hintStyle?.value || state.hintStyle || 'detailed');
+    return (v === 'short') ? 'short' : 'detailed';
+  }
+  function applyHintStyleToUI(){
+    state.hintStyle = loadHintStyle();
+    if (els.hintStyle) els.hintStyle.value = state.hintStyle;
+  }
 
   // --------- local learning history (browser only) ---------
   const STATS_KEY = 'aimath_quad_stats_v1';
@@ -547,10 +736,12 @@
   function renderHints(){
     els.hints.innerHTML = '';
     if (!state.q) return;
+    const style = getHintStyle();
+    const hintList = state.q.hintsByStyle?.[style] || state.q.hintsByStyle?.detailed || [];
     for (let i=0;i<state.hintLevel;i++){
       const div = document.createElement('div');
       div.className = 'hint';
-      div.textContent = `提示 ${i+1}：` + state.q.hints[i];
+      div.textContent = `提示 ${i+1}：` + (hintList[i] || '');
       els.hints.appendChild(div);
     }
   }
@@ -589,6 +780,31 @@
     els.tbAns.value = q.solution.roots.map(fracToString).join(', ');
   }
 
+  function setPracticeQuestionFromEquation(eqStr){
+    resetPanels();
+    const {A,B,C} = parseEquation(eqStr);
+    const roots = solveQuadraticInt(A,B,C);
+    const D = B*B - 4*A*C;
+    const s = sqrtInt(D);
+    const pair = (A===1) ? findMonicFactorPair(B,C) : null;
+    const factor = pair
+      ? `${formatMonicFactor(pair[0])}${formatMonicFactor(pair[1])}=0`
+      : formatFactorFromRoots(A, roots[0], roots[1]);
+
+    const solution = { A,B,C,D, sqrtD:s, factor, roots };
+    const eq = formatEquation(A,B,C);
+    const q = { A,B,C, eq, hintsByStyle: {}, solution };
+    q.hintsByStyle = {
+      detailed: buildHintsForQuestion(q, 'detailed'),
+      short: buildHintsForQuestion(q, 'short'),
+    };
+    state.q = q;
+    els.eqText.textContent = q.eq;
+    els.tbEq.value = q.eq;
+    els.tbAns.value = '';
+    setPracticeBanner('已帶入自訂題目，按「看提示」可逐步教學。');
+  }
+
   function checkAnswer(){
     if (!state.q){
       setPracticeBanner('請先按「出新題」。', false);
@@ -624,7 +840,9 @@
       setPracticeBanner('請先按「出新題」。', false);
       return;
     }
-    if (state.hintLevel >= state.q.hints.length){
+    const style = getHintStyle();
+    const hintList = state.q.hintsByStyle?.[style] || state.q.hintsByStyle?.detailed || [];
+    if (state.hintLevel >= hintList.length){
       setPracticeBanner('提示已顯示完畢。', true);
       return;
     }
@@ -668,6 +886,15 @@
   els.btnHint.addEventListener('click', showHint);
   els.btnSolution.addEventListener('click', showSolution);
 
+  applyHintStyleToUI();
+  if (els.hintStyle){
+    els.hintStyle.addEventListener('change', () => {
+      state.hintStyle = getHintStyle();
+      try{ localStorage.setItem('aimath_hint_style', state.hintStyle); }catch(_){ /* ignore */ }
+      renderHints();
+    });
+  }
+
   els.btnVerify.addEventListener('click', verifyCustom);
   els.btnImport.addEventListener('click', () => {
     if (!state.q){
@@ -678,6 +905,69 @@
     els.tbAns.value = '';
     setVerifyBanner('已帶入目前題目，請輸入答案後按「驗證」。');
   });
+
+  els.btnUseAsPractice.addEventListener('click', () => {
+    try{
+      const eq = String(els.tbEq.value || '').trim();
+      if (!eq){
+        setVerifyBanner('請先輸入方程式。', false);
+        return;
+      }
+      setPracticeQuestionFromEquation(eq);
+    }catch(e){
+      setVerifyBanner('帶入失敗：' + String(e.message || e), false);
+    }
+  });
+
+  function buildShareUrl(){
+    const url = new URL(window.location.href);
+    url.search = '';
+    const eq = String(els.tbEq.value || '').trim();
+    const ans = String(els.tbAns.value || '').trim();
+    if (eq) url.searchParams.set('eq', eq);
+    if (ans) url.searchParams.set('ans', ans);
+    url.searchParams.set('mode', 'verify');
+    return url.toString();
+  }
+
+  async function copyShareLink(){
+    try{
+      const link = buildShareUrl();
+      if (navigator.clipboard && navigator.clipboard.writeText){
+        await navigator.clipboard.writeText(link);
+        setVerifyBanner('已複製分享連結 ✅（可直接貼到聊天/群組）', true);
+      }else{
+        window.prompt('複製此連結：', link);
+      }
+    }catch(e){
+      setVerifyBanner('複製失敗：' + String(e.message || e), false);
+    }
+  }
+
+  els.btnShare.addEventListener('click', copyShareLink);
+
+  function applyQueryParams(){
+    try{
+      const params = new URLSearchParams(window.location.search || '');
+      const eq = params.get('eq');
+      const ans = params.get('ans');
+      const mode = params.get('mode');
+      const practiceEq = params.get('practiceEq');
+
+      if (eq) els.tbEq.value = eq;
+      if (ans) els.tbAns.value = ans;
+
+      if (mode === 'verify' && (eq || ans)){
+        verifyCustom();
+      }
+
+      if (practiceEq){
+        setPracticeQuestionFromEquation(practiceEq);
+      }
+    }catch(_e){ /* ignore */ }
+  }
+
+  applyQueryParams();
 </script>
 </body>
 </html>

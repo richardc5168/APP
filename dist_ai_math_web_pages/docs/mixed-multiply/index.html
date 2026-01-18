@@ -1,0 +1,830 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>國小｜帶分數乘法（練習）</title>
+  <style>
+    :root{
+      --bg:#0b1020; --panel:#0f1733; --card:#121c3d;
+      --text:#e6edf3; --muted:#9aa4b2; --line:#243055;
+      --accent:#58a6ff; --ok:#2ea043; --bad:#f85149;
+    }
+    body{margin:0; font-family:Segoe UI,Helvetica,Arial; background:var(--bg); color:var(--text)}
+    header{padding:18px 16px; border-bottom:1px solid var(--line); background:linear-gradient(180deg, rgba(88,166,255,.12), rgba(0,0,0,0));}
+    header .title{font-size:18px; font-weight:700}
+    header .sub{color:var(--muted); font-size:13px; margin-top:6px; line-height:1.5}
+    main{max-width:1100px; margin:0 auto; padding:16px}
+    .grid{display:grid; grid-template-columns:1.2fr .8fr; gap:12px}
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr} }
+    .card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px}
+    .row{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+    label{color:var(--muted); font-size:13px}
+    select,input{background:rgba(0,0,0,.22); border:1px solid rgba(255,255,255,.12); color:var(--text); border-radius:10px; padding:10px 10px}
+    input{min-width:260px}
+    .btn{display:inline-block; padding:10px 12px; border-radius:10px; border:1px solid rgba(88,166,255,.45); background:rgba(88,166,255,.12); color:var(--text); text-decoration:none; cursor:pointer}
+    .btn.primary{background:rgba(88,166,255,.22); border-color:rgba(88,166,255,.65)}
+    .btn.good{border-color:rgba(46,160,67,.65); background:rgba(46,160,67,.14)}
+    .banner{border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:10px 12px; margin-top:10px}
+    .banner.muted{color:var(--muted)}
+    .banner.ok{border-color:rgba(46,160,67,.65); color:#b7f5c9; background:rgba(46,160,67,.10)}
+    .banner.bad{border-color:rgba(248,81,73,.65); color:#ffd2cf; background:rgba(248,81,73,.08)}
+    .eq{font-size:22px; padding:8px 0}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace}
+    .hint{border-left:3px solid rgba(88,166,255,.55); padding:8px 10px; background:rgba(88,166,255,.06); border-radius:10px; margin:8px 0; white-space:pre-wrap}
+    .sol{border:1px dashed rgba(255,255,255,.18); border-radius:12px; padding:12px; margin-top:10px; white-space:pre-wrap}
+    a{color:var(--accent)}
+    .small{font-size:12px}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="title">國小｜帶分數乘法（練習 + 提示）</div>
+    <div class="sub">支援：帶分數 × 整數、帶分數 × 分數。可離線（file://）或 GitHub Pages 使用。</div>
+    <div class="row" style="margin-top:10px">
+      <a class="btn" href="../">← 回到 AI MATH WEB</a>
+    </div>
+  </header>
+
+  <main>
+    <div class="grid">
+      <section class="card">
+        <h2 style="margin:0 0 10px 0">練習</h2>
+
+        <div class="row">
+          <label>題型</label>
+          <select id="mode">
+            <option value="mixed_x_int" selected>帶分數 × 整數</option>
+            <option value="mixed_x_frac">帶分數 × 分數</option>
+          </select>
+
+          <label>難度</label>
+          <select id="difficulty">
+            <option value="1">1（小數字）</option>
+            <option value="2" selected>2（一般）</option>
+            <option value="3">3（稍大 + 需要約分）</option>
+          </select>
+
+          <button class="btn primary" id="btnNew">出新題</button>
+        </div>
+
+        <div class="eq mono" id="qText">（按「出新題」開始）</div>
+
+        <div class="row">
+          <label>答案</label>
+          <input id="answer" placeholder="例如：2 1/3 或 7/3 或 2" />
+          <button class="btn good" id="btnCheck">送出/檢查</button>
+          <button class="btn" id="btnHint">看提示</button>
+          <button class="btn" id="btnSolution">看解答</button>
+
+          <label class="small" style="margin-left:auto; color:var(--muted)">提示詳細度</label>
+          <select id="hintStyle">
+            <option value="detailed" selected>詳細（含約分）</option>
+            <option value="short">精簡</option>
+          </select>
+        </div>
+
+        <div id="banner" class="banner muted">提示：可輸入帶分數（例：2 1/3）或假分數（例：7/3），也可輸入整數。</div>
+        <div id="hints"></div>
+        <div id="solution"></div>
+
+        <details style="margin-top:12px;">
+          <summary>逐步檢核（可選：本機老師模式）</summary>
+          <div class="small" style="margin-top:8px; color:var(--muted); line-height:1.6">
+            這個區塊會「看你的每一步」：
+            (1) 先把左邊帶分數換成假分數 →
+            (2) 相乘（先不約分也可以） →
+            (3) 化簡成最簡分數 / 帶分數。
+            <br/>若你用 <span class="mono">file://</span> 離線開啟，仍可照上方「提示」自學；本檢核需要本機 FastAPI 才能使用。
+          </div>
+
+          <div class="row" style="margin-top:10px">
+            <label>Step 1</label>
+            <input id="step1" placeholder="左邊換成假分數（例如 7/4）" />
+            <label>Step 2</label>
+            <input id="step2" placeholder="相乘結果（可未約分，例如 28/12）" />
+            <label>Step 3</label>
+            <input id="step3" placeholder="化簡後答案（例如 7/3 或 2 1/3）" />
+            <button class="btn" id="btnDiagnose">診斷我的步驟</button>
+          </div>
+          <div id="diagnose" class="banner muted" style="margin-top:10px">（尚未診斷）</div>
+        </details>
+
+        <details style="margin-top:10px;">
+          <summary>孩子常見卡點（建議教法）</summary>
+          <div class="small" style="margin-top:8px; color:var(--muted); line-height:1.6">
+            先「帶分數 → 假分數」，再乘，再約分，最後必要時「假分數 → 帶分數」。
+            這頁的提示會把每一步都寫出來，讓孩子照著做。
+          </div>
+        </details>
+      </section>
+
+      <aside class="card">
+        <h2 style="margin:0 0 10px 0">說明</h2>
+        <div class="small" style="color:var(--muted); line-height:1.7">
+          <div><b>帶分數</b>：例如 <span class="mono">2 1/3</span> 表示 <span class="mono">2 + 1/3</span></div>
+          <div><b>化為假分數</b>：<span class="mono">2 1/3 = (2×3+1)/3 = 7/3</span></div>
+          <div><b>乘法</b>：<span class="mono">7/3 × 4 = 28/3</span>；或 <span class="mono">7/3 × 2/5 = 14/15</span></div>
+          <div><b>化簡/約分</b>：把分子分母同除以最大公因數</div>
+          <div><b>轉回帶分數</b>：<span class="mono">28/3 = 9 1/3</span></div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+<script>
+  // --------- fraction helpers ---------
+  function gcd(a,b){ a=Math.abs(a); b=Math.abs(b); while(b){ const t=a%b; a=b; b=t; } return a||1; }
+  function frac(n,d){
+    if (!Number.isFinite(n) || !Number.isFinite(d) || d===0) throw new Error('分數無效');
+    if (d<0){ n=-n; d=-d; }
+    const g = gcd(n,d);
+    return {n:n/g, d:d/g};
+  }
+  function fracMul(a,b){ return frac(a.n*b.n, a.d*b.d); }
+  function fracEq(a,b){ return a.n===b.n && a.d===b.d; }
+  function fracToString(f){ return f.d===1 ? String(f.n) : `${f.n}/${f.d}`; }
+  function toMixedString(f){
+    const sgn = f.n<0 ? -1 : 1;
+    const n = Math.abs(f.n);
+    const d = f.d;
+    const w = Math.floor(n/d);
+    const r = n % d;
+    if (r===0) return String(sgn*w);
+    if (w===0) return (sgn<0?'-':'') + `${r}/${d}`;
+    return (sgn<0?'-':'') + `${w} ${r}/${d}`;
+  }
+
+  // --------- parsing (student answer) ---------
+  function normalizeText(s){
+    return String(s||'')
+      .replace(/−/g,'-')
+      .replaceAll('，', ',')
+      .replaceAll('、', ',')
+      .replaceAll('／', '/')
+      .replaceAll('＝', '=')
+      .trim();
+  }
+
+  function parseStudentRational(text){
+    const s = normalizeText(text);
+    if (!s) throw new Error('請輸入答案');
+
+    // mixed: a b/c
+    let m = s.match(/^\s*(-?\d+)\s+(\d+)\s*\/\s*(\d+)\s*$/);
+    if (m){
+      const whole = parseInt(m[1],10);
+      const num = parseInt(m[2],10);
+      const den = parseInt(m[3],10);
+      if (!Number.isFinite(whole) || !Number.isFinite(num) || !Number.isFinite(den) || den===0) throw new Error('格式錯誤');
+      if (num<0 || den<0) throw new Error('帶分數的分子分母請用正數');
+      const sign = whole<0 ? -1 : 1;
+      const absWhole = Math.abs(whole);
+      return frac(sign*(absWhole*den + num), den);
+    }
+
+    // improper/proper: a/b
+    m = s.match(/^\s*(-?\d+)\s*\/\s*(\d+)\s*$/);
+    if (m){
+      const n = parseInt(m[1],10);
+      const d = parseInt(m[2],10);
+      if (!Number.isFinite(n) || !Number.isFinite(d) || d===0) throw new Error('格式錯誤');
+      return frac(n,d);
+    }
+
+    // integer
+    m = s.match(/^\s*(-?\d+)\s*$/);
+    if (m){
+      const n = parseInt(m[1],10);
+      if (!Number.isFinite(n)) throw new Error('格式錯誤');
+      return frac(n,1);
+    }
+
+    throw new Error('答案格式支援：2 1/3、7/3、2');
+  }
+
+  // --------- generator ---------
+  function randInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+
+  function pickFrom(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+  function genProperFraction(maxDen, allowReducible){
+    // Prefer kid-friendly denominators (easier times tables)
+    const poolBase = [2,3,4,5,6,8,9,10,12];
+    const pool = poolBase.filter(x => x>=2 && x<=maxDen);
+    const d = pool.length ? pickFrom(pool) : randInt(2, maxDen);
+    let n = randInt(1, d-1);
+    if (!allowReducible){
+      let tries = 0;
+      while (gcd(n,d)!==1 && tries<50){
+        n = randInt(1, d-1);
+        tries++;
+      }
+    }
+    return frac(n,d);
+  }
+
+  function genMixed(difficulty){
+    // keep numbers kid-friendly (easy arithmetic)
+    const wholeMax = difficulty===1 ? 5 : difficulty===2 ? 7 : 9;
+    const denMax = difficulty===1 ? 6 : difficulty===2 ? 8 : 9;
+    const allowReducible = (difficulty>=3);
+    const w = randInt(1, wholeMax);
+    const f = genProperFraction(denMax, allowReducible);
+    return { whole: w, frac: f };
+  }
+
+  function mixedToImproper(m){
+    return frac(m.whole*m.frac.d + m.frac.n, m.frac.d);
+  }
+
+  function formatMixed(m){
+    return `${m.whole} ${m.frac.n}/${m.frac.d}`;
+  }
+
+  function buildQuestion(){
+    const mode = els.mode.value;
+    const difficulty = Number(els.difficulty.value||2);
+
+    // Guard: keep numbers small enough for self-study.
+    for (let attempt=0; attempt<80; attempt++){
+      const m = genMixed(difficulty);
+      const leftImproper = mixedToImproper(m);
+
+      let rightText = '';
+      let rightVal;
+
+      if (mode === 'mixed_x_int'){
+        const kMax = difficulty===1 ? 6 : difficulty===2 ? 9 : 9;
+        const kPool = difficulty===1 ? [2,3,4,5,6] : [2,3,4,5,6,7,8,9];
+        const k = pickFrom(kPool.filter(x => x<=kMax));
+        rightText = String(k);
+        rightVal = frac(k,1);
+      }else{
+        const denMax = difficulty===1 ? 6 : difficulty===2 ? 8 : 9;
+        const allowReducible = (difficulty>=3);
+        const f = genProperFraction(denMax, allowReducible);
+        // sometimes use improper multiplier at higher difficulty
+        if (difficulty>=3 && Math.random()<0.20){
+          const extra = randInt(1,2);
+          rightVal = frac(f.n + extra*f.d, f.d); // still small
+        }else{
+          rightVal = f;
+        }
+        rightText = fracToString(rightVal);
+      }
+
+      const product = fracMul(leftImproper, rightVal);
+      const maxAbsN = 220;
+      const maxD = 120;
+      if (Math.abs(product.n) > maxAbsN || product.d > maxD) continue;
+
+      const qText = `${formatMixed(m)} × ${rightText} = ?`;
+
+      const q = {
+        mode,
+        difficulty,
+        leftMixed: m,
+        leftImproper,
+        rightVal,
+        rightText,
+        product,
+        qText,
+        hintsByStyle: {},
+      };
+
+      q.hintsByStyle.detailed = buildHints(q, 'detailed');
+      q.hintsByStyle.short = buildHints(q, 'short');
+      return q;
+    }
+
+    // fallback (should be rare)
+    const m = genMixed(difficulty);
+    const leftImproper = mixedToImproper(m);
+    const rightVal = frac(2,1);
+    const rightText = '2';
+    const product = fracMul(leftImproper, rightVal);
+    const qText = `${formatMixed(m)} × ${rightText} = ?`;
+    const q = { mode, difficulty, leftMixed: m, leftImproper, rightVal, rightText, product, qText, hintsByStyle: {} };
+    q.hintsByStyle.detailed = buildHints(q, 'detailed');
+    q.hintsByStyle.short = buildHints(q, 'short');
+    return q;
+  }
+
+  // --------- hints ---------
+  function buildHints(q, style){
+    const m = q.leftMixed;
+    const den = m.frac.d;
+    const num = m.frac.n;
+    const whole = m.whole;
+
+    const leftImproper = q.leftImproper;
+    const right = q.rightVal;
+    const prod = q.product;
+
+    const lines1 = [
+      '提示 1：先把帶分數化為「假分數」',
+      `${whole} ${num}/${den} = (${whole}×${den}+${num})/${den} = ${leftImproper.n}/${leftImproper.d}`
+    ];
+
+    const lines2 = [
+      '提示 2：把乘法改成「分數 × 分數」',
+      `(${leftImproper.n}/${leftImproper.d}) × (${right.n}/${right.d})`
+    ];
+
+    const rawN = leftImproper.n * right.n;
+    const rawD = leftImproper.d * right.d;
+    const raw = {n:rawN, d:rawD};
+    const reduced = prod;
+
+    const lines3 = ['提示 3：分子乘分子、分母乘分母'];
+    lines3.push(`${leftImproper.n}×${right.n} = ${rawN}`);
+    lines3.push(`${leftImproper.d}×${right.d} = ${rawD}`);
+    lines3.push(`所以先得到：${rawN}/${rawD}`);
+
+    const lines4 = ['提示 4：約分（化簡）'];
+    const g = gcd(rawN, rawD);
+    if (g!==1){
+      if (style==='detailed'){
+        lines4.push(`分子分母的最大公因數 gcd(${rawN}, ${rawD}) = ${g}`);
+        lines4.push(`${rawN}/${rawD} = (${rawN}÷${g})/(${rawD}÷${g}) = ${reduced.n}/${reduced.d}`);
+      }else{
+        lines4.push(`把 ${rawN}/${rawD} 約分 → ${reduced.n}/${reduced.d}`);
+      }
+    }else{
+      lines4.push('這一步不需要約分（已最簡）。');
+    }
+
+    const lines5 = ['提示 5：需要時，把假分數轉回帶分數'];
+    const mixedAns = toMixedString(reduced);
+    if (reduced.d===1){
+      lines5.push(`答案是整數：${mixedAns}`);
+    }else{
+      // show division for mixed
+      const n = Math.abs(reduced.n);
+      const d = reduced.d;
+      const w = Math.floor(n/d);
+      const r = n % d;
+      if (w===0){
+        lines5.push(`結果小於 1，所以答案是：${mixedAns}`);
+      }else{
+        if (style==='detailed'){
+          lines5.push(`${reduced.n}/${reduced.d} = ${w} ... ${r}（分子 ÷ 分母）`);
+          lines5.push(`所以 = ${w} ${r}/${d}`);
+        }
+        lines5.push(`答案：${mixedAns}`);
+      }
+    }
+
+    if (style==='short'){
+      return [lines1.join('\n'), lines2.join('\n'), lines4.join('\n'), lines5.join('\n')];
+    }
+    return [lines1.join('\n'), lines2.join('\n'), lines3.join('\n'), lines4.join('\n'), lines5.join('\n')];
+  }
+
+  // --------- UI ---------
+  const els = {
+    mode: document.getElementById('mode'),
+    difficulty: document.getElementById('difficulty'),
+    btnNew: document.getElementById('btnNew'),
+    qText: document.getElementById('qText'),
+    answer: document.getElementById('answer'),
+    btnCheck: document.getElementById('btnCheck'),
+    btnHint: document.getElementById('btnHint'),
+    btnSolution: document.getElementById('btnSolution'),
+    hintStyle: document.getElementById('hintStyle'),
+    banner: document.getElementById('banner'),
+    hints: document.getElementById('hints'),
+    solution: document.getElementById('solution'),
+
+    step1: document.getElementById('step1'),
+    step2: document.getElementById('step2'),
+    step3: document.getElementById('step3'),
+    btnDiagnose: document.getElementById('btnDiagnose'),
+    diagnose: document.getElementById('diagnose'),
+  };
+
+  const state = {
+    q: null,
+    hintLevel: 0,
+    hintStyle: 'detailed',
+    diagnoseFailByWeakId: {},
+  };
+
+  function setBanner(msg, ok=null){
+    els.banner.className = 'banner ' + (ok===true ? 'ok' : ok===false ? 'bad' : 'muted');
+    els.banner.textContent = msg;
+  }
+
+  function loadHintStyle(){
+    try{
+      const v = localStorage.getItem('aimath_mixedmul_hint_style');
+      return (v==='short' || v==='detailed') ? v : 'detailed';
+    }catch(_){
+      return 'detailed';
+    }
+  }
+
+  function getHintStyle(){
+    const v = String(els.hintStyle?.value || state.hintStyle || 'detailed');
+    return (v==='short') ? 'short' : 'detailed';
+  }
+
+  function applyHintStyleToUI(){
+    state.hintStyle = loadHintStyle();
+    if (els.hintStyle) els.hintStyle.value = state.hintStyle;
+  }
+
+  function reset(){
+    els.hints.innerHTML = '';
+    els.solution.innerHTML = '';
+    state.hintLevel = 0;
+    els.answer.value = '';
+    setBanner('提示：可輸入帶分數（例：2 1/3）或假分數（例：7/3），也可輸入整數。');
+
+    if (els.step1) els.step1.value = '';
+    if (els.step2) els.step2.value = '';
+    if (els.step3) els.step3.value = '';
+    if (els.diagnose){
+      els.diagnose.className = 'banner muted';
+      els.diagnose.textContent = '（尚未診斷）';
+    }
+
+    state.diagnoseFailByWeakId = {};
+  }
+
+  function renderHints(){
+    els.hints.innerHTML = '';
+    if (!state.q) return;
+    const style = getHintStyle();
+    const list = state.q.hintsByStyle?.[style] || state.q.hintsByStyle?.detailed || [];
+    for (let i=0;i<state.hintLevel;i++){
+      const div = document.createElement('div');
+      div.className = 'hint';
+      div.textContent = list[i] || '';
+      els.hints.appendChild(div);
+    }
+  }
+
+  function renderSolution(){
+    els.solution.innerHTML = '';
+    if (!state.q) return;
+
+    const q = state.q;
+    const left = q.leftImproper;
+    const right = q.rightVal;
+    const prod = q.product;
+
+    const lines = [];
+    lines.push(`(1) 題目：${q.qText}`);
+    lines.push(`(2) 化為假分數：${formatMixed(q.leftMixed)} = ${left.n}/${left.d}`);
+    lines.push(`(3) 相乘：${left.n}/${left.d} × ${right.n}/${right.d} = ${left.n*right.n}/${left.d*right.d}`);
+    lines.push(`(4) 化簡：= ${prod.n}/${prod.d}`);
+    lines.push(`(5) 轉回帶分數：${toMixedString(prod)}`);
+
+    const div = document.createElement('div');
+    div.className = 'sol mono';
+    div.textContent = lines.join('\n');
+    els.solution.appendChild(div);
+  }
+
+  function newQuestion(){
+    reset();
+    const q = buildQuestion();
+    state.q = q;
+    els.qText.textContent = q.qText;
+
+    // help kids know what to type
+    if (els.step1) els.step1.placeholder = `左邊換成假分數（例如 ${q.leftImproper.n}/${q.leftImproper.d}）`;
+    if (els.step2){
+      const rawN = q.leftImproper.n * q.rightVal.n;
+      const rawD = q.leftImproper.d * q.rightVal.d;
+      els.step2.placeholder = `相乘結果（可未約分，例如 ${rawN}/${rawD}）`;
+    }
+    if (els.step3) els.step3.placeholder = `化簡後答案（例如 ${toMixedString(q.product)} 或 ${q.product.n}/${q.product.d}）`;
+  }
+
+  function setDiagnoseBox(ok, textLines, resourceUrl){
+    if (!els.diagnose) return;
+    els.diagnose.className = 'banner ' + (ok ? 'ok' : 'bad');
+    els.diagnose.innerHTML = '';
+
+    const pre = document.createElement('pre');
+    pre.className = 'mono';
+    pre.style.margin = '0';
+    pre.style.whiteSpace = 'pre-wrap';
+    pre.textContent = (textLines || []).join('\n');
+    els.diagnose.appendChild(pre);
+
+    if (resourceUrl){
+      const a = document.createElement('a');
+      a.href = resourceUrl;
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.textContent = '點我看補救影片（YouTube 搜尋）';
+      a.style.display = 'inline-block';
+      a.style.marginTop = '10px';
+      els.diagnose.appendChild(a);
+    }
+  }
+
+  function buildResourceUrlFor(weakPoint){
+    const map = {
+      '帶分數與假分數互換': '國小數學 五年級 帶分數 變 假分數 教學 均一',
+      '約分與最簡分數': '國小數學 五年級 約分 最簡分數 觀念 均一',
+      '真分數乘法': '國小數學 五年級 分數 乘法 分子分母 怎麼算 均一',
+      '帶分數乘法': '國小數學 五年級 帶分數 乘法 怎麼算 均一',
+    };
+    const q = map[String(weakPoint||'')] || ('國小數學 五年級 ' + String(weakPoint||''));
+    return 'https://www.youtube.com/results?search_query=' + encodeURIComponent(q);
+  }
+
+  function offlineDiagnose(payload){
+    // A lightweight fallback when API is not available (file:// or server not running).
+    // Uses the already-known exact values from the current question.
+    const q = state.q;
+    if (!q) return null;
+
+    const expected1 = frac(q.leftImproper.n, q.leftImproper.d);
+    const rawN = q.leftImproper.n * q.rightVal.n;
+    const rawD = q.leftImproper.d * q.rightVal.d;
+    const expected2 = frac(rawN, rawD);
+    const expected3 = frac(q.product.n, q.product.d);
+
+    const safeParse = (s) => {
+      try { return parseStudentRational(s || ''); } catch { return null; }
+    };
+    const s1 = safeParse(payload.step1);
+    const s2 = safeParse(payload.step2);
+    const s3 = safeParse(payload.step3);
+
+    const eq = (a,b) => a && b && a.n===b.n && a.d===b.d;
+
+    if (!eq(s1, expected1)){
+      return {
+        ok: false,
+        weak_id: 'E3',
+        weak_point: '帶分數與假分數互換',
+        diagnosis_code: 'E3_CONVERT_TO_IMPROPER',
+        message: '先把左邊帶分數換成假分數，這一步最容易錯。',
+        next_hint: '公式：a b/c → (a×c+b)/c（整數要先乘分母！）',
+        retry_prompt: '你可以再算一次：整數×分母+分子，整個當分子嗎？',
+        resource_url: buildResourceUrlFor('帶分數與假分數互換'),
+        expected: { step1: `${expected1.n}/${expected1.d}`, step2: `${expected2.n}/${expected2.d}`, step3: `${expected3.n}/${expected3.d}`, mixed: toMixedString(expected3) }
+      };
+    }
+
+    // Step2 accept raw OR equivalent
+    const valEq = (a,b) => a && b && (a.n*b.d === b.n*a.d);
+    if (!s2 || (!valEq(s2, expected2) && !valEq(s2, expected3))){
+      return {
+        ok: false,
+        weak_id: 'E4',
+        weak_point: '真分數乘法',
+        diagnosis_code: 'E4_FRACTION_MULTIPLY',
+        message: '換成假分數做對了 👍 接下來是分數乘法。',
+        next_hint: '分子乘分子、分母乘分母：a/b × c/d = (a×c)/(b×d)。',
+        retry_prompt: '先寫出未約分的乘法結果也可以。',
+        resource_url: buildResourceUrlFor('真分數乘法'),
+        expected: { step1: `${expected1.n}/${expected1.d}`, step2: `${expected2.n}/${expected2.d}`, step3: `${expected3.n}/${expected3.d}`, mixed: toMixedString(expected3) }
+      };
+    }
+
+    if (!s3){
+      return {
+        ok: false,
+        weak_id: 'E2',
+        weak_point: '約分與最簡分數',
+        diagnosis_code: 'E2_SIMPLIFY_MISSING',
+        message: '最後一步：把結果約分到最簡，必要時再轉回帶分數。',
+        next_hint: '分子分母同除同一個數（2、3、5…），直到不能再除。',
+        retry_prompt: '把 Step 2 的分數化簡成最簡，寫成 Step 3。',
+        resource_url: buildResourceUrlFor('約分與最簡分數'),
+        expected: { step1: `${expected1.n}/${expected1.d}`, step2: `${expected2.n}/${expected2.d}`, step3: `${expected3.n}/${expected3.d}`, mixed: toMixedString(expected3) }
+      };
+    }
+
+    // Special: typed reducible but equivalent fraction
+    const step3Text = normalizeText(payload.step3 || '');
+    if (step3Text.includes('/') && !step3Text.includes(' ')){
+      const parts = step3Text.split('/');
+      if (parts.length===2){
+        const n0 = parseInt(parts[0].trim(),10);
+        const d0 = parseInt(parts[1].trim(),10);
+        if (Number.isFinite(n0) && Number.isFinite(d0) && d0!==0){
+          const g = gcd(n0,d0);
+          if (g!==1){
+            const v = safeParse(step3Text);
+            if (v && valEq(v, expected3)){
+              return {
+                ok: false,
+                weak_id: 'E2',
+                weak_point: '約分與最簡分數',
+                diagnosis_code: 'E2_NEEDS_REDUCTION',
+                message: '你的值其實是對的，但還可以再約分一次，讓答案更漂亮（最簡分數）。',
+                next_hint: `分子分母還能同除 ${g}。`,
+                retry_prompt: '同除一樣的數，寫出最簡分數。',
+                resource_url: buildResourceUrlFor('約分與最簡分數'),
+                expected: { step1: `${expected1.n}/${expected1.d}`, step2: `${expected2.n}/${expected2.d}`, step3: `${expected3.n}/${expected3.d}`, mixed: toMixedString(expected3) }
+              };
+            }
+          }
+        }
+      }
+    }
+
+    if (!valEq(s3, expected3)){
+      return {
+        ok: false,
+        weak_id: 'E2',
+        weak_point: '約分與最簡分數',
+        diagnosis_code: 'E2_SIMPLIFY_WRONG',
+        message: '快完成了，但最後答案還差一點點。',
+        next_hint: '再檢查一次：約分時分子分母要同除同一個數。',
+        retry_prompt: '先試著同除 2，再試同除 3…直到不能再除。',
+        resource_url: buildResourceUrlFor('約分與最簡分數'),
+        expected: { step1: `${expected1.n}/${expected1.d}`, step2: `${expected2.n}/${expected2.d}`, step3: `${expected3.n}/${expected3.d}`, mixed: toMixedString(expected3) }
+      };
+    }
+
+    return {
+      ok: true,
+      weak_id: 'E5',
+      weak_point: '帶分數乘法',
+      diagnosis_code: 'E5_ALL_CORRECT',
+      message: '太好了！你的每一步都正確 ✅',
+      next_hint: '下一題也用同樣流程：換成假分數 → 相乘 → 約分 →（需要時）轉回帶分數。',
+      retry_prompt: '',
+      resource_url: buildResourceUrlFor('帶分數乘法'),
+      expected: { step1: `${expected1.n}/${expected1.d}`, step2: `${expected2.n}/${expected2.d}`, step3: `${expected3.n}/${expected3.d}`, mixed: toMixedString(expected3) }
+    };
+  }
+
+  async function diagnoseSteps(){
+    if (!state.q){
+      setBanner('請先按「出新題」。', false);
+      return;
+    }
+
+    if (!els.diagnose) return;
+    els.diagnose.className = 'banner muted';
+    els.diagnose.textContent = '診斷中...';
+
+    const payload = {
+      left: formatMixed(state.q.leftMixed),
+      right: state.q.rightText,
+      step1: els.step1 ? els.step1.value : null,
+      step2: els.step2 ? els.step2.value : null,
+      step3: els.step3 ? els.step3.value : null,
+    };
+
+    try{
+      const res = await fetch('/api/mixed-multiply/diagnose', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok){
+        const msg = data && (data.detail || data.message) ? (data.detail || data.message) : ('HTTP ' + res.status);
+        throw new Error(msg);
+      }
+
+      const ok = !!data.ok;
+      const expected = data.expected || {};
+
+      const weakId = String(data.weak_id || '');
+      if (!ok && weakId){
+        state.diagnoseFailByWeakId[weakId] = (state.diagnoseFailByWeakId[weakId] || 0) + 1;
+      }
+
+      const lines = [];
+      lines.push(String(data.message || ''));
+      if (!ok && data.retry_prompt){
+        lines.push('');
+        lines.push('再試一次：' + String(data.retry_prompt));
+      }
+      lines.push('');
+      lines.push('下一步提示：' + String(data.next_hint || ''));
+      lines.push('');
+      lines.push('老師參考答案：');
+      lines.push(`Step 1：${expected.step1 || ''}`);
+      lines.push(`Step 2：${expected.step2 || ''}`);
+      lines.push(`Step 3：${expected.step3 || ''}（或 ${expected.mixed || ''}）`);
+
+      let resourceUrl = null;
+      if (!ok && weakId && (state.diagnoseFailByWeakId[weakId] || 0) >= 2){
+        lines.push('');
+        lines.push('補救模式：你在同一關卡連續錯 2 次，我們先看 2~3 分鐘短講解再回來。');
+        resourceUrl = data.resource_url || null;
+      }
+
+      setDiagnoseBox(ok, lines, resourceUrl);
+    }catch(e){
+      // Offline fallback: still give teacher-like guidance.
+      const fb = offlineDiagnose(payload);
+      if (fb){
+        const ok = !!fb.ok;
+        const expected = fb.expected || {};
+
+        const weakId = String(fb.weak_id || '');
+        if (!ok && weakId){
+          state.diagnoseFailByWeakId[weakId] = (state.diagnoseFailByWeakId[weakId] || 0) + 1;
+        }
+
+        const lines = [];
+        lines.push(String(fb.message || ''));
+        if (!ok && fb.retry_prompt){
+          lines.push('');
+          lines.push('再試一次：' + String(fb.retry_prompt));
+        }
+        lines.push('');
+        lines.push('下一步提示：' + String(fb.next_hint || ''));
+        lines.push('');
+        lines.push('老師參考答案：');
+        lines.push(`Step 1：${expected.step1 || ''}`);
+        lines.push(`Step 2：${expected.step2 || ''}`);
+        lines.push(`Step 3：${expected.step3 || ''}（或 ${expected.mixed || ''}）`);
+
+        let resourceUrl = null;
+        if (!ok && weakId && (state.diagnoseFailByWeakId[weakId] || 0) >= 2){
+          lines.push('');
+          lines.push('補救模式：你在同一關卡連續錯 2 次，我們先看 2~3 分鐘短講解再回來。');
+          resourceUrl = fb.resource_url || null;
+        }
+
+        setDiagnoseBox(ok, lines, resourceUrl);
+      }else{
+        els.diagnose.className = 'banner muted';
+        els.diagnose.textContent =
+          '本機老師模式需要 FastAPI 才能使用。\n' +
+          '請確認已啟動：uvicorn server:app --reload --port 8001\n' +
+          '錯誤：' + String(e && e.message ? e.message : e);
+      }
+    }
+  }
+
+  function checkAnswer(){
+    if (!state.q){
+      setBanner('請先按「出新題」。', false);
+      return;
+    }
+
+    try{
+      const user = parseStudentRational(els.answer.value);
+      const truth = state.q.product;
+      const ok = fracEq(user, truth);
+
+      const truthMixed = toMixedString(truth);
+      if (ok){
+        setBanner(`正確 ✅（答案：${truthMixed}）`, true);
+      }else{
+        setBanner(`不正確 ❌（正確答案：${truthMixed}）`, false);
+      }
+    }catch(e){
+      setBanner('格式錯誤：' + String(e.message || e), false);
+    }
+  }
+
+  function showHint(){
+    if (!state.q){
+      setBanner('請先按「出新題」。', false);
+      return;
+    }
+    const style = getHintStyle();
+    const list = state.q.hintsByStyle?.[style] || state.q.hintsByStyle?.detailed || [];
+    if (state.hintLevel >= list.length){
+      setBanner('提示已顯示完畢。', true);
+      return;
+    }
+    state.hintLevel += 1;
+    renderHints();
+  }
+
+  function showSolution(){
+    if (!state.q){
+      setBanner('請先按「出新題」。', false);
+      return;
+    }
+    renderSolution();
+    setBanner('已顯示解答（用於自我校正）。', true);
+  }
+
+  // events
+  els.btnNew.addEventListener('click', newQuestion);
+  els.btnCheck.addEventListener('click', checkAnswer);
+  els.btnHint.addEventListener('click', showHint);
+  els.btnSolution.addEventListener('click', showSolution);
+  if (els.btnDiagnose) els.btnDiagnose.addEventListener('click', diagnoseSteps);
+
+  applyHintStyleToUI();
+  if (els.hintStyle){
+    els.hintStyle.addEventListener('change', () => {
+      state.hintStyle = getHintStyle();
+      try{ localStorage.setItem('aimath_mixedmul_hint_style', state.hintStyle); }catch(_){ /* ignore */ }
+      renderHints();
+    });
+  }
+</script>
+</body>
+</html>
