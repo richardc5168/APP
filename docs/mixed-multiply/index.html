@@ -37,19 +37,25 @@
     .small{font-size:12px}
 
     /* teacher-mode pacing + unlock visuals */
-    .stepInput{min-width:240px}
-    .stepInput:disabled{opacity:.55; cursor:not-allowed; border-color:rgba(255,255,255,.08)}
-    .stepInput.current{border-color:rgba(88,166,255,.8); box-shadow:0 0 0 3px rgba(88,166,255,.12)}
-    .stepInput.done{border-color:rgba(46,160,67,.65)}
+    .stepInput{min-width:240px; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); border:1px solid rgba(255,255,255,.12); background:rgba(0,0,0,.18);}
+    .stepInput:disabled{opacity:.4; cursor:not-allowed; border-color:transparent; background:rgba(0,0,0,.08); transform:scale(0.98);}
+    .stepInput.current{
+      border-color:rgba(88,166,255,1); 
+      box-shadow:0 0 15px rgba(88,166,255,.3), 0 0 0 2px rgba(88,166,255,.2); 
+      background:rgba(88,166,255,.05);
+      transform:scale(1.02);
+    }
+    .stepInput.done{border-color:rgba(46,160,67,.65); background:rgba(46,160,67,.06); opacity:0.9;}
     #btnDiagnose:disabled{opacity:.55; cursor:not-allowed}
 
     .stepper{display:flex; gap:8px; flex-wrap:wrap; margin-top:8px}
-    .pill{padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.14); background:rgba(0,0,0,.16); font-size:12px; color:var(--muted)}
-    .pill.current{border-color:rgba(88,166,255,.65); color:var(--text); background:rgba(88,166,255,.10)}
-    .pill.done{border-color:rgba(46,160,67,.65); color:#b7f5c9; background:rgba(46,160,67,.10)}
-    .pill.locked{opacity:.70}
+    .pill{padding:6px 12px; border-radius:999px; border:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.03); font-size:12px; color:var(--muted); transition:all 0.3s ease;}
+    .pill.current{border-color:rgba(88,166,255,.8); color:var(--text); background:rgba(88,166,255,.15); font-weight:bold; box-shadow:0 0 10px rgba(88,166,255,.2);}
+    .pill.done{border-color:rgba(46,160,67,.65); color:#b7f5c9; background:rgba(46,160,67,.15);}
+    .pill.locked{opacity:.5; transform:scale(0.95);}
 
-    .cooldown{display:none; margin-top:10px}
+    .cooldown{display:none; margin-top:10px; border-left:4px solid #f85149; background:rgba(248,81,73,.08); animation: fadeIn 0.4s;}
+    @keyframes fadeIn { from{opacity:0; transform:translateY(-5px);} to{opacity:1; transform:translateY(0);} }
     .cooldown.show{display:block}
     .cooldown .title{font-weight:700}
     .cooldown .meta{color:var(--muted); font-size:12px; margin-top:6px; line-height:1.6}
@@ -550,9 +556,9 @@
 
     if (els.cooldownBox) els.cooldownBox.classList.add('show');
     if (els.cooldownText){
-      els.cooldownText.textContent = resourceUrl
-        ? `你剛剛在同一關卡連續錯了 2 次，我們先停 ${seconds} 秒。請先打開補救影片連結，看 1~2 分鐘，倒數結束後按「回來繼續」。`
-        : `我們先停 ${seconds} 秒，深呼吸一下，再回來繼續。`;
+      els.cooldownText.innerHTML = resourceUrl
+        ? `<b>連錯警示：</b>你剛剛在同一關卡連續錯了 2 次。<br/>系統已啟動「學習緩衝機制」：請觀看下方補救影片 1~2 分鐘，倒數結束後再按「回來繼續」。`
+        : `<b>心流暫停：</b>我們先停 ${seconds} 秒，深呼吸一下、重新整理思緒，再回來繼續。`;
     }
     if (els.btnCooldownDone) els.btnCooldownDone.disabled = true;
 
@@ -560,8 +566,8 @@
       const remaining = Math.max(0, Math.ceil((state.cooldownUntil - Date.now()) / 1000));
       if (els.cooldownCountdown){
         els.cooldownCountdown.textContent = remaining > 0
-          ? `倒數：${remaining} 秒（先看影片，再回來）`
-          : '倒數結束，可以回來繼續了。';
+          ? `🔒 鎖定倒數：${remaining} 秒（請專心看影片/提示）`
+          : '🔔 倒數結束，請點擊上方按鈕回來驗收成果。';
       }
       if (remaining <= 0){
         state.cooldownNeedsAck = true;
@@ -794,15 +800,84 @@
       };
     }
 
-    // Special: typed reducible but equivalent fraction
+    // Special: typed reducible but equivalent fraction (try to detect specific E2 patterns)
     const step3Text = normalizeText(payload.step3 || '');
     if (step3Text.includes('/') && !step3Text.includes(' ')){
       const parts = step3Text.split('/');
       if (parts.length===2){
-        const n0 = parseInt(parts[0].trim(),10);
-        const d0 = parseInt(parts[1].trim(),10);
-        if (Number.isFinite(n0) && Number.isFinite(d0) && d0!==0){
-          const g = gcd(n0,d0);
+        const sn = parseInt(parts[0].trim(),10);
+        const sd = parseInt(parts[1].trim(),10);
+        
+        // Base check against Step 2 (raw) or product
+        // We need the "before reduction" numbers. 
+        // Best guess: user used raw N/D from Step 2, OR calculated raw N/D from inputs.
+        // Let's rely on raw from calculation as base.
+        const bn = rawN; 
+        const bd = rawD;
+
+        if (Number.isFinite(sn) && Number.isFinite(sd) && sd!==0 && bn && bd){
+          
+          // Pattern A: Reduce Num Only
+          // bn/bd -> (bn/k)/bd
+          // Check if sd == bd AND sn != bn, and bn%sn==0
+          if (sd === bd && sn !== bn && sn !== 0 && (bn % sn === 0)){
+            const k = bn / sn;
+            if (k > 1){
+               return {
+                ok: false,
+                weak_id: 'E2',
+                weak_point: '約分與最簡分數',
+                diagnosis_code: 'E2_REDUCE_NUM_ONLY',
+                message: '有在約分很棒！但我發現你「只把分子除掉了」，分母忘記一起除。\n約分規則：分子分母要「同時除以同一個數」。',
+                next_hint: `如果要除以 ${k}：分子 ÷ ${k}，分母也要 ÷ ${k}。`,
+                retry_prompt: '回到 Step 2，選一個公因數，分子分母一起除。',
+                resource_url: buildResourceUrlFor('約分與最簡分數'),
+                expected: { step1: `${expected1.n}/${expected1.d}`, step2: `${expected2.n}/${expected2.d}`, step3: `${expected3.n}/${expected3.d}`, mixed: toMixedString(expected3) }
+              };
+            }
+          }
+
+          // Pattern B: Reduce Den Only
+          // bn/bd -> bn/(bd/k)
+          if (sn === bn && sd !== bd && sd !== 0 && (bd % sd === 0)){
+             const k = bd / sd;
+             if (k > 1){
+               return {
+                ok: false,
+                weak_id: 'E2',
+                weak_point: '約分與最簡分數',
+                diagnosis_code: 'E2_REDUCE_DEN_ONLY',
+                message: '有在約分很棒！但我發現你「只把分母除掉了」，分子忘記一起除。\n約分規則：分子分母要「同時除以同一個數」。',
+                next_hint: `如果要除以 ${k}：分母 ÷ ${k}，分子也要 ÷ ${k}。`,
+                retry_prompt: '回到 Step 2，選一個公因數，分子分母一起除。',
+                resource_url: buildResourceUrlFor('約分與最簡分數'),
+                expected: { step1: `${expected1.n}/${expected1.d}`, step2: `${expected2.n}/${expected2.d}`, step3: `${expected3.n}/${expected3.d}`, mixed: toMixedString(expected3) }
+              };
+             }
+          }
+
+          // Pattern C: Different Divisors
+          // bn/bd -> (bn/kn) / (bd/kd) where kn != kd
+          if (sn!==0 && sd!==0 && (bn % sn === 0) && (bd % sd === 0)){
+            const kn = bn / sn;
+            const kd = bd / sd;
+            if (kn > 1 && kd > 1 && kn !== kd){
+               return {
+                ok: false,
+                weak_id: 'E2',
+                weak_point: '約分與最簡分數',
+                diagnosis_code: 'E2_REDUCE_DIFFERENT_DIVISORS',
+                message: '這一步最容易踩雷：你分子分母好像除以「不一樣的數」？\n約分規則：一定要「同除同一個數」，不能分開除不一樣的。',
+                next_hint: `你好像分子除以 ${kn}、分母除以 ${kd}。要改成除一樣的數。`,
+                retry_prompt: '再試一次：找公因數（2、3、5...），分子分母一起除。',
+                resource_url: buildResourceUrlFor('約分與最簡分數'),
+                expected: { step1: `${expected1.n}/${expected1.d}`, step2: `${expected2.n}/${expected2.d}`, step3: `${expected3.n}/${expected3.d}`, mixed: toMixedString(expected3) }
+              };
+            }
+          }
+
+          // General not simplified enough check
+          const g = gcd(sn,sd);
           if (g!==1){
             const v = safeParse(step3Text);
             if (v && valEq(v, expected3)){
