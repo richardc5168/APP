@@ -233,8 +233,8 @@
 
   function genMixed(difficulty){
     // keep numbers kid-friendly (easy arithmetic)
-    const wholeMax = difficulty===1 ? 5 : difficulty===2 ? 7 : 9;
-    const denMax = difficulty===1 ? 6 : difficulty===2 ? 8 : 9;
+    const wholeMax = difficulty===1 ? 4 : difficulty===2 ? 6 : 7;
+    const denMax = difficulty===1 ? 6 : difficulty===2 ? 8 : 8;
     const allowReducible = (difficulty>=3);
     const w = randInt(1, wholeMax);
     const f = genProperFraction(denMax, allowReducible);
@@ -282,8 +282,9 @@
       }
 
       const product = fracMul(leftImproper, rightVal);
-      const maxAbsN = 220;
-      const maxD = 120;
+      // Keep results small enough for kids to compute by hand.
+      const maxAbsN = 120;
+      const maxD = 80;
       if (Math.abs(product.n) > maxAbsN || product.d > maxD) continue;
 
       const qText = `${formatMixed(m)} × ${rightText} = ?`;
