@@ -17,6 +17,12 @@ import sympy as sp
 
 from rag_backend import Retriever
 
+try:
+    from fraction_word_g5 import generate_fraction_word_problem_g5, template_count
+except Exception:
+    generate_fraction_word_problem_g5 = None
+    template_count = lambda: 0
+
 DB_ANS = "answers.db"
 DB_CONV = "conversation.db"
 
@@ -797,6 +803,51 @@ def generate_math_problem_ollama(topic: str, difficulty: str, student_id: str) -
         "error": "",
     }
 
+def generate_math_problem_offline(topic: str, difficulty: str, student_id: str) -> dict:
+    """離線題庫出題（目前支援：小學五年級分數應用題）"""
+    if generate_fraction_word_problem_g5 is None:
+        return {
+            "question": "",
+            "solution_steps": [],
+            "answer": "",
+            "error": "離線題庫未載入（fraction_word_g5.py 缺失或匯入失敗）。",
+        }
+
+    if topic != "分數":
+        return {
+            "question": "",
+            "solution_steps": [],
+            "answer": "",
+            "error": "離線題庫目前只支援『分數』主題，請改選分數或切換 Ollama。",
+        }
+
+    data = generate_fraction_word_problem_g5()
+    question = data.get("question", "")
+    steps = data.get("steps", [])
+    answer = data.get("answer", "")
+
+    log_conversation(
+        student_id=student_id,
+        subject="math",
+        question=question,
+        answer=answer,
+        mode="auto_question",
+        meta={
+            "raw": data,
+            "topic": topic,
+            "difficulty": difficulty,
+            "model": "offline-fraction-word-g5",
+            "template_count": int(template_count()),
+        },
+    )
+
+    return {
+        "question": question,
+        "solution_steps": steps,
+        "answer": answer,
+        "error": "",
+    }
+
 # ============================================================
 # 🎓 AI 數學教師模式（含自動出題 + 逐步引導）
 # ============================================================
@@ -810,15 +861,21 @@ with tab3:
     )
     st.session_state["student_id"] = student_id
 
-    st.markdown("#### 自動出題（離線 Ollama）")
-    col_topic, col_diff, col_btn = st.columns([2, 2, 1])
+    st.markdown("#### 自動出題（離線題庫 / Ollama）")
+    col_mode, col_topic, col_diff, col_btn = st.columns([2, 2, 2, 1])
+    with col_mode:
+        gen_mode = st.selectbox("出題模式", ["離線題庫(分數應用題)", "Ollama"], index=0)
     with col_topic:
         topic = st.selectbox("主題", ["分數", "小數", "幾何", "應用題"], index=0)
     with col_diff:
         difficulty = st.selectbox("難度", ["簡單", "中等", "困難"], index=1)
     with col_btn:
         if st.button("自動產生一題"):
-            data = generate_math_problem_ollama(topic, difficulty, student_id)
+            if gen_mode.startswith("離線"):
+                data = generate_math_problem_offline(topic, difficulty, student_id)
+            else:
+                data = generate_math_problem_ollama(topic, difficulty, student_id)
+
             if data.get("error"):
                 st.error(data["error"])
             else:

@@ -57,6 +57,11 @@ try:
 except Exception:
     HAS_SYMPY = False
 
+try:
+    from fraction_word_g5 import generate_fraction_word_problem_g5
+except Exception:
+    generate_fraction_word_problem_g5 = None
+
 
 # ======================================================================
 # ENGINE (出題 / 判題 / 自訂題目解題)
@@ -257,6 +262,198 @@ def get_question_hints(qobj: Dict[str, Any]) -> Dict[str, str]:
             "最後記得約分到最簡(能約就約)。",
         )
         return {"level1": h[0], "level2": h[1], "level3": h[2]}
+
+    # Generic fallback
+    h = _hint_pack(
+        "先圈出題目中的分數與總量（或剩下量）。",
+        "把文字轉成算式：『幾分之幾』通常用乘法；『平均分』通常用除法。",
+        "算完記得約分到最簡，必要時再換成帶分數。",
+    )
+    return {"level1": h[0], "level2": h[1], "level3": h[2]}
+
+
+def get_next_step_hint(qobj: Dict[str, Any], student_state: str = "", level: int = 1) -> Dict[str, Any]:
+    """Generate a next-step hint based on student's current state.
+
+    Safety: do NOT reveal the final numeric answer.
+    Returns: {hint: str, level: int, mode: str}
+    """
+
+    try:
+        level_int = int(level)
+    except Exception:
+        level_int = 1
+    if level_int not in (1, 2, 3):
+        level_int = 1
+
+    topic = str(qobj.get("topic") or "")
+    qtext = str(qobj.get("question") or "")
+    state = str(student_state or "").strip()
+    s = state.lower()
+
+    # Very lightweight stage inference (0=read,1=setup,2=compute,3=simplify)
+    stage = 0
+    if state:
+        stage = 1
+        if any(k in s for k in ("=", "×", "*", "乘", "÷", "除")):
+            stage = 2
+        if any(k in s for k in ("約分", "最簡", "帶分數", "化簡", "simpl")):
+            stage = 3
+
+    # Detect question kind (focused on G5 fraction applications)
+    kind = "generic_fraction_word"
+    if re.search(r"平均.*(杯|份|段|人|盒|袋|盤)", qtext):
+        kind = "average_division"
+    elif re.search(r"(原來|原價|全程(長|需要)|原本)", qtext) and re.search(r"(還剩|折後|剩)", qtext):
+        kind = "reverse_fraction"
+    elif re.search(r"剩下的又", qtext):
+        kind = "remain_then_fraction"
+    elif re.search(r"(先|又).*(吃|用|看|走).*(先|又)", qtext):
+        kind = "two_steps_used"
+    elif re.search(r"其中的", qtext) and re.search(r"占", qtext):
+        kind = "fraction_of_fraction"
+    elif re.search(r"(倒出|用了|吃了|看了).*(剩下多少|還剩|剩多少)", qtext):
+        kind = "remaining_after_fraction"
+    elif re.search(r"(倒出|走了|用掉|占).*(\d+\s*/\s*\d+)", qtext):
+        kind = "fraction_of_quantity"
+
+    # If the student already mentions an operation, bias toward action-oriented guidance.
+    state_has_fraction = bool(re.search(r"\d+\s*/\s*\d+", state))
+    state_has_setup_words = any(k in s for k in ("先", "所以", "因為", "列式", "算式"))
+
+    def _base(level1: str, level2: str, level3: str) -> str:
+        return _hint_pack(level1, level2, level3)[level_int - 1]
+
+    # Student-aware next step guidance per kind
+    if kind == "average_division":
+        hint = _base(
+            "這是『平均分』：把總量（可能是分數）÷ 平均分成的份數。",
+            "先把題目圈出：總量是什麼？要分成幾份？再列式：總量 ÷ 份數。",
+            "除以整數可寫成乘倒數：總量 × (1/份數)，算完再約分到最簡。",
+        )
+        if stage >= 2:
+            hint = _base(
+                "你已列式了，下一步是把除法做完並寫成最簡分數。",
+                "檢查是否能先約分（分子分母同除公因數）再算，會更快。",
+                "最後確認單位（每杯/每份/每段）與題目一致。",
+            )
+        elif state_has_fraction and state_has_setup_words:
+            hint = _base(
+                "你已經開始列式了，下一步把『平均』寫成 ÷ 份數，避免用加減。",
+                "把『÷ 份數』改寫成『× 1/份數』會更好算。",
+                "最後只化簡到最簡分數，不要急著換帶分數（除非題目要）。",
+            )
+        return {"hint": hint, "level": level_int, "mode": "offline_rule"}
+
+    if kind == "reverse_fraction":
+        hint = _base(
+            "題目給的是『剩下（或折後）是多少』，要反推『原來是多少』。",
+            "先求『剩下的比例』：通常是 1 - 用掉比例（或 1 - 折扣比例）。",
+            "原來的量 = 已知剩下量 ÷ 剩下比例；列式後再計算並化簡。",
+        )
+        if stage >= 2:
+            hint = _base(
+                "下一步：把『÷ 分數』改成『× 倒數』再算。",
+                "計算後若是假分數可換回帶分數（看題目要不要）。",
+                "最後做合理性檢查：原來的量要比剩下的量大。",
+            )
+        elif state_has_fraction and ("1" in s and "-" in s):
+            hint = _base(
+                "你在做『1 - 分數』很好，下一步把它當成『剩下比例』，不要直接去乘。",
+                "接著用：原來 = 已知剩下 ÷ 剩下比例（用除法反推）。",
+                "把除法改成乘倒數後，再約分到最簡。",
+            )
+        return {"hint": hint, "level": level_int, "mode": "offline_rule"}
+
+    if kind == "remain_then_fraction":
+        hint = _base(
+            "這題是『先剩下，再取剩下的一部分』，要分兩段想。",
+            "第一段先求第一次後剩下的比例（1 - 先用掉/先看掉）。",
+            "第二段：用『剩下量 × 第二個分數』求第二次用掉（或看掉），再做加減求最後剩下。",
+        )
+        if stage >= 2:
+            hint = _base(
+                "你已經把第一段或第二段列式了，下一步是照順序算：先算第一次剩下，再算第二次變化。",
+                "過程中不要急著算到最後，先把『每一步的量』寫清楚（第一次剩下量、第二次用掉量、最後剩下量）。",
+                "最後只要寫出『剩多少（頁/公升/公尺）』，並把分數約分。",
+            )
+        elif state_has_setup_words and ("剩" in s or "1" in s):
+            hint = _base(
+                "先把『第一次剩下』寫成一個量（或比例），用它當作第二次的『基準』。",
+                "第二次如果是『剩下的又看了/又用掉』，就是用乘法取其中一部分。",
+                "最後做減法得到『最後剩下』，不要把第二次看成加法。",
+            )
+        return {"hint": hint, "level": level_int, "mode": "offline_rule"}
+
+    if kind == "two_steps_used":
+        hint = _base(
+            "這題有兩次變化：先用掉一些，再用掉一些（可能是剩下的）。",
+            "先判斷第二次是『用掉原來的一部分』還是『用掉剩下的一部分』；看題目有沒有寫『剩下的又...』。",
+            "若都是『同一個整體』，就先把用掉的分數加起來再用 1 去減；若是『剩下的又...』則用乘法做第二次。",
+        )
+        if stage >= 2:
+            hint = _base(
+                "你已判斷題型了，下一步是把分數加減或乘法算完並約分。",
+                "如果要先通分：用 LCM 當共同分母再加減分子。",
+                "最後確認答案是『剩下幾分之幾』或『用掉幾分之幾』，不要寫反。",
+            )
+        return {"hint": hint, "level": level_int, "mode": "offline_rule"}
+
+    if kind == "fraction_of_fraction":
+        hint = _base(
+            "看到『其中的…』或『…的…』，通常是『分數的分數』：用乘法。",
+            "先找：第一個分數是占全體多少；第二個分數是在那一部分裡又占多少。",
+            "占全體 = 第一個分數 × 第二個分數；算完約分到最簡。",
+        )
+        if stage >= 2:
+            hint = _base(
+                "下一步：把兩個分數相乘，能先約分就先約分。",
+                "相乘後把結果化為最簡分數。",
+                "最後確認題目問的是『占全體幾分之幾』而不是其中一部分。",
+            )
+        return {"hint": hint, "level": level_int, "mode": "offline_rule"}
+
+    if kind == "remaining_after_fraction":
+        hint = _base(
+            "題目問『剩下』，先求剩下的比例：1 - 用掉的分數。",
+            "再用 總量 × 剩下比例，得到剩下的量（不要先算出用掉多少也可以）。",
+            "最後把結果約分到最簡，並確認單位。",
+        )
+        if stage >= 2:
+            hint = _base(
+                "你已經寫出 1 - 分數 或乘法式了，下一步是完成乘法並約分。",
+                "若看到帶分數，先轉成假分數再算會更穩。",
+                "算完做合理性檢查：剩下的量要小於總量。",
+            )
+        return {"hint": hint, "level": level_int, "mode": "offline_rule"}
+
+    if kind == "fraction_of_quantity":
+        hint = _base(
+            "題目是『某個量的幾分之幾』：用 乘法（總量 × 分數）。",
+            "先圈出總量與分數，再列式：總量 × (分子/分母)。",
+            "可先做約分（總量和分母先除公因數）再乘，最後化為最簡。",
+        )
+        if stage >= 2:
+            hint = _base(
+                "下一步：把乘法做完，並把分數約分到最簡。",
+                "檢查是否漏寫單位（公升/公里/公斤/人數）。",
+                "最後確認你算的是『倒出/走了/用掉』而不是『剩下』。",
+            )
+        return {"hint": hint, "level": level_int, "mode": "offline_rule"}
+
+    # Generic fraction word problem guidance
+    hint = _base(
+        "先圈出題目中的分數與總量（或剩下量），再決定要用乘法或除法。",
+        "把文字翻成算式：『幾分之幾的…』→ 乘法；『剩下』→ 1-分數；『原來』→ 用除法反推。",
+        "算完務必約分到最簡，必要時再換回帶分數並檢查合理性。",
+    )
+    if stage >= 2:
+        hint = _base(
+            "你已列式了，下一步是完成計算並約分。",
+            "計算前先找可約分的地方（分子分母同除公因數）。",
+            "最後做合理性檢查：答案的大小要符合題意（剩下 < 總量；原來 > 剩下）。",
+        )
+    return {"hint": hint, "level": level_int, "mode": "offline_rule"}
 
     # 帶分數
     if "帶分數" in topic or re.search(r"\d+\s+\d+/\d+", qtext):
@@ -965,6 +1162,19 @@ def gen_fraction_chain():
     return {"topic": "分數連續加減(三項內)", "difficulty": "medium",
             "question": "（生成失敗）請重試。", "answer": "0/1", "explanation": "生成失敗"}
 
+def gen_fraction_word_problem_g5():
+    """小學五年級分數應用題（離線題庫 18+ 題型）"""
+    if generate_fraction_word_problem_g5 is None:
+        return {
+            "topic": "分數應用題(五年級)",
+            "difficulty": "medium",
+            "question": "（離線題庫載入失敗）請檢查 fraction_word_g5.py。",
+            "answer": "0",
+            "explanation": "離線題庫載入失敗",
+            "steps": ["請確認 fraction_word_g5.py 是否存在且可匯入。"],
+        }
+    return generate_fraction_word_problem_g5()
+
 def gen_gcd_lcm():
     count = random.choice([2, 3])
     if count == 2:
@@ -1133,6 +1343,7 @@ GENERATORS: Dict[str, Tuple[str, Any]] = {
     "7": ("小數四則運算", gen_decimal_arith),
     "8": ("長/正方體積/面積", gen_volume_area),
     "10": ("分數連續加減(三項內)", gen_fraction_chain),
+    "11": ("分數應用題(五年級)", gen_fraction_word_problem_g5),
     "linear": ("一元一次方程", gen_linear_equation),
     "quadratic": ("一元二次方程式", gen_quadratic_equation)
 }

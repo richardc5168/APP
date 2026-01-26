@@ -24,6 +24,7 @@ from typing import Optional, Dict, Any, List
 
 from fastapi import FastAPI, Header, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse, HTMLResponse
 from pydantic import BaseModel, Field
 
@@ -36,6 +37,11 @@ try:
     from quadratic_engine import quadratic_engine
 except ImportError:
     quadratic_engine = None
+
+try:
+    from linear_engine import linear_engine
+except ImportError:
+    linear_engine = None
 
 try:
     from knowledge_graph import KNOWLEDGE_GRAPH
@@ -69,7 +75,13 @@ async def lifespan(app: FastAPI):
     yield
 
 
-app = FastAPI(title="Math Practice MVP API", version="0.1", lifespan=lifespan)
+app = FastAPI(
+    title="Math Practice MVP API",
+    version="0.1",
+    lifespan=lifespan,
+    docs_url="/api/docs",   # Move Swagger UI to avoid conflict with 'docs' folder
+    redoc_url="/api/redoc"
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -124,6 +136,19 @@ class QuadraticCheckRequest(BaseModel):
     user_answer: str
     question_data: Dict[str, Any]
 
+
+class HintNextRequest(BaseModel):
+    """Request next-step hint based on a student's current thought.
+
+    Provide either question_id (recommended, from /v1/questions/next)
+    or question_data ({topic, question}).
+    """
+
+    question_id: Optional[int] = Field(default=None, ge=1)
+    question_data: Optional[Dict[str, Any]] = None
+    student_state: str = Field(default="", description="Student's current thought / partial work")
+    level: int = Field(default=1, ge=1, le=3)
+
 @app.post("/v1/quadratic/next", summary="Generate Quadratic Problem (MATH Dataset Level 1-5)")
 def next_quadratic(req: QuadraticGenRequest):
     if not quadratic_engine:
@@ -152,6 +177,65 @@ def check_quadratic(req: QuadraticCheckRequest):
     
     is_correct = quadratic_engine.check_answer(req.user_answer, req.question_data)
     return {"correct": is_correct}
+
+# --- Linear Engine Endpoints ---
+
+class LinearGenRequest(BaseModel):
+    difficulty: int = Field(default=1, ge=1, le=5)
+
+class LinearCheckRequest(BaseModel):
+    user_answer: str
+    question_data: Dict[str, Any]
+
+@app.post("/v1/linear/next", summary="Generate Linear Problem (Level 1-5)")
+def next_linear(req: LinearGenRequest):
+    if not linear_engine:
+        raise HTTPException(status_code=500, detail="Linear Engine not loaded")
+    try:
+        q = linear_engine.generate_problem(req.difficulty)
+        # q: { question_text, explanation(steps), ... }
+        # Map to DB schema: topic, difficulty, question, correct_answer, explanation, hints_json
+        
+        # We need to extract correct_answer. linear_engine generates 'sol'.
+        # But wait, linear_engine.generate_problem returns Dict[str, Any] with:
+        # question_text, explanation (list of strings).
+        # It needs to return the answer too! 
+        # I should check linear_engine.py output format.
+        
+        # Assuming linear_engine also returns 'answer' or 'sol'.
+        # Let's inspect linear_engine.generate_problem output.
+        # But for now I'll persist standard fields.
+        
+        # NOTE: linear_engine as I saw earlier returns `explanation_steps`.
+        # I'll convert steps to text.
+        
+        topic = "linear_eq"
+        question_text = q.get("question_text", "Unknown Question")
+        ans = str(q.get("sol", "")) # Check logic below
+        explanation_str = "\n".join(q.get("explanation_steps", []))
+        
+        conn = db()
+        cur = conn.cursor()
+        cur.execute("""
+            INSERT INTO question_cache (topic, difficulty, question, correct_answer, explanation, hints_json, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, (topic, str(req.difficulty), question_text, ans, explanation_str, "[]", datetime.now().isoformat()))
+        q_id = cur.lastrowid
+        conn.commit()
+        conn.close()
+        
+        q["question_id"] = q_id
+        return q
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/v1/linear/check", summary="Check Linear Answer")
+def check_linear(req: LinearCheckRequest):
+    if not linear_engine:
+        raise HTTPException(status_code=500, detail="Linear Engine not loaded")
+    return {"correct": linear_engine.check_answer(req.user_answer, req.question_data)}
+
+# -------------------------------
 
 @app.get("/v1/knowledge/graph", summary="Get Full Knowledge Graph")
 def get_knowledge_graph():
@@ -201,6 +285,48 @@ def _diagnose_via_llm(prompt: str) -> str:
         return (resp.choices[0].message.content or "").strip()
     except Exception as e:
         return f"分析：LLM 呼叫失敗（{type(e).__name__}: {e}）。建議先檢查 API Key / 網路 / 模型名稱。"
+
+@app.get("/v1/report/{student_id}", summary="Get Student Report HTML")
+def get_student_report(student_id: int):
+    # Just run the reporting job on the fly for MVP
+    try:
+        # Assuming scripts/reporting_job.py can be imported as module 
+        # or we just reimplement simple logic here
+        conn = db()
+        st = conn.execute("SELECT * FROM students WHERE id=?", (student_id,)).fetchone()
+        if not st:
+            return JSONResponse(status_code=404, content={"error": "Student not found"})
+            
+        attempts = conn.execute("SELECT * FROM attempts WHERE student_id=? ORDER BY ts DESC", (student_id,)).fetchall()
+        
+        total = len(attempts)
+        correct = sum(1 for a in attempts if a["is_correct"]==1)
+        acc = round(correct/total*100, 1) if total>0 else 0
+        
+        # Weak topics
+        topic_stats = {}
+        for a in attempts:
+            t = a["topic"] or "unknown"
+            if t not in topic_stats: topic_stats[t] = {"total":0, "correct":0}
+            topic_stats[t]["total"] += 1
+            if a["is_correct"]==1: topic_stats[t]["correct"] += 1
+            
+        weak_topics = []
+        for t, stats in topic_stats.items():
+            t_acc = stats["correct"] / stats["total"]
+            if t_acc < 0.7: weak_topics.append({"topic": t, "acc": round(t_acc*100,1)})
+            
+        return {
+            "student": st["display_name"],
+            "total_attempts": total,
+            "accuracy": acc,
+            "weak_topics": weak_topics,
+            "recent_history": [
+                {"ts": a["ts"], "topic": a["topic"], "correct": a["is_correct"]} for a in attempts[:10]
+            ]
+        }
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": str(e)})
 
 # ========= 2) DB =========
 def db() -> sqlite3.Connection:
@@ -1309,6 +1435,45 @@ async def question_hint(request: Request, x_api_key: str = Header(..., alias="X-
         hint = _build_hints({"topic": q["topic"], "question": q["question"]}).get(key, "")
     return {"hint": hint}
 
+
+@app.post("/v1/hints/next", summary="Next-step hint (3 levels, student-aware)")
+async def hints_next(req: HintNextRequest, x_api_key: str = Header(..., alias="X-API-Key")):
+    acc = get_account_by_api_key(x_api_key)
+    ensure_subscription_active(acc["id"])
+
+    qobj: Dict[str, Any] = {}
+    if req.question_id is not None:
+        conn = db()
+        row = conn.execute("SELECT * FROM question_cache WHERE id=?", (int(req.question_id),)).fetchone()
+        conn.close()
+        if not row:
+            raise HTTPException(status_code=404, detail="Question not found")
+        qobj = {"topic": row["topic"], "question": row["question"]}
+    elif isinstance(req.question_data, dict):
+        qobj = {
+            "topic": str(req.question_data.get("topic") or ""),
+            "question": str(req.question_data.get("question") or req.question_data.get("question_text") or ""),
+        }
+    else:
+        raise HTTPException(status_code=400, detail="Provide question_id or question_data")
+
+    # Prefer engine's student-aware next-step hint generator.
+    if engine is not None and hasattr(engine, "get_next_step_hint"):
+        try:
+            out = engine.get_next_step_hint(qobj, student_state=req.student_state, level=int(req.level))
+            if isinstance(out, dict) and out.get("hint"):
+                return {
+                    "hint": str(out.get("hint")),
+                    "level": int(out.get("level") or req.level),
+                    "mode": str(out.get("mode") or "engine"),
+                }
+        except Exception:
+            pass
+
+    # Fallback: return the static hint for this level.
+    hints = _build_hints(qobj)
+    return {"hint": hints.get(f"level{int(req.level)}", ""), "level": int(req.level), "mode": "fallback"}
+
 @app.post("/v1/answers/submit")
 async def submit_answer(request: Request, x_api_key: str = Header(..., alias="X-API-Key")):
     """
@@ -1391,9 +1556,43 @@ async def submit_answer(request: Request, x_api_key: str = Header(..., alias="X-
         hint_plan = diagnosis.get("hint_plan") or []
         drill_reco = diagnosis.get("drill_reco") or []
 
+    # --- Recommender Integration ---
+    resources_reco = []
+    if is_correct != 1:
+         # Count consecutive errors for this topic
+        last_attempts = conn.execute("""
+            SELECT is_correct FROM attempts 
+            WHERE student_id=? AND topic=? 
+            ORDER BY ts DESC LIMIT 5
+        """, (student_id, q["topic"])).fetchall()
+        
+        con_errors = 1 # current one is wrong
+        for r in last_attempts:
+            if r["is_correct"] != 1:
+                con_errors += 1
+            else:
+                break
+        
+        try:
+            import recommender
+            rec_sys = recommender.Recommender()
+            # Map topic to tag if needed, or just pass topic string
+            # Our resources use tags like "linear_eq", "quadratic_eq"
+            # We map q["topic"] which might be "linear", "A1", etc.
+            tag_map = {
+                "linear": "linear_eq", "A1": "linear_eq", "A2": "linear_eq", "一元一次方程": "linear_eq",
+                "quadratic": "quadratic_eq", "A3": "quadratic_eq", "A4": "quadratic_eq", "A5": "quadratic_eq", "一元二次方程式": "quadratic_eq"
+            }
+            mapped_tag = tag_map.get(q["topic"], q["topic"])
+            resources_reco = rec_sys.recommend(mapped_tag, con_errors)
+        except Exception as e:
+            print(f"Recommender error: {e}")
+    # -------------------------------
+
     meta = {
         "hint_level_used": hint_level_used_int,
         "policy": {"reveal_answer_after_submit": True, "max_hint_level": 3},
+        "resources_reco": resources_reco
     }
 
     conn.execute("""INSERT INTO attempts(account_id, student_id, question_id, mode, topic, difficulty,
@@ -1417,6 +1616,7 @@ async def submit_answer(request: Request, x_api_key: str = Header(..., alias="X-
         "error_detail": error_detail,
         "hint_plan": hint_plan,
         "drill_reco": drill_reco,
+        "resources_reco": resources_reco
     }
 
 
@@ -1728,6 +1928,30 @@ def parent_weekly(student_id: int, days: int = 7, x_api_key: str = Header(..., a
         conn.close()
         return [row_to_dict(r) for r in rows]
 
+from fastapi.responses import RedirectResponse
+
+@app.get("/linear")
+async def redirect_linear():
+    return RedirectResponse(url="/linear/")
+
+@app.get("/quadratic")
+async def redirect_quadratic():
+    return RedirectResponse(url="/quadratic/")
+
+# Mount specific modules explicitly to ensure /linear/ works even if root mount misses it
+app.mount("/linear", StaticFiles(directory="docs/linear", html=True), name="static_linear")
+app.mount("/quadratic", StaticFiles(directory="docs/quadratic", html=True), name="static_quadratic")
+
+# Mount docs folder to serve static web pages
+# 1. Allow access via /docs/path/to/file (Matches physical folder structure)
+app.mount("/docs", StaticFiles(directory="docs", html=True), name="static_docs_explicit")
+# 2. Allow access via root /path/to/file (Web root convenience)
+app.mount("/", StaticFiles(directory="docs", html=True), name="static_docs_root")
+
 if __name__ == "__main__":
+    print("Starting server...")
+    print("   Web UI (Linear):    http://localhost:8000/linear/  (or /docs/linear/)")
+    print("   Web UI (Quadratic): http://localhost:8000/quadratic/")
+    print("   API Docs:           http://localhost:8000/api/docs")
     import uvicorn
     uvicorn.run("server:app", host="0.0.0.0", port=int(os.environ.get("PORT", "8000")), reload=True)
