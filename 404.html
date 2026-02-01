@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Not Found</title>
+  <meta http-equiv="refresh" content="0; url=./docs/" />
+  <script>
+    // If someone hits a deep link on a misconfigured Pages root, bounce them to docs.
+    (function () {
+      try {
+        location.replace('./docs/');
+      } catch (e) {
+        // no-op
+      }
+    })();
+  </script>
+</head>
+<body>
+  <p>Redirecting to <a href="./docs/">AI MATH WEB</a>…</p>
+</body>
+</html>
