@@ -60,3 +60,11 @@ math_bank/*.generated.json
 *.bundle
 AIMATH_snapshot_*.zip
 CONVERSATION_LOG_*.txt
+
+# Local web export bundles (generated)
+offline_bundle/
+offline_bundle_*.zip
+
+# Scratch notes/scripts (local)
+web.txt
+write_index.py
