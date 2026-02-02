@@ -68,3 +68,29 @@ offline_bundle_*.zip
 # Scratch notes/scripts (local)
 web.txt
 write_index.py
+
+# Local helper scripts/docs (not part of product)
+FIX_404_GITHUB_PAGES.md
+SOLVE_GITHUB_404.md
+autopilot.py
+debug_db.py
+recommender.py
+gamification.py
+
+# Local commit/push helpers
+commit_v2.bat
+commit_v3_gamification.bat
+start_web_lan.bat
+scripts/fix_github_remote*.ps1
+scripts/push_*.ps1
+scripts/reporting_job.py
+scripts/resource_harvester.py
+scripts/run_autopilot.py
+
+# Local verification scripts
+test_new_features.py
+test_rag.py
+verify_*.py
+
+# Local resources (optional / user-specific)
+data/resources/
