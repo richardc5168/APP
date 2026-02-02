@@ -47,7 +47,7 @@
 <body>
   <header>
     <div class="title">國小五年級｜生活應用題講義 + 自動出題（離線題庫）</div>
-    <div class="sub">主題：買東西/找零/兩段式購物、打折/平均單價、時間加法、常用單位換算、表格統計、面積鋪地磚、比例分配、分數生活題。可離線（file://）或 GitHub Pages 使用。</div>
+    <div class="sub">主題：買東西/找零/兩段式購物、打折/平均單價、時間加法、常用單位換算、表格統計、面積鋪地磚、比例分配、周長圍籬、容量裝滿、溫度變化、分數生活題。可離線（file://）或 GitHub Pages 使用。</div>
     <div class="row" style="margin-top:10px">
       <a class="btn" href="../">← 回到 AI MATH WEB</a>
       <span class="pill" id="bankMeta">題庫載入中...</span>
@@ -136,6 +136,25 @@
           <br><b>列式</b>：房間面積÷地磚面積。
         </div>
 
+        <h3 style="margin:14px 0 6px 0">7b) 圍籬/周長（把四邊加起來）</h3>
+        <div><span class="k">情境</span> 正方形邊長 12 公尺，要圍起來。</div>
+        <div class="small" style="color:var(--muted)">
+          <b>正方形</b>：周長=邊長×4。<b>長方形</b>：周長=(長+寬)×2。
+        </div>
+
+        <h3 style="margin:14px 0 6px 0">7c) 容量裝滿（先統一單位，再做減法）</h3>
+        <div><span class="k">情境</span> 水壺最多 3 公升，現在有 1250 毫升，還差多少毫升？</div>
+        <div class="small" style="color:var(--muted)">
+          <b>重點</b>：1 公升=1000 毫升；先換成同單位。
+          <br><b>列式</b>：總容量−已有。
+        </div>
+
+        <h3 style="margin:14px 0 6px 0">7d) 溫度變化（上升加、下降減）</h3>
+        <div><span class="k">情境</span> 一開始 18°C，上升 6°C，現在多少°C？</div>
+        <div class="small" style="color:var(--muted)">
+          <b>關鍵字</b>：上升/增加→加法；下降/降低→減法。
+        </div>
+
         <h3 style="margin:14px 0 6px 0">8) 比例分配（先算總份數，再算每份）</h3>
         <div><span class="k">情境</span> 120 顆糖按 甲:乙:丙=2:3:5 分配，甲拿多少？</div>
         <div class="small" style="color:var(--muted)">
@@ -175,6 +194,9 @@
             <option value="table_stats">表格統計（加總/比較）</option>
             <option value="area_tiling">面積鋪地磚（面積÷面積）</option>
             <option value="proportional_split">比例分配（比值）</option>
+            <option value="perimeter_fence">圍籬/周長（(長+寬)×2）</option>
+            <option value="volume_fill">容量裝滿（總量−已有）</option>
+            <option value="temperature_change">溫度變化（上升加/下降減）</option>
             <option value="time_add">時間加法（進位）</option>
             <option value="unit_convert">單位換算</option>
             <option value="fraction_remaining">分數：用掉/剩下</option>
@@ -483,6 +505,9 @@
       if (kind === 'table_stats') return '下一步：把表格中的數字抄下來，照題目要的做加總或相減比較。';
       if (kind === 'area_tiling') return '下一步：先把單位統一（公尺↔公分），算出房間面積與地磚面積，再用除法求需要幾塊。';
       if (kind === 'proportional_split') return '下一步：先算「總份數」=比的各部分相加，再算每份=總數÷總份數，最後乘回那個人有幾份。';
+      if (kind === 'perimeter_fence') return '下一步：判斷圖形是正方形還是長方形；正方形用「邊長×4」，長方形用「(長+寬)×2」。';
+      if (kind === 'volume_fill') return '下一步：先把單位統一（公升↔毫升），再用「總容量−已有」求還差多少。';
+      if (kind === 'temperature_change') return '下一步：找關鍵字「上升/增加」或「下降/降低」，上升用加法、下降用減法。';
       if (kind === 'time_add') return '下一步：先加分鐘；若 ≥60 就進位 1 小時，分鐘−60。';
       if (kind === 'unit_convert') return '下一步：先寫換算關係（例如 1L=1000mL），再決定乘或除。';
       if (kind === 'fraction_remaining') return '下一步：用掉=全體×分數；剩下=全體−用掉。';

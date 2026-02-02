@@ -613,7 +613,124 @@ def q_proportional_split(i: int) -> Q:
     )
 
 
-def build_bank(target_total: int = 240) -> List[Dict[str, Any]]:
+def q_perimeter_fence(i: int) -> Q:
+    shape = random.choice(["長方形", "正方形"])
+    if shape == "正方形":
+        side_m = random.choice([6, 8, 10, 12, 14, 15, 18, 20])
+        per = 4 * side_m
+        question = f"（圍籬/周長）一個正方形花圃邊長 {side_m} 公尺，要用圍籬把四周圍起來，需要多少公尺圍籬？（只寫數字）"
+        hints = [
+            "觀念：周長＝四邊長度的總和。正方形周長＝邊長×4。",
+            f"列式：{side_m}×4。",
+            f"Level 3｜計算：{side_m}×4 = {per}（公尺）。",
+        ]
+        steps = ["正方形周長 = 邊長×4", f"{side_m}×4={per}"]
+        explanation = f"正方形周長 = {side_m}×4 = {per}（公尺）。"
+    else:
+        l = random.choice([8, 10, 12, 15, 18, 20, 24, 25])
+        w = random.choice([5, 6, 7, 8, 9, 10, 12, 14])
+        per = 2 * (l + w)
+        question = f"（圍籬/周長）一個長方形花圃長 {l} 公尺、寬 {w} 公尺，要用圍籬把四周圍起來，需要多少公尺圍籬？（只寫數字）"
+        hints = [
+            "觀念：長方形周長＝(長+寬)×2。",
+            f"列式：({l}+{w})×2。",
+            f"Level 3｜計算：({l}+{w})×2 = {per}（公尺）。",
+        ]
+        steps = ["長方形周長 = (長+寬)×2", f"({l}+{w})×2={per}"]
+        explanation = f"周長 = (長+寬)×2 = ({l}+{w})×2 = {per}（公尺）。"
+
+    return Q(
+        id=f"la5_per_{i:03d}",
+        kind="perimeter_fence",
+        difficulty="easy",
+        question=question,
+        answer=str(per),
+        answer_mode="number",
+        hints=hints,
+        steps=steps,
+        meta={"unit": "公尺"},
+        explanation=explanation,
+    )
+
+
+def q_volume_fill(i: int) -> Q:
+    container = random.choice(["水桶", "水壺", "量杯", "水箱"])
+    cap_l = random.choice([2, 3, 5, 8, 10, 12])
+    have_ml = random.randrange(250, cap_l * 1000, 50)
+    need_ml = cap_l * 1000 - have_ml
+
+    question = (
+        f"（容積/容量）一個{container}最多裝 {cap_l} 公升水，"
+        f"現在裡面有 {have_ml} 毫升水，還要再加多少毫升才會裝滿？（只寫數字）"
+    )
+
+    hints = [
+        "觀念：先把單位統一，再用『總容量−已有』。1 公升 = 1000 毫升。",
+        f"方法：總容量={cap_l}×1000={cap_l*1000}（毫升）。列式：{cap_l*1000}−{have_ml}。",
+        f"Level 3｜計算：{cap_l*1000}−{have_ml} = {need_ml}（毫升）。",
+    ]
+
+    steps = [
+        "把公升換成毫升",
+        "需要量 = 總容量 − 已有量",
+        f"得到 {need_ml}",
+    ]
+
+    return Q(
+        id=f"la5_vol_{i:03d}",
+        kind="volume_fill",
+        difficulty="easy",
+        question=question,
+        answer=str(need_ml),
+        answer_mode="number",
+        hints=hints,
+        steps=steps,
+        meta={"unit": "毫升"},
+        explanation=f"總容量 {cap_l}L={cap_l*1000}mL，還要加 {cap_l*1000}-{have_ml}={need_ml}（mL）。",
+    )
+
+
+def q_temperature_change(i: int) -> Q:
+    place = random.choice(["教室", "戶外", "山上", "冰箱旁", "運動場"])
+    start = random.randint(-2, 28)
+    delta = random.choice([3, 4, 5, 6, 7, 8, 9, 10, 12])
+    direction = random.choice(["up", "down"])
+    end = start + delta if direction == "up" else start - delta
+
+    if direction == "up":
+        question = f"（溫度變化）{place}一開始是 {start}°C，過了一會兒上升了 {delta}°C，現在是多少°C？（只寫數字）"
+        hints = [
+            "觀念：上升→用加法；下降→用減法。",
+            f"列式：{start}+{delta}。",
+            f"Level 3｜計算：{start}+{delta} = {end}（°C）。",
+        ]
+        steps = ["上升用加法", f"{start}+{delta}={end}"]
+        explanation = f"上升 {delta}°C，所以 {start}+{delta}={end}（°C）。"
+    else:
+        question = f"（溫度變化）{place}一開始是 {start}°C，過了一會兒下降了 {delta}°C，現在是多少°C？（只寫數字）"
+        hints = [
+            "觀念：上升→用加法；下降→用減法。",
+            f"列式：{start}−{delta}。",
+            f"Level 3｜計算：{start}−{delta} = {end}（°C）。",
+        ]
+        steps = ["下降用減法", f"{start}-{delta}={end}"]
+        explanation = f"下降 {delta}°C，所以 {start}-{delta}={end}（°C）。"
+
+    return Q(
+        id=f"la5_tmp_{i:03d}",
+        kind="temperature_change",
+        difficulty="easy",
+        question=question,
+        answer=str(end),
+        answer_mode="number",
+        hints=hints,
+        steps=steps,
+        meta={"unit": "°C"},
+        explanation=explanation,
+    )
+
+
+def build_bank(target_total: int = 300) -> List[Dict[str, Any]]:
     generators: Dict[str, Any] = {
         "buy_many": q_buy_many,
         "discount": q_discount,
@@ -626,20 +743,26 @@ def build_bank(target_total: int = 240) -> List[Dict[str, Any]]:
         "table_stats": q_table_stats,
         "area_tiling": q_area_tiling,
         "proportional_split": q_proportional_split,
+        "perimeter_fence": q_perimeter_fence,
+        "volume_fill": q_volume_fill,
+        "temperature_change": q_temperature_change,
     }
 
     quotas: Dict[str, int] = {
         "buy_many": 28,
         "unit_price": 25,
         "discount": 25,
-        "time_add": 20,
-        "unit_convert": 20,
-        "fraction_remaining": 18,
         "make_change": 22,
         "shopping_two_step": 22,
         "table_stats": 20,
         "area_tiling": 20,
         "proportional_split": 20,
+        "perimeter_fence": 18,
+        "volume_fill": 20,
+        "temperature_change": 20,
+        "time_add": 20,
+        "unit_convert": 20,
+        "fraction_remaining": 20,
     }
 
     seen_questions: set[str] = set()
@@ -701,7 +824,7 @@ def build_bank(target_total: int = 240) -> List[Dict[str, Any]]:
 
 
 def main() -> None:
-    bank = build_bank(target_total=240)
+    bank = build_bank(target_total=300)
     OUT_JS.parent.mkdir(parents=True, exist_ok=True)
 
     payload = json.dumps(bank, ensure_ascii=False, indent=2)
