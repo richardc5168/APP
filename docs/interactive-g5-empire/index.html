@@ -313,6 +313,118 @@
               <span id="convHint" class="small" style="color:var(--muted)"></span>
             </div>
           </div>
+
+          <!-- Tool 4: Fraction multiplication cross-cancel helper (for fraction_mul) -->
+          <div id="toolFracMul" style="display:none; margin-top:10px; border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:12px; background:rgba(0,0,0,.12)">
+            <div class="row" style="justify-content:space-between">
+              <div>
+                <b>交叉約分小幫手</b>
+                <span class="pill" style="margin-left:8px">分數乘法</span>
+              </div>
+              <button class="btn" id="btnFracMulFill" type="button">帶入本題</button>
+            </div>
+            <div class="small" style="color:var(--muted); margin-top:6px">先找「可約分的對角線」（左分子↔右分母、右分子↔左分母），約完再相乘更快更不容易算錯。</div>
+
+            <div class="row" style="margin-top:10px">
+              <span class="pill">題目</span>
+              <span id="fmExpr" class="small" style="color:var(--text)">—</span>
+            </div>
+
+            <div class="row" style="margin-top:10px">
+              <label>Step 1｜交叉約分後（四個數）</label>
+              <input id="fmA" placeholder="左分子（約分後）" />
+              <input id="fmB" placeholder="左分母（約分後）" />
+              <input id="fmC" placeholder="右分子（約分後）" />
+              <input id="fmD" placeholder="右分母（約分後）" />
+              <button class="btn" id="btnFmCheckReduced" type="button">檢查</button>
+              <span id="fmReducedHint" class="small" style="color:var(--muted)"></span>
+            </div>
+
+            <div class="row" style="margin-top:8px">
+              <label>Step 2｜最後答案（最簡分數）</label>
+              <input id="fmFinal" placeholder="例如：5/6" />
+              <button class="btn good" id="btnFmCheckFinal" type="button">檢查</button>
+              <span id="fmFinalHint" class="small" style="color:var(--muted)"></span>
+            </div>
+          </div>
+
+          <!-- Tool 5: Percent decomposition helper (for percent_of) -->
+          <div id="toolPercent" style="display:none; margin-top:10px; border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:12px; background:rgba(0,0,0,.12)">
+            <div class="row" style="justify-content:space-between">
+              <div>
+                <b>百分率拆解器</b>
+                <span class="pill" style="margin-left:8px">p% 的多少</span>
+              </div>
+              <button class="btn" id="btnPctFill" type="button">帶入本題</button>
+            </div>
+            <div class="small" style="color:var(--muted); margin-top:6px">先算好用的基礎（10%、25%、50%），再組合成 p%。</div>
+
+            <div class="row" style="margin-top:10px">
+              <span class="pill">本題</span>
+              <span id="pctExpr" class="small" style="color:var(--text)">—</span>
+              <span class="pill">拆解</span>
+              <span id="pctParts" class="small" style="color:var(--text)">—</span>
+            </div>
+
+            <div class="row" style="margin-top:10px">
+              <label>Step 1｜每個部分是多少？</label>
+              <input id="pctPart1" placeholder="部分1（例如 50%）" />
+              <input id="pctPart2" placeholder="部分2（可空白）" />
+              <input id="pctPart3" placeholder="部分3（可空白）" />
+              <button class="btn" id="btnPctCheckParts" type="button">檢查</button>
+              <span id="pctPartsHint" class="small" style="color:var(--muted)"></span>
+            </div>
+
+            <div class="row" style="margin-top:8px">
+              <label>Step 2｜把部分加起來（答案）</label>
+              <input id="pctFinal" placeholder="例如：120" />
+              <button class="btn good" id="btnPctCheckFinal" type="button">檢查</button>
+              <span id="pctFinalHint" class="small" style="color:var(--muted)"></span>
+            </div>
+          </div>
+
+          <!-- Tool 6: Time add timeline/carry helper (for time_add) -->
+          <div id="toolTime" style="display:none; margin-top:10px; border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:12px; background:rgba(0,0,0,.12)">
+            <div class="row" style="justify-content:space-between">
+              <div>
+                <b>時間線進位器</b>
+                <span class="pill" style="margin-left:8px">時間加法</span>
+              </div>
+              <button class="btn" id="btnTimeFill" type="button">帶入本題</button>
+            </div>
+            <div class="small" style="color:var(--muted); margin-top:6px">先加分鐘；滿 60 就進 1 小時；最後寫成 HH:MM。</div>
+
+            <div class="row" style="margin-top:10px">
+              <span class="pill">起始</span>
+              <span id="timeStart" class="pill"><b>--:--</b></span>
+              <span class="pill">加</span>
+              <span id="timeAdd" class="pill"><b>0</b> 分</span>
+              <span class="pill">目標</span>
+              <span id="timeEnd" class="pill"><b>--:--</b></span>
+            </div>
+
+            <div class="row" style="margin-top:10px">
+              <label>Step 1｜加完分鐘後的「總分鐘」</label>
+              <input id="timeTotalMin" placeholder="例如：95" />
+              <button class="btn" id="btnTimeCheckTotalMin" type="button">檢查</button>
+              <span id="timeTotalMinHint" class="small" style="color:var(--muted)"></span>
+            </div>
+
+            <div class="row" style="margin-top:8px">
+              <label>Step 2｜進位小時數 + 剩下分鐘</label>
+              <input id="timeCarryH" placeholder="進位小時（例如 1）" />
+              <input id="timeRemainM" placeholder="剩下分鐘（0~59）" />
+              <button class="btn" id="btnTimeCheckCarry" type="button">檢查</button>
+              <span id="timeCarryHint" class="small" style="color:var(--muted)"></span>
+            </div>
+
+            <div class="row" style="margin-top:8px">
+              <label>Step 3｜最後時間（HH:MM）</label>
+              <input id="timeFinal" placeholder="例如：09:35" />
+              <button class="btn good" id="btnTimeCheckFinal" type="button">檢查</button>
+              <span id="timeFinalHint" class="small" style="color:var(--muted)"></span>
+            </div>
+          </div>
         </div>
 
         <details style="margin-top:12px;">
@@ -564,6 +676,9 @@
       toolFraction: document.getElementById('toolFraction'),
       toolVolume: document.getElementById('toolVolume'),
       toolConvert: document.getElementById('toolConvert'),
+      toolFracMul: document.getElementById('toolFracMul'),
+      toolPercent: document.getElementById('toolPercent'),
+      toolTime: document.getElementById('toolTime'),
 
       // fraction tool
       btnFracFill: document.getElementById('btnFracFill'),
@@ -609,6 +724,48 @@
       convAnswer: document.getElementById('convAnswer'),
       btnConvCheck: document.getElementById('btnConvCheck'),
       convHint: document.getElementById('convHint'),
+
+      // fraction mul tool
+      btnFracMulFill: document.getElementById('btnFracMulFill'),
+      fmExpr: document.getElementById('fmExpr'),
+      fmA: document.getElementById('fmA'),
+      fmB: document.getElementById('fmB'),
+      fmC: document.getElementById('fmC'),
+      fmD: document.getElementById('fmD'),
+      btnFmCheckReduced: document.getElementById('btnFmCheckReduced'),
+      fmReducedHint: document.getElementById('fmReducedHint'),
+      fmFinal: document.getElementById('fmFinal'),
+      btnFmCheckFinal: document.getElementById('btnFmCheckFinal'),
+      fmFinalHint: document.getElementById('fmFinalHint'),
+
+      // percent tool
+      btnPctFill: document.getElementById('btnPctFill'),
+      pctExpr: document.getElementById('pctExpr'),
+      pctParts: document.getElementById('pctParts'),
+      pctPart1: document.getElementById('pctPart1'),
+      pctPart2: document.getElementById('pctPart2'),
+      pctPart3: document.getElementById('pctPart3'),
+      btnPctCheckParts: document.getElementById('btnPctCheckParts'),
+      pctPartsHint: document.getElementById('pctPartsHint'),
+      pctFinal: document.getElementById('pctFinal'),
+      btnPctCheckFinal: document.getElementById('btnPctCheckFinal'),
+      pctFinalHint: document.getElementById('pctFinalHint'),
+
+      // time tool
+      btnTimeFill: document.getElementById('btnTimeFill'),
+      timeStart: document.getElementById('timeStart'),
+      timeAdd: document.getElementById('timeAdd'),
+      timeEnd: document.getElementById('timeEnd'),
+      timeTotalMin: document.getElementById('timeTotalMin'),
+      btnTimeCheckTotalMin: document.getElementById('btnTimeCheckTotalMin'),
+      timeTotalMinHint: document.getElementById('timeTotalMinHint'),
+      timeCarryH: document.getElementById('timeCarryH'),
+      timeRemainM: document.getElementById('timeRemainM'),
+      btnTimeCheckCarry: document.getElementById('btnTimeCheckCarry'),
+      timeCarryHint: document.getElementById('timeCarryHint'),
+      timeFinal: document.getElementById('timeFinal'),
+      btnTimeCheckFinal: document.getElementById('btnTimeCheckFinal'),
+      timeFinalHint: document.getElementById('timeFinalHint'),
     };
 
     // ---------- tools wiring ----------
@@ -616,6 +773,9 @@
       if (els.toolFraction) els.toolFraction.style.display = 'none';
       if (els.toolVolume) els.toolVolume.style.display = 'none';
       if (els.toolConvert) els.toolConvert.style.display = 'none';
+      if (els.toolFracMul) els.toolFracMul.style.display = 'none';
+      if (els.toolPercent) els.toolPercent.style.display = 'none';
+      if (els.toolTime) els.toolTime.style.display = 'none';
 
       // reset hints
       if (els.fracLCDHint) els.fracLCDHint.textContent = '';
@@ -624,6 +784,13 @@
       if (els.volBaseHint) els.volBaseHint.textContent = '';
       if (els.volTotalHint) els.volTotalHint.textContent = '';
       if (els.convHint) els.convHint.textContent = '';
+      if (els.fmReducedHint) els.fmReducedHint.textContent = '';
+      if (els.fmFinalHint) els.fmFinalHint.textContent = '';
+      if (els.pctPartsHint) els.pctPartsHint.textContent = '';
+      if (els.pctFinalHint) els.pctFinalHint.textContent = '';
+      if (els.timeTotalMinHint) els.timeTotalMinHint.textContent = '';
+      if (els.timeCarryHint) els.timeCarryHint.textContent = '';
+      if (els.timeFinalHint) els.timeFinalHint.textContent = '';
     }
 
     function toIntSafe(v){
@@ -797,6 +964,133 @@
       if (els.convHint) els.convHint.textContent = `提示：${ex.big}×${ex.factor} + ${ex.small}`;
     }
 
+    // ----- fraction multiplication tool -----
+    function fracMulExpect(){
+      const q = state.q;
+      if (!q || q.kind !== 'fraction_mul') return null;
+      const m = q.meta || {};
+      const a = String(m.a || '');
+      const b = String(m.b || '');
+      if (!a.includes('/') || !b.includes('/')) return null;
+      const [aN,aD] = a.split('/').map(Number);
+      const [bN,bD] = b.split('/').map(Number);
+      if (![aN,aD,bN,bD].every(Number.isFinite)) return null;
+
+      // compute fully simplified result
+      const num = aN * bN;
+      const den = aD * bD;
+      const g = gcd(num, den);
+      const sn = num / g;
+      const sd = den / g;
+
+      // also compute a "max cross-cancel" reduced form (not unique), used for checking
+      let raN=aN, raD=aD, rbN=bN, rbD=bD;
+      const g1 = gcd(raN, rbD);
+      raN/=g1; rbD/=g1;
+      const g2 = gcd(rbN, raD);
+      rbN/=g2; raD/=g2;
+
+      return { aN, aD, bN, bD, raN, raD, rbN, rbD, ans:`${sn}/${sd}` };
+    }
+
+    function fillFracMulTool(){
+      const ex = fracMulExpect();
+      if (!ex) return;
+      if (els.fmExpr) els.fmExpr.textContent = `${ex.aN}/${ex.aD} × ${ex.bN}/${ex.bD}`;
+      if (els.fmA) els.fmA.value = '';
+      if (els.fmB) els.fmB.value = '';
+      if (els.fmC) els.fmC.value = '';
+      if (els.fmD) els.fmD.value = '';
+      if (els.fmFinal) els.fmFinal.value = '';
+      if (els.fmReducedHint){
+        els.fmReducedHint.textContent = '提示：先看對角線是否能約分（左分子↔右分母、右分子↔左分母）。';
+        els.fmReducedHint.style.color = 'var(--muted)';
+      }
+      if (els.fmFinalHint) els.fmFinalHint.textContent = '';
+    }
+
+    // ----- percent tool -----
+    function percentExpect(){
+      const q = state.q;
+      if (!q || q.kind !== 'percent_of') return null;
+      const m = q.meta || {};
+      const base = Number(m.base);
+      const p = Number(m.p);
+      if (!Number.isFinite(base) || !Number.isFinite(p)) return null;
+
+      // choose a simple decomposition for supported p values
+      const parts = [];
+      if (p === 75) parts.push(50, 25);
+      else if (p === 60) parts.push(50, 10);
+      else if (p === 40) parts.push(25, 10, 5); // but 5% not in our bank list; avoid.
+      else if (p === 30) parts.push(20, 10);
+      else if (p === 25) parts.push(25);
+      else if (p === 20) parts.push(20);
+      else if (p === 10) parts.push(10);
+      else if (p === 50) parts.push(50);
+      else if (p === 40) parts.push(25, 10, 5);
+      else parts.push(p);
+
+      // Ensure parts are from set {50,25,20,10}
+      const allowed = new Set([50,25,20,10]);
+      let parts2 = parts.filter(x => allowed.has(x));
+      if (!parts2.length) parts2 = [p];
+      const partValues = parts2.map(pp => base * pp / 100);
+      const ans = base * p / 100;
+      return { base, p, parts: parts2, partValues, ans };
+    }
+
+    function fillPercentTool(){
+      const ex = percentExpect();
+      if (!ex) return;
+      if (els.pctExpr) els.pctExpr.textContent = `${ex.p}% 的 ${ex.base}`;
+      if (els.pctParts) els.pctParts.textContent = ex.parts.map(x => `${x}%`).join(' + ');
+      if (els.pctPart1) els.pctPart1.value = '';
+      if (els.pctPart2) els.pctPart2.value = '';
+      if (els.pctPart3) els.pctPart3.value = '';
+      if (els.pctFinal) els.pctFinal.value = '';
+      if (els.pctPartsHint){
+        els.pctPartsHint.textContent = '提示：先算每個部分，再相加。';
+        els.pctPartsHint.style.color = 'var(--muted)';
+      }
+      if (els.pctFinalHint) els.pctFinalHint.textContent = '';
+    }
+
+    // ----- time tool -----
+    function timeExpect(){
+      const q = state.q;
+      if (!q || q.kind !== 'time_add') return null;
+      const m = q.meta || {};
+      const start = String(m.start || '');
+      const addM = Number(m.add_m);
+      const end = String(m.end || '');
+      if (!start.includes(':') || !Number.isFinite(addM) || !end.includes(':')) return null;
+      const [sh, sm] = start.split(':').map(Number);
+      if (![sh, sm].every(Number.isFinite)) return null;
+      const totalMin = sm + addM;
+      const carryH = Math.floor(totalMin / 60);
+      const remainM = totalMin % 60;
+      return { start, addM, end, sh, sm, totalMin, carryH, remainM };
+    }
+
+    function fillTimeTool(){
+      const ex = timeExpect();
+      if (!ex) return;
+      if (els.timeStart) els.timeStart.innerHTML = `<b>${ex.start}</b>`;
+      if (els.timeAdd) els.timeAdd.innerHTML = `<b>${ex.addM}</b> 分`;
+      if (els.timeEnd) els.timeEnd.innerHTML = `<b>${ex.end}</b>`;
+      if (els.timeTotalMin) els.timeTotalMin.value = '';
+      if (els.timeCarryH) els.timeCarryH.value = '';
+      if (els.timeRemainM) els.timeRemainM.value = '';
+      if (els.timeFinal) els.timeFinal.value = '';
+      if (els.timeTotalMinHint){
+        els.timeTotalMinHint.textContent = `提示：起始分鐘 ${ex.sm} + ${ex.addM}。`;
+        els.timeTotalMinHint.style.color = 'var(--muted)';
+      }
+      if (els.timeCarryHint) els.timeCarryHint.textContent = '';
+      if (els.timeFinalHint) els.timeFinalHint.textContent = '';
+    }
+
     // region buttons (8)
     const REGION_BTN_IDS = [
       'region_decimal_mul','region_decimal_div','region_fraction_addsub','region_fraction_mul',
@@ -855,6 +1149,18 @@
       if (kind === 'unit_convert' && els.toolConvert){
         els.toolConvert.style.display = '';
         fillConvertTool();
+      }
+      if (kind === 'fraction_mul' && els.toolFracMul){
+        els.toolFracMul.style.display = '';
+        fillFracMulTool();
+      }
+      if (kind === 'percent_of' && els.toolPercent){
+        els.toolPercent.style.display = '';
+        fillPercentTool();
+      }
+      if (kind === 'time_add' && els.toolTime){
+        els.toolTime.style.display = '';
+        fillTimeTool();
       }
     }
 
@@ -977,6 +1283,149 @@
       } catch(e){
         els.convHint.textContent = String(e?.message || e);
         els.convHint.style.color = 'var(--bad)';
+      }
+    });
+
+    // fraction mul tool events
+    els.btnFracMulFill?.addEventListener('click', fillFracMulTool);
+    els.btnFmCheckReduced?.addEventListener('click', () => {
+      const ex = fracMulExpect();
+      if (!ex) return;
+      const a = toIntSafe(els.fmA.value);
+      const b = toIntSafe(els.fmB.value);
+      const c = toIntSafe(els.fmC.value);
+      const d = toIntSafe(els.fmD.value);
+      if (![a,b,c,d].every(Number.isFinite)){
+        els.fmReducedHint.textContent = '請填 4 個整數（約分後）';
+        els.fmReducedHint.style.color = 'var(--bad)';
+        return;
+      }
+      const ok = (a === ex.raN && b === ex.raD && c === ex.rbN && d === ex.rbD);
+      if (ok){
+        els.fmReducedHint.textContent = 'Step 1 正確！現在直接相乘。';
+        els.fmReducedHint.style.color = 'var(--ok)';
+      } else {
+        els.fmReducedHint.textContent = '提示：先找對角線能約分的最大公因數，再把數字變小。';
+        els.fmReducedHint.style.color = 'var(--warn)';
+      }
+    });
+    els.btnFmCheckFinal?.addEventListener('click', () => {
+      const ex = fracMulExpect();
+      if (!ex) return;
+      try{
+        const ok = compareByMode(els.fmFinal.value, ex.ans, 'fraction');
+        if (ok){
+          els.fmFinalHint.textContent = 'Step 2 正確！';
+          els.fmFinalHint.style.color = 'var(--ok)';
+        } else {
+          els.fmFinalHint.textContent = '再試一次：分子相乘、分母相乘，最後約分到最簡。';
+          els.fmFinalHint.style.color = 'var(--warn)';
+        }
+      } catch(e){
+        els.fmFinalHint.textContent = String(e?.message || e);
+        els.fmFinalHint.style.color = 'var(--bad)';
+      }
+    });
+
+    // percent tool events
+    els.btnPctFill?.addEventListener('click', fillPercentTool);
+    els.btnPctCheckParts?.addEventListener('click', () => {
+      const ex = percentExpect();
+      if (!ex) return;
+      const inputs = [els.pctPart1?.value, els.pctPart2?.value, els.pctPart3?.value].filter(x => String(x||'').trim() !== '');
+      if (inputs.length !== ex.parts.length){
+        els.pctPartsHint.textContent = `本題拆成 ${ex.parts.length} 個部分，請把每個部分都填上。`;
+        els.pctPartsHint.style.color = 'var(--warn)';
+        return;
+      }
+      try{
+        const vals = inputs.map(parseStudentNumber);
+        let allOk = true;
+        for (let i=0;i<vals.length;i++){
+          if (!nearlyEqual(vals[i], ex.partValues[i], 1e-9)) allOk = false;
+        }
+        if (allOk){
+          els.pctPartsHint.textContent = 'Step 1 正確！把這些部分加起來。';
+          els.pctPartsHint.style.color = 'var(--ok)';
+        } else {
+          els.pctPartsHint.textContent = '提示：先算 10%（÷10）或 25%（÷4）或 50%（÷2）。';
+          els.pctPartsHint.style.color = 'var(--warn)';
+        }
+      } catch(e){
+        els.pctPartsHint.textContent = String(e?.message || e);
+        els.pctPartsHint.style.color = 'var(--bad)';
+      }
+    });
+    els.btnPctCheckFinal?.addEventListener('click', () => {
+      const ex = percentExpect();
+      if (!ex) return;
+      try{
+        const ok = compareByMode(els.pctFinal.value, String(ex.ans), 'number');
+        if (ok){
+          els.pctFinalHint.textContent = 'Step 2 正確！';
+          els.pctFinalHint.style.color = 'var(--ok)';
+        } else {
+          els.pctFinalHint.textContent = '再試一次：把各部分相加就是答案。';
+          els.pctFinalHint.style.color = 'var(--warn)';
+        }
+      } catch(e){
+        els.pctFinalHint.textContent = String(e?.message || e);
+        els.pctFinalHint.style.color = 'var(--bad)';
+      }
+    });
+
+    // time tool events
+    els.btnTimeFill?.addEventListener('click', fillTimeTool);
+    els.btnTimeCheckTotalMin?.addEventListener('click', () => {
+      const ex = timeExpect();
+      if (!ex) return;
+      const v = toIntSafe(els.timeTotalMin.value);
+      if (!Number.isFinite(v)){
+        els.timeTotalMinHint.textContent = '請輸入整數分鐘';
+        els.timeTotalMinHint.style.color = 'var(--bad)';
+        return;
+      }
+      if (v === ex.totalMin){
+        els.timeTotalMinHint.textContent = 'Step 1 正確！';
+        els.timeTotalMinHint.style.color = 'var(--ok)';
+      } else {
+        els.timeTotalMinHint.textContent = `提示：${ex.sm}+${ex.addM} = ${ex.totalMin}`;
+        els.timeTotalMinHint.style.color = 'var(--warn)';
+      }
+    });
+    els.btnTimeCheckCarry?.addEventListener('click', () => {
+      const ex = timeExpect();
+      if (!ex) return;
+      const ch = toIntSafe(els.timeCarryH.value);
+      const rm = toIntSafe(els.timeRemainM.value);
+      if (!Number.isFinite(ch) || !Number.isFinite(rm)){
+        els.timeCarryHint.textContent = '請輸入兩個整數';
+        els.timeCarryHint.style.color = 'var(--bad)';
+        return;
+      }
+      if (ch === ex.carryH && rm === ex.remainM){
+        els.timeCarryHint.textContent = 'Step 2 正確！';
+        els.timeCarryHint.style.color = 'var(--ok)';
+      } else {
+        els.timeCarryHint.textContent = `提示：${ex.totalMin} 分 = ${ex.carryH} 小時 + ${ex.remainM} 分`; 
+        els.timeCarryHint.style.color = 'var(--warn)';
+      }
+    });
+    els.btnTimeCheckFinal?.addEventListener('click', () => {
+      const ex = timeExpect();
+      if (!ex) return;
+      try{
+        const ok = compareByMode(els.timeFinal.value, ex.end, 'hhmm');
+        if (ok){
+          els.timeFinalHint.textContent = 'Step 3 正確！';
+          els.timeFinalHint.style.color = 'var(--ok)';
+        } else {
+          els.timeFinalHint.textContent = '再試一次：把進位加到小時，分鐘要補兩位數。';
+          els.timeFinalHint.style.color = 'var(--warn)';
+        }
+      } catch(e){
+        els.timeFinalHint.textContent = String(e?.message || e);
+        els.timeFinalHint.style.color = 'var(--bad)';
       }
     });
 
