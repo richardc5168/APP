@@ -2147,6 +2147,13 @@
       renderEmpire(null);
     }
 
+    function packFromRegion(regionId){
+      const id = regionById[regionId] ? regionId : REGIONS[0].id;
+      if (id === 'decimal_mul' || id === 'decimal_div') return 'decimals';
+      if (id === 'fraction_addsub' || id === 'fraction_mul') return 'fractions';
+      return 'life';
+    }
+
     function renderEmpire(latestIndex){
       const rid = empire.selected || REGIONS[0].id;
       const rs = regionStats(rid);
@@ -2197,10 +2204,48 @@
       gUpdate();
     }
 
+    // game: optional region lock (click a region => lock questions to that kind)
+    let gRegionLock = null;
+
+    function buildGamePool(lockRegionId){
+      const pack = String(els.pack.value||'mixed');
+      const diff = String(els.gDifficulty.value||'all');
+      const allow = packAllow(pack);
+      let pool = bank;
+      if (allow) pool = pool.filter(x => allow.has(String(x.kind)));
+      if (diff !== 'all') pool = pool.filter(x => String(x.difficulty) === diff);
+
+      const rid = lockRegionId && regionById[lockRegionId] ? lockRegionId : null;
+      if (rid){
+        const kinds = regionById[rid].kinds;
+        pool = pool.filter(x => kinds.has(String(x.kind)));
+      }
+      return pool;
+    }
+
+    function gRebuildPoolAndMaybePick(reason){
+      if (!g.running) return;
+      g.pool = buildGamePool(gRegionLock);
+      if (!g.pool.length){
+        const title = gRegionLock ? (regionById[gRegionLock]?.title || '此區域') : '目前條件';
+        gBanner('bad', `${title} 沒有符合條件的題目（可改難度/題型包，或解除鎖定）`);
+        gUpdate();
+        return;
+      }
+      gBanner('muted', reason || '已更新題型/難度，繼續闖關！');
+      gPick();
+    }
+
     // wire region buttons
     for (const r of REGIONS){
       const el = document.getElementById(`region_${r.id}`);
-      el?.addEventListener('click', () => setSelectedRegion(r.id));
+      el?.addEventListener('click', () => {
+        setSelectedRegion(r.id);
+        gRegionLock = r.id;
+        const p = packFromRegion(r.id);
+        if (els.pack && String(els.pack.value||'') !== p) els.pack.value = p;
+        gRebuildPoolAndMaybePick(`已切換戰場：${r.title}（題目會對應切換）`);
+      });
     }
 
     els.btnEmpireReset?.addEventListener('click', () => {
@@ -2338,15 +2383,14 @@
       return null;
     }
 
-    function buildGamePool(){
-      const pack = String(els.pack.value||'mixed');
-      const diff = String(els.gDifficulty.value||'all');
-      const allow = packAllow(pack);
-      let pool = bank;
-      if (allow) pool = pool.filter(x => allow.has(String(x.kind)));
-      if (diff !== 'all') pool = pool.filter(x => String(x.difficulty) === diff);
-      return pool;
-    }
+    // if user changes pack/difficulty while running, rebuild pool immediately
+    els.pack?.addEventListener('change', () => {
+      gRegionLock = null;
+      gRebuildPoolAndMaybePick('已切換戰役題型包（解除區域鎖定）');
+    });
+    els.gDifficulty?.addEventListener('change', () => {
+      gRebuildPoolAndMaybePick('已切換難度');
+    });
 
     function gBanner(kind, text){
       els.gBanner.className = `banner ${kind}`;
@@ -2402,7 +2446,7 @@
     }
 
     function gStart(){
-      g.pool = buildGamePool();
+      g.pool = buildGamePool(gRegionLock);
       if (!g.pool.length){
         gBanner('bad', '沒有符合條件的題目（請改成「全部」或換難度）');
         return;
