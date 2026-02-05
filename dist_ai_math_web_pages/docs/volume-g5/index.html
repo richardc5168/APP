@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>國小五年級｜體積（長方體/正方體）離線練習</title>
+  <style>
+    :root{
+      --bg:#0b1020; --card:#121c3d;
+      --text:#e6edf3; --muted:#9aa4b2; --line:#243055;
+      --accent:#58a6ff; --ok:#2ea043; --bad:#f85149;
+    }
+    body{margin:0; font-family:Segoe UI,Helvetica,Arial; background:var(--bg); color:var(--text); line-height:1.7}
+    header{padding:18px 16px; border-bottom:1px solid var(--line); background:linear-gradient(180deg, rgba(88,166,255,.12), rgba(0,0,0,0));}
+    header .title{font-size:18px; font-weight:700}
+    header .sub{color:var(--muted); font-size:13px; margin-top:6px; line-height:1.5}
+    main{max-width:1100px; margin:0 auto; padding:16px}
+    .grid{display:grid; grid-template-columns:1.15fr .85fr; gap:12px}
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr} }
+    .card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px}
+    .row{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+    label{color:var(--muted); font-size:13px}
+    select,input{background:rgba(0,0,0,.22); border:1px solid rgba(255,255,255,.12); color:var(--text); border-radius:10px; padding:10px 10px}
+    input{min-width:260px}
+    .btn{display:inline-block; padding:10px 12px; border-radius:10px; border:1px solid rgba(88,166,255,.45); background:rgba(88,166,255,.12); color:var(--text); text-decoration:none; cursor:pointer}
+    .btn.primary{background:rgba(88,166,255,.22); border-color:rgba(88,166,255,.65)}
+    .btn.good{border-color:rgba(46,160,67,.65); background:rgba(46,160,67,.14)}
+    .banner{border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:10px 12px; margin-top:10px}
+    .banner.muted{color:var(--muted)}
+    .banner.ok{border-color:rgba(46,160,67,.65); color:#b7f5c9; background:rgba(46,160,67,.10)}
+    .banner.bad{border-color:rgba(248,81,73,.65); color:#ffd2cf; background:rgba(248,81,73,.08)}
+    .q{font-size:18px; padding:12px 14px; border-radius:12px; background:#08102a; border:1px dashed rgba(88,166,255,.4); margin: 10px 0; white-space:pre-wrap}
+    .hint{border-left:3px solid rgba(88,166,255,.55); padding:8px 10px; background:rgba(88,166,255,.06); border-radius:10px; margin:8px 0; white-space:pre-wrap}
+    .sol{border:1px dashed rgba(255,255,255,.18); border-radius:12px; padding:12px; margin-top:10px; white-space:pre-wrap}
+    .pill{display:inline-block; padding:3px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.04); color:var(--muted); font-size:12px}
+    a{color:var(--accent)}
+    .small{font-size:12px}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="title">國小五年級｜體積（長方體/正方體）離線練習 + 三層提示</div>
+    <div class="sub">重點：體積單位、長方體/正方體體積、底面積×高、立方公尺↔立方公分換算、複合形體分解。</div>
+    <div class="row" style="margin-top:10px">
+      <a class="btn" href="../">← 回到 AI MATH WEB</a>
+      <span class="pill" id="bankMeta">題庫載入中...</span>
+    </div>
+  </header>
+
+  <main>
+    <div class="grid">
+      <section class="card">
+        <h2 style="margin:0 0 10px 0">練習</h2>
+
+        <div class="row">
+          <label>題型</label>
+          <select id="kind">
+            <option value="all" selected>全部</option>
+            <option value="cube_cm3">正方體體積（邊長）</option>
+            <option value="cube_find_edge">反求邊長（已知正方體體積）</option>
+            <option value="rect_cm3">長方體體積（長×寬×高）</option>
+            <option value="rect_find_height">反求高（已知體積＋長寬）</option>
+            <option value="base_area_h">體積＝底面積×高</option>
+            <option value="m3_to_cm3">立方公尺→立方公分</option>
+            <option value="cm3_to_m3">立方公分→立方公尺</option>
+            <option value="mixed_units">單位混合（m + cm）</option>
+            <option value="decimal_dims">帶小數尺寸（m）</option>
+            <option value="composite">複合形體（分解相加）</option>
+            <option value="composite3">複合形體進階（三段相加）</option>
+          </select>
+
+          <label>難度</label>
+          <select id="difficulty">
+            <option value="all" selected>全部</option>
+            <option value="easy">easy</option>
+            <option value="medium">medium</option>
+          </select>
+
+          <button class="btn primary" id="btnNew">出新題</button>
+          <button class="btn" id="btnReset">清空</button>
+        </div>
+
+        <div class="q" id="qText">（按「出新題」開始）</div>
+
+        <div class="row">
+          <label>你的答案</label>
+          <input id="answer" placeholder="例如：120、2000000、1.2（可輸入逗號：2,000,000）" />
+          <button class="btn good" id="btnCheck">送出/檢查</button>
+        </div>
+
+        <div class="row">
+          <label>提示層級</label>
+          <select id="hintLevel">
+            <option value="1" selected>Level 1（觀念方向）</option>
+            <option value="2">Level 2（列式/公式）</option>
+            <option value="3">Level 3（完整步驟）</option>
+          </select>
+          <button class="btn" id="btnHint">看提示</button>
+          <button class="btn" id="btnShowSteps">看完整解題</button>
+        </div>
+
+        <div id="banner" class="banner muted">提示：先想單位（cm³ / m³），再用公式計算；複合形體要「分解」再相加。</div>
+        <div id="hints"></div>
+        <div id="solution"></div>
+      </section>
+
+      <aside class="card">
+        <h2 style="margin:0 0 10px 0">重點整理（不抄原題）</h2>
+        <div class="small" style="color:var(--muted); line-height:1.75">
+          <div><b>1) 體積單位</b>：常用 <span class="mono">cm³</span>、<span class="mono">m³</span>（「立方」表示三個方向都算）。</div>
+          <div><b>2) 正方體體積</b>：<span class="mono">V = 邊長³</span></div>
+          <div><b>3) 長方體體積</b>：<span class="mono">V = 長×寬×高</span></div>
+          <div><b>4) 也可寫成</b>：<span class="mono">V = 底面積×高</span></div>
+          <div><b>5) 換算</b>：<span class="mono">1 m = 100 cm</span>，所以 <span class="mono">1 m³ = 100³ cm³ = 1,000,000 cm³</span></div>
+          <div><b>6) 複合形體</b>：畫輔助線分解成幾個長方體/正方體，<b>分別算體積再相加</b>。</div>
+          <hr style="border:0; border-top:1px solid var(--line); margin:10px 0;">
+          <div>題庫由 <span class="mono">bank.js</span> 離線提供，本頁可完全離線運作。</div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <script src="./bank.js"></script>
+  <script>
+    function normalizeText(s){
+      return String(s||'')
+        .replace(/−/g,'-')
+        .replaceAll('，', ',')
+        .replaceAll('、', ',')
+        .replaceAll('／', '/')
+        .replaceAll('＝', '=')
+        .trim();
+    }
+
+    function parseNumber(text){
+      const s0 = normalizeText(text);
+      if (!s0) throw new Error('請輸入答案');
+      // allow commas and optional unit words
+      const s = s0.replaceAll(',', '').replace(/[^0-9.\-]/g, '');
+      if (!s || s === '-' || s === '.' || s === '-.') throw new Error('格式錯誤');
+      const v = Number(s);
+      if (!Number.isFinite(v)) throw new Error('格式錯誤');
+      return v;
+    }
+
+    function nearlyEqual(a,b){
+      // Most answers are integers; allow tiny float error.
+      return Math.abs(a-b) <= 1e-9;
+    }
+
+    function renderHint(text){
+      const div = document.createElement('div');
+      div.className = 'hint';
+      div.textContent = text;
+      return div;
+    }
+
+    const bank = Array.isArray(window.VOLUME_G5_BANK) ? window.VOLUME_G5_BANK : [];
+    const state = { q: null, revealed: false, hintUsed: 0 };
+
+    const els = {
+      bankMeta: document.getElementById('bankMeta'),
+      kind: document.getElementById('kind'),
+      difficulty: document.getElementById('difficulty'),
+      btnNew: document.getElementById('btnNew'),
+      btnReset: document.getElementById('btnReset'),
+      qText: document.getElementById('qText'),
+      answer: document.getElementById('answer'),
+      btnCheck: document.getElementById('btnCheck'),
+      hintLevel: document.getElementById('hintLevel'),
+      btnHint: document.getElementById('btnHint'),
+      btnShowSteps: document.getElementById('btnShowSteps'),
+      banner: document.getElementById('banner'),
+      hints: document.getElementById('hints'),
+      solution: document.getElementById('solution'),
+    };
+
+    function pickQuestion(){
+      const kind = els.kind.value;
+      const diff = els.difficulty.value;
+      let pool = bank;
+      if (kind !== 'all') pool = pool.filter(q => q.kind === kind);
+      if (diff !== 'all') pool = pool.filter(q => q.difficulty === diff);
+      if (!pool.length) return null;
+      return pool[Math.floor(Math.random() * pool.length)];
+    }
+
+    function resetUI(){
+      state.q = null;
+      state.revealed = false;
+      state.hintUsed = 0;
+      els.qText.textContent = '（按「出新題」開始）';
+      els.answer.value = '';
+      els.hints.innerHTML = '';
+      els.solution.innerHTML = '';
+      els.banner.className = 'banner muted';
+      els.banner.textContent = '提示：先想單位（cm³ / m³），再用公式計算；複合形體要「分解」再相加。';
+    }
+
+    function setBanner(type, text){
+      els.banner.className = 'banner ' + type;
+      els.banner.textContent = text;
+    }
+
+    function newQuestion(){
+      const q = pickQuestion();
+      if (!q){
+        setBanner('bad','找不到符合條件的題目，請調整篩選。');
+        return;
+      }
+      state.q = q;
+      state.revealed = false;
+      state.hintUsed = 0;
+      els.hints.innerHTML = '';
+      els.solution.innerHTML = '';
+      els.answer.value = '';
+      els.qText.textContent = q.question;
+      setBanner('muted', '題型：' + q.kind + '｜單位：' + (q.meta && q.meta.unit ? q.meta.unit : '（依題目）'));
+    }
+
+    function check(){
+      if (!state.q){
+        setBanner('bad','請先出新題。');
+        return;
+      }
+      try{
+        const user = parseNumber(els.answer.value);
+        const ans = Number(state.q.answer);
+        const ok = nearlyEqual(user, ans);
+        if (ok){
+          setBanner('ok','✅ 正確！');
+        } else {
+          setBanner('bad', '❌ 再想想：先確認單位，再檢查公式與計算。');
+        }
+      } catch (e){
+        setBanner('bad', e.message || '格式錯誤');
+      }
+    }
+
+    function showHint(){
+      if (!state.q){
+        setBanner('bad','請先出新題。');
+        return;
+      }
+      const level = Number(els.hintLevel.value);
+      const idx = Math.max(0, Math.min(2, level-1));
+      const text = (state.q.hints && state.q.hints[idx]) ? state.q.hints[idx] : '（本題沒有提示）';
+      els.hints.innerHTML = '';
+      els.hints.appendChild(renderHint(text));
+      state.hintUsed = level;
+    }
+
+    function showSteps(){
+      if (!state.q){
+        setBanner('bad','請先出新題。');
+        return;
+      }
+      const parts = [];
+      if (Array.isArray(state.q.steps) && state.q.steps.length){
+        parts.push('【步驟】\n' + state.q.steps.map((s,i)=>`${i+1}) ${s}`).join('\n'));
+      }
+      if (state.q.explanation){
+        parts.push('【詳解】\n' + state.q.explanation);
+      }
+      if (!parts.length){
+        parts.push('（本題沒有詳解）');
+      }
+      const div = document.createElement('div');
+      div.className = 'sol';
+      div.textContent = parts.join('\n\n');
+      els.solution.innerHTML = '';
+      els.solution.appendChild(div);
+    }
+
+    els.btnNew.addEventListener('click', newQuestion);
+    els.btnReset.addEventListener('click', resetUI);
+    els.btnCheck.addEventListener('click', check);
+    els.btnHint.addEventListener('click', showHint);
+    els.btnShowSteps.addEventListener('click', showSteps);
+
+    // init
+    els.bankMeta.textContent = `題庫：${bank.length} 題`;
+    resetUI();
+  </script>
+</body>
+</html>

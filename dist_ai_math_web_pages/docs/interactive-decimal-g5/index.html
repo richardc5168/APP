@@ -1,0 +1,948 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>互動小五小數計算｜闖關練習</title>
+  <style>
+    :root{
+      --bg:#0b1020; --panel:#0f1733; --card:#121c3d;
+      --text:#e6edf3; --muted:#9aa4b2; --line:#243055;
+      --accent:#58a6ff; --ok:#2ea043; --bad:#f85149; --warn:#d29922;
+    }
+    body{margin:0; font-family:Segoe UI,Helvetica,Arial; background:var(--bg); color:var(--text); line-height:1.7}
+    header{padding:18px 16px; border-bottom:1px solid var(--line); background:linear-gradient(180deg, rgba(88,166,255,.12), rgba(0,0,0,0));}
+    header .title{font-size:18px; font-weight:800}
+    header .sub{color:var(--muted); font-size:13px; margin-top:6px; line-height:1.5}
+    main{max-width:1100px; margin:0 auto; padding:16px}
+    .grid{display:grid; grid-template-columns:1.05fr .95fr; gap:12px}
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr} }
+    .card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px}
+    .row{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+    label{color:var(--muted); font-size:13px}
+    select,input,textarea{background:rgba(0,0,0,.22); border:1px solid rgba(255,255,255,.12); color:var(--text); border-radius:10px; padding:10px 10px}
+    input{min-width:220px}
+    textarea{min-width:220px; min-height:64px; resize:vertical}
+    .btn{display:inline-block; padding:10px 12px; border-radius:10px; border:1px solid rgba(88,166,255,.45); background:rgba(88,166,255,.12); color:var(--text); text-decoration:none; cursor:pointer}
+    .btn.primary{background:rgba(88,166,255,.22); border-color:rgba(88,166,255,.65)}
+    .btn.good{border-color:rgba(46,160,67,.65); background:rgba(46,160,67,.14)}
+    .btn.bad{border-color:rgba(248,81,73,.65); background:rgba(248,81,73,.08)}
+    .btn.warn{border-color:rgba(210,153,34,.7); background:rgba(210,153,34,.10)}
+    .banner{border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:10px 12px; margin-top:10px; white-space:pre-wrap}
+    .banner.muted{color:var(--muted)}
+    .banner.ok{border-color:rgba(46,160,67,.65); color:#b7f5c9; background:rgba(46,160,67,.10)}
+    .banner.bad{border-color:rgba(248,81,73,.65); color:#ffd2cf; background:rgba(248,81,73,.08)}
+    .banner.warn{border-color:rgba(210,153,34,.7); color:#ffe3b0; background:rgba(210,153,34,.08)}
+    .q{font-size:18px; padding:12px 14px; border-radius:12px; background:#08102a; border:1px dashed rgba(88,166,255,.4); margin: 10px 0; white-space:pre-wrap}
+    .hint{border-left:3px solid rgba(88,166,255,.55); padding:8px 10px; background:rgba(88,166,255,.06); border-radius:10px; margin:8px 0; white-space:pre-wrap}
+    .sol{border:1px dashed rgba(255,255,255,.18); border-radius:12px; padding:12px; margin-top:10px; white-space:pre-wrap}
+    .pill{display:inline-block; padding:3px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.04); color:var(--muted); font-size:12px}
+    a{color:var(--accent)}
+    .small{font-size:12px}
+    .tabs{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
+    .tab{padding:8px 12px; border-radius:999px; border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.04); color:var(--muted); cursor:pointer; user-select:none}
+    .tab.active{border-color:rgba(88,166,255,.8); color:var(--text); background:rgba(88,166,255,.15); font-weight:800}
+    .k{padding:2px 8px; border:1px solid rgba(56,139,253,0.35); background:rgba(56,139,253,0.12); border-radius:999px; font-size:12px; color:#a9d1ff}
+    .callout{border-left:4px solid rgba(210, 153, 34, .7); background:rgba(210, 153, 34, .08); padding:10px 12px; border-radius:12px; margin:10px 0}
+    .meter{height:10px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.10); border-radius:999px; overflow:hidden}
+    .meter > div{height:100%; background:linear-gradient(90deg, rgba(88,166,255,.95), rgba(88,166,255,.55)); width:0%}
+    .stat{display:flex; gap:10px; flex-wrap:wrap; color:var(--muted); font-size:12px}
+    .stat b{color:var(--text)}
+    .workshop{border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:12px; background:rgba(0,0,0,.18); margin-top:10px}
+    .workshop h3{margin:0 0 8px 0; font-size:14px}
+    .wk-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+    @media (max-width: 980px){ .wk-grid{grid-template-columns:1fr} }
+
+    .empire{margin-top:12px; border-top:1px solid var(--line); padding-top:12px}
+    .empire h3{margin:0 0 8px 0; font-size:14px}
+    .empire-grid{display:grid; grid-template-columns:repeat(10, 12px); gap:5px; align-items:center}
+    .tile{width:12px; height:12px; border-radius:4px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.05)}
+    .tile.own{border-color:rgba(88,166,255,.55); background:rgba(88,166,255,.28)}
+    .tile.castle{border-color:rgba(46,160,67,.7); background:rgba(46,160,67,.22)}
+    .tile.latest{outline:2px solid rgba(210,153,34,.8); outline-offset:1px}
+    .btn.empire-reset{border-color:rgba(248,81,73,.65); background:rgba(248,81,73,.08)}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="title">互動小五小數計算｜闖關練習（離線題庫）</div>
+    <div class="sub">把「小數點最容易錯的地方」做成互動：先算整數、再放小數點；並用闖關計分把練習變好玩。可離線（file://）或 GitHub Pages 使用。</div>
+    <div class="row" style="margin-top:10px">
+      <a class="btn" href="../">← 回到 AI MATH WEB</a>
+      <span class="pill" id="bankMeta">題庫載入中...</span>
+      <span class="pill" id="bestMeta" style="display:none"></span>
+    </div>
+    <div class="tabs" role="tablist" aria-label="模式">
+      <div class="tab active" id="tabGame" role="tab" aria-selected="true">闖關模式（有分數）</div>
+      <div class="tab" id="tabPractice" role="tab" aria-selected="false">練習模式（提示/詳解）</div>
+    </div>
+  </header>
+
+  <main>
+    <div class="grid">
+      <section class="card" id="panelGame">
+        <h2 style="margin:0 0 10px 0">闖關模式：90 秒挑戰</h2>
+
+        <div class="callout">
+          <b>玩法</b>：90 秒內答越多越好。連對會加分；看提示不扣分（但不看提示答對會有額外加分）。
+          <br><b>學習重點</b>：每一題先做 3 秒估算：乘 0.x 會變小；乘 >1 會變大；不夠除就補 0。
+          <br><b>帝國擴張</b>：答對會累積工程點數，對應題型的「帝國區域」會擴張領土。
+        </div>
+
+        <div class="row">
+          <label>題型包</label>
+          <select id="pack">
+            <option value="mixed" selected>綜合（全部）</option>
+            <option value="mul">乘法（小數點放回）</option>
+            <option value="div">除法（補 0）</option>
+            <option value="shift">小數點移動（×10/×0.01）</option>
+          </select>
+
+          <label>難度</label>
+          <select id="gDifficulty">
+            <option value="all" selected>全部</option>
+            <option value="easy">easy</option>
+            <option value="medium">medium</option>
+          </select>
+
+          <button class="btn primary" id="btnStart">開始闖關</button>
+          <button class="btn" id="btnStop" disabled>停止</button>
+        </div>
+
+        <div class="stat" style="margin-top:8px">
+          <div>時間：<b id="gTime">90</b>s</div>
+          <div>分數：<b id="gScore">0</b></div>
+          <div>連對：<b id="gStreak">0</b></div>
+          <div>正確率：<b id="gAcc">-</b></div>
+          <div>戰場：<b id="gRegion">—</b></div>
+          <div>領地：<b id="gLand">0</b></div>
+          <div>堡壘：<b id="gFort">-</b></div>
+        </div>
+        <div class="meter" style="margin-top:8px"><div id="gBar"></div></div>
+        <div class="small" style="color:var(--muted); margin-top:6px" id="gProgressMeta">進度：0 / 60（答對才前進）</div>
+
+        <div class="q" id="gQ">（按「開始闖關」）</div>
+
+        <div class="row">
+          <label>答案</label>
+          <input id="gAnswer" placeholder="例如：7.5 或 0.45 或 3.6" />
+          <button class="btn good" id="btnSubmit" disabled>送出</button>
+          <button class="btn warn" id="btnNudge" disabled>小提示（不扣分）</button>
+        </div>
+
+        <div id="gBanner" class="banner muted">提示：先估算方向，再計算。</div>
+      </section>
+
+      <section class="card" id="panelPractice" style="display:none">
+        <h2 style="margin:0 0 10px 0">練習模式：提示 → 互動工坊 → 詳解</h2>
+
+        <div class="row">
+          <label>題型</label>
+          <select id="kind">
+            <option value="all" selected>全部</option>
+            <option value="d_mul_int">小數 × 整數</option>
+            <option value="int_mul_d">整數 × 小數（打折/比例）</option>
+            <option value="d_mul_d">小數 × 小數</option>
+            <option value="d_div_int">小數 ÷ 整數（平均分）</option>
+            <option value="int_div_int_to_decimal">整數 ÷ 整數（商是小數）</option>
+            <option value="x10_shift">小數點移動（×10/×0.01）</option>
+          </select>
+
+          <label>難度</label>
+          <select id="difficulty">
+            <option value="all" selected>全部</option>
+            <option value="easy">easy</option>
+            <option value="medium">medium</option>
+          </select>
+
+          <button class="btn primary" id="btnNew">出新題</button>
+          <button class="btn" id="btnReset">清空</button>
+        </div>
+
+        <div class="q" id="qText">（按「出新題」開始）</div>
+
+        <div class="row">
+          <label>你的答案</label>
+          <input id="answer" placeholder="例如：7.5 或 0.45 或 3.6" />
+          <button class="btn good" id="btnCheck">送出/檢查</button>
+        </div>
+
+        <div class="row">
+          <label>提示層級</label>
+          <select id="hintLevel">
+            <option value="1" selected>Level 1（觀念方向）</option>
+            <option value="2">Level 2（列式/規則）</option>
+            <option value="3">Level 3（計算步驟）</option>
+          </select>
+          <button class="btn" id="btnHint">看提示</button>
+          <button class="btn" id="btnShowSteps">看完整解題</button>
+        </div>
+
+        <div id="banner" class="banner muted">提示：先估算大小（應該變大/變小？大約多少？）再動手算。</div>
+        <div id="hints"></div>
+        <div id="solution"></div>
+
+        <div id="workshop" class="workshop" style="display:none">
+          <h3>小數點工坊（互動練一次就不會放錯）</h3>
+          <div class="small" style="color:var(--muted)">適用：乘法題。先把小數點拿掉做整數乘法，再依「總小數位數」把小數點放回去。</div>
+          <div class="wk-grid" style="margin-top:10px">
+            <div>
+              <div class="small" style="color:var(--muted)">Step 1｜去掉小數點後的整數乘積</div>
+              <div class="row" style="margin-top:6px">
+                <input id="wkRaw" placeholder="例如：125×6 的結果" />
+                <button class="btn" id="wkCheckRaw">檢查 Step 1</button>
+              </div>
+              <div class="small" id="wkRawHint" style="color:var(--muted); margin-top:6px"></div>
+            </div>
+            <div>
+              <div class="small" style="color:var(--muted)">Step 2｜總小數位數（把兩個數的小數位加起來）</div>
+              <div class="row" style="margin-top:6px">
+                <input id="wkPlaces" placeholder="例如：2" />
+                <button class="btn" id="wkCheckPlaces">檢查 Step 2</button>
+              </div>
+              <div class="small" id="wkPlacesHint" style="color:var(--muted); margin-top:6px"></div>
+            </div>
+          </div>
+          <div style="margin-top:10px">
+            <div class="small" style="color:var(--muted)">Step 3｜把小數點放回去（最後答案）</div>
+            <div class="row" style="margin-top:6px">
+              <input id="wkFinal" placeholder="例如：7.5" />
+              <button class="btn good" id="wkCheckFinal">檢查 Step 3</button>
+            </div>
+            <div class="small" id="wkFinalHint" style="color:var(--muted); margin-top:6px"></div>
+          </div>
+        </div>
+
+        <details style="margin-top:12px;">
+          <summary>依孩子目前想法，給「下一步」</summary>
+          <div class="small" style="margin-top:8px; color:var(--muted); line-height:1.6">
+            你可以輸入孩子目前的想法（例如：「我先把小數點去掉」、「我覺得要補 0」、「我想用估算」）。
+            這頁會用純規則回一個「下一步」，不直接爆出最後答案。
+          </div>
+          <div class="row" style="margin-top:10px">
+            <label>孩子想法</label>
+            <textarea id="studentState" placeholder="例如：我先把 1.25 當 125 算，再放回 2 位小數"></textarea>
+            <button class="btn primary" id="btnNext">給我下一步</button>
+          </div>
+          <div id="nextHint" class="hint" style="display:none"></div>
+        </details>
+      </section>
+
+      <aside class="card">
+        <h2 style="margin:0 0 10px 0">小數不失誤三招</h2>
+        <div class="small" style="color:var(--muted); line-height:1.7">
+          <div><b>1) 方向檢查</b>：乘 0.x 會變小；乘 >1 會變大；除以 >1 會變小。</div>
+          <div><b>2) 整數先算</b>：先去掉小數點算整數，最後放回小數點。</div>
+          <div><b>3) 估算範圍</b>：先四捨五入算大概，答案不要差太多。</div>
+          <hr style="border:0; border-top:1px solid var(--line); margin:10px 0;">
+          <div class="small">題庫是離線 bank.js，自動抽題；闖關分數會存在本機 localStorage。</div>
+        </div>
+
+        <div class="empire">
+          <h3>帝國擴張（領地進度）</h3>
+          <div class="small" style="color:var(--muted); line-height:1.6">
+            每答對累積「工程點數」。不同題型會幫不同區域擴張領土；領地越多，堡壘等級越高。
+          </div>
+
+          <div class="row" style="margin-top:10px">
+            <span class="pill">區域</span>
+            <button class="tab active" id="regionMul" type="button">乘法王國</button>
+            <button class="tab" id="regionDiv" type="button">除法聯邦</button>
+            <button class="tab" id="regionShift" type="button">移點沙漠</button>
+          </div>
+
+          <div class="row" style="margin-top:8px">
+            <span class="pill">本區領地 <b id="empireLand">0</b></span>
+            <span class="pill">本區工程點數 <b id="empireXP">0</b></span>
+            <span class="pill">堡壘 <b id="empireFort">—</b></span>
+            <span class="pill" id="empireSaved">存檔：準備中</span>
+            <button class="btn empire-reset" id="btnEmpireReset" title="只重置目前區域的領地/工程點數，不影響題庫">重置本區</button>
+            <button class="btn" id="btnEmpireResetAll" title="重置所有區域的領地/工程點數">全部重置</button>
+          </div>
+          <div class="small" style="color:var(--muted); margin-top:6px" id="empireSummary">乘法王國 0｜除法聯邦 0｜移點沙漠 0</div>
+          <div class="small" style="color:var(--muted); margin-top:8px" id="empireMeta">下一塊領地：0 / 60</div>
+          <div class="empire-grid" id="empireGrid" style="margin-top:10px"></div>
+          <div class="small" style="color:var(--muted); margin-top:10px">說明：領地會自動存到本機 localStorage（同一台電腦同一個瀏覽器不會消失）。</div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <script src="./bank.js"></script>
+  <script>
+    // ---------- tabs ----------
+    const tabGame = document.getElementById('tabGame');
+    const tabPractice = document.getElementById('tabPractice');
+    const panelGame = document.getElementById('panelGame');
+    const panelPractice = document.getElementById('panelPractice');
+
+    function activateTab(which){
+      const isGame = which === 'game';
+      tabGame.classList.toggle('active', isGame);
+      tabPractice.classList.toggle('active', !isGame);
+      tabGame.setAttribute('aria-selected', isGame ? 'true':'false');
+      tabPractice.setAttribute('aria-selected', !isGame ? 'true':'false');
+      panelGame.style.display = isGame ? '' : 'none';
+      panelPractice.style.display = isGame ? 'none' : '';
+    }
+    tabGame.addEventListener('click', () => activateTab('game'));
+    tabPractice.addEventListener('click', () => activateTab('practice'));
+
+    // ---------- helpers ----------
+    function normalizeText(s){
+      return String(s||'')
+        .replace(/−/g,'-')
+        .replaceAll('，', ',')
+        .replaceAll('、', ',')
+        .replaceAll('／', '/')
+        .replaceAll('＝', '=')
+        .trim();
+    }
+
+    function parseStudentNumber(text){
+      const s = normalizeText(text);
+      if (!s) throw new Error('請輸入答案');
+      const cleaned = s.replace(/,/g,'');
+      const v = Number(cleaned);
+      if (!Number.isFinite(v)) throw new Error('答案請輸入數字（例如 7.5）');
+      return v;
+    }
+
+    function nearlyEqual(a,b,eps){ return Math.abs(a-b) <= (eps ?? 1e-9); }
+
+    function compareByMode(studentText, correctText, mode){
+      const m = String(mode || 'number');
+      if (m === 'exact'){
+        const s = normalizeText(studentText);
+        const c = normalizeText(correctText);
+        if (!s || !c) throw new Error('請輸入答案');
+        return s === c;
+      }
+      const sv = parseStudentNumber(studentText);
+      const cv = parseStudentNumber(correctText);
+      return nearlyEqual(sv, cv, 1e-9);
+    }
+
+    function renderHint(text){
+      const div = document.createElement('div');
+      div.className = 'hint';
+      div.textContent = text;
+      return div;
+    }
+
+    // ---------- bank/state ----------
+    const bank = Array.isArray(window.INTERACTIVE_DECIMAL_G5_BANK) ? window.INTERACTIVE_DECIMAL_G5_BANK : [];
+    const state = { q: null, revealed: false, hintUsed: 0 };
+
+    const ls = {
+      get(k, d){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } },
+      set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+    };
+
+    const els = {
+      bankMeta: document.getElementById('bankMeta'),
+      bestMeta: document.getElementById('bestMeta'),
+
+      // game
+      pack: document.getElementById('pack'),
+      gDifficulty: document.getElementById('gDifficulty'),
+      btnStart: document.getElementById('btnStart'),
+      btnStop: document.getElementById('btnStop'),
+      gTime: document.getElementById('gTime'),
+      gScore: document.getElementById('gScore'),
+      gStreak: document.getElementById('gStreak'),
+      gAcc: document.getElementById('gAcc'),
+      gRegion: document.getElementById('gRegion'),
+      gLand: document.getElementById('gLand'),
+      gFort: document.getElementById('gFort'),
+      gProgressMeta: document.getElementById('gProgressMeta'),
+      gBar: document.getElementById('gBar'),
+      gQ: document.getElementById('gQ'),
+      gAnswer: document.getElementById('gAnswer'),
+      btnSubmit: document.getElementById('btnSubmit'),
+      btnNudge: document.getElementById('btnNudge'),
+      gBanner: document.getElementById('gBanner'),
+
+      // empire UI
+      regionMul: document.getElementById('regionMul'),
+      regionDiv: document.getElementById('regionDiv'),
+      regionShift: document.getElementById('regionShift'),
+      empireLand: document.getElementById('empireLand'),
+      empireXP: document.getElementById('empireXP'),
+      empireFort: document.getElementById('empireFort'),
+      empireSaved: document.getElementById('empireSaved'),
+      empireSummary: document.getElementById('empireSummary'),
+      empireMeta: document.getElementById('empireMeta'),
+      empireGrid: document.getElementById('empireGrid'),
+      btnEmpireReset: document.getElementById('btnEmpireReset'),
+      btnEmpireResetAll: document.getElementById('btnEmpireResetAll'),
+
+      // practice
+      kind: document.getElementById('kind'),
+      difficulty: document.getElementById('difficulty'),
+      btnNew: document.getElementById('btnNew'),
+      btnReset: document.getElementById('btnReset'),
+      qText: document.getElementById('qText'),
+      answer: document.getElementById('answer'),
+      btnCheck: document.getElementById('btnCheck'),
+      banner: document.getElementById('banner'),
+      hints: document.getElementById('hints'),
+      solution: document.getElementById('solution'),
+      hintLevel: document.getElementById('hintLevel'),
+      btnHint: document.getElementById('btnHint'),
+      btnShowSteps: document.getElementById('btnShowSteps'),
+      studentState: document.getElementById('studentState'),
+      btnNext: document.getElementById('btnNext'),
+      nextHint: document.getElementById('nextHint'),
+
+      // workshop
+      workshop: document.getElementById('workshop'),
+      wkRaw: document.getElementById('wkRaw'),
+      wkPlaces: document.getElementById('wkPlaces'),
+      wkFinal: document.getElementById('wkFinal'),
+      wkCheckRaw: document.getElementById('wkCheckRaw'),
+      wkCheckPlaces: document.getElementById('wkCheckPlaces'),
+      wkCheckFinal: document.getElementById('wkCheckFinal'),
+      wkRawHint: document.getElementById('wkRawHint'),
+      wkPlacesHint: document.getElementById('wkPlacesHint'),
+      wkFinalHint: document.getElementById('wkFinalHint'),
+    };
+
+    function updateBankMeta(){
+      if (!bank.length){
+        els.bankMeta.textContent = '題庫未載入（請確認 bank.js）';
+        return;
+      }
+      const kinds = new Set(bank.map(x => x.kind || 'unknown'));
+      els.bankMeta.textContent = `離線題庫：${bank.length} 題｜題型：${kinds.size} 種`;
+
+      const best = ls.get('idg5_best', {score:0, streak:0});
+      els.bestMeta.style.display = '';
+      els.bestMeta.textContent = `最佳：${best.score} 分｜最長連對：${best.streak}`;
+    }
+
+    function pickFromPool(pool){
+      if (!pool.length) return null;
+      return pool[Math.floor(Math.random() * pool.length)];
+    }
+
+    function filteredBank(kind, difficulty){
+      let pool = bank;
+      if (kind && kind !== 'all') pool = pool.filter(x => String(x.kind) === kind);
+      if (difficulty && difficulty !== 'all') pool = pool.filter(x => String(x.difficulty) === difficulty);
+      return pool;
+    }
+
+    function showQuestion(q){
+      state.q = q;
+      state.revealed = false;
+      state.hintUsed = 0;
+      els.answer.value = '';
+      els.studentState.value = '';
+      els.hints.innerHTML = '';
+      els.solution.innerHTML = '';
+      els.nextHint.style.display = 'none';
+      els.qText.textContent = q ? q.question : '（題庫中沒有符合條件的題目）';
+      els.banner.className = 'banner muted';
+      els.banner.textContent = '提示：先估算方向，再計算。';
+
+      // workshop reset
+      els.workshop.style.display = 'none';
+      els.wkRaw.value = '';
+      els.wkPlaces.value = '';
+      els.wkFinal.value = '';
+      els.wkRawHint.textContent = '';
+      els.wkPlacesHint.textContent = '';
+      els.wkFinalHint.textContent = '';
+
+      if (q && q.meta && typeof q.meta.raw_int_product === 'number'){
+        els.workshop.style.display = '';
+        const a = q.meta?.a;
+        const b = q.meta?.b;
+        els.wkRawHint.textContent = `提示：先把 ${a} 和 ${b} 的小數點拿掉，做整數乘法。`;
+        els.wkPlacesHint.textContent = `提示：總小數位數 = a 的小數位 + b 的小數位。`;
+      }
+    }
+
+    function showBanner(kind, text){
+      els.banner.className = `banner ${kind}`;
+      els.banner.textContent = text;
+    }
+
+    function showSolution(){
+      const q = state.q;
+      if (!q) return;
+      const div = document.createElement('div');
+      div.className = 'sol';
+      const lines = [];
+      if (Array.isArray(q.steps) && q.steps.length){
+        q.steps.forEach((s,i) => lines.push(`步驟 ${i+1}：${s}`));
+      }
+      if (q.explanation) lines.push('', '詳解：', q.explanation);
+      lines.push('', `答案：${q.answer}`);
+      div.textContent = lines.join('\n');
+      els.solution.innerHTML = '';
+      els.solution.appendChild(div);
+    }
+
+    function currentHint(level){
+      const q = state.q;
+      if (!q) return null;
+      const idx = Math.max(1, Math.min(3, level)) - 1;
+      if (Array.isArray(q.hints) && q.hints[idx]) return q.hints[idx];
+      if (Array.isArray(q.steps) && q.steps.length) return q.steps.slice(0, idx+1).join('\n');
+      return '（沒有提示）';
+    }
+
+    function nextStepHintByRule(q, studentState){
+      const st = normalizeText(studentState);
+      const kind = String(q?.kind || '');
+      if (!st) return '下一步：先估算方向（變大/變小），再列式。';
+
+      if (kind === 'd_mul_int') return '下一步：先把小數點拿掉做整數乘法，最後再放回小數點（位數不變）。';
+      if (kind === 'int_mul_d' || kind === 'd_mul_d') return '下一步：先做整數乘法，再把小數位數「加起來」放回去，並用大小感檢查。';
+      if (kind === 'd_div_int' || kind === 'int_div_int_to_decimal') return '下一步：不夠除就補 0，做到小數點要往上點到商；最後用乘回去檢查。';
+      if (kind === 'x10_shift') return '下一步：判斷是 ×10/×100/×0.01 類型，依規則移動小數點，再用大小感檢查。';
+
+      if (st.includes('估算')) return '很好！接著列式 → 計算 → 檢查小數點位置是否合理。';
+      if (st.includes('補0') || st.includes('補 0')) return '對！不夠除就補 0；商的小數點要跟被除數的小數點對齊（往上點）。';
+      if (st.includes('小數點') && (st.includes('放') || st.includes('點'))) return '下一步：確認要放回的小數位數（乘法是位數加起來），從右邊數回去點上。';
+
+      return '下一步：把題目翻成算式，先估算，再算，最後檢查小數點。';
+    }
+
+    // ---------- practice events ----------
+    els.btnNew?.addEventListener('click', () => {
+      const pool = filteredBank(String(els.kind.value||'all'), String(els.difficulty.value||'all'));
+      const q = pickFromPool(pool);
+      showQuestion(q);
+    });
+
+    els.btnReset?.addEventListener('click', () => {
+      showQuestion(state.q);
+    });
+
+    els.btnHint?.addEventListener('click', () => {
+      const q = state.q;
+      if (!q) return;
+      const level = Number(els.hintLevel.value || '1');
+      const text = currentHint(level);
+      if (!text) return;
+      els.hints.appendChild(renderHint(text));
+      state.hintUsed = Math.max(state.hintUsed, level);
+    });
+
+    els.btnShowSteps?.addEventListener('click', () => {
+      showSolution();
+      state.revealed = true;
+    });
+
+    els.btnCheck?.addEventListener('click', () => {
+      const q = state.q;
+      if (!q){
+        showBanner('bad', '請先出一題');
+        return;
+      }
+      try {
+        const ok = compareByMode(els.answer.value, q.answer, q.answer_mode || 'number');
+        if (ok){
+          showBanner('ok', '答對了！你可以出下一題。');
+        } else {
+          showBanner('bad', '答案不對，再試一次；可以先看提示 Level 1/2，或用「小數點工坊」拆解。');
+        }
+      } catch (e){
+        showBanner('bad', String(e?.message || e || '答案格式錯誤'));
+      }
+    });
+
+    els.btnNext?.addEventListener('click', () => {
+      const q = state.q;
+      if (!q) return;
+      const t = nextStepHintByRule(q, els.studentState.value);
+      els.nextHint.textContent = t;
+      els.nextHint.style.display = '';
+    });
+
+    // workshop checks
+    function wkExpect(){
+      const q = state.q;
+      if (!q || !q.meta) return null;
+      if (typeof q.meta.raw_int_product !== 'number') return null;
+      return {
+        raw: q.meta.raw_int_product,
+        places: q.meta.total_places,
+        answer: q.answer,
+        a: q.meta.a,
+        b: q.meta.b,
+        a_int: q.meta.a_int,
+        b_int: q.meta.b_int,
+        a_places: q.meta.a_places,
+        b_places: q.meta.b_places,
+      };
+    }
+
+    els.wkCheckRaw?.addEventListener('click', () => {
+      const ex = wkExpect();
+      if (!ex) return;
+      try{
+        const v = parseStudentNumber(els.wkRaw.value);
+        if (nearlyEqual(v, ex.raw, 1e-9)){
+          els.wkRawHint.textContent = 'Step 1 正確！';
+          els.wkRawHint.style.color = 'var(--ok)';
+        } else {
+          els.wkRawHint.textContent = `再想想：先算 ${ex.a_int}×${ex.b_int}（把小數點拿掉）。`;
+          els.wkRawHint.style.color = 'var(--warn)';
+        }
+      } catch(e){
+        els.wkRawHint.textContent = String(e?.message || e);
+        els.wkRawHint.style.color = 'var(--bad)';
+      }
+    });
+
+    els.wkCheckPlaces?.addEventListener('click', () => {
+      const ex = wkExpect();
+      if (!ex) return;
+      try{
+        const v = parseStudentNumber(els.wkPlaces.value);
+        if (nearlyEqual(v, ex.places, 1e-9)){
+          els.wkPlacesHint.textContent = 'Step 2 正確！';
+          els.wkPlacesHint.style.color = 'var(--ok)';
+        } else {
+          els.wkPlacesHint.textContent = `提示：${ex.a} 有 ${ex.a_places} 位小數，${ex.b} 有 ${ex.b_places} 位小數，所以總共 ${ex.a_places}+${ex.b_places}。`;
+          els.wkPlacesHint.style.color = 'var(--warn)';
+        }
+      } catch(e){
+        els.wkPlacesHint.textContent = String(e?.message || e);
+        els.wkPlacesHint.style.color = 'var(--bad)';
+      }
+    });
+
+    els.wkCheckFinal?.addEventListener('click', () => {
+      const ex = wkExpect();
+      if (!ex) return;
+      try{
+        const ok = compareByMode(els.wkFinal.value, ex.answer, 'number');
+        if (ok){
+          els.wkFinalHint.textContent = 'Step 3 正確！小數點放對了。';
+          els.wkFinalHint.style.color = 'var(--ok)';
+        } else {
+          els.wkFinalHint.textContent = `提示：先拿到整數乘積 ${ex.raw}，再從右邊數回 ${ex.places} 位點上小數點。`;
+          els.wkFinalHint.style.color = 'var(--warn)';
+        }
+      } catch(e){
+        els.wkFinalHint.textContent = String(e?.message || e);
+        els.wkFinalHint.style.color = 'var(--bad)';
+      }
+    });
+
+    // ---------- game mode / empire regions ----------
+    const TERRITORY_XP = 60;
+    const MAX_TILES = 60;
+    const gPersistKey = 'idg5_empire_regions_v1';
+
+    const REGIONS = [
+      { id:'mul', title:'乘法王國', kinds:new Set(['d_mul_int','int_mul_d','d_mul_d']) },
+      { id:'div', title:'除法聯邦', kinds:new Set(['d_div_int','int_div_int_to_decimal']) },
+      { id:'shift', title:'移點沙漠', kinds:new Set(['x10_shift']) },
+    ];
+    const regionById = Object.fromEntries(REGIONS.map(r => [r.id, r]));
+
+    function defaultEmpire(){
+      return { regions: { mul:{xp:0}, div:{xp:0}, shift:{xp:0} }, selected:'mul' };
+    }
+
+    let empire = ls.get(gPersistKey, defaultEmpire());
+    if (!empire || !empire.regions) empire = defaultEmpire();
+    if (!empire.regions.mul) empire.regions.mul = {xp:0};
+    if (!empire.regions.div) empire.regions.div = {xp:0};
+    if (!empire.regions.shift) empire.regions.shift = {xp:0};
+    if (!empire.selected) empire.selected = 'mul';
+
+    function territoriesFromXP(xp){
+      return Math.max(0, Math.floor((Number(xp)||0) / TERRITORY_XP));
+    }
+
+    function fortressLevel(land){
+      const n = Number(land) || 0;
+      if (n >= 45) return '帝國堡壘';
+      if (n >= 30) return '鋼鐵要塞';
+      if (n >= 18) return '石造城堡';
+      if (n >= 8) return '木造堡壘';
+      if (n >= 1) return '前哨';
+      return '—';
+    }
+
+    function regionFromKind(kind){
+      const k = String(kind||'');
+      for (const r of REGIONS){
+        if (r.kinds.has(k)) return r.id;
+      }
+      return 'mul';
+    }
+
+    function regionXP(regionId){
+      const id = regionById[regionId] ? regionId : 'mul';
+      return Math.max(0, Number(empire?.regions?.[id]?.xp) || 0);
+    }
+
+    function setRegionXP(regionId, xp){
+      const id = regionById[regionId] ? regionId : 'mul';
+      empire.regions[id] = empire.regions[id] || {xp:0};
+      empire.regions[id].xp = Math.max(0, Number(xp) || 0);
+    }
+
+    function regionStats(regionId){
+      const xp = regionXP(regionId);
+      const land = territoriesFromXP(xp);
+      const inTile = xp % TERRITORY_XP;
+      return { xp, land, inTile, fort: fortressLevel(land) };
+    }
+
+    function saveEmpire(){
+      ls.set(gPersistKey, empire);
+      if (els.empireSaved){
+        const t = new Date();
+        const hh = String(t.getHours()).padStart(2,'0');
+        const mm = String(t.getMinutes()).padStart(2,'0');
+        const ss = String(t.getSeconds()).padStart(2,'0');
+        els.empireSaved.textContent = `存檔：已自動保存（${hh}:${mm}:${ss}）`;
+      }
+    }
+
+    function setSelectedRegion(regionId){
+      const id = regionById[regionId] ? regionId : 'mul';
+      empire.selected = id;
+      saveEmpire();
+      renderEmpire(null);
+    }
+
+    function renderEmpire(latestIndex){
+      const rid = empire.selected || 'mul';
+      const rs = regionStats(rid);
+
+      if (els.regionMul && els.regionDiv && els.regionShift){
+        els.regionMul.classList.toggle('active', rid === 'mul');
+        els.regionDiv.classList.toggle('active', rid === 'div');
+        els.regionShift.classList.toggle('active', rid === 'shift');
+      }
+
+      if (els.empireLand) els.empireLand.textContent = String(rs.land);
+      if (els.empireXP) els.empireXP.textContent = String(rs.xp);
+      if (els.empireFort) els.empireFort.textContent = rs.fort;
+      if (els.empireMeta) els.empireMeta.textContent = `下一塊領地：${rs.inTile} / ${TERRITORY_XP}`;
+
+      if (els.empireSummary){
+        const a = regionStats('mul').land;
+        const b = regionStats('div').land;
+        const c = regionStats('shift').land;
+        els.empireSummary.textContent = `乘法王國 ${a}｜除法聯邦 ${b}｜移點沙漠 ${c}`;
+      }
+
+      const grid = els.empireGrid;
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      for (let i=1;i<=MAX_TILES;i++){
+        const d = document.createElement('div');
+        d.className = 'tile' + (i <= rs.land ? ' own' : '');
+        if (i === 8 || i === 18 || i === 30 || i === 45) d.className += ' castle';
+        if (latestIndex && i === latestIndex) d.className += ' latest';
+        d.title = i <= rs.land ? `${regionById[rid].title}｜領地 #${i}` : `未取得（還差 ${Math.max(0, (i*TERRITORY_XP) - rs.xp)} 點）`;
+        grid.appendChild(d);
+      }
+    }
+
+    function resetSelectedRegion(){
+      const rid = empire.selected || 'mul';
+      setRegionXP(rid, 0);
+      saveEmpire();
+      renderEmpire(null);
+      gUpdate();
+    }
+
+    function resetAllRegions(){
+      for (const r of REGIONS) setRegionXP(r.id, 0);
+      saveEmpire();
+      renderEmpire(null);
+      gUpdate();
+    }
+
+    els.regionMul?.addEventListener('click', () => setSelectedRegion('mul'));
+    els.regionDiv?.addEventListener('click', () => setSelectedRegion('div'));
+    els.regionShift?.addEventListener('click', () => setSelectedRegion('shift'));
+
+    els.btnEmpireReset?.addEventListener('click', () => {
+      const title = regionById[empire.selected || 'mul']?.title || '目前區域';
+      if (confirm(`確定要重置「${title}」的領地/工程點數嗎？（不會影響題庫）`)) resetSelectedRegion();
+    });
+    els.btnEmpireResetAll?.addEventListener('click', () => {
+      if (confirm('確定要重置全部區域的領地/工程點數嗎？')) resetAllRegions();
+    });
+
+    let g = { running:false, t:90, timer:null, score:0, streak:0, correct:0, total:0, q:null, pool:[], hintUsedThisQ:false, activeRegion:'mul' };
+
+    function packFilter(pack){
+      if (pack === 'mul') return new Set(['d_mul_int','int_mul_d','d_mul_d']);
+      if (pack === 'div') return new Set(['d_div_int','int_div_int_to_decimal']);
+      if (pack === 'shift') return new Set(['x10_shift']);
+      return null; // mixed
+    }
+
+    function buildGamePool(){
+      const pack = String(els.pack.value||'mixed');
+      const diff = String(els.gDifficulty.value||'all');
+      const allow = packFilter(pack);
+      let pool = bank;
+      if (allow) pool = pool.filter(x => allow.has(String(x.kind)));
+      if (diff !== 'all') pool = pool.filter(x => String(x.difficulty) === diff);
+      return pool;
+    }
+
+    function gBanner(kind, text){
+      els.gBanner.className = `banner ${kind}`;
+      els.gBanner.textContent = text;
+    }
+
+    function gUpdate(){
+      const rs = regionStats(g.activeRegion || 'mul');
+      els.gTime.textContent = String(g.t);
+      els.gScore.textContent = String(g.score);
+      els.gStreak.textContent = String(g.streak);
+      els.gAcc.textContent = g.total ? `${Math.round((g.correct/g.total)*100)}%` : '-';
+      if (els.gRegion) els.gRegion.textContent = regionById[g.activeRegion]?.title || '—';
+      if (els.gLand) els.gLand.textContent = String(rs.land);
+      if (els.gFort) els.gFort.textContent = rs.fort;
+
+      // Progress bar: advance ONLY when XP increases (correct answer).
+      const pct = Math.max(0, Math.min(100, (rs.inTile / TERRITORY_XP) * 100));
+      els.gBar.style.width = `${pct}%`;
+      if (els.gProgressMeta) els.gProgressMeta.textContent = `進度：${rs.inTile} / ${TERRITORY_XP}（答對才前進）｜本區工程點數：${rs.xp}`;
+    }
+
+    function gPick(){
+      g.q = pickFromPool(g.pool);
+      g.hintUsedThisQ = false;
+      g.activeRegion = regionFromKind(g.q?.kind);
+      els.gQ.textContent = g.q ? g.q.question : '（題庫不足）';
+      els.gAnswer.value = '';
+      gBanner('muted', '提示：先估算方向，再計算。');
+      renderEmpire(null);
+      gUpdate();
+    }
+
+    function gStop(){
+      g.running = false;
+      if (g.timer) clearInterval(g.timer);
+      g.timer = null;
+      els.btnStart.disabled = false;
+      els.btnStop.disabled = true;
+      els.btnSubmit.disabled = true;
+      els.btnNudge.disabled = true;
+
+      const best = ls.get('idg5_best', {score:0, streak:0});
+      const next = { score: Math.max(best.score||0, g.score), streak: Math.max(best.streak||0, g.streak) };
+      ls.set('idg5_best', next);
+      updateBankMeta();
+
+      saveEmpire();
+      renderEmpire(null);
+
+      gBanner('warn', `結束！分數 ${g.score}｜正確 ${g.correct}/${g.total}（${g.total?Math.round((g.correct/g.total)*100):0}%）\n你可以再挑戰一次，或切到練習模式用「小數點工坊」練最容易錯的地方。`);
+    }
+
+    function gStart(){
+      g.pool = buildGamePool();
+      if (!g.pool.length){
+        gBanner('bad', '沒有符合條件的題目（請改成「全部」或換難度）');
+        return;
+      }
+      g = { running:true, t:90, timer:null, score:0, streak:0, correct:0, total:0, q:null, pool:g.pool, hintUsedThisQ:false };
+      els.btnStart.disabled = true;
+      els.btnStop.disabled = false;
+      els.btnSubmit.disabled = false;
+      els.btnNudge.disabled = false;
+      gPick();
+      renderEmpire(null);
+      gUpdate();
+      g.timer = setInterval(() => {
+        g.t -= 1;
+        if (g.t <= 0){
+          g.t = 0;
+          gUpdate();
+          gStop();
+          return;
+        }
+        gUpdate();
+      }, 1000);
+    }
+
+    function gSubmit(){
+      if (!g.running || !g.q) return;
+      g.total += 1;
+      try{
+        const ok = compareByMode(els.gAnswer.value, g.q.answer, g.q.answer_mode || 'number');
+        if (ok){
+          g.correct += 1;
+          g.streak += 1;
+          const base = 10 + Math.min(10, g.streak);
+          const bonus = g.hintUsedThisQ ? 0 : 5;
+          const delta = base + bonus;
+          g.score += delta;
+
+          // Empire XP: only increases when correct.
+          const rid = g.activeRegion || regionFromKind(g.q?.kind);
+          const beforeLand = regionStats(rid).land;
+          setRegionXP(rid, regionXP(rid) + delta);
+          const after = regionStats(rid);
+          saveEmpire();
+          const latest = after.land > beforeLand ? after.land : null;
+          renderEmpire(latest);
+
+          const gotLand = after.land > beforeLand;
+          if (gotLand){
+            const rt = regionById[rid]?.title || '本區域';
+            gBanner('ok', `答對！+${base}${bonus?`+${bonus}（不看提示加分）`:''}｜連對 ${g.streak}\n${rt} 擴張成功：取得第 ${after.land} 塊領地！`);
+          } else if (bonus){
+            gBanner('ok', `答對！+${base}+${bonus}（不看提示加分）｜連對 ${g.streak}`);
+          } else {
+            gBanner('ok', `答對！+${base} 分｜連對 ${g.streak}`);
+          }
+        } else {
+          g.streak = 0;
+          g.score = Math.max(0, g.score - 4);
+          gBanner('bad', `不對，扣 4 分。\n小提醒：先估算方向，再算；小數點最容易放錯。`);
+        }
+      } catch(e){
+        g.streak = 0;
+        g.score = Math.max(0, g.score - 1);
+        gBanner('bad', String(e?.message || e || '答案格式錯誤'));
+      }
+      gUpdate();
+      setTimeout(() => { if (g.running) gPick(); }, 650);
+    }
+
+    function gNudge(){
+      if (!g.running || !g.q) return;
+      g.hintUsedThisQ = true;
+      const kind = String(g.q.kind||'');
+      if (kind === 'x10_shift') gBanner('warn', '提示：這題是小數點移動。先看是 ×10/×100 還是 ×0.1/×0.01，再移動小數點。');
+      else if (kind === 'd_div_int' || kind === 'int_div_int_to_decimal') gBanner('warn', '提示：不夠除就補 0；商的小數點要往上點到對齊。');
+      else gBanner('warn', '提示：先去掉小數點算整數乘法，再把小數位數放回去。');
+    }
+
+    els.btnStart?.addEventListener('click', gStart);
+    els.btnStop?.addEventListener('click', gStop);
+    els.btnSubmit?.addEventListener('click', gSubmit);
+    els.btnNudge?.addEventListener('click', gNudge);
+    els.gAnswer?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') gSubmit();
+    });
+
+    // init
+    updateBankMeta();
+    renderEmpire(null);
+    saveEmpire();
+    if (bank.length) showQuestion(bank[0]);
+  </script>
+</body>
+</html>

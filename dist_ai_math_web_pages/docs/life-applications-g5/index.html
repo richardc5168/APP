@@ -1,0 +1,576 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>國小五年級｜生活應用題（講義 + 自動出題）</title>
+  <style>
+    :root{
+      --bg:#0b1020; --panel:#0f1733; --card:#121c3d;
+      --text:#e6edf3; --muted:#9aa4b2; --line:#243055;
+      --accent:#58a6ff; --ok:#2ea043; --bad:#f85149;
+    }
+    body{margin:0; font-family:Segoe UI,Helvetica,Arial; background:var(--bg); color:var(--text); line-height:1.7}
+    header{padding:18px 16px; border-bottom:1px solid var(--line); background:linear-gradient(180deg, rgba(88,166,255,.12), rgba(0,0,0,0));}
+    header .title{font-size:18px; font-weight:700}
+    header .sub{color:var(--muted); font-size:13px; margin-top:6px; line-height:1.5}
+    main{max-width:1100px; margin:0 auto; padding:16px}
+    .grid{display:grid; grid-template-columns:1.15fr .85fr; gap:12px}
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr} }
+    .card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px}
+    .row{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+    label{color:var(--muted); font-size:13px}
+    select,input,textarea{background:rgba(0,0,0,.22); border:1px solid rgba(255,255,255,.12); color:var(--text); border-radius:10px; padding:10px 10px}
+    input{min-width:260px}
+    textarea{min-width:260px; min-height:70px; resize:vertical}
+    .btn{display:inline-block; padding:10px 12px; border-radius:10px; border:1px solid rgba(88,166,255,.45); background:rgba(88,166,255,.12); color:var(--text); text-decoration:none; cursor:pointer}
+    .btn.primary{background:rgba(88,166,255,.22); border-color:rgba(88,166,255,.65)}
+    .btn.good{border-color:rgba(46,160,67,.65); background:rgba(46,160,67,.14)}
+    .btn.bad{border-color:rgba(248,81,73,.65); background:rgba(248,81,73,.08)}
+    .banner{border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:10px 12px; margin-top:10px}
+    .banner.muted{color:var(--muted)}
+    .banner.ok{border-color:rgba(46,160,67,.65); color:#b7f5c9; background:rgba(46,160,67,.10)}
+    .banner.bad{border-color:rgba(248,81,73,.65); color:#ffd2cf; background:rgba(248,81,73,.08)}
+    .q{font-size:18px; padding:12px 14px; border-radius:12px; background:#08102a; border:1px dashed rgba(88,166,255,.4); margin: 10px 0; white-space:pre-wrap}
+    .hint{border-left:3px solid rgba(88,166,255,.55); padding:8px 10px; background:rgba(88,166,255,.06); border-radius:10px; margin:8px 0; white-space:pre-wrap}
+    .sol{border:1px dashed rgba(255,255,255,.18); border-radius:12px; padding:12px; margin-top:10px; white-space:pre-wrap}
+    .pill{display:inline-block; padding:3px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.04); color:var(--muted); font-size:12px}
+    a{color:var(--accent)}
+    .small{font-size:12px}
+    .tabs{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
+    .tab{padding:8px 12px; border-radius:999px; border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.04); color:var(--muted); cursor:pointer; user-select:none}
+    .tab.active{border-color:rgba(88,166,255,.8); color:var(--text); background:rgba(88,166,255,.15); font-weight:700}
+    .k{padding:2px 8px; border:1px solid rgba(56,139,253,0.35); background:rgba(56,139,253,0.12); border-radius:999px; font-size:12px; color:#a9d1ff}
+    .callout{border-left:4px solid rgba(210, 153, 34, .7); background:rgba(210, 153, 34, .08); padding:10px 12px; border-radius:12px; margin:10px 0}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="title">國小五年級｜生活應用題講義 + 自動出題（離線題庫）</div>
+    <div class="sub">主題：買東西/找零/兩段式購物、打折/平均單價、時間加法、常用單位換算、表格統計、面積鋪地磚、比例分配、周長圍籬、容量裝滿、溫度變化、分數生活題。可離線（file://）或 GitHub Pages 使用。</div>
+    <div class="row" style="margin-top:10px">
+      <a class="btn" href="../">← 回到 AI MATH WEB</a>
+      <span class="pill" id="bankMeta">題庫載入中...</span>
+    </div>
+    <div class="tabs" role="tablist" aria-label="模式">
+      <div class="tab active" id="tabLesson" role="tab" aria-selected="true">講義（先學方法）</div>
+      <div class="tab" id="tabPractice" role="tab" aria-selected="false">練習（出題/提示/詳解）</div>
+    </div>
+  </header>
+
+  <main>
+    <div class="grid">
+      <section class="card" id="panelLesson">
+        <h2 style="margin:0 0 10px 0">小五講義：生活應用題（解題方法）</h2>
+
+        <div class="callout">
+          <b>生活應用題一句話</b>：先把題目翻成「算式」，再把算式算對。
+          <br>最常見的錯不是算不出來，是 <b>看錯題意、列錯式、單位忘了</b>。
+        </div>
+
+        <h3 style="margin:14px 0 6px 0">0) 讀題 4 步驟（每題都通用）</h3>
+        <div class="small" style="color:var(--muted)">
+          <div><b>步驟 1｜圈關鍵字</b>：一共/總共/合起來、平均、每…多少、剩下、打折、找回/找零、折價券、最多/最少、按…分配。</div>
+          <div><b>步驟 2｜寫出已知與未知</b>：已知（數字+單位）、未知（要問什麼+單位）。</div>
+          <div><b>步驟 3｜選運算</b>：買多份→乘法；平均→除法；找零/差→減法；合計→加法；面積/地磚→先算面積再除；比例分配→先算總份數再除。</div>
+          <div><b>步驟 4｜估算檢查</b>：答案應該變大/變小？大約在幾附近？</div>
+        </div>
+
+        <h3 style="margin:14px 0 6px 0">1) 買多份（單價 × 數量）</h3>
+        <div><span class="k">情境</span> 每瓶 18.8 元，買 7 瓶。</div>
+        <div class="small" style="color:var(--muted)">
+          <b>列式</b>：18.8×7。<b>檢查</b>：買很多份，總價一定比 18.8 大。
+        </div>
+
+        <h3 style="margin:14px 0 6px 0">2) 平均單價（總價 ÷ 數量）</h3>
+        <div><span class="k">情境</span> 8 瓶一共 120 元，平均每瓶多少元？</div>
+        <div class="small" style="color:var(--muted)">
+          <b>列式</b>：120÷8。<b>檢查</b>：平均價一定小於總價，且介於 10~20 之間。
+        </div>
+
+        <h3 style="margin:14px 0 6px 0">3) 打折（付原價的幾%）</h3>
+        <div><span class="k">情境</span> 原價 240 元，打 25% 折扣。</div>
+        <div class="small" style="color:var(--muted)">
+          <b>核心</b>：先算要付的百分率：100%−25%=75%。
+          <br><b>列式</b>：240×0.75。<b>檢查</b>：打折後一定變小。
+        </div>
+
+        <h3 style="margin:14px 0 6px 0">3b) 找零/湊整（付款 − 金額）</h3>
+        <div><span class="k">情境</span> 買點心 68 元，用 100 元付款。</div>
+        <div class="small" style="color:var(--muted)">
+          <b>列式</b>：100−68。<b>檢查</b>：找零一定是正數，且小於 100。
+        </div>
+
+        <h3 style="margin:14px 0 6px 0">3c) 兩段式購物（小計 → 合計 → 折扣/折價）</h3>
+        <div><span class="k">情境</span> 果汁每瓶 12.5 元買 4 瓶；餅乾每包 16 元買 3 包；再用 20 元折價券。</div>
+        <div class="small" style="color:var(--muted)">
+          <b>列式</b>：(12.5×4) + (16×3) − 20。
+          <br><b>檢查</b>：折價後一定比「未折價合計」小。
+        </div>
+
+        <h3 style="margin:14px 0 6px 0">4) 時間加法（分鐘進位）</h3>
+        <div><span class="k">情境</span> 19:40 開始，寫 55 分鐘。</div>
+        <div class="small" style="color:var(--muted)">
+          <b>做法</b>：先加分鐘；分鐘 ≥ 60 就進位到小時。
+        </div>
+
+        <h3 style="margin:14px 0 6px 0">5) 常用單位換算（固定倍率）</h3>
+        <div class="small" style="color:var(--muted)">
+          <div><b>1 公升 = 1000 毫升</b></div>
+          <div><b>1 公斤 = 1000 公克</b></div>
+          <div><b>1 公尺 = 100 公分</b></div>
+          <div>看到換算題：先寫換算關係，再決定要乘還是除。</div>
+        </div>
+
+        <h3 style="margin:14px 0 6px 0">6) 表格統計（加總/比較/找最大）</h3>
+        <div><span class="k">情境</span> 表格列出四種水果的數量，要問「總共多少」、「差多少」、「最多是哪個」。</div>
+        <div class="small" style="color:var(--muted)">
+          <b>方法</b>：先把要用到的數字抄下來。
+          <br>總共→相加；差多少→相減取差；最多/最少→找最大/最小。
+        </div>
+
+        <h3 style="margin:14px 0 6px 0">7) 面積鋪地磚（房間面積 ÷ 地磚面積）</h3>
+        <div><span class="k">情境</span> 房間 4 公尺×3 公尺，要鋪 50 公分×50 公分地磚。</div>
+        <div class="small" style="color:var(--muted)">
+          <b>重點</b>：先統一單位（公尺↔公分）。
+          <br><b>列式</b>：房間面積÷地磚面積。
+        </div>
+
+        <h3 style="margin:14px 0 6px 0">7b) 圍籬/周長（把四邊加起來）</h3>
+        <div><span class="k">情境</span> 正方形邊長 12 公尺，要圍起來。</div>
+        <div class="small" style="color:var(--muted)">
+          <b>正方形</b>：周長=邊長×4。<b>長方形</b>：周長=(長+寬)×2。
+        </div>
+
+        <h3 style="margin:14px 0 6px 0">7c) 容量裝滿（先統一單位，再做減法）</h3>
+        <div><span class="k">情境</span> 水壺最多 3 公升，現在有 1250 毫升，還差多少毫升？</div>
+        <div class="small" style="color:var(--muted)">
+          <b>重點</b>：1 公升=1000 毫升；先換成同單位。
+          <br><b>列式</b>：總容量−已有。
+        </div>
+
+        <h3 style="margin:14px 0 6px 0">7d) 溫度變化（上升加、下降減）</h3>
+        <div><span class="k">情境</span> 一開始 18°C，上升 6°C，現在多少°C？</div>
+        <div class="small" style="color:var(--muted)">
+          <b>關鍵字</b>：上升/增加→加法；下降/降低→減法。
+        </div>
+
+        <h3 style="margin:14px 0 6px 0">8) 比例分配（先算總份數，再算每份）</h3>
+        <div><span class="k">情境</span> 120 顆糖按 甲:乙:丙=2:3:5 分配，甲拿多少？</div>
+        <div class="small" style="color:var(--muted)">
+          <b>方法</b>：總份數=2+3+5=10；每份=120÷10=12；甲=2×12。
+          <br><b>檢查</b>：三人加起來要剛好 120。
+        </div>
+
+        <h3 style="margin:14px 0 6px 0">9) 分數：用掉/剩下（全體×分數，再做減法）</h3>
+        <div><span class="k">情境</span> 40 公尺緞帶用掉 3/8，剩下多少？</div>
+        <div class="small" style="color:var(--muted)">
+          <b>列式</b>：用掉=40×3/8；剩下=40−用掉。
+          <br><b>檢查</b>：用掉的是全體的一部分，所以剩下應該仍接近 40、但比 40 小。
+        </div>
+
+        <details style="margin-top:12px;">
+          <summary>家長/老師：快速救援（孩子卡關時問三句）</summary>
+          <div class="small" style="margin-top:8px; color:var(--muted); line-height:1.7">
+            <div><b>Q1</b>：這題要問的是什麼？（把未知寫出來）</div>
+            <div><b>Q2</b>：你覺得答案應該比哪個數大/小？（估算方向）</div>
+            <div><b>Q3</b>：你用了哪個公式/關係？（單位換算或乘除理由）</div>
+          </div>
+        </details>
+      </section>
+
+      <section class="card" id="panelPractice" style="display:none">
+        <h2 style="margin:0 0 10px 0">練習：出題 → 作答 → 提示 → 詳解</h2>
+
+        <div class="row">
+          <label>題型</label>
+          <select id="kind">
+            <option value="all" selected>全部</option>
+            <option value="buy_many">買多份（乘法）</option>
+            <option value="unit_price">平均單價（除法）</option>
+            <option value="discount">打折（百分率）</option>
+            <option value="make_change">找零/湊整（付款−金額）</option>
+            <option value="shopping_two_step">兩段式購物（小計→合計→折價）</option>
+            <option value="table_stats">表格統計（加總/比較）</option>
+            <option value="area_tiling">面積鋪地磚（面積÷面積）</option>
+            <option value="proportional_split">比例分配（比值）</option>
+            <option value="perimeter_fence">圍籬/周長（(長+寬)×2）</option>
+            <option value="volume_fill">容量裝滿（總量−已有）</option>
+            <option value="temperature_change">溫度變化（上升加/下降減）</option>
+            <option value="time_add">時間加法（進位）</option>
+            <option value="unit_convert">單位換算</option>
+            <option value="fraction_remaining">分數：用掉/剩下</option>
+          </select>
+
+          <label>難度</label>
+          <select id="difficulty">
+            <option value="all" selected>全部</option>
+            <option value="easy">easy</option>
+            <option value="medium">medium</option>
+          </select>
+
+          <button class="btn primary" id="btnNew">出新題</button>
+          <button class="btn" id="btnReset">清空</button>
+        </div>
+
+        <div class="q" id="qText">（按「出新題」開始）</div>
+
+        <div class="row">
+          <label>你的答案</label>
+          <input id="answer" placeholder="例如：131.6、15.06、0.75、19:35" />
+          <button class="btn good" id="btnCheck">送出/檢查</button>
+        </div>
+
+        <div class="row">
+          <label>提示層級</label>
+          <select id="hintLevel">
+            <option value="1" selected>Level 1（觀念方向）</option>
+            <option value="2">Level 2（列式/規則）</option>
+            <option value="3">Level 3（計算步驟）</option>
+          </select>
+          <button class="btn" id="btnHint">看提示</button>
+          <button class="btn" id="btnShowSteps">看完整解題</button>
+        </div>
+
+        <div id="banner" class="banner muted">提示：先寫出「已知/未知/單位」，再列式。</div>
+        <div id="hints"></div>
+        <div id="solution"></div>
+
+        <details style="margin-top:12px;">
+          <summary>依孩子目前想法，給「下一步」</summary>
+          <div class="small" style="margin-top:8px; color:var(--muted); line-height:1.6">
+            你可以輸入孩子目前的想法（例如：「我覺得要用乘法」、「我先算付幾%」、「我加分鐘超過 60」）。
+            這頁會用純規則回一個「下一步」，不直接爆出最後答案。
+          </div>
+          <div class="row" style="margin-top:10px">
+            <label>孩子想法</label>
+            <textarea id="studentState" placeholder="例如：我先算 100%-25% = 75% 再乘原價"></textarea>
+            <button class="btn primary" id="btnNext">給我下一步</button>
+          </div>
+          <div id="nextHint" class="hint" style="display:none"></div>
+        </details>
+      </section>
+
+      <aside class="card">
+        <h2 style="margin:0 0 10px 0">生活題必殺流程（貼在桌上）</h2>
+        <div class="small" style="color:var(--muted); line-height:1.7">
+          <div><b>1) 圈關鍵字</b>：一共/平均/剩下/打折/每…</div>
+          <div><b>2) 寫單位</b>：元、分鐘、毫升、公克、公分…</div>
+          <div><b>3) 列式</b>：乘/除/加/減（先別急著算）</div>
+          <div><b>4) 估算</b>：答案應該變大/變小？</div>
+          <div><b>5) 計算</b>：算完再回頭檢查單位與大小感</div>
+          <hr style="border:0; border-top:1px solid var(--line); margin:10px 0;">
+          <div class="small">這份題庫是離線 bank.js，自動亂數抽題；提交後可看完整詳解。</div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <script src="./bank.js"></script>
+  <script>
+    // ---------- tabs ----------
+    const tabLesson = document.getElementById('tabLesson');
+    const tabPractice = document.getElementById('tabPractice');
+    const panelLesson = document.getElementById('panelLesson');
+    const panelPractice = document.getElementById('panelPractice');
+
+    function activateTab(which){
+      const isLesson = which === 'lesson';
+      tabLesson.classList.toggle('active', isLesson);
+      tabPractice.classList.toggle('active', !isLesson);
+      tabLesson.setAttribute('aria-selected', isLesson ? 'true':'false');
+      tabPractice.setAttribute('aria-selected', !isLesson ? 'true':'false');
+      panelLesson.style.display = isLesson ? '' : 'none';
+      panelPractice.style.display = isLesson ? 'none' : '';
+    }
+    tabLesson.addEventListener('click', () => activateTab('lesson'));
+    tabPractice.addEventListener('click', () => activateTab('practice'));
+
+    // ---------- helpers ----------
+    function normalizeText(s){
+      return String(s||'')
+        .replace(/−/g,'-')
+        .replaceAll('，', ',')
+        .replaceAll('、', ',')
+        .replaceAll('／', '/')
+        .replaceAll('：', ':')
+        .replaceAll('＝', '=')
+        .trim();
+    }
+
+    function parseStudentNumber(text){
+      const s = normalizeText(text);
+      if (!s) throw new Error('請輸入答案');
+      const cleaned = s.replace(/,/g,'');
+      const v = Number(cleaned);
+      if (!Number.isFinite(v)) throw new Error('答案請輸入數字（例如 131.6）');
+      return v;
+    }
+
+    function gcd(a,b){ a=Math.abs(a); b=Math.abs(b); while(b){ const t=a%b; a=b; b=t; } return a||1; }
+    function frac(n,d){
+      if (!Number.isFinite(n) || !Number.isFinite(d) || d===0) throw new Error('分數無效');
+      if (d<0){ n=-n; d=-d; }
+      const g = gcd(n,d);
+      return {n:n/g, d:d/g};
+    }
+
+    function parseStudentRational(text){
+      const s = normalizeText(text);
+      if (!s) throw new Error('請輸入答案');
+
+      let m = s.match(/^\s*(-?\d+)\s+(\d+)\s*\/\s*(\d+)\s*$/);
+      if (m){
+        const whole = parseInt(m[1],10);
+        const num = parseInt(m[2],10);
+        const den = parseInt(m[3],10);
+        if (!Number.isFinite(whole) || !Number.isFinite(num) || !Number.isFinite(den) || den===0) throw new Error('格式錯誤');
+        if (num<0 || den<0) throw new Error('帶分數的分子分母請用正數');
+        const sign = whole<0 ? -1 : 1;
+        const absWhole = Math.abs(whole);
+        return frac(sign*(absWhole*den + num), den);
+      }
+
+      m = s.match(/^\s*(-?\d+)\s*\/\s*(\d+)\s*$/);
+      if (m){
+        const n = parseInt(m[1],10);
+        const d = parseInt(m[2],10);
+        if (!Number.isFinite(n) || !Number.isFinite(d) || d===0) throw new Error('格式錯誤');
+        return frac(n,d);
+      }
+
+      m = s.match(/^\s*(-?\d+)\s*$/);
+      if (m){
+        const n = parseInt(m[1],10);
+        if (!Number.isFinite(n)) throw new Error('格式錯誤');
+        return frac(n,1);
+      }
+
+      throw new Error('答案格式支援：2 1/3、7/3、2');
+    }
+
+    function fracEq(a,b){ return a.n===b.n && a.d===b.d; }
+
+    function parseHHMM(text){
+      const s = normalizeText(text);
+      const m = s.match(/^(\d{1,2})\s*:\s*(\d{1,2})$/);
+      if (!m) throw new Error('時間格式請用 HH:MM，例如 19:35');
+      const hh = Number(m[1]);
+      const mm = Number(m[2]);
+      if (!Number.isFinite(hh) || !Number.isFinite(mm) || hh<0 || hh>23 || mm<0 || mm>59) throw new Error('時間不合法');
+      return `${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`;
+    }
+
+    function nearlyEqual(a,b,eps){ return Math.abs(a-b) <= (eps ?? 1e-9); }
+
+    function compareByMode(studentText, correctText, mode){
+      const m = String(mode||'number');
+      if (m === 'hhmm'){
+        return parseHHMM(studentText) === parseHHMM(correctText);
+      }
+      if (m === 'fraction'){
+        return fracEq(parseStudentRational(studentText), parseStudentRational(correctText));
+      }
+      if (m === 'text'){
+        const s = normalizeText(studentText).replace(/\s+/g,'').toLowerCase();
+        const c = normalizeText(correctText).replace(/\s+/g,'').toLowerCase();
+        if (!s || !c) throw new Error('請輸入答案');
+        return s === c;
+      }
+
+      const sv = parseStudentNumber(studentText);
+      const cv = parseStudentNumber(correctText);
+
+      if (m === 'money2' || m === 'round2'){
+        const s2 = Math.round(sv * 100) / 100;
+        const c2 = Math.round(cv * 100) / 100;
+        return nearlyEqual(s2, c2, 1e-9);
+      }
+
+      return nearlyEqual(sv, cv, 1e-9);
+    }
+
+    function renderHint(text){
+      const div = document.createElement('div');
+      div.className = 'hint';
+      div.textContent = text;
+      return div;
+    }
+
+    // ---------- state ----------
+    const bank = Array.isArray(window.LIFE_APPLICATIONS_G5_BANK) ? window.LIFE_APPLICATIONS_G5_BANK : [];
+    const state = { q: null, revealed: false, hintUsed: 0 };
+
+    const els = {
+      bankMeta: document.getElementById('bankMeta'),
+      kind: document.getElementById('kind'),
+      difficulty: document.getElementById('difficulty'),
+      btnNew: document.getElementById('btnNew'),
+      btnReset: document.getElementById('btnReset'),
+      qText: document.getElementById('qText'),
+      answer: document.getElementById('answer'),
+      btnCheck: document.getElementById('btnCheck'),
+      banner: document.getElementById('banner'),
+      hints: document.getElementById('hints'),
+      solution: document.getElementById('solution'),
+      hintLevel: document.getElementById('hintLevel'),
+      btnHint: document.getElementById('btnHint'),
+      btnShowSteps: document.getElementById('btnShowSteps'),
+      studentState: document.getElementById('studentState'),
+      btnNext: document.getElementById('btnNext'),
+      nextHint: document.getElementById('nextHint'),
+    };
+
+    function updateBankMeta(){
+      if (!bank.length){
+        els.bankMeta.textContent = '題庫未載入（請確認 bank.js）';
+        return;
+      }
+      const kinds = new Set(bank.map(x => x.kind || 'unknown'));
+      els.bankMeta.textContent = `離線題庫：${bank.length} 題｜題型標籤：${kinds.size} 種`;
+    }
+
+    function pickQuestion(){
+      const k = String(els.kind.value || 'all');
+      const d = String(els.difficulty.value || 'all');
+      let pool = bank;
+      if (k !== 'all') pool = pool.filter(x => String(x.kind) === k);
+      if (d !== 'all') pool = pool.filter(x => String(x.difficulty) === d);
+      if (!pool.length) return null;
+      return pool[Math.floor(Math.random() * pool.length)];
+    }
+
+    function showQuestion(q){
+      state.q = q;
+      state.revealed = false;
+      state.hintUsed = 0;
+      els.answer.value = '';
+      els.studentState.value = '';
+      els.hints.innerHTML = '';
+      els.solution.innerHTML = '';
+      els.nextHint.style.display = 'none';
+      els.qText.textContent = q ? q.question : '（題庫中沒有符合條件的題目）';
+      els.banner.className = 'banner muted';
+      els.banner.textContent = '提示：先寫出「已知/未知/單位」，再列式。';
+
+      if (q && q.meta && q.meta.unit){
+        els.banner.textContent += `\n單位：${q.meta.unit}`;
+      }
+    }
+
+    function showBanner(kind, text){
+      els.banner.className = `banner ${kind}`;
+      els.banner.textContent = text;
+    }
+
+    function currentHint(level){
+      const q = state.q;
+      if (!q) return null;
+      const idx = Math.max(1, Math.min(3, level)) - 1;
+      if (Array.isArray(q.hints) && q.hints[idx]) return q.hints[idx];
+      if (Array.isArray(q.steps) && q.steps.length){
+        return q.steps.slice(0, idx+1).join('\n');
+      }
+      return '（沒有提示）';
+    }
+
+    function showSolution(){
+      const q = state.q;
+      if (!q) return;
+      const div = document.createElement('div');
+      div.className = 'sol';
+      const lines = [];
+      if (Array.isArray(q.steps) && q.steps.length){
+        q.steps.forEach((s,i) => lines.push(`步驟 ${i+1}：${s}`));
+      }
+      if (q.explanation) lines.push('', '詳解：', q.explanation);
+      lines.push('', `答案：${q.answer}`);
+      div.textContent = lines.join('\n');
+      els.solution.innerHTML = '';
+      els.solution.appendChild(div);
+    }
+
+    function nextStepHintByRule(q, studentState){
+      const st = normalizeText(studentState);
+      const kind = String(q?.kind || '');
+
+      if (!st) return '下一步：把已知和未知寫出來（含單位），再選運算。';
+      if (st.includes('估算') || st.includes('大約')) return '很好！接著把題目翻成算式，再計算並回頭檢查單位與大小感。';
+
+      if (kind === 'buy_many') return '下一步：列式「單價×數量」，再做估算（答案一定變大）。';
+      if (kind === 'unit_price') return '下一步：列式「總價÷數量」，算出平均每一份。';
+      if (kind === 'discount') return '下一步：先算「要付幾%」=100%−折扣%，再用 原價×付費比例。';
+      if (kind === 'make_change') return '下一步：列式「付款金額−實際金額」，算出找零（再檢查找零應該是正數）。';
+      if (kind === 'shopping_two_step') return '下一步：先算兩個小計（單價×數量），再相加得到合計，最後再減折價券/優惠。';
+      if (kind === 'table_stats') return '下一步：把表格中的數字抄下來，照題目要的做加總或相減比較。';
+      if (kind === 'area_tiling') return '下一步：先把單位統一（公尺↔公分），算出房間面積與地磚面積，再用除法求需要幾塊。';
+      if (kind === 'proportional_split') return '下一步：先算「總份數」=比的各部分相加，再算每份=總數÷總份數，最後乘回那個人有幾份。';
+      if (kind === 'perimeter_fence') return '下一步：判斷圖形是正方形還是長方形；正方形用「邊長×4」，長方形用「(長+寬)×2」。';
+      if (kind === 'volume_fill') return '下一步：先把單位統一（公升↔毫升），再用「總容量−已有」求還差多少。';
+      if (kind === 'temperature_change') return '下一步：找關鍵字「上升/增加」或「下降/降低」，上升用加法、下降用減法。';
+      if (kind === 'time_add') return '下一步：先加分鐘；若 ≥60 就進位 1 小時，分鐘−60。';
+      if (kind === 'unit_convert') return '下一步：先寫換算關係（例如 1L=1000mL），再決定乘或除。';
+      if (kind === 'fraction_remaining') return '下一步：用掉=全體×分數；剩下=全體−用掉。';
+
+      return '下一步：先列式，再計算，最後檢查單位。';
+    }
+
+    // ---------- events ----------
+    els.btnNew?.addEventListener('click', () => {
+      const q = pickQuestion();
+      showQuestion(q);
+      if (q) activateTab('practice');
+    });
+
+    els.btnReset?.addEventListener('click', () => {
+      showQuestion(state.q);
+    });
+
+    els.btnHint?.addEventListener('click', () => {
+      const q = state.q;
+      if (!q) return;
+      const level = Number(els.hintLevel.value || '1');
+      const text = currentHint(level);
+      if (!text) return;
+      els.hints.appendChild(renderHint(text));
+      state.hintUsed = Math.max(state.hintUsed, level);
+    });
+
+    els.btnShowSteps?.addEventListener('click', () => {
+      showSolution();
+      state.revealed = true;
+    });
+
+    els.btnCheck?.addEventListener('click', () => {
+      const q = state.q;
+      if (!q){
+        showBanner('bad', '請先出一題');
+        return;
+      }
+
+      try {
+        const ok = compareByMode(els.answer.value, q.answer, q.answer_mode || 'number');
+        if (ok){
+          showBanner('ok', '答對了！你可以出下一題。');
+        } else {
+          showBanner('bad', '答案不對，再試一次；可以先看提示 Level 1/2。');
+        }
+      } catch (e){
+        showBanner('bad', String(e?.message || e || '答案格式錯誤'));
+      }
+    });
+
+    els.btnNext?.addEventListener('click', () => {
+      const q = state.q;
+      if (!q) return;
+      const t = nextStepHintByRule(q, els.studentState.value);
+      els.nextHint.textContent = t;
+      els.nextHint.style.display = '';
+    });
+
+    // init
+    updateBankMeta();
+    if (bank.length) showQuestion(bank[0]);
+  </script>
+</body>
+</html>

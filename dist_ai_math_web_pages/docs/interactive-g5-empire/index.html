@@ -1,0 +1,2646 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>互動小五數學帝國｜8 題型闖關</title>
+  <style>
+    :root{
+      --bg:#0b1020; --panel:#0f1733; --card:#121c3d;
+      --text:#e6edf3; --muted:#9aa4b2; --line:#243055;
+      --accent:#58a6ff; --ok:#2ea043; --bad:#f85149; --warn:#d29922;
+    }
+    body{margin:0; font-family:Segoe UI,Helvetica,Arial; background:var(--bg); color:var(--text); line-height:1.7}
+    header{padding:18px 16px; border-bottom:1px solid var(--line); background:linear-gradient(180deg, rgba(88,166,255,.12), rgba(0,0,0,0));}
+    header .title{font-size:18px; font-weight:800}
+    header .sub{color:var(--muted); font-size:13px; margin-top:6px; line-height:1.5}
+    main{max-width:1150px; margin:0 auto; padding:16px}
+    .grid{display:grid; grid-template-columns:1.05fr .95fr; gap:12px}
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr} }
+    .card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px}
+    .row{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+    label{color:var(--muted); font-size:13px}
+    select,input,textarea{background:rgba(0,0,0,.22); border:1px solid rgba(255,255,255,.12); color:var(--text); border-radius:10px; padding:10px 10px}
+    input{min-width:240px}
+    textarea{min-width:240px; min-height:64px; resize:vertical}
+    .btn{display:inline-block; padding:10px 12px; border-radius:10px; border:1px solid rgba(88,166,255,.45); background:rgba(88,166,255,.12); color:var(--text); text-decoration:none; cursor:pointer}
+    .btn.primary{background:rgba(88,166,255,.22); border-color:rgba(88,166,255,.65)}
+    .btn.good{border-color:rgba(46,160,67,.65); background:rgba(46,160,67,.14)}
+    .btn.bad{border-color:rgba(248,81,73,.65); background:rgba(248,81,73,.08)}
+    .btn.warn{border-color:rgba(210,153,34,.7); background:rgba(210,153,34,.10)}
+    .banner{border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:10px 12px; margin-top:10px; white-space:pre-wrap}
+    .banner.muted{color:var(--muted)}
+    .banner.ok{border-color:rgba(46,160,67,.65); color:#b7f5c9; background:rgba(46,160,67,.10)}
+    .banner.bad{border-color:rgba(248,81,73,.65); color:#ffd2cf; background:rgba(248,81,73,.08)}
+    .banner.warn{border-color:rgba(210,153,34,.7); color:#ffe3b0; background:rgba(210,153,34,.08)}
+    .q{font-size:18px; padding:12px 14px; border-radius:12px; background:#08102a; border:1px dashed rgba(88,166,255,.4); margin: 10px 0; white-space:pre-wrap}
+    .hint{border-left:3px solid rgba(88,166,255,.55); padding:8px 10px; background:rgba(88,166,255,.06); border-radius:10px; margin:8px 0; white-space:pre-wrap}
+    .sol{border:1px dashed rgba(255,255,255,.18); border-radius:12px; padding:12px; margin-top:10px; white-space:pre-wrap}
+    .pill{display:inline-block; padding:3px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.04); color:var(--muted); font-size:12px}
+    a{color:var(--accent)}
+    .small{font-size:12px}
+    .tabs{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
+    .tab{padding:8px 12px; border-radius:999px; border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.04); color:var(--muted); cursor:pointer; user-select:none}
+    .tab.active{border-color:rgba(88,166,255,.8); color:var(--text); background:rgba(88,166,255,.15); font-weight:800}
+    .callout{border-left:4px solid rgba(210, 153, 34, .7); background:rgba(210, 153, 34, .08); padding:10px 12px; border-radius:12px; margin:10px 0}
+    .meter{height:10px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.10); border-radius:999px; overflow:hidden}
+    .meter > div{height:100%; background:linear-gradient(90deg, rgba(88,166,255,.95), rgba(88,166,255,.55)); width:0%}
+    .stat{display:flex; gap:10px; flex-wrap:wrap; color:var(--muted); font-size:12px}
+    .stat b{color:var(--text)}
+
+    .empire{margin-top:12px; border-top:1px solid var(--line); padding-top:12px}
+    .empire h3{margin:0 0 8px 0; font-size:14px}
+    .empire-grid{display:grid; grid-template-columns:repeat(12, 12px); gap:5px; align-items:center}
+    .tile{width:12px; height:12px; border-radius:4px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.05)}
+    .tile.own{border-color:rgba(88,166,255,.55); background:rgba(88,166,255,.28)}
+    .tile.castle{border-color:rgba(46,160,67,.7); background:rgba(46,160,67,.22)}
+    .tile.latest{outline:2px solid rgba(210,153,34,.8); outline-offset:1px}
+    .btn.empire-reset{border-color:rgba(248,81,73,.65); background:rgba(248,81,73,.08)}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="title">互動小五數學帝國｜8 題型闖關練習（離線題庫）</div>
+    <div class="sub">把小五常見題型做成「帝國擴張」：答對才前進、累積工程點數、解鎖領地。闖關有分數，練習有提示/詳解/下一步。</div>
+    <div class="row" style="margin-top:10px">
+      <a class="btn" href="../">← 回到 AI MATH WEB</a>
+      <span class="pill" id="bankMeta">題庫載入中...</span>
+      <span class="pill" id="bestMeta" style="display:none"></span>
+    </div>
+    <div class="tabs" role="tablist" aria-label="模式">
+      <div class="tab active" id="tabGame" role="tab" aria-selected="true">闖關模式（有分數）</div>
+      <div class="tab" id="tabPractice" role="tab" aria-selected="false">練習模式（提示/詳解）</div>
+    </div>
+  </header>
+
+  <main>
+    <div class="grid">
+      <section class="card" id="panelGame">
+        <h2 style="margin:0 0 10px 0">闖關模式：90 秒帝國征途</h2>
+
+        <div class="callout">
+          <b>玩法</b>：90 秒內答越多越好。連對會加分；看提示不扣分（但不看提示答對會有額外加分）。
+          <br><b>帝國擴張</b>：答對獲得工程點數（XP），會加到該題型的區域，藍色進度條只在答對時前進，滿格獲得一塊領地。
+        </div>
+
+        <div class="row">
+          <label>戰役題型包</label>
+          <select id="pack">
+            <option value="mixed" selected>綜合（全部 8 題型）</option>
+            <option value="decimals">小數雙城（乘/除）</option>
+            <option value="fractions">分數群島（加減/乘）</option>
+            <option value="life">生活三邦（百分率/時間/單位/體積）</option>
+          </select>
+
+          <label>難度</label>
+          <select id="gDifficulty">
+            <option value="all" selected>全部</option>
+            <option value="easy">easy</option>
+            <option value="medium">medium</option>
+          </select>
+
+          <button class="btn primary" id="btnStart">開始闖關</button>
+          <button class="btn" id="btnStop" disabled>停止</button>
+        </div>
+
+        <div class="stat" style="margin-top:8px">
+          <div>時間：<b id="gTime">90</b>s</div>
+          <div>分數：<b id="gScore">0</b></div>
+          <div>連對：<b id="gStreak">0</b></div>
+          <div>正確率：<b id="gAcc">-</b></div>
+          <div>戰場：<b id="gRegion">—</b></div>
+          <div>領地：<b id="gLand">0</b></div>
+          <div>堡壘：<b id="gFort">-</b></div>
+        </div>
+        <div class="meter" style="margin-top:8px"><div id="gBar"></div></div>
+        <div class="small" style="color:var(--muted); margin-top:6px" id="gProgressMeta">進度：0 / 60（答對才前進）</div>
+
+        <div class="q" id="gQ">（按「開始闖關」）</div>
+
+        <div class="row">
+          <label>答案</label>
+          <input id="gAnswer" placeholder="例如：7.5、12、1/2、09:35" />
+          <span class="pill" id="gAnswerModePill">答案格式：—</span>
+          <button class="btn good" id="btnSubmit" disabled>送出</button>
+          <button class="btn warn" id="btnNudge" disabled>小提示（不扣分）</button>
+          <button class="btn" id="btnGDecTool" disabled title="只在小數乘/除題出現">小數小工具</button>
+        </div>
+
+        <div id="gDecToolWrap" class="card" style="display:none; margin-top:10px; background:rgba(0,0,0,.16)">
+          <h3 style="margin:0 0 8px 0; font-size:14px">闖關快工具（小數）</h3>
+
+          <div id="gToolDecMul" style="display:none; border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:12px; background:rgba(0,0,0,.12)">
+            <div class="row" style="justify-content:space-between">
+              <div>
+                <b>小數點放回工坊</b>
+                <span class="pill" style="margin-left:8px">小數乘法</span>
+              </div>
+              <button class="btn" id="btnGdmFill" type="button">帶入本題</button>
+            </div>
+            <div class="row" style="margin-top:10px">
+              <span class="pill">題目</span>
+              <span id="gdmExpr" class="small" style="color:var(--text)">—</span>
+              <span class="pill">小數位數</span>
+              <span class="pill"><b id="gdmPlaces">0</b> 位</span>
+            </div>
+
+            <div id="gdmDemo" class="sol small" style="margin-top:10px; color:var(--muted); line-height:1.6; font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space:pre">（示範會依本題更新）</div>
+            <div class="row" style="margin-top:10px">
+              <label>Step 1｜整數乘法結果</label>
+              <input id="gdmRaw" placeholder="例如：360" />
+              <button class="btn" id="btnGdmCheckRaw" type="button">檢查</button>
+              <span id="gdmRawHint" class="small" style="color:var(--muted)"></span>
+            </div>
+            <div class="row" style="margin-top:8px">
+              <label>Step 2｜最後答案</label>
+              <input id="gdmFinal" placeholder="例如：36.0 或 3.60" />
+              <button class="btn good" id="btnGdmCheckFinal" type="button">檢查</button>
+              <span id="gdmFinalHint" class="small" style="color:var(--muted)"></span>
+            </div>
+          </div>
+
+          <div id="gToolDecDiv" style="display:none; margin-top:10px; border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:12px; background:rgba(0,0,0,.12)">
+            <div class="row" style="justify-content:space-between">
+              <div>
+                <b>小數除法對齊工坊</b>
+                <span class="pill" style="margin-left:8px">小數除法</span>
+              </div>
+              <button class="btn" id="btnGddFill" type="button">帶入本題</button>
+            </div>
+            <div class="row" style="margin-top:10px">
+              <span class="pill">題目</span>
+              <span id="gddExpr" class="small" style="color:var(--text)">—</span>
+              <span class="pill">右移</span>
+              <span class="pill"><b id="gddPlaces">0</b> 位</span>
+            </div>
+
+            <div id="gddDemo" class="sol small" style="margin-top:10px; color:var(--muted); line-height:1.6; font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space:pre">（示範會依本題更新）</div>
+            <div class="row" style="margin-top:10px">
+              <label>Step 1｜右移後整數 a_int</label>
+              <input id="gddAInt" placeholder="例如：120" />
+              <button class="btn" id="btnGddCheckShift" type="button">檢查</button>
+              <span id="gddShiftHint" class="small" style="color:var(--muted)"></span>
+            </div>
+            <div class="row" style="margin-top:8px">
+              <label>Step 2｜整數商 ans_int</label>
+              <input id="gddAnsInt" placeholder="例如：15" />
+              <button class="btn" id="btnGddCheckAnsInt" type="button">檢查</button>
+              <span id="gddAnsIntHint" class="small" style="color:var(--muted)"></span>
+            </div>
+            <div class="row" style="margin-top:8px">
+              <label>Step 3｜最後答案</label>
+              <input id="gddFinal" placeholder="例如：1.5" />
+              <button class="btn good" id="btnGddCheckFinal" type="button">檢查</button>
+              <span id="gddFinalHint" class="small" style="color:var(--muted)"></span>
+            </div>
+          </div>
+        </div>
+
+        <div id="gBanner" class="banner muted">提示：先讀題抓已知/未知，再列式。</div>
+      </section>
+
+      <section class="card" id="panelPractice" style="display:none">
+        <h2 style="margin:0 0 10px 0">練習模式：提示 → 下一步 → 詳解</h2>
+
+        <div class="row">
+          <label>題型</label>
+          <select id="kind">
+            <option value="all" selected>全部</option>
+            <option value="decimal_mul">小數乘法（先整數再放小數點）</option>
+            <option value="decimal_div">小數除法（平均分/補 0）</option>
+            <option value="fraction_addsub">分數加減（通分/約分）</option>
+            <option value="fraction_mul">分數乘法（交叉約分）</option>
+            <option value="percent_of">百分率（p% 的多少）</option>
+            <option value="time_add">時間加法（分鐘進位）</option>
+            <option value="unit_convert">單位換算（m↔cm、kg↔g、L↔mL）</option>
+            <option value="volume_rect_prism">體積（長方體）</option>
+          </select>
+
+          <label>難度</label>
+          <select id="difficulty">
+            <option value="all" selected>全部</option>
+            <option value="easy">easy</option>
+            <option value="medium">medium</option>
+          </select>
+
+          <button class="btn primary" id="btnNew">出新題</button>
+          <button class="btn" id="btnReset">清空</button>
+        </div>
+
+        <div class="q" id="qText">（按「出新題」開始）</div>
+
+        <div class="row">
+          <label>你的答案</label>
+          <input id="answer" placeholder="例如：7.5、12、1/2、09:35" />
+          <span class="pill" id="answerModePill">答案格式：—</span>
+          <button class="btn good" id="btnCheck">送出/檢查</button>
+        </div>
+
+        <div class="row">
+          <label>提示層級</label>
+          <select id="hintLevel">
+            <option value="1" selected>Level 1（觀念方向）</option>
+            <option value="2">Level 2（列式/規則）</option>
+            <option value="3">Level 3（計算引導）</option>
+          </select>
+          <button class="btn" id="btnHint">看提示</button>
+          <button class="btn" id="btnHintNext" title="自動切到下一個 Level 並顯示提示">下一個 Level</button>
+          <button class="btn" id="btnShowSteps">看完整解題</button>
+        </div>
+
+        <div id="hintHelp" class="small" style="color:var(--muted); margin-top:6px; line-height:1.6">
+          小提醒：如果看完還不清楚，請改選其他提示層級（Level 2 / Level 3）再按一次「看提示」，提示會更詳細。
+        </div>
+
+        <div id="banner" class="banner muted">提示：先抓「已知/未知」→ 再列式。</div>
+        <div id="hints"></div>
+        <div id="solution"></div>
+
+        <div id="tools" class="card" style="margin-top:12px; background:rgba(0,0,0,.16)">
+          <h3 style="margin:0 0 8px 0; font-size:14px">專屬小工具（看得懂、做得出來）</h3>
+          <div class="small" style="color:var(--muted); line-height:1.6">
+            這些工具會跟著題型自動出現：讓孩子「先做對一小步」，再自然走到答案。
+          </div>
+
+          <!-- Tool 0A: Decimal multiplication workshop (for decimal_mul) -->
+          <div id="toolDecMul" style="display:none; margin-top:10px; border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:12px; background:rgba(0,0,0,.12)">
+            <div class="row" style="justify-content:space-between">
+              <div>
+                <b>小數點放回工坊</b>
+                <span class="pill" style="margin-left:8px">小數乘法</span>
+              </div>
+              <button class="btn" id="btnDecMulFill" type="button">帶入本題</button>
+            </div>
+            <div class="small" style="color:var(--muted); margin-top:6px">先把小數點拿掉做「整數乘法」，再依小數位數把小數點放回去。</div>
+
+            <div class="row" style="margin-top:10px">
+              <span class="pill">題目</span>
+              <span id="dmExpr" class="small" style="color:var(--text)">—</span>
+              <span class="pill">小數位數</span>
+              <span class="pill"><b id="dmPlaces">0</b> 位</span>
+            </div>
+
+            <div id="dmDemo" class="sol small" style="margin-top:10px; color:var(--muted); line-height:1.6; font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space:pre">（示範會依本題更新）</div>
+
+            <div class="row" style="margin-top:10px">
+              <label>Step 1｜先做整數乘法（拿掉小數點）</label>
+              <input id="dmRaw" placeholder="整數乘法結果（例如 360）" />
+              <button class="btn" id="btnDmCheckRaw" type="button">檢查</button>
+              <span id="dmRawHint" class="small" style="color:var(--muted)"></span>
+            </div>
+
+            <div class="row" style="margin-top:8px">
+              <label>Step 2｜放回小數點（最後答案）</label>
+              <input id="dmFinal" placeholder="例如：36.0 或 3.60" />
+              <button class="btn good" id="btnDmCheckFinal" type="button">檢查</button>
+              <span id="dmFinalHint" class="small" style="color:var(--muted)"></span>
+            </div>
+          </div>
+
+          <!-- Tool 0B: Decimal division point-align workshop (for decimal_div) -->
+          <div id="toolDecDiv" style="display:none; margin-top:10px; border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:12px; background:rgba(0,0,0,.12)">
+            <div class="row" style="justify-content:space-between">
+              <div>
+                <b>小數除法對齊工坊</b>
+                <span class="pill" style="margin-left:8px">小數除法</span>
+              </div>
+              <button class="btn" id="btnDecDivFill" type="button">帶入本題</button>
+            </div>
+            <div class="small" style="color:var(--muted); margin-top:6px">把被除數的小數點右移變成整數再除（等於商的小數點左移同樣位數）。</div>
+
+            <div class="row" style="margin-top:10px">
+              <span class="pill">題目</span>
+              <span id="ddExpr" class="small" style="color:var(--text)">—</span>
+              <span class="pill">右移</span>
+              <span class="pill"><b id="ddPlaces">0</b> 位</span>
+            </div>
+
+            <div id="ddDemo" class="sol small" style="margin-top:10px; color:var(--muted); line-height:1.6; font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space:pre">（示範會依本題更新）</div>
+
+            <div class="row" style="margin-top:10px">
+              <label>Step 1｜把被除數小數點右移變整數（a_int）</label>
+              <input id="ddAInt" placeholder="例如：120（把 1.20 變 120）" />
+              <button class="btn" id="btnDdCheckShift" type="button">檢查</button>
+              <span id="ddShiftHint" class="small" style="color:var(--muted)"></span>
+            </div>
+
+            <div class="row" style="margin-top:8px">
+              <label>Step 2｜整數除法（a_int ÷ b = ans_int）</label>
+              <input id="ddAnsInt" placeholder="例如：15（整數商）" />
+              <button class="btn" id="btnDdCheckAnsInt" type="button">檢查</button>
+              <span id="ddAnsIntHint" class="small" style="color:var(--muted)"></span>
+            </div>
+
+            <div class="row" style="margin-top:8px">
+              <label>Step 3｜把小數點放回（最後答案）</label>
+              <input id="ddFinal" placeholder="例如：1.5 或 0.15" />
+              <button class="btn good" id="btnDdCheckFinal" type="button">檢查</button>
+              <span id="ddFinalHint" class="small" style="color:var(--muted)"></span>
+            </div>
+          </div>
+
+          <!-- Tool 1: Fraction common-denominator helper (for fraction_addsub) -->
+          <div id="toolFraction" style="display:none; margin-top:10px; border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:12px; background:rgba(0,0,0,.12)">
+            <div class="row" style="justify-content:space-between">
+              <div>
+                <b>通分小幫手</b>
+                <span class="pill" style="margin-left:8px">分數加減</span>
+              </div>
+              <button class="btn" id="btnFracFill" type="button">帶入本題</button>
+            </div>
+            <div class="small" style="color:var(--muted); margin-top:6px">先找公分母（通分）→ 再做分子加減 → 最後約分。</div>
+
+            <div class="row" style="margin-top:10px">
+              <span class="pill">題目</span>
+              <span id="fracExpr" class="small" style="color:var(--text)">—</span>
+            </div>
+
+            <div class="row" style="margin-top:10px">
+              <label>Step 1｜公分母（最小公倍數 LCM）</label>
+              <input id="fracLCD" placeholder="例如：12" />
+              <button class="btn" id="btnFracCheckLCD" type="button">檢查</button>
+              <span id="fracLCDHint" class="small" style="color:var(--muted)"></span>
+            </div>
+
+            <div class="row" style="margin-top:8px">
+              <label>Step 2｜通分後分子</label>
+              <input id="fracA2" placeholder="左邊分子（通分後）" />
+              <input id="fracB2" placeholder="右邊分子（通分後）" />
+              <button class="btn" id="btnFracCheckNums" type="button">檢查</button>
+              <span id="fracNumHint" class="small" style="color:var(--muted)"></span>
+            </div>
+
+            <div class="row" style="margin-top:8px">
+              <label>Step 3｜結果（最簡分數）</label>
+              <input id="fracFinal" placeholder="例如：5/6" />
+              <button class="btn good" id="btnFracCheckFinal" type="button">檢查</button>
+              <span id="fracFinalHint" class="small" style="color:var(--muted)"></span>
+            </div>
+          </div>
+
+          <!-- Tool 2: Volume layered blocks helper (for volume_rect_prism) -->
+          <div id="toolVolume" style="display:none; margin-top:10px; border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:12px; background:rgba(0,0,0,.12)">
+            <div class="row" style="justify-content:space-between">
+              <div>
+                <b>體積積木分層</b>
+                <span class="pill" style="margin-left:8px">長方體體積</span>
+              </div>
+              <button class="btn" id="btnVolFill" type="button">帶入本題</button>
+            </div>
+            <div class="small" style="color:var(--muted); margin-top:6px">想像底面鋪滿積木，一層一層堆高：體積 = 底面積 × 層數（高）。</div>
+
+            <div class="row" style="margin-top:10px">
+              <span class="pill">尺寸</span>
+              <span id="volDims" class="small">—</span>
+              <span class="pill">底面積</span>
+              <span id="volBaseArea" class="small">—</span>
+              <span class="pill">體積</span>
+              <span id="volTotal" class="small">—</span>
+            </div>
+
+            <div style="margin-top:10px">
+              <div class="small" style="color:var(--muted)">拖曳層數（高度）看看「一層有多少顆」→ 「總共多少顆」</div>
+              <div class="row" style="margin-top:6px">
+                <label>層數</label>
+                <input id="volLayer" type="range" min="1" max="10" value="1" style="min-width:260px" />
+                <span class="pill">目前：<b id="volLayerN">1</b> 層</span>
+                <span class="pill">目前積木：<b id="volCubesNow">0</b> 顆</span>
+              </div>
+              <div id="volViz" style="margin-top:10px"></div>
+            </div>
+
+            <div class="row" style="margin-top:10px">
+              <label>互動檢查：底面積</label>
+              <input id="volInputBase" placeholder="例如：120" />
+              <button class="btn" id="btnVolCheckBase" type="button">檢查</button>
+              <span id="volBaseHint" class="small" style="color:var(--muted)"></span>
+            </div>
+            <div class="row" style="margin-top:8px">
+              <label>互動檢查：體積</label>
+              <input id="volInputTotal" placeholder="例如：1560" />
+              <button class="btn good" id="btnVolCheckTotal" type="button">檢查</button>
+              <span id="volTotalHint" class="small" style="color:var(--muted)"></span>
+            </div>
+          </div>
+
+          <!-- Tool 3: Unit conversion slider (for unit_convert) -->
+          <div id="toolConvert" style="display:none; margin-top:10px; border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:12px; background:rgba(0,0,0,.12)">
+            <div class="row" style="justify-content:space-between">
+              <div>
+                <b>換算滑桿</b>
+                <span class="pill" style="margin-left:8px">單位換算</span>
+              </div>
+              <button class="btn" id="btnConvFill" type="button">帶入本題</button>
+            </div>
+            <div class="small" style="color:var(--muted); margin-top:6px">把「整包」和「剩下」分開算：例如 公尺×100 + 公分。</div>
+
+            <div class="row" style="margin-top:10px">
+              <label>換算類型</label>
+              <select id="convKind">
+                <option value="m_cm">公尺/公分 → 公分</option>
+                <option value="kg_g">公斤/公克 → 公克</option>
+                <option value="l_ml">公升/毫升 → 毫升</option>
+              </select>
+              <span class="pill">整包倍率：<b id="convFactor">100</b></span>
+            </div>
+
+            <div class="row" style="margin-top:10px">
+              <label id="convBigLabel">公尺</label>
+              <input id="convBig" type="range" min="0" max="30" value="0" style="min-width:260px" />
+              <span class="pill"><b id="convBigN">0</b></span>
+            </div>
+            <div class="row" style="margin-top:8px">
+              <label id="convSmallLabel">公分</label>
+              <input id="convSmall" type="range" min="0" max="99" value="0" style="min-width:260px" />
+              <span class="pill"><b id="convSmallN">0</b></span>
+            </div>
+
+            <div class="row" style="margin-top:10px">
+              <span class="pill">結果（小單位）</span>
+              <span class="pill"><b id="convResult">0</b></span>
+              <span class="small" style="color:var(--muted)">= big×factor + small</span>
+            </div>
+
+            <div class="row" style="margin-top:10px">
+              <label>互動檢查：你算的答案</label>
+              <input id="convAnswer" placeholder="例如：1234" />
+              <button class="btn good" id="btnConvCheck" type="button">檢查</button>
+              <span id="convHint" class="small" style="color:var(--muted)"></span>
+            </div>
+          </div>
+
+          <!-- Tool 4: Fraction multiplication cross-cancel helper (for fraction_mul) -->
+          <div id="toolFracMul" style="display:none; margin-top:10px; border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:12px; background:rgba(0,0,0,.12)">
+            <div class="row" style="justify-content:space-between">
+              <div>
+                <b>交叉約分小幫手</b>
+                <span class="pill" style="margin-left:8px">分數乘法</span>
+              </div>
+              <button class="btn" id="btnFracMulFill" type="button">帶入本題</button>
+            </div>
+            <div class="small" style="color:var(--muted); margin-top:6px">先找「可約分的對角線」（左分子↔右分母、右分子↔左分母），約完再相乘更快更不容易算錯。</div>
+
+            <div class="row" style="margin-top:10px">
+              <span class="pill">題目</span>
+              <span id="fmExpr" class="small" style="color:var(--text)">—</span>
+            </div>
+
+            <div class="row" style="margin-top:10px">
+              <label>Step 1｜交叉約分後（四個數）</label>
+              <input id="fmA" placeholder="左分子（約分後）" />
+              <input id="fmB" placeholder="左分母（約分後）" />
+              <input id="fmC" placeholder="右分子（約分後）" />
+              <input id="fmD" placeholder="右分母（約分後）" />
+              <button class="btn" id="btnFmCheckReduced" type="button">檢查</button>
+              <span id="fmReducedHint" class="small" style="color:var(--muted)"></span>
+            </div>
+
+            <div class="row" style="margin-top:8px">
+              <label>Step 2｜最後答案（最簡分數）</label>
+              <input id="fmFinal" placeholder="例如：5/6" />
+              <button class="btn good" id="btnFmCheckFinal" type="button">檢查</button>
+              <span id="fmFinalHint" class="small" style="color:var(--muted)"></span>
+            </div>
+          </div>
+
+          <!-- Tool 5: Percent decomposition helper (for percent_of) -->
+          <div id="toolPercent" style="display:none; margin-top:10px; border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:12px; background:rgba(0,0,0,.12)">
+            <div class="row" style="justify-content:space-between">
+              <div>
+                <b>百分率拆解器</b>
+                <span class="pill" style="margin-left:8px">p% 的多少</span>
+              </div>
+              <button class="btn" id="btnPctFill" type="button">帶入本題</button>
+            </div>
+            <div class="small" style="color:var(--muted); margin-top:6px">先算好用的基礎（10%、25%、50%），再組合成 p%。</div>
+
+            <div class="row" style="margin-top:10px">
+              <span class="pill">本題</span>
+              <span id="pctExpr" class="small" style="color:var(--text)">—</span>
+              <span class="pill">拆解</span>
+              <span id="pctParts" class="small" style="color:var(--text)">—</span>
+            </div>
+
+            <div class="row" style="margin-top:10px">
+              <label>Step 1｜每個部分是多少？</label>
+              <input id="pctPart1" placeholder="部分1（例如 50%）" />
+              <input id="pctPart2" placeholder="部分2（可空白）" />
+              <input id="pctPart3" placeholder="部分3（可空白）" />
+              <button class="btn" id="btnPctCheckParts" type="button">檢查</button>
+              <span id="pctPartsHint" class="small" style="color:var(--muted)"></span>
+            </div>
+
+            <div class="row" style="margin-top:8px">
+              <label>Step 2｜把部分加起來（答案）</label>
+              <input id="pctFinal" placeholder="例如：120" />
+              <button class="btn good" id="btnPctCheckFinal" type="button">檢查</button>
+              <span id="pctFinalHint" class="small" style="color:var(--muted)"></span>
+            </div>
+          </div>
+
+          <!-- Tool 6: Time add timeline/carry helper (for time_add) -->
+          <div id="toolTime" style="display:none; margin-top:10px; border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:12px; background:rgba(0,0,0,.12)">
+            <div class="row" style="justify-content:space-between">
+              <div>
+                <b>時間線進位器</b>
+                <span class="pill" style="margin-left:8px">時間加法</span>
+              </div>
+              <button class="btn" id="btnTimeFill" type="button">帶入本題</button>
+            </div>
+            <div class="small" style="color:var(--muted); margin-top:6px">先加分鐘；滿 60 就進 1 小時；最後寫成 HH:MM。</div>
+
+            <div class="row" style="margin-top:10px">
+              <span class="pill">起始</span>
+              <span id="timeStart" class="pill"><b>--:--</b></span>
+              <span class="pill">加</span>
+              <span id="timeAdd" class="pill"><b>0</b> 分</span>
+              <span class="pill">目標</span>
+              <span id="timeEnd" class="pill"><b>--:--</b></span>
+            </div>
+
+            <div class="row" style="margin-top:10px">
+              <label>Step 1｜加完分鐘後的「總分鐘」</label>
+              <input id="timeTotalMin" placeholder="例如：95" />
+              <button class="btn" id="btnTimeCheckTotalMin" type="button">檢查</button>
+              <span id="timeTotalMinHint" class="small" style="color:var(--muted)"></span>
+            </div>
+
+            <div class="row" style="margin-top:8px">
+              <label>Step 2｜進位小時數 + 剩下分鐘</label>
+              <input id="timeCarryH" placeholder="進位小時（例如 1）" />
+              <input id="timeRemainM" placeholder="剩下分鐘（0~59）" />
+              <button class="btn" id="btnTimeCheckCarry" type="button">檢查</button>
+              <span id="timeCarryHint" class="small" style="color:var(--muted)"></span>
+            </div>
+
+            <div class="row" style="margin-top:8px">
+              <label>Step 3｜最後時間（HH:MM）</label>
+              <input id="timeFinal" placeholder="例如：09:35" />
+              <button class="btn good" id="btnTimeCheckFinal" type="button">檢查</button>
+              <span id="timeFinalHint" class="small" style="color:var(--muted)"></span>
+            </div>
+          </div>
+        </div>
+
+        <details style="margin-top:12px;">
+          <summary>依孩子目前想法，給「下一步」</summary>
+          <div class="small" style="margin-top:8px; color:var(--muted); line-height:1.6">
+            你可以輸入孩子目前的想法（例如：「我先通分」、「我先算底面積」、「分鐘超過 60 要進位」）。
+            這裡會用純規則回一個「下一步」，不直接爆出最後答案。
+          </div>
+          <div class="row" style="margin-top:10px">
+            <label>孩子想法</label>
+            <textarea id="studentState" placeholder="例如：我先把 2/3 變成同分母，再做加減"></textarea>
+            <button class="btn primary" id="btnNext">給我下一步</button>
+          </div>
+          <div id="nextHint" class="hint" style="display:none"></div>
+        </details>
+      </section>
+
+      <aside class="card">
+        <h2 style="margin:0 0 10px 0">帝國地圖（8 題型）</h2>
+        <div class="small" style="color:var(--muted); line-height:1.7">
+          <div><b>小數雙城</b>：小數乘法、⼩數除法</div>
+          <div><b>分數群島</b>：分數加減、分數乘法</div>
+          <div><b>生活三邦</b>：百分率、時間加法、單位換算、體積</div>
+          <hr style="border:0; border-top:1px solid var(--line); margin:10px 0;">
+          <div>題庫是離線 bank.js，自動抽題；分數/領地進度會存在本機 localStorage。</div>
+        </div>
+
+        <div class="empire">
+          <h3>帝國擴張（領地進度）</h3>
+          <div class="small" style="color:var(--muted); line-height:1.6">
+            每答對累積「工程點數」。不同題型會幫不同區域擴張領土；領地越多，堡壘等級越高。
+          </div>
+
+          <div class="row" style="margin-top:10px">
+            <span class="pill">區域</span>
+            <button class="tab active" id="region_decimal_mul" type="button">小數乘法城</button>
+            <button class="tab" id="region_decimal_div" type="button">小數除法港</button>
+            <button class="tab" id="region_fraction_addsub" type="button">通分山谷</button>
+            <button class="tab" id="region_fraction_mul" type="button">約分港口</button>
+            <button class="tab" id="region_percent_of" type="button">百分要塞</button>
+            <button class="tab" id="region_time_add" type="button">時間鐘塔</button>
+            <button class="tab" id="region_unit_convert" type="button">換算工坊</button>
+            <button class="tab" id="region_volume_rect_prism" type="button">體積積木城</button>
+          </div>
+
+          <div class="row" style="margin-top:8px">
+            <span class="pill">本區領地 <b id="empireLand">0</b></span>
+            <span class="pill">本區工程點數 <b id="empireXP">0</b></span>
+            <span class="pill">堡壘 <b id="empireFort">—</b></span>
+            <span class="pill" id="empireSaved">存檔：準備中</span>
+            <button class="btn empire-reset" id="btnEmpireReset" title="只重置目前區域的領地/工程點數，不影響題庫">重置本區</button>
+            <button class="btn" id="btnEmpireResetAll" title="重置所有區域的領地/工程點數">全部重置</button>
+          </div>
+          <div class="small" style="color:var(--muted); margin-top:6px" id="empireSummary">載入中...</div>
+          <div class="small" style="color:var(--muted); margin-top:8px" id="empireMeta">下一塊領地：0 / 60</div>
+          <div class="empire-grid" id="empireGrid" style="margin-top:10px"></div>
+          <div class="small" style="color:var(--muted); margin-top:10px">說明：領地會自動存到本機 localStorage（同一台電腦同一個瀏覽器不會消失）。</div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <script src="./bank.js"></script>
+  <script>
+    // ---------- tabs ----------
+    const tabGame = document.getElementById('tabGame');
+    const tabPractice = document.getElementById('tabPractice');
+    const panelGame = document.getElementById('panelGame');
+    const panelPractice = document.getElementById('panelPractice');
+
+    function activateTab(which){
+      const isGame = which === 'game';
+      tabGame.classList.toggle('active', isGame);
+      tabPractice.classList.toggle('active', !isGame);
+      tabGame.setAttribute('aria-selected', isGame ? 'true':'false');
+      tabPractice.setAttribute('aria-selected', !isGame ? 'true':'false');
+      panelGame.style.display = isGame ? '' : 'none';
+      panelPractice.style.display = isGame ? 'none' : '';
+    }
+    tabGame.addEventListener('click', () => activateTab('game'));
+    tabPractice.addEventListener('click', () => activateTab('practice'));
+
+    // ---------- helpers ----------
+    function normalizeText(s){
+      return String(s||'')
+        .replace(/−/g,'-')
+        .replaceAll('，', ',')
+        .replaceAll('、', ',')
+        .replaceAll('／', '/')
+        .replaceAll('＝', '=')
+        .trim();
+    }
+
+    function parseStudentNumber(text){
+      const s = normalizeText(text);
+      if (!s) throw new Error('請輸入答案');
+      const cleaned = s.replace(/,/g,'');
+      const v = Number(cleaned);
+      if (!Number.isFinite(v)) throw new Error('答案請輸入數字（例如 7.5）');
+      return v;
+    }
+
+    function nearlyEqual(a,b,eps){ return Math.abs(a-b) <= (eps ?? 1e-9); }
+
+    function gcd(a,b){
+      a = Math.abs(a); b = Math.abs(b);
+      while (b){ const t=a%b; a=b; b=t; }
+      return a || 1;
+    }
+
+    function parseFraction(text){
+      const s0 = normalizeText(text);
+      if (!s0) throw new Error('請輸入答案');
+      const s = s0.replace(/\s+/g,' ');
+      // support: a/b or "a b/c" (mixed) or integer
+      const mixed = s.match(/^(-?\d+)\s+(\d+)\s*\/\s*(\d+)$/);
+      if (mixed){
+        const whole = Number(mixed[1]);
+        const n = Number(mixed[2]);
+        const d = Number(mixed[3]);
+        if (!Number.isInteger(whole) || !Number.isInteger(n) || !Number.isInteger(d) || d===0) throw new Error('分數格式錯誤');
+        const sign = whole < 0 ? -1 : 1;
+        const absWhole = Math.abs(whole);
+        const num = sign * (absWhole * d + n);
+        return simplifyFraction(num, d);
+      }
+      const frac = s.match(/^(-?\d+)\s*\/\s*(-?\d+)$/);
+      if (frac){
+        const n = Number(frac[1]);
+        const d = Number(frac[2]);
+        if (!Number.isInteger(n) || !Number.isInteger(d) || d===0) throw new Error('分數格式錯誤（例如 3/4）');
+        return simplifyFraction(n, d);
+      }
+      // integer
+      const v = Number(s);
+      if (Number.isFinite(v) && Number.isInteger(v)) return [v, 1];
+      throw new Error('分數答案請用 a/b（例如 3/4）');
+    }
+
+    function simplifyFraction(n, d){
+      if (d < 0){ n = -n; d = -d; }
+      const g = gcd(n,d);
+      return [n/g, d/g];
+    }
+
+    function parseHHMM(text){
+      const s = normalizeText(text);
+      if (!s) throw new Error('請輸入答案');
+      const m = s.match(/^(\d{1,2})\s*:\s*(\d{1,2})$/);
+      if (!m) throw new Error('時間請用 HH:MM（例如 09:35）');
+      const hh = Number(m[1]);
+      const mm = Number(m[2]);
+      if (!Number.isInteger(hh) || !Number.isInteger(mm) || hh < 0 || hh > 23 || mm < 0 || mm > 59) throw new Error('時間範圍錯誤');
+      return `${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`;
+    }
+
+    function compareByMode(studentText, correctText, mode){
+      const m = String(mode || 'number');
+      if (m === 'fraction'){
+        const [sn, sd] = parseFraction(studentText);
+        const [cn, cd] = parseFraction(correctText);
+        return sn * cd === cn * sd;
+      }
+      if (m === 'hhmm'){
+        return parseHHMM(studentText) === parseHHMM(correctText);
+      }
+      if (m === 'exact'){
+        const s = normalizeText(studentText);
+        const c = normalizeText(correctText);
+        if (!s || !c) throw new Error('請輸入答案');
+        return s === c;
+      }
+      const sv = parseStudentNumber(studentText);
+      const cv = parseStudentNumber(correctText);
+      return nearlyEqual(sv, cv, 1e-9);
+    }
+
+    function answerModeUI(q){
+      const mode = String(q?.answer_mode || 'number');
+      const kind = String(q?.kind || '');
+
+      if (mode === 'fraction'){
+        return {
+          pill: (kind === 'fraction_addsub' || kind === 'fraction_mul') ? '最簡分數（a/b）' : '分數（a/b）',
+          placeholder: '例如：5/6',
+        };
+      }
+      if (mode === 'hhmm') return { pill: '時間（HH:MM）', placeholder: '例如：09:35' };
+      if (mode === 'exact') return { pill: '完全一致（照題目格式）', placeholder: '例如：x=3（照題目要求）' };
+      return { pill: '數字（可小數）', placeholder: '例如：12 或 7.5' };
+    }
+
+    function applyAnswerUI(q, which){
+      const ui = answerModeUI(q);
+      if (which === 'game'){
+        if (els.gAnswer) els.gAnswer.placeholder = ui.placeholder;
+        if (els.gAnswerModePill) els.gAnswerModePill.textContent = `答案格式：${ui.pill}`;
+        return;
+      }
+      if (els.answer) els.answer.placeholder = ui.placeholder;
+      if (els.answerModePill) els.answerModePill.textContent = `答案格式：${ui.pill}`;
+    }
+
+    function renderHint(text, level){
+      const div = document.createElement('div');
+      div.className = 'hint';
+      if (level != null) div.dataset.level = String(level);
+      div.textContent = text;
+      return div;
+    }
+
+    // ---------- bank/state ----------
+    const bank = Array.isArray(window.INTERACTIVE_G5_EMPIRE_BANK) ? window.INTERACTIVE_G5_EMPIRE_BANK : [];
+    const state = { q: null, revealed: false, hintUsed: 0, shownHintLevels: {1:false,2:false,3:false} };
+
+    const ls = {
+      get(k, d){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } },
+      set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+    };
+
+    const els = {
+      bankMeta: document.getElementById('bankMeta'),
+      bestMeta: document.getElementById('bestMeta'),
+
+      // game
+      pack: document.getElementById('pack'),
+      gDifficulty: document.getElementById('gDifficulty'),
+      btnStart: document.getElementById('btnStart'),
+      btnStop: document.getElementById('btnStop'),
+      gTime: document.getElementById('gTime'),
+      gScore: document.getElementById('gScore'),
+      gStreak: document.getElementById('gStreak'),
+      gAcc: document.getElementById('gAcc'),
+      gRegion: document.getElementById('gRegion'),
+      gLand: document.getElementById('gLand'),
+      gFort: document.getElementById('gFort'),
+      gProgressMeta: document.getElementById('gProgressMeta'),
+      gBar: document.getElementById('gBar'),
+      gQ: document.getElementById('gQ'),
+      gAnswer: document.getElementById('gAnswer'),
+      gAnswerModePill: document.getElementById('gAnswerModePill'),
+      btnSubmit: document.getElementById('btnSubmit'),
+      btnNudge: document.getElementById('btnNudge'),
+      gBanner: document.getElementById('gBanner'),
+
+      // game decimal quick tools
+      btnGDecTool: document.getElementById('btnGDecTool'),
+      gDecToolWrap: document.getElementById('gDecToolWrap'),
+      gToolDecMul: document.getElementById('gToolDecMul'),
+      gToolDecDiv: document.getElementById('gToolDecDiv'),
+      btnGdmFill: document.getElementById('btnGdmFill'),
+      gdmExpr: document.getElementById('gdmExpr'),
+      gdmDemo: document.getElementById('gdmDemo'),
+      gdmPlaces: document.getElementById('gdmPlaces'),
+      gdmRaw: document.getElementById('gdmRaw'),
+      btnGdmCheckRaw: document.getElementById('btnGdmCheckRaw'),
+      gdmRawHint: document.getElementById('gdmRawHint'),
+      gdmFinal: document.getElementById('gdmFinal'),
+      btnGdmCheckFinal: document.getElementById('btnGdmCheckFinal'),
+      gdmFinalHint: document.getElementById('gdmFinalHint'),
+      btnGddFill: document.getElementById('btnGddFill'),
+      gddExpr: document.getElementById('gddExpr'),
+      gddDemo: document.getElementById('gddDemo'),
+      gddPlaces: document.getElementById('gddPlaces'),
+      gddAInt: document.getElementById('gddAInt'),
+      btnGddCheckShift: document.getElementById('btnGddCheckShift'),
+      gddShiftHint: document.getElementById('gddShiftHint'),
+      gddAnsInt: document.getElementById('gddAnsInt'),
+      btnGddCheckAnsInt: document.getElementById('btnGddCheckAnsInt'),
+      gddAnsIntHint: document.getElementById('gddAnsIntHint'),
+      gddFinal: document.getElementById('gddFinal'),
+      btnGddCheckFinal: document.getElementById('btnGddCheckFinal'),
+      gddFinalHint: document.getElementById('gddFinalHint'),
+
+      // empire
+      empireLand: document.getElementById('empireLand'),
+      empireXP: document.getElementById('empireXP'),
+      empireFort: document.getElementById('empireFort'),
+      empireSaved: document.getElementById('empireSaved'),
+      empireSummary: document.getElementById('empireSummary'),
+      empireMeta: document.getElementById('empireMeta'),
+      empireGrid: document.getElementById('empireGrid'),
+      btnEmpireReset: document.getElementById('btnEmpireReset'),
+      btnEmpireResetAll: document.getElementById('btnEmpireResetAll'),
+
+      // practice
+      kind: document.getElementById('kind'),
+      difficulty: document.getElementById('difficulty'),
+      btnNew: document.getElementById('btnNew'),
+      btnReset: document.getElementById('btnReset'),
+      qText: document.getElementById('qText'),
+      answer: document.getElementById('answer'),
+      answerModePill: document.getElementById('answerModePill'),
+      btnCheck: document.getElementById('btnCheck'),
+      banner: document.getElementById('banner'),
+      hints: document.getElementById('hints'),
+      solution: document.getElementById('solution'),
+      hintLevel: document.getElementById('hintLevel'),
+      btnHint: document.getElementById('btnHint'),
+      btnShowSteps: document.getElementById('btnShowSteps'),
+      btnHintNext: document.getElementById('btnHintNext'),
+      studentState: document.getElementById('studentState'),
+      btnNext: document.getElementById('btnNext'),
+      nextHint: document.getElementById('nextHint'),
+
+      // tools
+      tools: document.getElementById('tools'),
+      toolDecMul: document.getElementById('toolDecMul'),
+      toolDecDiv: document.getElementById('toolDecDiv'),
+      toolFraction: document.getElementById('toolFraction'),
+      toolVolume: document.getElementById('toolVolume'),
+      toolConvert: document.getElementById('toolConvert'),
+      toolFracMul: document.getElementById('toolFracMul'),
+      toolPercent: document.getElementById('toolPercent'),
+      toolTime: document.getElementById('toolTime'),
+
+      // decimal mul tool
+      btnDecMulFill: document.getElementById('btnDecMulFill'),
+      dmExpr: document.getElementById('dmExpr'),
+      dmDemo: document.getElementById('dmDemo'),
+      dmPlaces: document.getElementById('dmPlaces'),
+      dmRaw: document.getElementById('dmRaw'),
+      btnDmCheckRaw: document.getElementById('btnDmCheckRaw'),
+      dmRawHint: document.getElementById('dmRawHint'),
+      dmFinal: document.getElementById('dmFinal'),
+      btnDmCheckFinal: document.getElementById('btnDmCheckFinal'),
+      dmFinalHint: document.getElementById('dmFinalHint'),
+
+      // decimal div tool
+      btnDecDivFill: document.getElementById('btnDecDivFill'),
+      ddExpr: document.getElementById('ddExpr'),
+      ddDemo: document.getElementById('ddDemo'),
+      ddPlaces: document.getElementById('ddPlaces'),
+      ddAInt: document.getElementById('ddAInt'),
+      btnDdCheckShift: document.getElementById('btnDdCheckShift'),
+      ddShiftHint: document.getElementById('ddShiftHint'),
+      ddAnsInt: document.getElementById('ddAnsInt'),
+      btnDdCheckAnsInt: document.getElementById('btnDdCheckAnsInt'),
+      ddAnsIntHint: document.getElementById('ddAnsIntHint'),
+      ddFinal: document.getElementById('ddFinal'),
+      btnDdCheckFinal: document.getElementById('btnDdCheckFinal'),
+      ddFinalHint: document.getElementById('ddFinalHint'),
+
+      // fraction tool
+      btnFracFill: document.getElementById('btnFracFill'),
+      fracExpr: document.getElementById('fracExpr'),
+      fracLCD: document.getElementById('fracLCD'),
+      btnFracCheckLCD: document.getElementById('btnFracCheckLCD'),
+      fracLCDHint: document.getElementById('fracLCDHint'),
+      fracA2: document.getElementById('fracA2'),
+      fracB2: document.getElementById('fracB2'),
+      btnFracCheckNums: document.getElementById('btnFracCheckNums'),
+      fracNumHint: document.getElementById('fracNumHint'),
+      fracFinal: document.getElementById('fracFinal'),
+      btnFracCheckFinal: document.getElementById('btnFracCheckFinal'),
+      fracFinalHint: document.getElementById('fracFinalHint'),
+
+      // volume tool
+      btnVolFill: document.getElementById('btnVolFill'),
+      volDims: document.getElementById('volDims'),
+      volBaseArea: document.getElementById('volBaseArea'),
+      volTotal: document.getElementById('volTotal'),
+      volLayer: document.getElementById('volLayer'),
+      volLayerN: document.getElementById('volLayerN'),
+      volCubesNow: document.getElementById('volCubesNow'),
+      volViz: document.getElementById('volViz'),
+      volInputBase: document.getElementById('volInputBase'),
+      btnVolCheckBase: document.getElementById('btnVolCheckBase'),
+      volBaseHint: document.getElementById('volBaseHint'),
+      volInputTotal: document.getElementById('volInputTotal'),
+      btnVolCheckTotal: document.getElementById('btnVolCheckTotal'),
+      volTotalHint: document.getElementById('volTotalHint'),
+
+      // conversion tool
+      btnConvFill: document.getElementById('btnConvFill'),
+      convKind: document.getElementById('convKind'),
+      convFactor: document.getElementById('convFactor'),
+      convBigLabel: document.getElementById('convBigLabel'),
+      convSmallLabel: document.getElementById('convSmallLabel'),
+      convBig: document.getElementById('convBig'),
+      convSmall: document.getElementById('convSmall'),
+      convBigN: document.getElementById('convBigN'),
+      convSmallN: document.getElementById('convSmallN'),
+      convResult: document.getElementById('convResult'),
+      convAnswer: document.getElementById('convAnswer'),
+      btnConvCheck: document.getElementById('btnConvCheck'),
+      convHint: document.getElementById('convHint'),
+
+      // fraction mul tool
+      btnFracMulFill: document.getElementById('btnFracMulFill'),
+      fmExpr: document.getElementById('fmExpr'),
+      fmA: document.getElementById('fmA'),
+      fmB: document.getElementById('fmB'),
+      fmC: document.getElementById('fmC'),
+      fmD: document.getElementById('fmD'),
+      btnFmCheckReduced: document.getElementById('btnFmCheckReduced'),
+      fmReducedHint: document.getElementById('fmReducedHint'),
+      fmFinal: document.getElementById('fmFinal'),
+      btnFmCheckFinal: document.getElementById('btnFmCheckFinal'),
+      fmFinalHint: document.getElementById('fmFinalHint'),
+
+      // percent tool
+      btnPctFill: document.getElementById('btnPctFill'),
+      pctExpr: document.getElementById('pctExpr'),
+      pctParts: document.getElementById('pctParts'),
+      pctPart1: document.getElementById('pctPart1'),
+      pctPart2: document.getElementById('pctPart2'),
+      pctPart3: document.getElementById('pctPart3'),
+      btnPctCheckParts: document.getElementById('btnPctCheckParts'),
+      pctPartsHint: document.getElementById('pctPartsHint'),
+      pctFinal: document.getElementById('pctFinal'),
+      btnPctCheckFinal: document.getElementById('btnPctCheckFinal'),
+      pctFinalHint: document.getElementById('pctFinalHint'),
+
+      // time tool
+      btnTimeFill: document.getElementById('btnTimeFill'),
+      timeStart: document.getElementById('timeStart'),
+      timeAdd: document.getElementById('timeAdd'),
+      timeEnd: document.getElementById('timeEnd'),
+      timeTotalMin: document.getElementById('timeTotalMin'),
+      btnTimeCheckTotalMin: document.getElementById('btnTimeCheckTotalMin'),
+      timeTotalMinHint: document.getElementById('timeTotalMinHint'),
+      timeCarryH: document.getElementById('timeCarryH'),
+      timeRemainM: document.getElementById('timeRemainM'),
+      btnTimeCheckCarry: document.getElementById('btnTimeCheckCarry'),
+      timeCarryHint: document.getElementById('timeCarryHint'),
+      timeFinal: document.getElementById('timeFinal'),
+      btnTimeCheckFinal: document.getElementById('btnTimeCheckFinal'),
+      timeFinalHint: document.getElementById('timeFinalHint'),
+    };
+
+    // ---------- tools wiring ----------
+    function hideAllTools(){
+      if (els.toolDecMul) els.toolDecMul.style.display = 'none';
+      if (els.toolDecDiv) els.toolDecDiv.style.display = 'none';
+      if (els.toolFraction) els.toolFraction.style.display = 'none';
+      if (els.toolVolume) els.toolVolume.style.display = 'none';
+      if (els.toolConvert) els.toolConvert.style.display = 'none';
+      if (els.toolFracMul) els.toolFracMul.style.display = 'none';
+      if (els.toolPercent) els.toolPercent.style.display = 'none';
+      if (els.toolTime) els.toolTime.style.display = 'none';
+
+      // reset hints
+      if (els.fracLCDHint) els.fracLCDHint.textContent = '';
+      if (els.fracNumHint) els.fracNumHint.textContent = '';
+      if (els.fracFinalHint) els.fracFinalHint.textContent = '';
+      if (els.volBaseHint) els.volBaseHint.textContent = '';
+      if (els.volTotalHint) els.volTotalHint.textContent = '';
+      if (els.convHint) els.convHint.textContent = '';
+      if (els.dmRawHint) els.dmRawHint.textContent = '';
+      if (els.dmFinalHint) els.dmFinalHint.textContent = '';
+      if (els.ddShiftHint) els.ddShiftHint.textContent = '';
+      if (els.ddAnsIntHint) els.ddAnsIntHint.textContent = '';
+      if (els.ddFinalHint) els.ddFinalHint.textContent = '';
+      if (els.fmReducedHint) els.fmReducedHint.textContent = '';
+      if (els.fmFinalHint) els.fmFinalHint.textContent = '';
+      if (els.pctPartsHint) els.pctPartsHint.textContent = '';
+      if (els.pctFinalHint) els.pctFinalHint.textContent = '';
+      if (els.timeTotalMinHint) els.timeTotalMinHint.textContent = '';
+      if (els.timeCarryHint) els.timeCarryHint.textContent = '';
+      if (els.timeFinalHint) els.timeFinalHint.textContent = '';
+    }
+
+    function toIntSafe(v){
+      const n = Number(String(v||'').trim());
+      return Number.isFinite(n) ? Math.trunc(n) : NaN;
+    }
+
+    function intPlacesToStrFixed(n, places){
+      const sign = n < 0 ? '-' : '';
+      const a = Math.abs(toIntSafe(n));
+      const p = Math.max(0, toIntSafe(places));
+      if (!Number.isFinite(a) || !Number.isFinite(p)) return '';
+      if (p <= 0) return `${sign}${a}`;
+      const s = String(a).padStart(p + 1, '0');
+      return `${sign}${s.slice(0, -p)}.${s.slice(-p)}`;
+    }
+
+    function ensureDotForDiagram(s){
+      const ss = String(s ?? '').trim();
+      return ss.includes('.') ? ss : `${ss}.`;
+    }
+
+    function caretUnderDot(s){
+      const ss = String(s ?? '');
+      const idx = ss.indexOf('.');
+      const pos = idx >= 0 ? idx : ss.length;
+      return ' '.repeat(Math.max(0, pos)) + '^';
+    }
+
+    function dotMoveDiagram(from, to){
+      const f = ensureDotForDiagram(from);
+      const t = ensureDotForDiagram(to);
+      const fCaret = caretUnderDot(f);
+      const tCaret = caretUnderDot(t);
+      const w = Math.max(f.length, fCaret.length);
+      return `${f.padEnd(w)} → ${t}\n${fCaret.padEnd(w)}   ${tCaret}`;
+    }
+
+    // ----- decimal tools -----
+    function decMulExpect(){
+      const q = state.q;
+      if (!q || q.kind !== 'decimal_mul') return null;
+      const m = q.meta || {};
+      const a = String(m.a || '');
+      const b = toIntSafe(m.b);
+      const aInt = toIntSafe(m.a_int);
+      const aPlaces = toIntSafe(m.a_places);
+      const raw = toIntSafe(m.raw_int_product);
+      const totalPlaces = toIntSafe(m.total_places);
+      if (!a || !Number.isFinite(b) || !Number.isFinite(aInt) || !Number.isFinite(aPlaces) || !Number.isFinite(raw) || !Number.isFinite(totalPlaces)) return null;
+      return { a, b, aInt, aPlaces, raw, totalPlaces, ans: String(q.answer || '') };
+    }
+
+    function fillDecMulTool(){
+      const ex = decMulExpect();
+      if (!ex) return;
+      if (els.dmExpr) els.dmExpr.textContent = `${ex.a} × ${ex.b}`;
+      if (els.dmPlaces) els.dmPlaces.textContent = String(ex.totalPlaces);
+      if (els.dmRaw) els.dmRaw.value = '';
+      if (els.dmFinal) els.dmFinal.value = '';
+      if (els.dmDemo){
+        const pow = Math.pow(10, ex.totalPlaces);
+        els.dmDemo.textContent = [
+          '（^ 表示小數點的位置）',
+          '完整示範（跟著本題做）：',
+          `Step 1｜把小數點往右移 ${ex.totalPlaces} 格（×${pow}）`,
+          dotMoveDiagram(ex.a, String(ex.aInt)),
+          `Step 2｜整數乘法：${ex.aInt} × ${ex.b} = ${ex.raw}`,
+          `Step 3｜把小數點往左移 ${ex.totalPlaces} 格（÷${pow}）`,
+          dotMoveDiagram(String(ex.raw), String(ex.ans)),
+        ].join('\n');
+      }
+      if (els.dmRawHint){
+        els.dmRawHint.textContent = `提示：先把 ${ex.a} 右移 ${ex.totalPlaces} 位 → ${ex.aInt}，再算 ${ex.aInt}×${ex.b}`;
+        els.dmRawHint.style.color = 'var(--muted)';
+      }
+      if (els.dmFinalHint) els.dmFinalHint.textContent = '';
+    }
+
+    function decDivExpect(){
+      const q = state.q;
+      if (!q || q.kind !== 'decimal_div') return null;
+      const m = q.meta || {};
+      const a = String(m.a || '');
+      const b = toIntSafe(m.b);
+      const aInt = toIntSafe(m.a_int);
+      const aPlaces = toIntSafe(m.a_places);
+      const ansInt = toIntSafe(m.ans_int);
+      const ansPlaces = toIntSafe(m.ans_places);
+      if (!a || !Number.isFinite(b) || !Number.isFinite(aInt) || !Number.isFinite(aPlaces) || !Number.isFinite(ansInt) || !Number.isFinite(ansPlaces)) return null;
+      return { a, b, aInt, aPlaces, ansInt, ansPlaces, ans: String(q.answer || '') };
+    }
+
+    function fillDecDivTool(){
+      const ex = decDivExpect();
+      if (!ex) return;
+      if (els.ddExpr) els.ddExpr.textContent = `${ex.a} ÷ ${ex.b}`;
+      if (els.ddPlaces) els.ddPlaces.textContent = String(ex.aPlaces);
+      if (els.ddAInt) els.ddAInt.value = '';
+      if (els.ddAnsInt) els.ddAnsInt.value = '';
+      if (els.ddFinal) els.ddFinal.value = '';
+      if (els.ddDemo){
+        const pow = Math.pow(10, ex.aPlaces);
+        const ansFixed = intPlacesToStrFixed(ex.ansInt, ex.ansPlaces);
+        els.ddDemo.textContent = [
+          '（^ 表示小數點的位置）',
+          '完整示範（跟著本題做）：',
+          `Step 1｜把小數點往右移 ${ex.aPlaces} 格（×${pow}）`,
+          dotMoveDiagram(ex.a, String(ex.aInt)),
+          `Step 2｜整數除法：${ex.aInt} ÷ ${ex.b} = ${ex.ansInt}`,
+          `Step 3｜把小數點往左移 ${ex.aPlaces} 格（÷${pow}）`,
+          dotMoveDiagram(String(ex.ansInt), ansFixed),
+        ].join('\n');
+      }
+      if (els.ddShiftHint){
+        els.ddShiftHint.textContent = `提示：右移 ${ex.aPlaces} 位（×${Math.pow(10, ex.aPlaces)}) 變整數 a_int。`;
+        els.ddShiftHint.style.color = 'var(--muted)';
+      }
+      if (els.ddAnsIntHint) els.ddAnsIntHint.textContent = '';
+      if (els.ddFinalHint) els.ddFinalHint.textContent = '';
+    }
+
+    function parseFracStrict(s){
+      const [n,d] = parseFraction(s);
+      return { n, d };
+    }
+
+    function fracToolExpect(){
+      const q = state.q;
+      if (!q || q.kind !== 'fraction_addsub') return null;
+      const m = q.meta || {};
+      const op = String(m.op || '+');
+      const a = String(m.a || '');
+      const b = String(m.b || '');
+      const lcm = Number(m.lcm);
+      if (!a.includes('/') || !b.includes('/') || !Number.isFinite(lcm)) return null;
+      const [aN,aD] = a.split('/').map(x=>Number(x));
+      const [bN,bD] = b.split('/').map(x=>Number(x));
+      const a2 = aN * (lcm / aD);
+      const b2 = bN * (lcm / bD);
+      return { aN, aD, bN, bD, op, lcm, a2, b2, answer: String(q.answer||'') };
+    }
+
+    function fillFractionTool(){
+      const ex = fracToolExpect();
+      if (!ex) return;
+      if (els.fracExpr) els.fracExpr.textContent = `${ex.aN}/${ex.aD} ${ex.op} ${ex.bN}/${ex.bD}`;
+      if (els.fracLCD) els.fracLCD.value = '';
+      if (els.fracA2) els.fracA2.value = '';
+      if (els.fracB2) els.fracB2.value = '';
+      if (els.fracFinal) els.fracFinal.value = '';
+      if (els.fracLCDHint) els.fracLCDHint.textContent = `提示：${ex.aD} 和 ${ex.bD} 的最小公倍數。`;
+      if (els.fracNumHint) els.fracNumHint.textContent = '';
+      if (els.fracFinalHint) els.fracFinalHint.textContent = '';
+    }
+
+    function volToolExpect(){
+      const q = state.q;
+      if (!q || q.kind !== 'volume_rect_prism') return null;
+      const m = q.meta || {};
+      const l = Number(m.l), w = Number(m.w), h = Number(m.h);
+      if (!Number.isFinite(l) || !Number.isFinite(w) || !Number.isFinite(h)) return null;
+      const base = l*w;
+      const total = base*h;
+      return { l, w, h, base, total, answer: String(q.answer||total) };
+    }
+
+    function renderVolViz(ex){
+      if (!els.volViz || !els.volLayer) return;
+      const layer = Math.max(1, Math.min(ex.h, Number(els.volLayer.value||1)));
+      const base = ex.base;
+      if (els.volLayerN) els.volLayerN.textContent = String(layer);
+      if (els.volCubesNow) els.volCubesNow.textContent = String(base * layer);
+
+      // Simple visualization: show base as a grid of tiny tiles (capped), and show layers count.
+      const MAX_SHOW = 160;
+      const showCount = Math.min(MAX_SHOW, base);
+      const cols = Math.min(16, Math.max(6, Math.round(Math.sqrt(showCount))));
+      const rows = Math.ceil(showCount / cols);
+
+      const wrap = document.createElement('div');
+      wrap.style.display = 'grid';
+      wrap.style.gridTemplateColumns = `repeat(${cols}, 10px)`;
+      wrap.style.gap = '4px';
+      wrap.style.alignItems = 'center';
+
+      for (let i=0;i<showCount;i++){
+        const t = document.createElement('div');
+        t.style.width = '10px';
+        t.style.height = '10px';
+        t.style.borderRadius = '3px';
+        t.style.border = '1px solid rgba(255,255,255,.12)';
+        t.style.background = 'rgba(88,166,255,.18)';
+        wrap.appendChild(t);
+      }
+
+      const meta = document.createElement('div');
+      meta.className = 'small';
+      meta.style.color = 'var(--muted)';
+      meta.style.marginTop = '8px';
+      const note = base > MAX_SHOW ? `（底面積 ${base} 顆，只顯示前 ${MAX_SHOW} 顆示意）` : `（底面積 ${base} 顆）`;
+      meta.textContent = `一層 = 底面積 ${base} 顆；現在 ${layer} 層 → ${base*layer} 顆。${note}`;
+
+      els.volViz.innerHTML = '';
+      els.volViz.appendChild(wrap);
+      els.volViz.appendChild(meta);
+    }
+
+    function fillVolumeTool(){
+      const ex = volToolExpect();
+      if (!ex) return;
+      if (els.volDims) els.volDims.textContent = `長 ${ex.l} × 寬 ${ex.w} × 高 ${ex.h}（cm）`;
+      if (els.volBaseArea) els.volBaseArea.textContent = String(ex.base);
+      if (els.volTotal) els.volTotal.textContent = String(ex.total);
+      if (els.volLayer){
+        els.volLayer.min = '1';
+        els.volLayer.max = String(ex.h);
+        els.volLayer.value = String(Math.min(ex.h, 1));
+      }
+      if (els.volInputBase) els.volInputBase.value = '';
+      if (els.volInputTotal) els.volInputTotal.value = '';
+      if (els.volBaseHint) els.volBaseHint.textContent = `提示：底面積 = 長×寬 = ${ex.l}×${ex.w}`;
+      if (els.volTotalHint) els.volTotalHint.textContent = '';
+      renderVolViz(ex);
+    }
+
+    function convToolExpect(){
+      const q = state.q;
+      if (!q || q.kind !== 'unit_convert') return null;
+      const m = q.meta || {};
+      const ck = String(m.convert_kind || 'm_cm');
+      let big = 0, small = 0;
+      if (ck === 'm_cm'){ big = Number(m.m); small = Number(m.cm); }
+      else if (ck === 'kg_g'){ big = Number(m.kg); small = Number(m.g); }
+      else { big = Number(m.l); small = Number(m.ml); }
+      if (!Number.isFinite(big) || !Number.isFinite(small)) return null;
+      const factor = ck === 'm_cm' ? 100 : 1000;
+      const result = big * factor + small;
+      return { ck, big, small, factor, result, answer: String(q.answer||result) };
+    }
+
+    function applyConvKindUI(kind){
+      const k = String(kind||'m_cm');
+      if (!els.convKind) return;
+      const factor = k === 'm_cm' ? 100 : 1000;
+      if (els.convFactor) els.convFactor.textContent = String(factor);
+
+      if (k === 'm_cm'){
+        if (els.convBigLabel) els.convBigLabel.textContent = '公尺';
+        if (els.convSmallLabel) els.convSmallLabel.textContent = '公分';
+        if (els.convSmall) els.convSmall.max = '99';
+      } else if (k === 'kg_g'){
+        if (els.convBigLabel) els.convBigLabel.textContent = '公斤';
+        if (els.convSmallLabel) els.convSmallLabel.textContent = '公克';
+        if (els.convSmall) els.convSmall.max = '999';
+      } else {
+        if (els.convBigLabel) els.convBigLabel.textContent = '公升';
+        if (els.convSmallLabel) els.convSmallLabel.textContent = '毫升';
+        if (els.convSmall) els.convSmall.max = '999';
+      }
+
+      // update result
+      updateConvResult();
+    }
+
+    function updateConvResult(){
+      const k = String(els.convKind?.value || 'm_cm');
+      const factor = k === 'm_cm' ? 100 : 1000;
+      const big = Number(els.convBig?.value || 0);
+      const small = Number(els.convSmall?.value || 0);
+      if (els.convBigN) els.convBigN.textContent = String(big);
+      if (els.convSmallN) els.convSmallN.textContent = String(small);
+      if (els.convFactor) els.convFactor.textContent = String(factor);
+      if (els.convResult) els.convResult.textContent = String(big * factor + small);
+    }
+
+    function fillConvertTool(){
+      const ex = convToolExpect();
+      if (!ex) return;
+      if (els.convKind) els.convKind.value = ex.ck;
+      applyConvKindUI(ex.ck);
+      if (els.convBig) els.convBig.value = String(ex.big);
+      if (els.convSmall) els.convSmall.value = String(ex.small);
+      updateConvResult();
+      if (els.convAnswer) els.convAnswer.value = '';
+      if (els.convHint) els.convHint.textContent = `提示：${ex.big}×${ex.factor} + ${ex.small}`;
+    }
+
+    // ----- fraction multiplication tool -----
+    function fracMulExpect(){
+      const q = state.q;
+      if (!q || q.kind !== 'fraction_mul') return null;
+      const m = q.meta || {};
+      const a = String(m.a || '');
+      const b = String(m.b || '');
+      if (!a.includes('/') || !b.includes('/')) return null;
+      const [aN,aD] = a.split('/').map(Number);
+      const [bN,bD] = b.split('/').map(Number);
+      if (![aN,aD,bN,bD].every(Number.isFinite)) return null;
+
+      // compute fully simplified result
+      const num = aN * bN;
+      const den = aD * bD;
+      const g = gcd(num, den);
+      const sn = num / g;
+      const sd = den / g;
+
+      // also compute a "max cross-cancel" reduced form (not unique), used for checking
+      let raN=aN, raD=aD, rbN=bN, rbD=bD;
+      const g1 = gcd(raN, rbD);
+      raN/=g1; rbD/=g1;
+      const g2 = gcd(rbN, raD);
+      rbN/=g2; raD/=g2;
+
+      return { aN, aD, bN, bD, raN, raD, rbN, rbD, ans:`${sn}/${sd}` };
+    }
+
+    function fillFracMulTool(){
+      const ex = fracMulExpect();
+      if (!ex) return;
+      if (els.fmExpr) els.fmExpr.textContent = `${ex.aN}/${ex.aD} × ${ex.bN}/${ex.bD}`;
+      if (els.fmA) els.fmA.value = '';
+      if (els.fmB) els.fmB.value = '';
+      if (els.fmC) els.fmC.value = '';
+      if (els.fmD) els.fmD.value = '';
+      if (els.fmFinal) els.fmFinal.value = '';
+      if (els.fmReducedHint){
+        els.fmReducedHint.textContent = '提示：先看對角線是否能約分（左分子↔右分母、右分子↔左分母）。';
+        els.fmReducedHint.style.color = 'var(--muted)';
+      }
+      if (els.fmFinalHint) els.fmFinalHint.textContent = '';
+    }
+
+    // ----- percent tool -----
+    function percentExpect(){
+      const q = state.q;
+      if (!q || q.kind !== 'percent_of') return null;
+      const m = q.meta || {};
+      const base = Number(m.base);
+      const p = Number(m.p);
+      if (!Number.isFinite(base) || !Number.isFinite(p)) return null;
+
+      // choose a decomposition that (1) is easy to compute (2) always sums to p
+      // bank p values: [10, 20, 25, 30, 40, 50, 60, 75]
+      let parts;
+      if (p === 75) parts = [50, 25];
+      else if (p === 60) parts = [50, 10];
+      else if (p === 40) parts = [20, 20];
+      else if (p === 30) parts = [20, 10];
+      else if (p === 50) parts = [50];
+      else if (p === 25) parts = [25];
+      else if (p === 20) parts = [20];
+      else if (p === 10) parts = [10];
+      else parts = [p];
+
+      const sum = parts.reduce((acc, x) => acc + x, 0);
+      if (sum !== p) parts = [p];
+      const partValues = parts.map(pp => base * pp / 100);
+      const ans = base * p / 100;
+      return { base, p, parts, partValues, ans };
+    }
+
+    function fillPercentTool(){
+      const ex = percentExpect();
+      if (!ex) return;
+      if (els.pctExpr) els.pctExpr.textContent = `${ex.p}% 的 ${ex.base}`;
+      if (els.pctParts) els.pctParts.textContent = ex.parts.map(x => `${x}%`).join(' + ');
+      if (els.pctPart1) els.pctPart1.value = '';
+      if (els.pctPart2) els.pctPart2.value = '';
+      if (els.pctPart3) els.pctPart3.value = '';
+      if (els.pctFinal) els.pctFinal.value = '';
+      if (els.pctPartsHint){
+        els.pctPartsHint.textContent = '提示：先算每個部分，再相加。';
+        els.pctPartsHint.style.color = 'var(--muted)';
+      }
+      if (els.pctFinalHint) els.pctFinalHint.textContent = '';
+    }
+
+    // ----- time tool -----
+    function timeExpect(){
+      const q = state.q;
+      if (!q || q.kind !== 'time_add') return null;
+      const m = q.meta || {};
+      const start = String(m.start || '');
+      const addM = Number(m.add_m);
+      const end = String(m.end || '');
+      if (!start.includes(':') || !Number.isFinite(addM) || !end.includes(':')) return null;
+      const [sh, sm] = start.split(':').map(Number);
+      if (![sh, sm].every(Number.isFinite)) return null;
+      const totalMin = sm + addM;
+      const carryH = Math.floor(totalMin / 60);
+      const remainM = totalMin % 60;
+      return { start, addM, end, sh, sm, totalMin, carryH, remainM };
+    }
+
+    function fillTimeTool(){
+      const ex = timeExpect();
+      if (!ex) return;
+      if (els.timeStart) els.timeStart.innerHTML = `<b>${ex.start}</b>`;
+      if (els.timeAdd) els.timeAdd.innerHTML = `<b>${ex.addM}</b> 分`;
+      if (els.timeEnd) els.timeEnd.innerHTML = `<b>${ex.end}</b>`;
+      if (els.timeTotalMin) els.timeTotalMin.value = '';
+      if (els.timeCarryH) els.timeCarryH.value = '';
+      if (els.timeRemainM) els.timeRemainM.value = '';
+      if (els.timeFinal) els.timeFinal.value = '';
+      if (els.timeTotalMinHint){
+        els.timeTotalMinHint.textContent = `提示：起始分鐘 ${ex.sm} + ${ex.addM}。`;
+        els.timeTotalMinHint.style.color = 'var(--muted)';
+      }
+      if (els.timeCarryHint) els.timeCarryHint.textContent = '';
+      if (els.timeFinalHint) els.timeFinalHint.textContent = '';
+    }
+
+    // region buttons (8)
+    const REGION_BTN_IDS = [
+      'region_decimal_mul','region_decimal_div','region_fraction_addsub','region_fraction_mul',
+      'region_percent_of','region_time_add','region_unit_convert','region_volume_rect_prism'
+    ];
+
+    function updateBankMeta(){
+      if (!bank.length){
+        els.bankMeta.textContent = '題庫未載入（請確認 bank.js）';
+        return;
+      }
+      const kinds = new Set(bank.map(x => x.kind || 'unknown'));
+      els.bankMeta.textContent = `離線題庫：${bank.length} 題｜題型：${kinds.size} 種`;
+
+      const best = ls.get('g5e_best_v1', {score:0, streak:0});
+      els.bestMeta.style.display = '';
+      els.bestMeta.textContent = `最佳：${best.score} 分｜最長連對：${best.streak}`;
+    }
+
+    function pickFromPool(pool){
+      if (!pool.length) return null;
+      return pool[Math.floor(Math.random() * pool.length)];
+    }
+
+    function filteredBank(kind, difficulty){
+      let pool = bank;
+      if (kind && kind !== 'all') pool = pool.filter(x => String(x.kind) === kind);
+      if (difficulty && difficulty !== 'all') pool = pool.filter(x => String(x.difficulty) === difficulty);
+      return pool;
+    }
+
+    function showQuestion(q){
+      state.q = q;
+      state.revealed = false;
+      state.hintUsed = 0;
+      state.shownHintLevels = {1:false,2:false,3:false};
+      els.answer.value = '';
+      els.studentState.value = '';
+      els.hints.innerHTML = '';
+      els.solution.innerHTML = '';
+      els.nextHint.style.display = 'none';
+      els.qText.textContent = q ? q.question : '（題庫中沒有符合條件的題目）';
+      applyAnswerUI(q, 'practice');
+      els.banner.className = 'banner muted';
+      els.banner.textContent = '提示：先抓「已知/未知」→ 再列式。看完不清楚 → 改選 Level 2/3 再按「看提示」。';
+
+      // tools
+      hideAllTools();
+      const kind = String(q?.kind || '');
+      if (kind === 'decimal_mul' && els.toolDecMul){
+        els.toolDecMul.style.display = '';
+        fillDecMulTool();
+      }
+      if (kind === 'decimal_div' && els.toolDecDiv){
+        els.toolDecDiv.style.display = '';
+        fillDecDivTool();
+      }
+      if (kind === 'fraction_addsub' && els.toolFraction){
+        els.toolFraction.style.display = '';
+        fillFractionTool();
+      }
+      if (kind === 'volume_rect_prism' && els.toolVolume){
+        els.toolVolume.style.display = '';
+        fillVolumeTool();
+      }
+      if (kind === 'unit_convert' && els.toolConvert){
+        els.toolConvert.style.display = '';
+        fillConvertTool();
+      }
+      if (kind === 'fraction_mul' && els.toolFracMul){
+        els.toolFracMul.style.display = '';
+        fillFracMulTool();
+      }
+      if (kind === 'percent_of' && els.toolPercent){
+        els.toolPercent.style.display = '';
+        fillPercentTool();
+      }
+      if (kind === 'time_add' && els.toolTime){
+        els.toolTime.style.display = '';
+        fillTimeTool();
+      }
+    }
+
+    // decimal tool events
+    els.btnDecMulFill?.addEventListener('click', fillDecMulTool);
+    els.btnDmCheckRaw?.addEventListener('click', () => {
+      const ex = decMulExpect();
+      if (!ex) return;
+      const v = toIntSafe(els.dmRaw.value);
+      if (!Number.isFinite(v)){
+        els.dmRawHint.textContent = '請輸入整數（整數乘法結果）';
+        els.dmRawHint.style.color = 'var(--bad)';
+        return;
+      }
+      if (v === ex.raw){
+        els.dmRawHint.textContent = `Step 1 正確！現在把 ${ex.raw} 左移 ${ex.totalPlaces} 位，得到答案。`;
+        els.dmRawHint.style.color = 'var(--ok)';
+      } else {
+        els.dmRawHint.textContent = `提示：${ex.aInt}×${ex.b} = ${ex.raw}`;
+        els.dmRawHint.style.color = 'var(--warn)';
+      }
+    });
+    els.btnDmCheckFinal?.addEventListener('click', () => {
+      const ex = decMulExpect();
+      if (!ex) return;
+      try{
+        const ok = compareByMode(els.dmFinal.value, ex.ans, 'number');
+        if (ok){
+          els.dmFinalHint.textContent = 'Step 2 正確！';
+          els.dmFinalHint.style.color = 'var(--ok)';
+        } else {
+          els.dmFinalHint.textContent = `提示：把 ${ex.raw} 左移 ${ex.totalPlaces} 位（放回小數點），答案應該是 ${ex.ans}`;
+          els.dmFinalHint.style.color = 'var(--warn)';
+        }
+      } catch(e){
+        els.dmFinalHint.textContent = String(e?.message || e);
+        els.dmFinalHint.style.color = 'var(--bad)';
+      }
+    });
+
+    els.btnDecDivFill?.addEventListener('click', fillDecDivTool);
+    els.btnDdCheckShift?.addEventListener('click', () => {
+      const ex = decDivExpect();
+      if (!ex) return;
+      const v = toIntSafe(els.ddAInt.value);
+      if (!Number.isFinite(v)){
+        els.ddShiftHint.textContent = '請輸入整數 a_int（把小數點右移後的整數）';
+        els.ddShiftHint.style.color = 'var(--bad)';
+        return;
+      }
+      if (v === ex.aInt){
+        els.ddShiftHint.textContent = `Step 1 正確！接著算整數：${ex.aInt} ÷ ${ex.b}`;
+        els.ddShiftHint.style.color = 'var(--ok)';
+      } else {
+        els.ddShiftHint.textContent = `提示：右移 ${ex.aPlaces} 位後，a_int 應該是 ${ex.aInt}`;
+        els.ddShiftHint.style.color = 'var(--warn)';
+      }
+    });
+    els.btnDdCheckAnsInt?.addEventListener('click', () => {
+      const ex = decDivExpect();
+      if (!ex) return;
+      const v = toIntSafe(els.ddAnsInt.value);
+      if (!Number.isFinite(v)){
+        els.ddAnsIntHint.textContent = '請輸入整數商 ans_int';
+        els.ddAnsIntHint.style.color = 'var(--bad)';
+        return;
+      }
+      if (v === ex.ansInt){
+        els.ddAnsIntHint.textContent = `Step 2 正確！把 ${ex.ansInt} 左移 ${ex.ansPlaces} 位小數，得到答案。`;
+        els.ddAnsIntHint.style.color = 'var(--ok)';
+      } else {
+        els.ddAnsIntHint.textContent = `提示：${ex.aInt}÷${ex.b} = ${ex.ansInt}`;
+        els.ddAnsIntHint.style.color = 'var(--warn)';
+      }
+    });
+    els.btnDdCheckFinal?.addEventListener('click', () => {
+      const ex = decDivExpect();
+      if (!ex) return;
+      try{
+        const ok = compareByMode(els.ddFinal.value, ex.ans, 'number');
+        if (ok){
+          els.ddFinalHint.textContent = 'Step 3 正確！';
+          els.ddFinalHint.style.color = 'var(--ok)';
+        } else {
+          els.ddFinalHint.textContent = `提示：把 ${ex.ansInt} 左移 ${ex.ansPlaces} 位（放回小數點），答案應該是 ${ex.ans}`;
+          els.ddFinalHint.style.color = 'var(--warn)';
+        }
+      } catch(e){
+        els.ddFinalHint.textContent = String(e?.message || e);
+        els.ddFinalHint.style.color = 'var(--bad)';
+      }
+    });
+
+    // fraction tool events
+    els.btnFracFill?.addEventListener('click', fillFractionTool);
+    els.btnFracCheckLCD?.addEventListener('click', () => {
+      const ex = fracToolExpect();
+      if (!ex) return;
+      const v = toIntSafe(els.fracLCD.value);
+      if (!Number.isFinite(v)){
+        els.fracLCDHint.textContent = '請輸入整數（例如 12）';
+        els.fracLCDHint.style.color = 'var(--bad)';
+        return;
+      }
+      if (v === ex.lcm){
+        els.fracLCDHint.textContent = 'Step 1 正確！';
+        els.fracLCDHint.style.color = 'var(--ok)';
+      } else {
+        els.fracLCDHint.textContent = `再想想：${ex.aD} 和 ${ex.bD} 的最小公倍數不是 ${v}。`;
+        els.fracLCDHint.style.color = 'var(--warn)';
+      }
+    });
+    els.btnFracCheckNums?.addEventListener('click', () => {
+      const ex = fracToolExpect();
+      if (!ex) return;
+      const a2 = toIntSafe(els.fracA2.value);
+      const b2 = toIntSafe(els.fracB2.value);
+      if (!Number.isFinite(a2) || !Number.isFinite(b2)){
+        els.fracNumHint.textContent = '請輸入兩個整數分子';
+        els.fracNumHint.style.color = 'var(--bad)';
+        return;
+      }
+      if (a2 === ex.a2 && b2 === ex.b2){
+        els.fracNumHint.textContent = `Step 2 正確！同分母是 ${ex.lcm}。`;
+        els.fracNumHint.style.color = 'var(--ok)';
+      } else {
+        const la = ex.lcm / ex.aD;
+        const lb = ex.lcm / ex.bD;
+        els.fracNumHint.textContent = `提示：左邊分子要乘 ${la}，右邊分子要乘 ${lb}。`;
+        els.fracNumHint.style.color = 'var(--warn)';
+      }
+    });
+    els.btnFracCheckFinal?.addEventListener('click', () => {
+      const ex = fracToolExpect();
+      if (!ex) return;
+      try{
+        const ok = compareByMode(els.fracFinal.value, ex.answer, 'fraction');
+        if (ok){
+          els.fracFinalHint.textContent = 'Step 3 正確！而且是最簡分數。';
+          els.fracFinalHint.style.color = 'var(--ok)';
+        } else {
+          els.fracFinalHint.textContent = '再試一次：先用通分後的分子做加減，再約分到最簡。';
+          els.fracFinalHint.style.color = 'var(--warn)';
+        }
+      } catch(e){
+        els.fracFinalHint.textContent = String(e?.message || e);
+        els.fracFinalHint.style.color = 'var(--bad)';
+      }
+    });
+
+    // volume tool events
+    els.btnVolFill?.addEventListener('click', fillVolumeTool);
+    els.volLayer?.addEventListener('input', () => {
+      const ex = volToolExpect();
+      if (!ex) return;
+      renderVolViz(ex);
+    });
+    els.btnVolCheckBase?.addEventListener('click', () => {
+      const ex = volToolExpect();
+      if (!ex) return;
+      try{
+        const v = parseStudentNumber(els.volInputBase.value);
+        if (nearlyEqual(v, ex.base, 1e-9)){
+          els.volBaseHint.textContent = '底面積正確！';
+          els.volBaseHint.style.color = 'var(--ok)';
+        } else {
+          els.volBaseHint.textContent = `提示：${ex.l}×${ex.w} = ${ex.base}`;
+          els.volBaseHint.style.color = 'var(--warn)';
+        }
+      } catch(e){
+        els.volBaseHint.textContent = String(e?.message || e);
+        els.volBaseHint.style.color = 'var(--bad)';
+      }
+    });
+    els.btnVolCheckTotal?.addEventListener('click', () => {
+      const ex = volToolExpect();
+      if (!ex) return;
+      try{
+        const ok = compareByMode(els.volInputTotal.value, ex.answer, 'number');
+        if (ok){
+          els.volTotalHint.textContent = '體積正確！';
+          els.volTotalHint.style.color = 'var(--ok)';
+        } else {
+          els.volTotalHint.textContent = `提示：底面積 ${ex.base} × 高 ${ex.h}`;
+          els.volTotalHint.style.color = 'var(--warn)';
+        }
+      } catch(e){
+        els.volTotalHint.textContent = String(e?.message || e);
+        els.volTotalHint.style.color = 'var(--bad)';
+      }
+    });
+
+    // conversion tool events
+    els.btnConvFill?.addEventListener('click', fillConvertTool);
+    els.convKind?.addEventListener('change', () => applyConvKindUI(els.convKind.value));
+    els.convBig?.addEventListener('input', updateConvResult);
+    els.convSmall?.addEventListener('input', updateConvResult);
+    els.btnConvCheck?.addEventListener('click', () => {
+      const ex = convToolExpect();
+      if (!ex) return;
+      try{
+        const ok = compareByMode(els.convAnswer.value, ex.answer, 'number');
+        if (ok){
+          els.convHint.textContent = '正確！';
+          els.convHint.style.color = 'var(--ok)';
+        } else {
+          els.convHint.textContent = `再想想：${ex.big}×${ex.factor} + ${ex.small} = ${ex.result}`;
+          els.convHint.style.color = 'var(--warn)';
+        }
+      } catch(e){
+        els.convHint.textContent = String(e?.message || e);
+        els.convHint.style.color = 'var(--bad)';
+      }
+    });
+
+    // fraction mul tool events
+    els.btnFracMulFill?.addEventListener('click', fillFracMulTool);
+    els.btnFmCheckReduced?.addEventListener('click', () => {
+      const ex = fracMulExpect();
+      if (!ex) return;
+      const a = toIntSafe(els.fmA.value);
+      const b = toIntSafe(els.fmB.value);
+      const c = toIntSafe(els.fmC.value);
+      const d = toIntSafe(els.fmD.value);
+      if (![a,b,c,d].every(Number.isFinite) || ![a,b,c,d].every(x => Number.isInteger(x) && x > 0)){
+        els.fmReducedHint.textContent = '請填 4 個正整數（約分後）';
+        els.fmReducedHint.style.color = 'var(--bad)';
+        return;
+      }
+
+      // Accept any equivalent reduced-only representation (kids may simplify in different orders).
+      // But disallow making numbers larger than the original factors.
+      const reducedOnly = (ex.aN % a === 0) && (ex.aD % b === 0) && (ex.bN % c === 0) && (ex.bD % d === 0);
+
+      const n0 = ex.aN * ex.bN;
+      const d0 = ex.aD * ex.bD;
+      const g0 = gcd(n0, d0);
+      const rn0 = n0 / g0;
+      const rd0 = d0 / g0;
+
+      const n1 = a * c;
+      const d1 = b * d;
+      const g1 = gcd(n1, d1);
+      const rn1 = n1 / g1;
+      const rd1 = d1 / g1;
+
+      const eq = (rn0 === rn1 && rd0 === rd1);
+      if (!eq){
+        els.fmReducedHint.textContent = '提示：你填的兩個分數相乘後，跟原題不等價。請再做一次交叉約分。';
+        els.fmReducedHint.style.color = 'var(--warn)';
+        return;
+      }
+      if (!reducedOnly){
+        els.fmReducedHint.textContent = '等價沒錯，但 Step 1 建議只做「約分變小」：不要把數字放大。';
+        els.fmReducedHint.style.color = 'var(--warn)';
+        return;
+      }
+
+      const gLeft = gcd(a, d);
+      const gRight = gcd(c, b);
+      if (gLeft > 1 || gRight > 1){
+        els.fmReducedHint.textContent = '等價沒錯！但還可以再交叉約分，讓數字更小（對角線還能約）。';
+        els.fmReducedHint.style.color = 'var(--warn)';
+      } else {
+        els.fmReducedHint.textContent = 'Step 1 正確！現在直接相乘。';
+        els.fmReducedHint.style.color = 'var(--ok)';
+      }
+    });
+    els.btnFmCheckFinal?.addEventListener('click', () => {
+      const ex = fracMulExpect();
+      if (!ex) return;
+      try{
+        const ok = compareByMode(els.fmFinal.value, ex.ans, 'fraction');
+        if (ok){
+          els.fmFinalHint.textContent = 'Step 2 正確！';
+          els.fmFinalHint.style.color = 'var(--ok)';
+        } else {
+          els.fmFinalHint.textContent = '再試一次：分子相乘、分母相乘，最後約分到最簡。';
+          els.fmFinalHint.style.color = 'var(--warn)';
+        }
+      } catch(e){
+        els.fmFinalHint.textContent = String(e?.message || e);
+        els.fmFinalHint.style.color = 'var(--bad)';
+      }
+    });
+
+    // percent tool events
+    els.btnPctFill?.addEventListener('click', fillPercentTool);
+    els.btnPctCheckParts?.addEventListener('click', () => {
+      const ex = percentExpect();
+      if (!ex) return;
+      const inputs = [els.pctPart1?.value, els.pctPart2?.value, els.pctPart3?.value].filter(x => String(x||'').trim() !== '');
+      if (inputs.length !== ex.parts.length){
+        els.pctPartsHint.textContent = `本題拆成 ${ex.parts.length} 個部分，請把每個部分都填上。`;
+        els.pctPartsHint.style.color = 'var(--warn)';
+        return;
+      }
+      try{
+        const vals = inputs.map(parseStudentNumber);
+        let allOk = true;
+        for (let i=0;i<vals.length;i++){
+          if (!nearlyEqual(vals[i], ex.partValues[i], 1e-9)) allOk = false;
+        }
+        if (allOk){
+          els.pctPartsHint.textContent = 'Step 1 正確！把這些部分加起來。';
+          els.pctPartsHint.style.color = 'var(--ok)';
+        } else {
+          els.pctPartsHint.textContent = '提示：先算 10%（÷10）或 20%（÷5）或 25%（÷4）或 50%（÷2）。';
+          els.pctPartsHint.style.color = 'var(--warn)';
+        }
+      } catch(e){
+        els.pctPartsHint.textContent = String(e?.message || e);
+        els.pctPartsHint.style.color = 'var(--bad)';
+      }
+    });
+    els.btnPctCheckFinal?.addEventListener('click', () => {
+      const ex = percentExpect();
+      if (!ex) return;
+      try{
+        const ok = compareByMode(els.pctFinal.value, String(ex.ans), 'number');
+        if (ok){
+          els.pctFinalHint.textContent = 'Step 2 正確！';
+          els.pctFinalHint.style.color = 'var(--ok)';
+        } else {
+          els.pctFinalHint.textContent = '再試一次：把各部分相加就是答案。';
+          els.pctFinalHint.style.color = 'var(--warn)';
+        }
+      } catch(e){
+        els.pctFinalHint.textContent = String(e?.message || e);
+        els.pctFinalHint.style.color = 'var(--bad)';
+      }
+    });
+
+    // time tool events
+    els.btnTimeFill?.addEventListener('click', fillTimeTool);
+    els.btnTimeCheckTotalMin?.addEventListener('click', () => {
+      const ex = timeExpect();
+      if (!ex) return;
+      const v = toIntSafe(els.timeTotalMin.value);
+      if (!Number.isFinite(v)){
+        els.timeTotalMinHint.textContent = '請輸入整數分鐘';
+        els.timeTotalMinHint.style.color = 'var(--bad)';
+        return;
+      }
+      if (v === ex.totalMin){
+        els.timeTotalMinHint.textContent = 'Step 1 正確！';
+        els.timeTotalMinHint.style.color = 'var(--ok)';
+      } else {
+        els.timeTotalMinHint.textContent = `提示：${ex.sm}+${ex.addM} = ${ex.totalMin}`;
+        els.timeTotalMinHint.style.color = 'var(--warn)';
+      }
+    });
+    els.btnTimeCheckCarry?.addEventListener('click', () => {
+      const ex = timeExpect();
+      if (!ex) return;
+      const ch = toIntSafe(els.timeCarryH.value);
+      const rm = toIntSafe(els.timeRemainM.value);
+      if (!Number.isFinite(ch) || !Number.isFinite(rm)){
+        els.timeCarryHint.textContent = '請輸入兩個整數';
+        els.timeCarryHint.style.color = 'var(--bad)';
+        return;
+      }
+      if (ch === ex.carryH && rm === ex.remainM){
+        els.timeCarryHint.textContent = 'Step 2 正確！';
+        els.timeCarryHint.style.color = 'var(--ok)';
+      } else {
+        els.timeCarryHint.textContent = `提示：${ex.totalMin} 分 = ${ex.carryH} 小時 + ${ex.remainM} 分`; 
+        els.timeCarryHint.style.color = 'var(--warn)';
+      }
+    });
+    els.btnTimeCheckFinal?.addEventListener('click', () => {
+      const ex = timeExpect();
+      if (!ex) return;
+      try{
+        const ok = compareByMode(els.timeFinal.value, ex.end, 'hhmm');
+        if (ok){
+          els.timeFinalHint.textContent = 'Step 3 正確！';
+          els.timeFinalHint.style.color = 'var(--ok)';
+        } else {
+          els.timeFinalHint.textContent = '再試一次：把進位加到小時，分鐘要補兩位數。';
+          els.timeFinalHint.style.color = 'var(--warn)';
+        }
+      } catch(e){
+        els.timeFinalHint.textContent = String(e?.message || e);
+        els.timeFinalHint.style.color = 'var(--bad)';
+      }
+    });
+
+    function showBanner(kind, text){
+      els.banner.className = `banner ${kind}`;
+      els.banner.textContent = text;
+    }
+
+    function showSolution(){
+      const q = state.q;
+      if (!q) return;
+      const div = document.createElement('div');
+      div.className = 'sol';
+      const lines = [];
+      if (Array.isArray(q.steps) && q.steps.length){
+        q.steps.forEach((s,i) => lines.push(`步驟 ${i+1}：${s}`));
+      }
+      if (q.explanation) lines.push('', '詳解：', q.explanation);
+      lines.push('', `答案：${q.answer}`);
+      div.textContent = lines.join('\n');
+      els.solution.innerHTML = '';
+      els.solution.appendChild(div);
+    }
+
+    function currentHint(level){
+      const q = state.q;
+      if (!q) return null;
+      const idx = Math.max(1, Math.min(3, level)) - 1;
+      if (Array.isArray(q.hints) && q.hints[idx]) return q.hints[idx];
+      if (Array.isArray(q.steps) && q.steps.length) return q.steps.slice(0, idx+1).join('\n');
+      return '（沒有提示）';
+    }
+
+    function clampHintLevel(raw){
+      const n = Number(raw);
+      if (!Number.isFinite(n)) return 1;
+      return Math.max(1, Math.min(3, Math.floor(n)));
+    }
+
+    function showHintForLevel(level, source){
+      const q = state.q;
+      if (!q) return false;
+      const lv = clampHintLevel(level);
+
+      const existing = els.hints.querySelector(`.hint[data-level="${lv}"]`);
+      if (existing){
+        showBanner('warn', source === 'next'
+          ? '這個 Level 的提示已經看過了；請再按「下一個 Level」或改選其他 Level。'
+          : '這個 Level 的提示你已經看過了；如果還不清楚，請改選其他 Level 再按「看提示」。'
+        );
+        try { existing.scrollIntoView({behavior:'smooth', block:'nearest'}); } catch {}
+        return false;
+      }
+
+      const text = currentHint(lv);
+      if (!text) return false;
+      els.hints.appendChild(renderHint(text, lv));
+      state.shownHintLevels[lv] = true;
+      state.hintUsed = Math.max(state.hintUsed, lv);
+      return true;
+    }
+
+    function nextStepHintByRule(q, studentState){
+      const st = normalizeText(studentState);
+      const kind = String(q?.kind || '');
+      if (!st) return '下一步：先寫出算式（列式），再做估算檢查（答案大概在哪裡）。';
+
+      if (kind === 'decimal_mul') return '下一步：先把小數點拿掉做整數乘法，最後依小數位數把小數點放回去。';
+      if (kind === 'decimal_div') return '下一步：用直式除法，不夠除就補 0；商的小數點要跟被除數的小數點對齊（往上點）。';
+      if (kind === 'fraction_addsub') return '下一步：先通分（找最小公倍數），把兩個分數改成同分母，再做加減，最後約分到最簡。';
+      if (kind === 'fraction_mul') return '下一步：先交叉約分，再分子乘分子、分母乘分母，確認最簡。';
+      if (kind === 'percent_of') return '下一步：把 p% 變成 p/100 或小數，再用乘法求部分；也可以先算 10%/25% 再組合。';
+      if (kind === 'time_add') return '下一步：先加分鐘，超過 60 就進位到小時；最後把分鐘補成兩位數（HH:MM）。';
+      if (kind === 'unit_convert') return '下一步：寫出換算關係（×100 或 ×1000），先算整包，再加上剩下。';
+      if (kind === 'volume_rect_prism') return '下一步：先算底面積（長×寬），再乘高；單位要寫 cm³。';
+
+      if (st.includes('通分')) return '很好！下一步：通分後做加減，再約分成最簡分數。';
+      if (st.includes('約分')) return '很好！下一步：能交叉約分先約分，再相乘。';
+      if (st.includes('進位')) return '對！下一步：把超過 60 的分鐘換成 1 小時，分鐘留餘數。';
+      return '下一步：把題目翻成算式，算完再做合理性檢查。';
+    }
+
+    // ---------- practice events ----------
+    els.btnNew?.addEventListener('click', () => {
+      const pool = filteredBank(String(els.kind.value||'all'), String(els.difficulty.value||'all'));
+      const q = pickFromPool(pool);
+      showQuestion(q);
+    });
+
+    els.btnReset?.addEventListener('click', () => {
+      showQuestion(state.q);
+    });
+
+    els.btnHint?.addEventListener('click', () => {
+      const q = state.q;
+      if (!q) return;
+      const level = clampHintLevel(els.hintLevel.value || '1');
+      showHintForLevel(level, 'hint');
+    });
+
+    els.btnHintNext?.addEventListener('click', () => {
+      const q = state.q;
+      if (!q) return;
+      const cur = clampHintLevel(els.hintLevel.value || '1');
+      for (let lv = cur + 1; lv <= 3; lv++){
+        els.hintLevel.value = String(lv);
+        if (showHintForLevel(lv, 'next')) return;
+      }
+      showBanner('warn', '已經到 Level 3 了；如果還是不懂，可以按「看完整解題」，或換一題再試一次。');
+    });
+
+    els.btnShowSteps?.addEventListener('click', () => {
+      showSolution();
+      state.revealed = true;
+    });
+
+    els.btnCheck?.addEventListener('click', () => {
+      const q = state.q;
+      if (!q){
+        showBanner('bad', '請先出一題');
+        return;
+      }
+      try {
+        const ok = compareByMode(els.answer.value, q.answer, q.answer_mode || 'number');
+        if (ok){
+          showBanner('ok', '答對了！你可以出下一題。');
+        } else {
+          showBanner('bad', '答案不對，再試一次；可以先看提示 Level 1/2/3。');
+        }
+      } catch (e){
+        showBanner('bad', String(e?.message || e || '答案格式錯誤'));
+      }
+    });
+
+    els.btnNext?.addEventListener('click', () => {
+      const q = state.q;
+      if (!q) return;
+      const t = nextStepHintByRule(q, els.studentState.value);
+      els.nextHint.textContent = t;
+      els.nextHint.style.display = '';
+    });
+
+    // ---------- game mode / empire regions ----------
+    const TERRITORY_XP = 60;
+    const MAX_TILES = 72;
+    const gPersistKey = 'g5e_empire_regions_v1';
+
+    const REGIONS = [
+      { id:'decimal_mul', title:'小數乘法城', kinds:new Set(['decimal_mul']) },
+      { id:'decimal_div', title:'小數除法港', kinds:new Set(['decimal_div']) },
+      { id:'fraction_addsub', title:'通分山谷', kinds:new Set(['fraction_addsub']) },
+      { id:'fraction_mul', title:'約分港口', kinds:new Set(['fraction_mul']) },
+      { id:'percent_of', title:'百分要塞', kinds:new Set(['percent_of']) },
+      { id:'time_add', title:'時間鐘塔', kinds:new Set(['time_add']) },
+      { id:'unit_convert', title:'換算工坊', kinds:new Set(['unit_convert']) },
+      { id:'volume_rect_prism', title:'體積積木城', kinds:new Set(['volume_rect_prism']) },
+    ];
+    const regionById = Object.fromEntries(REGIONS.map(r => [r.id, r]));
+
+    function defaultEmpire(){
+      const regions = {};
+      for (const r of REGIONS) regions[r.id] = {xp:0};
+      return { regions, selected: REGIONS[0].id };
+    }
+
+    let empire = ls.get(gPersistKey, defaultEmpire());
+    if (!empire || !empire.regions) empire = defaultEmpire();
+    for (const r of REGIONS) if (!empire.regions[r.id]) empire.regions[r.id] = {xp:0};
+    if (!empire.selected || !regionById[empire.selected]) empire.selected = REGIONS[0].id;
+
+    function territoriesFromXP(xp){
+      return Math.max(0, Math.floor((Number(xp)||0) / TERRITORY_XP));
+    }
+
+    function fortressLevel(land){
+      const n = Number(land) || 0;
+      if (n >= 54) return '帝國堡壘';
+      if (n >= 40) return '鋼鐵要塞';
+      if (n >= 26) return '石造城堡';
+      if (n >= 12) return '木造堡壘';
+      if (n >= 1) return '前哨';
+      return '—';
+    }
+
+    function regionFromKind(kind){
+      const k = String(kind||'');
+      for (const r of REGIONS){
+        if (r.kinds.has(k)) return r.id;
+      }
+      return REGIONS[0].id;
+    }
+
+    function regionXP(regionId){
+      const id = regionById[regionId] ? regionId : REGIONS[0].id;
+      return Math.max(0, Number(empire?.regions?.[id]?.xp) || 0);
+    }
+
+    function setRegionXP(regionId, xp){
+      const id = regionById[regionId] ? regionId : REGIONS[0].id;
+      empire.regions[id] = empire.regions[id] || {xp:0};
+      empire.regions[id].xp = Math.max(0, Number(xp) || 0);
+    }
+
+    function regionStats(regionId){
+      const xp = regionXP(regionId);
+      const land = territoriesFromXP(xp);
+      const inTile = xp % TERRITORY_XP;
+      return { xp, land, inTile, fort: fortressLevel(land) };
+    }
+
+    function saveEmpire(){
+      ls.set(gPersistKey, empire);
+      if (els.empireSaved){
+        const t = new Date();
+        const hh = String(t.getHours()).padStart(2,'0');
+        const mm = String(t.getMinutes()).padStart(2,'0');
+        const ss = String(t.getSeconds()).padStart(2,'0');
+        els.empireSaved.textContent = `存檔：已自動保存（${hh}:${mm}:${ss}）`;
+      }
+    }
+
+    function setSelectedRegion(regionId){
+      const id = regionById[regionId] ? regionId : REGIONS[0].id;
+      empire.selected = id;
+      saveEmpire();
+      renderEmpire(null);
+    }
+
+    function packFromRegion(regionId){
+      const id = regionById[regionId] ? regionId : REGIONS[0].id;
+      if (id === 'decimal_mul' || id === 'decimal_div') return 'decimals';
+      if (id === 'fraction_addsub' || id === 'fraction_mul') return 'fractions';
+      return 'life';
+    }
+
+    function renderEmpire(latestIndex){
+      const rid = empire.selected || REGIONS[0].id;
+      const rs = regionStats(rid);
+
+      // toggle tab active
+      for (const id of REGION_BTN_IDS){
+        const el = document.getElementById(id);
+        if (!el) continue;
+        el.classList.toggle('active', id === `region_${rid}`);
+      }
+
+      if (els.empireLand) els.empireLand.textContent = String(rs.land);
+      if (els.empireXP) els.empireXP.textContent = String(rs.xp);
+      if (els.empireFort) els.empireFort.textContent = rs.fort;
+      if (els.empireMeta) els.empireMeta.textContent = `下一塊領地：${rs.inTile} / ${TERRITORY_XP}`;
+
+      if (els.empireSummary){
+        const parts = REGIONS.map(r => `${r.title} ${regionStats(r.id).land}`);
+        els.empireSummary.textContent = parts.join('｜');
+      }
+
+      const grid = els.empireGrid;
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      for (let i=1;i<=MAX_TILES;i++){
+        const d = document.createElement('div');
+        d.className = 'tile' + (i <= rs.land ? ' own' : '');
+        if (i === 12 || i === 26 || i === 40 || i === 54) d.className += ' castle';
+        if (latestIndex && i === latestIndex) d.className += ' latest';
+        d.title = i <= rs.land ? `${regionById[rid].title}｜領地 #${i}` : `未取得（還差 ${Math.max(0, (i*TERRITORY_XP) - rs.xp)} 點）`;
+        grid.appendChild(d);
+      }
+    }
+
+    function resetSelectedRegion(){
+      const rid = empire.selected || REGIONS[0].id;
+      setRegionXP(rid, 0);
+      saveEmpire();
+      renderEmpire(null);
+      gUpdate();
+    }
+
+    function resetAllRegions(){
+      for (const r of REGIONS) setRegionXP(r.id, 0);
+      saveEmpire();
+      renderEmpire(null);
+      gUpdate();
+    }
+
+    // game: optional region lock (click a region => lock questions to that kind)
+    let gRegionLock = null;
+
+    function buildGamePool(lockRegionId){
+      const pack = String(els.pack.value||'mixed');
+      const diff = String(els.gDifficulty.value||'all');
+      const allow = packAllow(pack);
+      let pool = bank;
+      if (allow) pool = pool.filter(x => allow.has(String(x.kind)));
+      if (diff !== 'all') pool = pool.filter(x => String(x.difficulty) === diff);
+
+      const rid = lockRegionId && regionById[lockRegionId] ? lockRegionId : null;
+      if (rid){
+        const kinds = regionById[rid].kinds;
+        pool = pool.filter(x => kinds.has(String(x.kind)));
+      }
+      return pool;
+    }
+
+    function gRebuildPoolAndMaybePick(reason){
+      if (!g.running) return;
+      g.pool = buildGamePool(gRegionLock);
+      if (!g.pool.length){
+        const title = gRegionLock ? (regionById[gRegionLock]?.title || '此區域') : '目前條件';
+        gBanner('bad', `${title} 沒有符合條件的題目（可改難度/題型包，或解除鎖定）`);
+        gUpdate();
+        return;
+      }
+      gBanner('muted', reason || '已更新題型/難度，繼續闖關！');
+      gPick();
+    }
+
+    // wire region buttons
+    for (const r of REGIONS){
+      const el = document.getElementById(`region_${r.id}`);
+      el?.addEventListener('click', () => {
+        setSelectedRegion(r.id);
+        gRegionLock = r.id;
+        const p = packFromRegion(r.id);
+        if (els.pack && String(els.pack.value||'') !== p) els.pack.value = p;
+        gRebuildPoolAndMaybePick(`已切換戰場：${r.title}（題目會對應切換）`);
+      });
+    }
+
+    els.btnEmpireReset?.addEventListener('click', () => {
+      const title = regionById[empire.selected || REGIONS[0].id]?.title || '目前區域';
+      if (confirm(`確定要重置「${title}」的領地/工程點數嗎？（不會影響題庫）`)) resetSelectedRegion();
+    });
+    els.btnEmpireResetAll?.addEventListener('click', () => {
+      if (confirm('確定要重置全部區域的領地/工程點數嗎？')) resetAllRegions();
+    });
+
+    let g = { running:false, t:90, timer:null, score:0, streak:0, correct:0, total:0, q:null, pool:[], hintUsedThisQ:false, activeRegion:REGIONS[0].id, decToolOpen:false };
+
+    function gHideDecTools(){
+      if (els.gDecToolWrap) els.gDecToolWrap.style.display = 'none';
+      if (els.gToolDecMul) els.gToolDecMul.style.display = 'none';
+      if (els.gToolDecDiv) els.gToolDecDiv.style.display = 'none';
+      if (els.gdmRawHint) els.gdmRawHint.textContent = '';
+      if (els.gdmFinalHint) els.gdmFinalHint.textContent = '';
+      if (els.gddShiftHint) els.gddShiftHint.textContent = '';
+      if (els.gddAnsIntHint) els.gddAnsIntHint.textContent = '';
+      if (els.gddFinalHint) els.gddFinalHint.textContent = '';
+    }
+
+    function gDecMulExpect(){
+      const q = g.q;
+      if (!q || q.kind !== 'decimal_mul') return null;
+      const m = q.meta || {};
+      const a = String(m.a || '');
+      const b = toIntSafe(m.b);
+      const aInt = toIntSafe(m.a_int);
+      const totalPlaces = toIntSafe(m.total_places);
+      const raw = toIntSafe(m.raw_int_product);
+      if (!a || !Number.isFinite(b) || !Number.isFinite(aInt) || !Number.isFinite(totalPlaces) || !Number.isFinite(raw)) return null;
+      return { a, b, aInt, totalPlaces, raw, ans: String(q.answer || '') };
+    }
+
+    function gFillDecMul(){
+      const ex = gDecMulExpect();
+      if (!ex) return;
+      if (els.gdmExpr) els.gdmExpr.textContent = `${ex.a} × ${ex.b}`;
+      if (els.gdmPlaces) els.gdmPlaces.textContent = String(ex.totalPlaces);
+      if (els.gdmRaw) els.gdmRaw.value = '';
+      if (els.gdmFinal) els.gdmFinal.value = '';
+      if (els.gdmDemo){
+        const pow = Math.pow(10, ex.totalPlaces);
+        els.gdmDemo.textContent = [
+          '（^ 表示小數點的位置）',
+          '完整示範（跟著本題做）：',
+          `Step 1｜把小數點往右移 ${ex.totalPlaces} 格（×${pow}）`,
+          dotMoveDiagram(ex.a, String(ex.aInt)),
+          `Step 2｜整數乘法：${ex.aInt} × ${ex.b} = ${ex.raw}`,
+          `Step 3｜把小數點往左移 ${ex.totalPlaces} 格（÷${pow}）`,
+          dotMoveDiagram(String(ex.raw), String(ex.ans)),
+        ].join('\n');
+      }
+      if (els.gdmRawHint){
+        els.gdmRawHint.textContent = `提示：先把 ${ex.a} 右移 ${ex.totalPlaces} 位 → ${ex.aInt}，再算 ${ex.aInt}×${ex.b}`;
+        els.gdmRawHint.style.color = 'var(--muted)';
+      }
+      if (els.gdmFinalHint) els.gdmFinalHint.textContent = '';
+    }
+
+    function gDecDivExpect(){
+      const q = g.q;
+      if (!q || q.kind !== 'decimal_div') return null;
+      const m = q.meta || {};
+      const a = String(m.a || '');
+      const b = toIntSafe(m.b);
+      const aInt = toIntSafe(m.a_int);
+      const aPlaces = toIntSafe(m.a_places);
+      const ansInt = toIntSafe(m.ans_int);
+      const ansPlaces = toIntSafe(m.ans_places);
+      if (!a || !Number.isFinite(b) || !Number.isFinite(aInt) || !Number.isFinite(aPlaces) || !Number.isFinite(ansInt) || !Number.isFinite(ansPlaces)) return null;
+      return { a, b, aInt, aPlaces, ansInt, ansPlaces, ans: String(q.answer || '') };
+    }
+
+    function gFillDecDiv(){
+      const ex = gDecDivExpect();
+      if (!ex) return;
+      if (els.gddExpr) els.gddExpr.textContent = `${ex.a} ÷ ${ex.b}`;
+      if (els.gddPlaces) els.gddPlaces.textContent = String(ex.aPlaces);
+      if (els.gddAInt) els.gddAInt.value = '';
+      if (els.gddAnsInt) els.gddAnsInt.value = '';
+      if (els.gddFinal) els.gddFinal.value = '';
+      if (els.gddDemo){
+        const pow = Math.pow(10, ex.aPlaces);
+        const ansFixed = intPlacesToStrFixed(ex.ansInt, ex.ansPlaces);
+        els.gddDemo.textContent = [
+          '（^ 表示小數點的位置）',
+          '完整示範（跟著本題做）：',
+          `Step 1｜把小數點往右移 ${ex.aPlaces} 格（×${pow}）`,
+          dotMoveDiagram(ex.a, String(ex.aInt)),
+          `Step 2｜整數除法：${ex.aInt} ÷ ${ex.b} = ${ex.ansInt}`,
+          `Step 3｜把小數點往左移 ${ex.aPlaces} 格（÷${pow}）`,
+          dotMoveDiagram(String(ex.ansInt), ansFixed),
+        ].join('\n');
+      }
+      if (els.gddShiftHint){
+        els.gddShiftHint.textContent = `提示：右移 ${ex.aPlaces} 位（×${Math.pow(10, ex.aPlaces)}) 變整數 a_int。`;
+        els.gddShiftHint.style.color = 'var(--muted)';
+      }
+      if (els.gddAnsIntHint) els.gddAnsIntHint.textContent = '';
+      if (els.gddFinalHint) els.gddFinalHint.textContent = '';
+    }
+
+    function gRenderDecTools(){
+      const kind = String(g.q?.kind || '');
+      const isDec = (kind === 'decimal_mul' || kind === 'decimal_div');
+      if (els.btnGDecTool) els.btnGDecTool.disabled = !g.running || !isDec;
+      if (!isDec){
+        g.decToolOpen = false;
+        gHideDecTools();
+        return;
+      }
+      if (!g.decToolOpen){
+        gHideDecTools();
+        return;
+      }
+      if (els.gDecToolWrap) els.gDecToolWrap.style.display = '';
+      if (kind === 'decimal_mul'){
+        if (els.gToolDecMul) els.gToolDecMul.style.display = '';
+        if (els.gToolDecDiv) els.gToolDecDiv.style.display = 'none';
+        gFillDecMul();
+      } else {
+        if (els.gToolDecDiv) els.gToolDecDiv.style.display = '';
+        if (els.gToolDecMul) els.gToolDecMul.style.display = 'none';
+        gFillDecDiv();
+      }
+    }
+
+    function packAllow(pack){
+      if (pack === 'decimals') return new Set(['decimal_mul','decimal_div']);
+      if (pack === 'fractions') return new Set(['fraction_addsub','fraction_mul']);
+      if (pack === 'life') return new Set(['percent_of','time_add','unit_convert','volume_rect_prism']);
+      return null;
+    }
+
+    // if user changes pack/difficulty while running, rebuild pool immediately
+    els.pack?.addEventListener('change', () => {
+      gRegionLock = null;
+      gRebuildPoolAndMaybePick('已切換戰役題型包（解除區域鎖定）');
+    });
+    els.gDifficulty?.addEventListener('change', () => {
+      gRebuildPoolAndMaybePick('已切換難度');
+    });
+
+    function gBanner(kind, text){
+      els.gBanner.className = `banner ${kind}`;
+      els.gBanner.textContent = text;
+    }
+
+    function gUpdate(){
+      const rs = regionStats(g.activeRegion || REGIONS[0].id);
+      els.gTime.textContent = String(g.t);
+      els.gScore.textContent = String(g.score);
+      els.gStreak.textContent = String(g.streak);
+      els.gAcc.textContent = g.total ? `${Math.round((g.correct/g.total)*100)}%` : '-';
+      if (els.gRegion) els.gRegion.textContent = regionById[g.activeRegion]?.title || '—';
+      if (els.gLand) els.gLand.textContent = String(rs.land);
+      if (els.gFort) els.gFort.textContent = rs.fort;
+
+      const pct = Math.max(0, Math.min(100, (rs.inTile / TERRITORY_XP) * 100));
+      els.gBar.style.width = `${pct}%`;
+      if (els.gProgressMeta) els.gProgressMeta.textContent = `進度：${rs.inTile} / ${TERRITORY_XP}（答對才前進）｜本區工程點數：${rs.xp}`;
+    }
+
+    function gPick(){
+      g.q = pickFromPool(g.pool);
+      g.hintUsedThisQ = false;
+      g.activeRegion = regionFromKind(g.q?.kind);
+      els.gQ.textContent = g.q ? g.q.question : '（題庫不足）';
+      els.gAnswer.value = '';
+      applyAnswerUI(g.q, 'game');
+      gBanner('muted', '提示：先讀題抓已知/未知，再列式。');
+      gRenderDecTools();
+      renderEmpire(null);
+      gUpdate();
+    }
+
+    function gStop(){
+      g.running = false;
+      if (g.timer) clearInterval(g.timer);
+      g.timer = null;
+      els.btnStart.disabled = false;
+      els.btnStop.disabled = true;
+      els.btnSubmit.disabled = true;
+      els.btnNudge.disabled = true;
+
+      const best = ls.get('g5e_best_v1', {score:0, streak:0});
+      const next = { score: Math.max(best.score||0, g.score), streak: Math.max(best.streak||0, g.streak) };
+      ls.set('g5e_best_v1', next);
+      updateBankMeta();
+
+      saveEmpire();
+      renderEmpire(null);
+
+      gBanner('warn', `結束！分數 ${g.score}｜正確 ${g.correct}/${g.total}（${g.total?Math.round((g.correct/g.total)*100):0}%）\n你可以再挑戰一次，或切到練習模式用提示/詳解把弱點練熟。`);
+    }
+
+    function gStart(){
+      g.pool = buildGamePool(gRegionLock);
+      if (!g.pool.length){
+        gBanner('bad', '沒有符合條件的題目（請改成「全部」或換難度）');
+        return;
+      }
+      g = { running:true, t:90, timer:null, score:0, streak:0, correct:0, total:0, q:null, pool:g.pool, hintUsedThisQ:false, activeRegion:REGIONS[0].id, decToolOpen:false };
+      els.btnStart.disabled = true;
+      els.btnStop.disabled = false;
+      els.btnSubmit.disabled = false;
+      els.btnNudge.disabled = false;
+      gHideDecTools();
+      gPick();
+      renderEmpire(null);
+      gUpdate();
+      g.timer = setInterval(() => {
+        g.t -= 1;
+        if (g.t <= 0){
+          g.t = 0;
+          gUpdate();
+          gStop();
+          return;
+        }
+        gUpdate();
+      }, 1000);
+    }
+
+    function gSubmit(){
+      if (!g.running || !g.q) return;
+      g.total += 1;
+      try{
+        const ok = compareByMode(els.gAnswer.value, g.q.answer, g.q.answer_mode || 'number');
+        if (ok){
+          g.correct += 1;
+          g.streak += 1;
+          const base = 10 + Math.min(10, g.streak);
+          const bonus = g.hintUsedThisQ ? 0 : 5;
+          const delta = base + bonus;
+          g.score += delta;
+
+          const rid = g.activeRegion || regionFromKind(g.q?.kind);
+          const beforeLand = regionStats(rid).land;
+          setRegionXP(rid, regionXP(rid) + delta);
+          const after = regionStats(rid);
+          saveEmpire();
+          const latest = after.land > beforeLand ? after.land : null;
+          renderEmpire(latest);
+
+          const gotLand = after.land > beforeLand;
+          if (gotLand){
+            const rt = regionById[rid]?.title || '本區域';
+            gBanner('ok', `答對！+${base}${bonus?`+${bonus}（不看提示加分）`:''}｜連對 ${g.streak}\n${rt} 擴張成功：取得第 ${after.land} 塊領地！`);
+          } else if (bonus){
+            gBanner('ok', `答對！+${base}+${bonus}（不看提示加分）｜連對 ${g.streak}`);
+          } else {
+            gBanner('ok', `答對！+${base} 分｜連對 ${g.streak}`);
+          }
+        } else {
+          g.streak = 0;
+          g.score = Math.max(0, g.score - 4);
+          gBanner('bad', `不對，扣 4 分。\n小提醒：先估算/列式，再計算。`);
+        }
+      } catch(e){
+        g.streak = 0;
+        g.score = Math.max(0, g.score - 1);
+        gBanner('bad', String(e?.message || e || '答案格式錯誤'));
+      }
+      gUpdate();
+      setTimeout(() => { if (g.running) gPick(); }, 650);
+    }
+
+    function gNudge(){
+      if (!g.running || !g.q) return;
+      g.hintUsedThisQ = true;
+      const kind = String(g.q.kind||'');
+      const region = regionById[regionFromKind(kind)]?.title || '本區域';
+      if (kind === 'fraction_addsub') gBanner('warn', `提示（${region}）：先通分（找公分母）→ 分子相加減 → 約分。`);
+      else if (kind === 'fraction_mul') gBanner('warn', `提示（${region}）：先交叉約分，再分子乘分子、分母乘分母。`);
+      else if (kind === 'decimal_div') gBanner('warn', `提示（${region}）：不夠除就補 0；商的小數點對齊（往上點）。`);
+      else if (kind === 'decimal_mul') gBanner('warn', `提示（${region}）：先當整數乘，再依小數位數把小數點放回。`);
+      else if (kind === 'time_add') gBanner('warn', `提示（${region}）：先加分鐘，滿 60 進 1 小時；最後寫 HH:MM。`);
+      else if (kind === 'unit_convert') gBanner('warn', `提示（${region}）：寫出換算關係（×100 或 ×1000），先算整包再加剩下。`);
+      else if (kind === 'volume_rect_prism') gBanner('warn', `提示（${region}）：體積=長×寬×高（或 底面積×高）。`);
+      else gBanner('warn', `提示（${region}）：p% = p/100，先算 10%/25% 再組合。`);
+    }
+
+    // game decimal quick tools events
+    els.btnGDecTool?.addEventListener('click', () => {
+      if (!g.running) return;
+      const kind = String(g.q?.kind || '');
+      if (kind !== 'decimal_mul' && kind !== 'decimal_div') return;
+      g.decToolOpen = !g.decToolOpen;
+      if (!g.decToolOpen) gHideDecTools();
+      gRenderDecTools();
+    });
+    els.btnGdmFill?.addEventListener('click', gFillDecMul);
+    els.btnGdmCheckRaw?.addEventListener('click', () => {
+      const ex = gDecMulExpect();
+      if (!ex) return;
+      const v = toIntSafe(els.gdmRaw.value);
+      if (!Number.isFinite(v)){
+        els.gdmRawHint.textContent = '請輸入整數（整數乘法結果）';
+        els.gdmRawHint.style.color = 'var(--bad)';
+        return;
+      }
+      if (v === ex.raw){
+        els.gdmRawHint.textContent = 'Step 1 正確！接著把小數點放回去。';
+        els.gdmRawHint.style.color = 'var(--ok)';
+      } else {
+        els.gdmRawHint.textContent = `提示：${ex.aInt}×${ex.b} = ${ex.raw}`;
+        els.gdmRawHint.style.color = 'var(--warn)';
+      }
+    });
+    els.btnGdmCheckFinal?.addEventListener('click', () => {
+      const ex = gDecMulExpect();
+      if (!ex) return;
+      try{
+        const ok = compareByMode(els.gdmFinal.value, ex.ans, 'number');
+        if (ok){
+          els.gdmFinalHint.textContent = 'Step 2 正確！';
+          els.gdmFinalHint.style.color = 'var(--ok)';
+        } else {
+          els.gdmFinalHint.textContent = `提示：整數結果 ${ex.raw} 共有 ${ex.totalPlaces} 位小數，要放回小數點。`;
+          els.gdmFinalHint.style.color = 'var(--warn)';
+        }
+      } catch(e){
+        els.gdmFinalHint.textContent = String(e?.message || e);
+        els.gdmFinalHint.style.color = 'var(--bad)';
+      }
+    });
+    els.btnGddFill?.addEventListener('click', gFillDecDiv);
+    els.btnGddCheckShift?.addEventListener('click', () => {
+      const ex = gDecDivExpect();
+      if (!ex) return;
+      const v = toIntSafe(els.gddAInt.value);
+      if (!Number.isFinite(v)){
+        els.gddShiftHint.textContent = '請輸入整數 a_int（把小數點右移後的整數）';
+        els.gddShiftHint.style.color = 'var(--bad)';
+        return;
+      }
+      if (v === ex.aInt){
+        els.gddShiftHint.textContent = 'Step 1 正確！接著做整數除法。';
+        els.gddShiftHint.style.color = 'var(--ok)';
+      } else {
+        els.gddShiftHint.textContent = `提示：右移 ${ex.aPlaces} 位後，a_int 應該是 ${ex.aInt}`;
+        els.gddShiftHint.style.color = 'var(--warn)';
+      }
+    });
+    els.btnGddCheckAnsInt?.addEventListener('click', () => {
+      const ex = gDecDivExpect();
+      if (!ex) return;
+      const v = toIntSafe(els.gddAnsInt.value);
+      if (!Number.isFinite(v)){
+        els.gddAnsIntHint.textContent = '請輸入整數商 ans_int';
+        els.gddAnsIntHint.style.color = 'var(--bad)';
+        return;
+      }
+      if (v === ex.ansInt){
+        els.gddAnsIntHint.textContent = 'Step 2 正確！最後把小數點放回去。';
+        els.gddAnsIntHint.style.color = 'var(--ok)';
+      } else {
+        els.gddAnsIntHint.textContent = `提示：${ex.aInt}÷${ex.b} = ${ex.ansInt}`;
+        els.gddAnsIntHint.style.color = 'var(--warn)';
+      }
+    });
+    els.btnGddCheckFinal?.addEventListener('click', () => {
+      const ex = gDecDivExpect();
+      if (!ex) return;
+      try{
+        const ok = compareByMode(els.gddFinal.value, ex.ans, 'number');
+        if (ok){
+          els.gddFinalHint.textContent = 'Step 3 正確！';
+          els.gddFinalHint.style.color = 'var(--ok)';
+        } else {
+          els.gddFinalHint.textContent = `提示：整數商 ${ex.ansInt} 要左移 ${ex.ansPlaces} 位小數。`;
+          els.gddFinalHint.style.color = 'var(--warn)';
+        }
+      } catch(e){
+        els.gddFinalHint.textContent = String(e?.message || e);
+        els.gddFinalHint.style.color = 'var(--bad)';
+      }
+    });
+
+    els.btnStart?.addEventListener('click', gStart);
+    els.btnStop?.addEventListener('click', gStop);
+    els.btnSubmit?.addEventListener('click', gSubmit);
+    els.btnNudge?.addEventListener('click', gNudge);
+    els.gAnswer?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') gSubmit();
+    });
+
+    // init
+    updateBankMeta();
+    renderEmpire(null);
+    saveEmpire();
+    if (bank.length) showQuestion(bank[0]);
+  </script>
+</body>
+</html>
