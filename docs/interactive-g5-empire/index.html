@@ -120,6 +120,7 @@
         <div class="row">
           <label>答案</label>
           <input id="gAnswer" placeholder="例如：7.5、12、1/2、09:35" />
+          <span class="pill" id="gAnswerModePill">答案格式：—</span>
           <button class="btn good" id="btnSubmit" disabled>送出</button>
           <button class="btn warn" id="btnNudge" disabled>小提示（不扣分）</button>
           <button class="btn" id="btnGDecTool" disabled title="只在小數乘/除題出現">小數小工具</button>
@@ -227,6 +228,7 @@
         <div class="row">
           <label>你的答案</label>
           <input id="answer" placeholder="例如：7.5、12、1/2、09:35" />
+          <span class="pill" id="answerModePill">答案格式：—</span>
           <button class="btn good" id="btnCheck">送出/檢查</button>
         </div>
 
@@ -742,6 +744,32 @@
       return nearlyEqual(sv, cv, 1e-9);
     }
 
+    function answerModeUI(q){
+      const mode = String(q?.answer_mode || 'number');
+      const kind = String(q?.kind || '');
+
+      if (mode === 'fraction'){
+        return {
+          pill: (kind === 'fraction_addsub' || kind === 'fraction_mul') ? '最簡分數（a/b）' : '分數（a/b）',
+          placeholder: '例如：5/6',
+        };
+      }
+      if (mode === 'hhmm') return { pill: '時間（HH:MM）', placeholder: '例如：09:35' };
+      if (mode === 'exact') return { pill: '完全一致（照題目格式）', placeholder: '例如：x=3（照題目要求）' };
+      return { pill: '數字（可小數）', placeholder: '例如：12 或 7.5' };
+    }
+
+    function applyAnswerUI(q, which){
+      const ui = answerModeUI(q);
+      if (which === 'game'){
+        if (els.gAnswer) els.gAnswer.placeholder = ui.placeholder;
+        if (els.gAnswerModePill) els.gAnswerModePill.textContent = `答案格式：${ui.pill}`;
+        return;
+      }
+      if (els.answer) els.answer.placeholder = ui.placeholder;
+      if (els.answerModePill) els.answerModePill.textContent = `答案格式：${ui.pill}`;
+    }
+
     function renderHint(text){
       const div = document.createElement('div');
       div.className = 'hint';
@@ -778,6 +806,7 @@
       gBar: document.getElementById('gBar'),
       gQ: document.getElementById('gQ'),
       gAnswer: document.getElementById('gAnswer'),
+      gAnswerModePill: document.getElementById('gAnswerModePill'),
       btnSubmit: document.getElementById('btnSubmit'),
       btnNudge: document.getElementById('btnNudge'),
       gBanner: document.getElementById('gBanner'),
@@ -827,6 +856,7 @@
       btnReset: document.getElementById('btnReset'),
       qText: document.getElementById('qText'),
       answer: document.getElementById('answer'),
+      answerModePill: document.getElementById('answerModePill'),
       btnCheck: document.getElementById('btnCheck'),
       banner: document.getElementById('banner'),
       hints: document.getElementById('hints'),
@@ -1390,6 +1420,7 @@
       els.solution.innerHTML = '';
       els.nextHint.style.display = 'none';
       els.qText.textContent = q ? q.question : '（題庫中沒有符合條件的題目）';
+      applyAnswerUI(q, 'practice');
       els.banner.className = 'banner muted';
       els.banner.textContent = '提示：先抓「已知/未知」→ 再列式。';
 
@@ -2205,6 +2236,7 @@
       g.activeRegion = regionFromKind(g.q?.kind);
       els.gQ.textContent = g.q ? g.q.question : '（題庫不足）';
       els.gAnswer.value = '';
+      applyAnswerUI(g.q, 'game');
       gBanner('muted', '提示：先讀題抓已知/未知，再列式。');
       gRenderDecTools();
       renderEmpire(null);
