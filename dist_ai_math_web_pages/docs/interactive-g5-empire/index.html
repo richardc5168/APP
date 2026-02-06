@@ -33,20 +33,20 @@
     .banner.ok{border-color:rgba(46,160,67,.65); color:#b7f5c9; background:rgba(46,160,67,.10)}
     .banner.bad{border-color:rgba(248,81,73,.65); color:#ffd2cf; background:rgba(248,81,73,.08)}
     .banner.warn{border-color:rgba(210,153,34,.7); color:#ffe3b0; background:rgba(210,153,34,.08)}
-    .banner.has-badge{position:relative; padding-right:78px; --badge-size:56px}
+    .banner.has-badge{position:relative; --badge-size:72px; --badge-max:92px; --badge-min:46px; padding-right:calc(var(--badge-max) + 22px)}
     .banner.has-badge::after{
       content: attr(data-badge);
       position:absolute;
       right:12px;
       top:50%;
       transform:translateY(-50%);
-      font-size:var(--badge-size);
+      font-size:clamp(var(--badge-min), var(--badge-size), var(--badge-max));
       line-height:1;
       filter:drop-shadow(0 0 14px rgba(255,215,0,.25));
       opacity:.98;
     }
     @media (max-width: 520px){
-      .banner.has-badge{padding-right:64px; --badge-size:46px}
+      .banner.has-badge{--badge-max:68px; padding-right:calc(var(--badge-max) + 18px)}
       .banner.has-badge::after{right:10px}
     }
     .q{font-size:18px; padding:12px 14px; border-radius:12px; background:#08102a; border:1px dashed rgba(88,166,255,.4); margin: 10px 0; white-space:pre-wrap}
@@ -2325,7 +2325,7 @@
             showBanner(
               'ok',
               `答對了！+${delta} 工程點數（練習也能擴張）\n連對 ${state.practiceStreak}：領地已滿！你已征服「${rTitle}」全境`,
-              { badge: '🏰', badgeSizePx: 60 }
+              { badge: '🏰', badgeSizePx: 92 }
             );
           } else {
             showBanner('ok', `答對了！+${delta} 工程點數（練習也能擴張）\n連對 ${state.practiceStreak}：擴張 ${gained || 0} 格。你可以出下一題。`);
