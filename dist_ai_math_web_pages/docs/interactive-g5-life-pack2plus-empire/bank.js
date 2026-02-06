@@ -6,7 +6,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u1_avg_fraction_01",
     "kind": "u1_avg_fraction",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
     "question": "（生活應用｜平均分配｜班級點心）有 1 個披薩，平均分給 4 人，每人得到多少個？（用最簡分數 a/b 表示）",
     "answer": "1/4",
@@ -46,7 +46,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u1_avg_fraction_02",
     "kind": "u1_avg_fraction",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜平均分配｜班級點心）有 3/2 個巧克力，平均分給 3 人，每人得到多少個？（用最簡分數 a/b 表示）",
     "answer": "1/2",
@@ -86,7 +86,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u1_avg_fraction_03",
     "kind": "u1_avg_fraction",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜平均分配｜園遊會）有 9/5 個果汁，平均分給 6 人，每人得到多少個？（用最簡分數 a/b 表示）",
     "answer": "3/10",
@@ -126,7 +126,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u1_avg_fraction_04",
     "kind": "u1_avg_fraction",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜平均分配｜園遊會）有 1 個緞帶，平均分給 4 人，每人得到多少個？（用最簡分數 a/b 表示）",
     "answer": "1/4",
@@ -166,7 +166,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u1_avg_fraction_05",
     "kind": "u1_avg_fraction",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜平均分配｜園遊會）有 2/1 個緞帶，平均分給 3 人，每人得到多少個？（用最簡分數 a/b 表示）",
     "answer": "2/3",
@@ -206,7 +206,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u1_avg_fraction_06",
     "kind": "u1_avg_fraction",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜平均分配｜班級點心）有 1 個緞帶，平均分給 4 人，每人得到多少個？（用最簡分數 a/b 表示）",
     "answer": "1/4",
@@ -246,7 +246,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u1_avg_fraction_07",
     "kind": "u1_avg_fraction",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
     "question": "（生活應用｜平均分配｜班級點心）有 1 個蛋糕，平均分給 2 人，每人得到多少個？（用最簡分數 a/b 表示）",
     "answer": "1/2",
@@ -286,7 +286,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u1_avg_fraction_08",
     "kind": "u1_avg_fraction",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜平均分配｜班級點心）有 1 個西瓜，平均分給 4 人，每人得到多少個？（用最簡分數 a/b 表示）",
     "answer": "1/4",
@@ -326,7 +326,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u1_avg_fraction_09",
     "kind": "u1_avg_fraction",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜平均分配｜社團活動）有 3/2 個果汁，平均分給 5 人，每人得到多少個？（用最簡分數 a/b 表示）",
     "answer": "3/10",
@@ -366,7 +366,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u1_avg_fraction_10",
     "kind": "u1_avg_fraction",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
     "question": "（生活應用｜平均分配｜社團活動）有 1 個手作餅乾，平均分給 5 人，每人得到多少個？（用最簡分數 a/b 表示）",
     "answer": "1/5",
@@ -406,7 +406,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u1_avg_fraction_11",
     "kind": "u1_avg_fraction",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜平均分配｜班級點心）有 7/5 個蛋糕，平均分給 5 人，每人得到多少個？（用最簡分數 a/b 表示）",
     "answer": "7/25",
@@ -446,7 +446,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u1_avg_fraction_12",
     "kind": "u1_avg_fraction",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜平均分配｜社團活動）有 2/1 個果汁，平均分給 7 人，每人得到多少個？（用最簡分數 a/b 表示）",
     "answer": "2/7",
@@ -486,7 +486,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u1_avg_fraction_13",
     "kind": "u1_avg_fraction",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜平均分配｜園遊會）有 2/1 個果汁，平均分給 5 人，每人得到多少個？（用最簡分數 a/b 表示）",
     "answer": "2/5",
@@ -526,7 +526,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u1_avg_fraction_14",
     "kind": "u1_avg_fraction",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜平均分配｜園遊會）有 1 個果汁，平均分給 3 人，每人得到多少個？（用最簡分數 a/b 表示）",
     "answer": "1/3",
@@ -566,7 +566,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u1_avg_fraction_15",
     "kind": "u1_avg_fraction",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜平均分配｜家庭分享）有 9/5 個蛋糕，平均分給 7 人，每人得到多少個？（用最簡分數 a/b 表示）",
     "answer": "9/35",
@@ -606,7 +606,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u1_avg_fraction_16",
     "kind": "u1_avg_fraction",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜平均分配｜園遊會）有 1 個果汁，平均分給 3 人，每人得到多少個？（用最簡分數 a/b 表示）",
     "answer": "1/3",
@@ -646,7 +646,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u1_avg_fraction_17",
     "kind": "u1_avg_fraction",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜平均分配｜社團活動）有 6/5 個壽司捲，平均分給 6 人，每人得到多少個？（用最簡分數 a/b 表示）",
     "answer": "1/5",
@@ -686,7 +686,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u1_avg_fraction_18",
     "kind": "u1_avg_fraction",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜平均分配｜社團活動）有 1 個果汁，平均分給 7 人，每人得到多少個？（用最簡分數 a/b 表示）",
     "answer": "1/7",
@@ -726,7 +726,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u1_avg_fraction_19",
     "kind": "u1_avg_fraction",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜平均分配｜社團活動）有 7/4 個壽司捲，平均分給 3 人，每人得到多少個？（用最簡分數 a/b 表示）",
     "answer": "7/12",
@@ -766,7 +766,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u1_avg_fraction_20",
     "kind": "u1_avg_fraction",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜平均分配｜社團活動）有 1 個巧克力，平均分給 5 人，每人得到多少個？（用最簡分數 a/b 表示）",
     "answer": "1/5",
@@ -806,7 +806,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u2_frac_addsub_life_01",
     "kind": "u2_frac_addsub_life",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜分數減法）原本有 5/6 公升檸檬汁，用掉 2/3 公升檸檬汁，還剩多少 公升檸檬汁？（最簡分數）",
     "answer": "1/6",
@@ -850,7 +850,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u2_frac_addsub_life_02",
     "kind": "u2_frac_addsub_life",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜分數加法）小明喝了 2/3 杯水，又喝了 2/3 杯水，一共喝了多少 杯水？（最簡分數）",
     "answer": "4/3",
@@ -894,7 +894,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u2_frac_addsub_life_03",
     "kind": "u2_frac_addsub_life",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜分數加法）小明喝了 2/5 升湯，又喝了 1/2 升湯，一共喝了多少 升湯？（最簡分數）",
     "answer": "9/10",
@@ -938,7 +938,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u2_frac_addsub_life_04",
     "kind": "u2_frac_addsub_life",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜分數減法）原本有 3/4 罐檸檬汁，用掉 1/2 罐檸檬汁，還剩多少 罐檸檬汁？（最簡分數）",
     "answer": "1/4",
@@ -982,7 +982,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u2_frac_addsub_life_05",
     "kind": "u2_frac_addsub_life",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜分數減法）原本有 4/5 公升果汁，用掉 1/2 公升果汁，還剩多少 公升果汁？（最簡分數）",
     "answer": "3/10",
@@ -1026,7 +1026,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u2_frac_addsub_life_06",
     "kind": "u2_frac_addsub_life",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜分數加法）小明喝了 1/2 公升油，又喝了 1/2 公升油，一共喝了多少 公升油？（最簡分數）",
     "answer": "1/1",
@@ -1070,7 +1070,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u2_frac_addsub_life_07",
     "kind": "u2_frac_addsub_life",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜分數加法）小明喝了 2/5 瓶酵素飲，又喝了 1/6 瓶酵素飲，一共喝了多少 瓶酵素飲？（最簡分數）",
     "answer": "17/30",
@@ -1114,7 +1114,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u2_frac_addsub_life_08",
     "kind": "u2_frac_addsub_life",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜分數加法）小明喝了 1/6 杯牛奶，又喝了 3/5 杯牛奶，一共喝了多少 杯牛奶？（最簡分數）",
     "answer": "23/30",
@@ -1158,7 +1158,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u2_frac_addsub_life_09",
     "kind": "u2_frac_addsub_life",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜分數加法）小明喝了 7/8 升果汁，又喝了 1/8 升果汁，一共喝了多少 升果汁？（最簡分數）",
     "answer": "1/1",
@@ -1202,7 +1202,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u2_frac_addsub_life_10",
     "kind": "u2_frac_addsub_life",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜分數減法）原本有 4/5 公升果汁，用掉 1/2 公升果汁，還剩多少 公升果汁？（最簡分數）",
     "answer": "3/10",
@@ -1246,7 +1246,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u2_frac_addsub_life_11",
     "kind": "u2_frac_addsub_life",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜分數減法）原本有 7/8 瓶油，用掉 1/3 瓶油，還剩多少 瓶油？（最簡分數）",
     "answer": "13/24",
@@ -1290,7 +1290,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u2_frac_addsub_life_12",
     "kind": "u2_frac_addsub_life",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜分數減法）原本有 1/2 杯油，用掉 5/12 杯油，還剩多少 杯油？（最簡分數）",
     "answer": "1/12",
@@ -1334,7 +1334,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u2_frac_addsub_life_13",
     "kind": "u2_frac_addsub_life",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜分數減法）原本有 2/3 公升果汁，用掉 1/2 公升果汁，還剩多少 公升果汁？（最簡分數）",
     "answer": "1/6",
@@ -1378,7 +1378,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u2_frac_addsub_life_14",
     "kind": "u2_frac_addsub_life",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜分數加法）小明喝了 3/5 杯油，又喝了 1/5 杯油，一共喝了多少 杯油？（最簡分數）",
     "answer": "4/5",
@@ -1422,7 +1422,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u2_frac_addsub_life_15",
     "kind": "u2_frac_addsub_life",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜分數減法）原本有 1/2 公升檸檬汁，用掉 1/6 公升檸檬汁，還剩多少 公升檸檬汁？（最簡分數）",
     "answer": "1/3",
@@ -1466,7 +1466,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u2_frac_addsub_life_16",
     "kind": "u2_frac_addsub_life",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
     "question": "（生活應用｜分數加法）小明喝了 1/2 公升果汁，又喝了 1/2 公升果汁，一共喝了多少 公升果汁？（最簡分數）",
     "answer": "1/1",
@@ -1510,7 +1510,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u2_frac_addsub_life_17",
     "kind": "u2_frac_addsub_life",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
     "question": "（生活應用｜分數加法）小明喝了 3/5 公升果汁，又喝了 4/5 公升果汁，一共喝了多少 公升果汁？（最簡分數）",
     "answer": "7/5",
@@ -1554,7 +1554,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u2_frac_addsub_life_18",
     "kind": "u2_frac_addsub_life",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
     "question": "（生活應用｜分數加法）小明喝了 2/5 杯牛奶，又喝了 2/3 杯牛奶，一共喝了多少 杯牛奶？（最簡分數）",
     "answer": "16/15",
@@ -1598,7 +1598,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u2_frac_addsub_life_19",
     "kind": "u2_frac_addsub_life",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜分數減法）原本有 4/5 公升果汁，用掉 2/5 公升果汁，還剩多少 公升果汁？（最簡分數）",
     "answer": "2/5",
@@ -1642,7 +1642,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u2_frac_addsub_life_20",
     "kind": "u2_frac_addsub_life",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜分數加法）小明喝了 9/10 罐酵素飲，又喝了 4/5 罐酵素飲，一共喝了多少 罐酵素飲？（最簡分數）",
     "answer": "17/10",
@@ -1686,7 +1686,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u3_frac_times_int_01",
     "kind": "u3_frac_times_int",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜分數×整數）每份是 7/6 個水壺，共有 4 份，一共有多少個水壺？（最簡分數）",
     "answer": "14/3",
@@ -1725,7 +1725,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u3_frac_times_int_02",
     "kind": "u3_frac_times_int",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜分數×整數）每份是 5/6 個鍋湯，共有 7 份，一共有多少個鍋湯？（最簡分數）",
     "answer": "35/6",
@@ -1764,7 +1764,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u3_frac_times_int_03",
     "kind": "u3_frac_times_int",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
     "question": "（生活應用｜分數×整數）每份是 1/5 個水壺，共有 2 份，一共有多少個水壺？（最簡分數）",
     "answer": "2/5",
@@ -1803,7 +1803,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u3_frac_times_int_04",
     "kind": "u3_frac_times_int",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜分數×整數）每份是 19/10 個鍋湯，共有 8 份，一共有多少個鍋湯？（最簡分數）",
     "answer": "76/5",
@@ -1842,7 +1842,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u3_frac_times_int_05",
     "kind": "u3_frac_times_int",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜分數×整數）每份是 1/12 個披薩，共有 8 份，一共有多少個披薩？（最簡分數）",
     "answer": "2/3",
@@ -1881,7 +1881,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u3_frac_times_int_06",
     "kind": "u3_frac_times_int",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜分數×整數）每份是 7/8 個水壺，共有 8 份，一共有多少個水壺？（最簡分數）",
     "answer": "7/1",
@@ -1920,7 +1920,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u3_frac_times_int_07",
     "kind": "u3_frac_times_int",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜分數×整數）每份是 1/1 個蛋糕，共有 5 份，一共有多少個蛋糕？（最簡分數）",
     "answer": "5/1",
@@ -1959,7 +1959,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u3_frac_times_int_08",
     "kind": "u3_frac_times_int",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜分數×整數）每份是 5/6 個水壺，共有 5 份，一共有多少個水壺？（最簡分數）",
     "answer": "25/6",
@@ -1998,7 +1998,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u3_frac_times_int_09",
     "kind": "u3_frac_times_int",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜分數×整數）每份是 4/5 個鍋湯，共有 4 份，一共有多少個鍋湯？（最簡分數）",
     "answer": "16/5",
@@ -2037,7 +2037,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u3_frac_times_int_10",
     "kind": "u3_frac_times_int",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜分數×整數）每份是 4/5 個披薩，共有 8 份，一共有多少個披薩？（最簡分數）",
     "answer": "32/5",
@@ -2076,7 +2076,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u3_frac_times_int_11",
     "kind": "u3_frac_times_int",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜分數×整數）每份是 1/1 個披薩，共有 3 份，一共有多少個披薩？（最簡分數）",
     "answer": "3/1",
@@ -2115,7 +2115,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u3_frac_times_int_12",
     "kind": "u3_frac_times_int",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜分數×整數）每份是 1/4 個披薩，共有 7 份，一共有多少個披薩？（最簡分數）",
     "answer": "7/4",
@@ -2154,7 +2154,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u3_frac_times_int_13",
     "kind": "u3_frac_times_int",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜分數×整數）每份是 1/2 個蛋糕，共有 4 份，一共有多少個蛋糕？（最簡分數）",
     "answer": "2/1",
@@ -2193,7 +2193,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u3_frac_times_int_14",
     "kind": "u3_frac_times_int",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜分數×整數）每份是 3/10 個蛋糕，共有 8 份，一共有多少個蛋糕？（最簡分數）",
     "answer": "12/5",
@@ -2232,7 +2232,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u3_frac_times_int_15",
     "kind": "u3_frac_times_int",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
     "question": "（生活應用｜分數×整數）每份是 1/2 個蛋糕，共有 5 份，一共有多少個蛋糕？（最簡分數）",
     "answer": "5/2",
@@ -2271,7 +2271,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u3_frac_times_int_16",
     "kind": "u3_frac_times_int",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜分數×整數）每份是 1/1 個水壺，共有 8 份，一共有多少個水壺？（最簡分數）",
     "answer": "8/1",
@@ -2310,7 +2310,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u3_frac_times_int_17",
     "kind": "u3_frac_times_int",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜分數×整數）每份是 1/1 個蛋糕，共有 4 份，一共有多少個蛋糕？（最簡分數）",
     "answer": "4/1",
@@ -2349,7 +2349,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u3_frac_times_int_18",
     "kind": "u3_frac_times_int",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜分數×整數）每份是 5/8 個桶果汁，共有 3 份，一共有多少個桶果汁？（最簡分數）",
     "answer": "15/8",
@@ -2388,7 +2388,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u3_frac_times_int_19",
     "kind": "u3_frac_times_int",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
     "question": "（生活應用｜分數×整數）每份是 3/4 個蛋糕，共有 3 份，一共有多少個蛋糕？（最簡分數）",
     "answer": "9/4",
@@ -2427,7 +2427,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u3_frac_times_int_20",
     "kind": "u3_frac_times_int",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜分數×整數）每份是 4/5 個桶果汁，共有 3 份，一共有多少個桶果汁？（最簡分數）",
     "answer": "12/5",
@@ -2466,7 +2466,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u4_money_decimal_addsub_01",
     "kind": "u4_money_decimal_addsub",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜金錢找零）買了 貼紙 7.35 元、筆記本 9.55 元、原子筆 4.4 元、口香糖 4.1 元，共 25.4 元。付了 27.9 元，要找回多少元？",
     "answer": "2.5",
@@ -2512,7 +2512,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u4_money_decimal_addsub_02",
     "kind": "u4_money_decimal_addsub",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
     "question": "（生活應用｜金錢找零）買了 礦泉水 3.5 元、三明治 2.4 元，共 5.9 元。付了 11.9 元，要找回多少元？",
     "answer": "6",
@@ -2556,7 +2556,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u4_money_decimal_addsub_03",
     "kind": "u4_money_decimal_addsub",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜金錢小數加法）買了 明信片 9.2 元、紙膠帶 3.1 元、貼紙包 3.2 元，一共要付多少元？（可寫小數）",
     "answer": "15.5",
@@ -2601,7 +2601,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u4_money_decimal_addsub_04",
     "kind": "u4_money_decimal_addsub",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜金錢找零）買了 貼紙 2.4 元、筆記本 3.3 元、原子筆 6.7 元，共 12.4 元。付了 18.9 元，要找回多少元？",
     "answer": "6.5",
@@ -2646,7 +2646,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u4_money_decimal_addsub_05",
     "kind": "u4_money_decimal_addsub",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜金錢找零）買了 礦泉水 13.25 元、三明治 9.1 元、優格 9.7 元、水果杯 2.45 元，共 34.5 元。付了 37 元，要找回多少元？",
     "answer": "2.5",
@@ -2692,7 +2692,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u4_money_decimal_addsub_06",
     "kind": "u4_money_decimal_addsub",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜金錢找零）買了 果汁 13.25 元、麵包 7.2 元、餅乾 8.85 元、口香糖 3.95 元，合計 33.25 元。使用折價券 1.5 元後，實付多少元？若付了 43.25 元，要找回多少元？",
     "answer": "11.5",
@@ -2740,7 +2740,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u4_money_decimal_addsub_07",
     "kind": "u4_money_decimal_addsub",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜金錢小數加法）買了 果汁 9.2 元、麵包 2.1 元、餅乾 4.7 元，一共要付多少元？（可寫小數）",
     "answer": "16",
@@ -2785,7 +2785,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u4_money_decimal_addsub_08",
     "kind": "u4_money_decimal_addsub",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜金錢找零）買了 礦泉水 7.2 元、三明治 4.6 元、優格 4.6 元，共 16.4 元。付了 20.9 元，要找回多少元？",
     "answer": "4.5",
@@ -2830,7 +2830,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u4_money_decimal_addsub_09",
     "kind": "u4_money_decimal_addsub",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜金錢找零）買了 鉛筆 3.8 元、橡皮擦 7.1 元、尺 5.5 元，共 16.4 元。付了 22.9 元，要找回多少元？",
     "answer": "6.5",
@@ -2875,7 +2875,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u4_money_decimal_addsub_10",
     "kind": "u4_money_decimal_addsub",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜金錢找零）買了 飯糰 2.7 元、豆漿 7.1 元、茶葉蛋 11.15 元、口香糖 9.1 元，共 30.05 元。付了 38.55 元，要找回多少元？",
     "answer": "8.5",
@@ -2921,7 +2921,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u4_money_decimal_addsub_11",
     "kind": "u4_money_decimal_addsub",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜金錢小數加法）買了 礦泉水 7.4 元、三明治 7.8 元、優格 6 元，一共要付多少元？（可寫小數）",
     "answer": "21.2",
@@ -2966,7 +2966,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u4_money_decimal_addsub_12",
     "kind": "u4_money_decimal_addsub",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜金錢小數加法）買了 飯糰 2.4 元、豆漿 7.4 元、茶葉蛋 4.5 元，一共要付多少元？（可寫小數）",
     "answer": "14.3",
@@ -3011,7 +3011,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u4_money_decimal_addsub_13",
     "kind": "u4_money_decimal_addsub",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜金錢小數加法）買了 貼紙 8.4 元、筆記本 7.2 元、原子筆 5 元，一共要付多少元？（可寫小數）",
     "answer": "20.6",
@@ -3056,7 +3056,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u4_money_decimal_addsub_14",
     "kind": "u4_money_decimal_addsub",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜金錢找零）買了 鉛筆 2.25 元、橡皮擦 1.05 元、尺 1.6 元、口香糖 7.55 元，合計 12.45 元。使用折價券 2.05 元後，實付多少元？若付了 15.45 元，要找回多少元？",
     "answer": "5.05",
@@ -3104,7 +3104,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u4_money_decimal_addsub_15",
     "kind": "u4_money_decimal_addsub",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜金錢找零）買了 鉛筆 1.8 元、橡皮擦 2.1 元、尺 5.1 元，共 9 元。付了 10 元，要找回多少元？",
     "answer": "1",
@@ -3149,7 +3149,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u4_money_decimal_addsub_16",
     "kind": "u4_money_decimal_addsub",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜金錢小數加法）買了 資料夾 11.55 元、修正帶 5.45 元、便利貼 10.6 元、原子筆 2.7 元，合計多少元？再使用折價券 0.95 元，最後要付多少元？（可寫小數）",
     "answer": "29.35",
@@ -3197,7 +3197,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u4_money_decimal_addsub_17",
     "kind": "u4_money_decimal_addsub",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜金錢小數加法）買了 礦泉水 6.05 元、三明治 4.75 元、優格 9.95 元、水果杯 8.1 元，一共要付多少元？（可寫小數）",
     "answer": "28.85",
@@ -3243,7 +3243,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u4_money_decimal_addsub_18",
     "kind": "u4_money_decimal_addsub",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
     "question": "（生活應用｜金錢小數加法）買了 果汁 5 元、麵包 4.8 元，一共要付多少元？（可寫小數）",
     "answer": "9.8",
@@ -3287,7 +3287,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u4_money_decimal_addsub_19",
     "kind": "u4_money_decimal_addsub",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜金錢找零）買了 果汁 13.7 元、麵包 5.55 元、餅乾 6.65 元、口香糖 4.45 元，合計 30.35 元。使用折價券 0.75 元後，實付多少元？若付了 37.85 元，要找回多少元？",
     "answer": "8.25",
@@ -3335,7 +3335,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u4_money_decimal_addsub_20",
     "kind": "u4_money_decimal_addsub",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
     "question": "（生活應用｜金錢找零）買了 明信片 1 元、紙膠帶 4.4 元，共 5.4 元。付了 11.4 元，要找回多少元？",
     "answer": "6",
@@ -3379,7 +3379,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u5_decimal_muldiv_price_01",
     "kind": "u5_decimal_muldiv_price",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜單價×數量）一瓶飲料 3.35 元，買 5 瓶，一共多少元？",
     "answer": "16.75",
@@ -3421,7 +3421,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u5_decimal_muldiv_price_02",
     "kind": "u5_decimal_muldiv_price",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜單價×數量）一瓶飲料 6.9 元，買 6 瓶，一共多少元？",
     "answer": "41.4",
@@ -3463,7 +3463,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u5_decimal_muldiv_price_03",
     "kind": "u5_decimal_muldiv_price",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
     "question": "（生活應用｜平均/單價）6 瓶飲料共 18 元，平均每瓶多少元？",
     "answer": "3",
@@ -3505,7 +3505,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u5_decimal_muldiv_price_04",
     "kind": "u5_decimal_muldiv_price",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜單價×數量）一瓶飲料 7.35 元，買 5 瓶，一共多少元？",
     "answer": "36.75",
@@ -3547,7 +3547,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u5_decimal_muldiv_price_05",
     "kind": "u5_decimal_muldiv_price",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜平均/單價）20 瓶飲料共 208 元，平均每瓶多少元？",
     "answer": "10.4",
@@ -3589,7 +3589,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u5_decimal_muldiv_price_06",
     "kind": "u5_decimal_muldiv_price",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜總價平均分）一盒點心 8.1 元，買 19 盒共多少元？若 2 人平均分攤，每人要付多少元？",
     "answer": "76.95",
@@ -3632,7 +3632,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u5_decimal_muldiv_price_07",
     "kind": "u5_decimal_muldiv_price",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜平均/單價）8 瓶飲料共 56 元，平均每瓶多少元？",
     "answer": "7",
@@ -3674,7 +3674,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u5_decimal_muldiv_price_08",
     "kind": "u5_decimal_muldiv_price",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜單價×數量）一瓶飲料 2.1 元，買 7 瓶，一共多少元？",
     "answer": "14.7",
@@ -3716,7 +3716,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u5_decimal_muldiv_price_09",
     "kind": "u5_decimal_muldiv_price",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜總價平均分）一盒點心 6 元，買 3 盒共多少元？若 4 人平均分攤，每人要付多少元？",
     "answer": "4.5",
@@ -3759,7 +3759,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u5_decimal_muldiv_price_10",
     "kind": "u5_decimal_muldiv_price",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜平均/單價）3 瓶飲料共 4.95 元，平均每瓶多少元？",
     "answer": "1.65",
@@ -3801,7 +3801,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u5_decimal_muldiv_price_11",
     "kind": "u5_decimal_muldiv_price",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜平均/單價）3 瓶飲料共 8.85 元，平均每瓶多少元？",
     "answer": "2.95",
@@ -3843,7 +3843,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u5_decimal_muldiv_price_12",
     "kind": "u5_decimal_muldiv_price",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
     "question": "（生活應用｜平均/單價）2 瓶飲料共 3 元，平均每瓶多少元？",
     "answer": "1.5",
@@ -3885,7 +3885,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u5_decimal_muldiv_price_13",
     "kind": "u5_decimal_muldiv_price",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜平均/單價）13 瓶飲料共 107.25 元，平均每瓶多少元？",
     "answer": "8.25",
@@ -3927,7 +3927,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u5_decimal_muldiv_price_14",
     "kind": "u5_decimal_muldiv_price",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜單價×數量）一瓶飲料 5.6 元，買 4 瓶，一共多少元？",
     "answer": "22.4",
@@ -3969,7 +3969,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u5_decimal_muldiv_price_15",
     "kind": "u5_decimal_muldiv_price",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜單價×數量）一瓶飲料 3.35 元，買 3 瓶，一共多少元？",
     "answer": "10.05",
@@ -4011,7 +4011,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u5_decimal_muldiv_price_16",
     "kind": "u5_decimal_muldiv_price",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜平均/單價）2 瓶飲料共 19.5 元，平均每瓶多少元？",
     "answer": "9.75",
@@ -4053,7 +4053,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u5_decimal_muldiv_price_17",
     "kind": "u5_decimal_muldiv_price",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
     "question": "（生活應用｜平均/單價）5 瓶飲料共 12.5 元，平均每瓶多少元？",
     "answer": "2.5",
@@ -4095,7 +4095,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u5_decimal_muldiv_price_18",
     "kind": "u5_decimal_muldiv_price",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜總價平均分）一盒點心 4.5 元，買 16 盒共多少元？若 3 人平均分攤，每人要付多少元？",
     "answer": "24",
@@ -4138,7 +4138,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u5_decimal_muldiv_price_19",
     "kind": "u5_decimal_muldiv_price",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜總價平均分）一盒點心 5.45 元，買 4 盒共多少元？若 2 人平均分攤，每人要付多少元？",
     "answer": "10.9",
@@ -4181,7 +4181,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u5_decimal_muldiv_price_20",
     "kind": "u5_decimal_muldiv_price",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜總價平均分）一盒點心 9 元，買 4 盒共多少元？若 4 人平均分攤，每人要付多少元？",
     "answer": "9",
@@ -4224,7 +4224,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u6_frac_dec_convert_01",
     "kind": "u6_frac_dec_convert",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
     "question": "（生活應用｜等值｜溫度/比例）把小數 0.2 寫成最簡分數 a/b。",
     "answer": "1/5",
@@ -4264,7 +4264,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u6_frac_dec_convert_02",
     "kind": "u6_frac_dec_convert",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜等值｜跑步進度）把分數 1/4 寫成小數。",
     "answer": "0.25",
@@ -4303,7 +4303,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u6_frac_dec_convert_03",
     "kind": "u6_frac_dec_convert",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜等值｜價格折扣倍率）把小數 0.119 寫成最簡分數 a/b。",
     "answer": "119/1000",
@@ -4343,7 +4343,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u6_frac_dec_convert_04",
     "kind": "u6_frac_dec_convert",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜等值｜跑步進度）把分數 2/5 寫成小數。",
     "answer": "0.4",
@@ -4382,7 +4382,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u6_frac_dec_convert_05",
     "kind": "u6_frac_dec_convert",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜等值｜量杯刻度）把分數 3/8 寫成小數。",
     "answer": "0.375",
@@ -4421,7 +4421,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u6_frac_dec_convert_06",
     "kind": "u6_frac_dec_convert",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜等值｜價格折扣倍率）把小數 0.42 寫成最簡分數 a/b。",
     "answer": "21/50",
@@ -4461,7 +4461,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u6_frac_dec_convert_07",
     "kind": "u6_frac_dec_convert",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜等值｜飲料容量）把分數 1/25 寫成小數。",
     "answer": "0.04",
@@ -4500,7 +4500,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u6_frac_dec_convert_08",
     "kind": "u6_frac_dec_convert",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
     "question": "（生活應用｜等值｜地圖比例）把分數 19/25 寫成小數。",
     "answer": "0.76",
@@ -4539,7 +4539,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u6_frac_dec_convert_09",
     "kind": "u6_frac_dec_convert",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜等值｜量杯刻度）把分數 3/5 寫成小數。",
     "answer": "0.6",
@@ -4578,7 +4578,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u6_frac_dec_convert_10",
     "kind": "u6_frac_dec_convert",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜等值｜溫度/比例）把小數 0.695 寫成最簡分數 a/b。",
     "answer": "139/200",
@@ -4618,7 +4618,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u6_frac_dec_convert_11",
     "kind": "u6_frac_dec_convert",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
     "question": "（生活應用｜等值｜飲料容量）把分數 13/20 寫成小數。",
     "answer": "0.65",
@@ -4657,7 +4657,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u6_frac_dec_convert_12",
     "kind": "u6_frac_dec_convert",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜等值｜地圖比例）把分數 9/10 寫成小數。",
     "answer": "0.9",
@@ -4696,7 +4696,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u6_frac_dec_convert_13",
     "kind": "u6_frac_dec_convert",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜等值｜地圖比例）把分數 4/5 寫成小數。",
     "answer": "0.8",
@@ -4735,7 +4735,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u6_frac_dec_convert_14",
     "kind": "u6_frac_dec_convert",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜等值｜地圖比例）把分數 23/100 寫成小數。",
     "answer": "0.23",
@@ -4774,7 +4774,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u6_frac_dec_convert_15",
     "kind": "u6_frac_dec_convert",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜等值｜價格折扣倍率）把小數 0.51 寫成最簡分數 a/b。",
     "answer": "51/100",
@@ -4814,7 +4814,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u6_frac_dec_convert_16",
     "kind": "u6_frac_dec_convert",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜等值｜飲料容量）把分數 19/20 寫成小數。",
     "answer": "0.95",
@@ -4853,7 +4853,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u6_frac_dec_convert_17",
     "kind": "u6_frac_dec_convert",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜等值｜量杯刻度）把分數 3/5 寫成小數。",
     "answer": "0.6",
@@ -4892,7 +4892,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u6_frac_dec_convert_18",
     "kind": "u6_frac_dec_convert",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜等值｜跑步進度）把分數 13/25 寫成小數。",
     "answer": "0.52",
@@ -4931,7 +4931,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u6_frac_dec_convert_19",
     "kind": "u6_frac_dec_convert",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜等值｜量杯刻度）把分數 1/2 寫成小數。",
     "answer": "0.5",
@@ -4970,7 +4970,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u6_frac_dec_convert_20",
     "kind": "u6_frac_dec_convert",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜等值｜飲料容量）把分數 3/5 寫成小數。",
     "answer": "0.6",
@@ -5009,7 +5009,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u7_discount_percent_01",
     "kind": "u7_discount_percent",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜折扣）一件文具組原價 77.2 元，打 折扣 0.82，省下多少元？",
     "answer": "13.9",
@@ -5051,7 +5051,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u7_discount_percent_02",
     "kind": "u7_discount_percent",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
     "question": "（生活應用｜折扣）一件玩具原價 19 元，打 8 折，折後價是多少元？",
     "answer": "15.2",
@@ -5093,7 +5093,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u7_discount_percent_03",
     "kind": "u7_discount_percent",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜折扣）一件書包原價 24.5 元，打 折扣 0.66，省下多少元？",
     "answer": "8.33",
@@ -5135,7 +5135,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u7_discount_percent_04",
     "kind": "u7_discount_percent",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜折扣）一件文具組原價 6.6 元，打 折扣 0.72，折後價是多少元？",
     "answer": "4.75",
@@ -5177,7 +5177,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u7_discount_percent_05",
     "kind": "u7_discount_percent",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
     "question": "（生活應用｜折扣）一件書包原價 12 元，打 9 折，折後價是多少元？",
     "answer": "10.8",
@@ -5219,7 +5219,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u7_discount_percent_06",
     "kind": "u7_discount_percent",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜折扣）一件外套原價 85.8 元，打 折扣 0.66，省下多少元？",
     "answer": "29.17",
@@ -5261,7 +5261,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u7_discount_percent_07",
     "kind": "u7_discount_percent",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜折扣）一件玩具原價 39.4 元，打 8 折，折後價是多少元？",
     "answer": "31.52",
@@ -5303,7 +5303,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u7_discount_percent_08",
     "kind": "u7_discount_percent",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜折扣）一件文具組原價 83.4 元，打 折扣 0.75，折後價是多少元？",
     "answer": "62.55",
@@ -5345,7 +5345,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u7_discount_percent_09",
     "kind": "u7_discount_percent",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
     "question": "（生活應用｜折扣）一件文具組原價 10.5 元，打 折扣 0.85，折後價是多少元？",
     "answer": "8.92",
@@ -5387,7 +5387,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u7_discount_percent_10",
     "kind": "u7_discount_percent",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜折扣）一件外套原價 71 元，打 8 折，省下多少元？",
     "answer": "14.2",
@@ -5429,7 +5429,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u7_discount_percent_11",
     "kind": "u7_discount_percent",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜折扣）一件玩具原價 67.9 元，打 7 折，省下多少元？",
     "answer": "20.37",
@@ -5471,7 +5471,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u7_discount_percent_12",
     "kind": "u7_discount_percent",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜折扣）一件外套原價 66.3 元，打 折扣 0.72，省下多少元？",
     "answer": "18.56",
@@ -5513,7 +5513,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u7_discount_percent_13",
     "kind": "u7_discount_percent",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜折扣）一件外套原價 20.7 元，打 折扣 0.66，折後價是多少元？",
     "answer": "13.66",
@@ -5555,7 +5555,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u7_discount_percent_14",
     "kind": "u7_discount_percent",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜折扣）一件玩具原價 88.2 元，打 折扣 0.82，折後價是多少元？",
     "answer": "72.32",
@@ -5597,7 +5597,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u7_discount_percent_15",
     "kind": "u7_discount_percent",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜折扣）一件球鞋原價 32.5 元，打 折扣 0.85，省下多少元？",
     "answer": "4.88",
@@ -5639,7 +5639,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u7_discount_percent_16",
     "kind": "u7_discount_percent",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜折扣）一件書包原價 66.2 元，打 折扣 0.75，省下多少元？",
     "answer": "16.55",
@@ -5681,7 +5681,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u7_discount_percent_17",
     "kind": "u7_discount_percent",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜折扣）一件玩具原價 37.1 元，打 7 折，省下多少元？",
     "answer": "11.13",
@@ -5723,7 +5723,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u7_discount_percent_18",
     "kind": "u7_discount_percent",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜折扣）一件文具組原價 8.1 元，打 折扣 0.85，折後價是多少元？",
     "answer": "6.88",
@@ -5765,7 +5765,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u7_discount_percent_19",
     "kind": "u7_discount_percent",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜折扣）一件外套原價 86.9 元，打 折扣 0.75，折後價是多少元？",
     "answer": "65.18",
@@ -5807,7 +5807,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u7_discount_percent_20",
     "kind": "u7_discount_percent",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜折扣）一件玩具原價 74.1 元，打 折扣 0.78，省下多少元？",
     "answer": "16.3",
@@ -5849,7 +5849,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u7_discount_percent_21",
     "kind": "u7_discount_percent",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜折扣）一件外套原價 62.3 元，打 8 折，省下多少元？",
     "answer": "12.46",
@@ -5891,7 +5891,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u7_discount_percent_22",
     "kind": "u7_discount_percent",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜折扣）一件球鞋原價 63.9 元，打 9 折，折後價是多少元？",
     "answer": "57.51",
@@ -5933,7 +5933,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u7_discount_percent_23",
     "kind": "u7_discount_percent",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
     "question": "（生活應用｜折扣）一件玩具原價 40.5 元，打 8 折，折後價是多少元？",
     "answer": "32.4",
@@ -5975,7 +5975,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u7_discount_percent_24",
     "kind": "u7_discount_percent",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜折扣）一件外套原價 10.8 元，打 9 折，省下多少元？",
     "answer": "1.08",
@@ -6017,7 +6017,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u7_discount_percent_25",
     "kind": "u7_discount_percent",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜折扣）一件玩具原價 61.8 元，打 8 折，省下多少元？",
     "answer": "12.36",
@@ -6059,7 +6059,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u7_discount_percent_26",
     "kind": "u7_discount_percent",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜折扣）一件書包原價 37.6 元，打 9 折，省下多少元？",
     "answer": "3.76",
@@ -6101,7 +6101,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u7_discount_percent_27",
     "kind": "u7_discount_percent",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜折扣）一件球鞋原價 36.7 元，打 折扣 0.82，折後價是多少元？",
     "answer": "30.09",
@@ -6143,7 +6143,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u7_discount_percent_28",
     "kind": "u7_discount_percent",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜折扣）一件書包原價 11.5 元，打 9 折，省下多少元？",
     "answer": "1.15",
@@ -6185,7 +6185,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u7_discount_percent_29",
     "kind": "u7_discount_percent",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
     "question": "（生活應用｜折扣）一件外套原價 11.5 元，打 9 折，折後價是多少元？",
     "answer": "10.35",
@@ -6227,7 +6227,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u7_discount_percent_30",
     "kind": "u7_discount_percent",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜折扣）一件玩具原價 78.1 元，打 9 折，省下多少元？",
     "answer": "7.81",
@@ -6269,7 +6269,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u8_ratio_recipe_01",
     "kind": "u8_ratio_recipe",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜比例）調配果汁，果汁:水 = 4:9，總共有 494 mL，水有多少 mL？",
     "answer": "342",
@@ -6311,7 +6311,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u8_ratio_recipe_02",
     "kind": "u8_ratio_recipe",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜比例）調配運動飲料，果汁:水 = 2:8，總共有 1780 mL，水有多少 mL？",
     "answer": "1424",
@@ -6353,7 +6353,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u8_ratio_recipe_03",
     "kind": "u8_ratio_recipe",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜比例）調配檸檬水，果汁:水 = 3:4，總共有 917 mL，果汁有多少 mL？",
     "answer": "393",
@@ -6395,7 +6395,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u8_ratio_recipe_04",
     "kind": "u8_ratio_recipe",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
     "question": "（生活應用｜比例）調配檸檬水，果汁:水 = 4:1，總共有 850 mL，果汁有多少 mL？",
     "answer": "680",
@@ -6437,7 +6437,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u8_ratio_recipe_05",
     "kind": "u8_ratio_recipe",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜比例）調配運動飲料，果汁:水 = 6:3，總共有 2169 mL，果汁有多少 mL？",
     "answer": "1446",
@@ -6479,7 +6479,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u8_ratio_recipe_06",
     "kind": "u8_ratio_recipe",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
     "question": "（生活應用｜比例）調配檸檬水，果汁:水 = 2:5，總共有 1141 mL，果汁有多少 mL？",
     "answer": "326",
@@ -6521,7 +6521,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u8_ratio_recipe_07",
     "kind": "u8_ratio_recipe",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜比例）調配運動飲料，果汁:水 = 6:3，總共有 1296 mL，果汁有多少 mL？",
     "answer": "864",
@@ -6563,7 +6563,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u8_ratio_recipe_08",
     "kind": "u8_ratio_recipe",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜比例）調配奶茶，果汁:水 = 7:5，總共有 1956 mL，果汁有多少 mL？",
     "answer": "1141",
@@ -6605,7 +6605,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u8_ratio_recipe_09",
     "kind": "u8_ratio_recipe",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜比例）調配運動飲料，果汁:水 = 7:4，總共有 1287 mL，果汁有多少 mL？",
     "answer": "819",
@@ -6647,7 +6647,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u8_ratio_recipe_10",
     "kind": "u8_ratio_recipe",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜比例）調配奶茶，果汁:水 = 4:5，總共有 2133 mL，水有多少 mL？",
     "answer": "1185",
@@ -6689,7 +6689,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u8_ratio_recipe_11",
     "kind": "u8_ratio_recipe",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜比例）調配奶茶，果汁:水 = 7:4，總共有 1276 mL，水有多少 mL？",
     "answer": "464",
@@ -6731,7 +6731,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u8_ratio_recipe_12",
     "kind": "u8_ratio_recipe",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜比例）調配果汁，果汁:水 = 5:4，總共有 1593 mL，水有多少 mL？",
     "answer": "708",
@@ -6773,7 +6773,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u8_ratio_recipe_13",
     "kind": "u8_ratio_recipe",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
     "question": "（生活應用｜比例）調配果汁，果汁:水 = 1:2，總共有 522 mL，果汁有多少 mL？",
     "answer": "174",
@@ -6815,7 +6815,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u8_ratio_recipe_14",
     "kind": "u8_ratio_recipe",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜比例）調配奶茶，果汁:水 = 5:4，總共有 2376 mL，水有多少 mL？",
     "answer": "1056",
@@ -6857,7 +6857,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u8_ratio_recipe_15",
     "kind": "u8_ratio_recipe",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜比例）調配奶茶，果汁:水 = 5:8，總共有 715 mL，果汁有多少 mL？",
     "answer": "275",
@@ -6899,7 +6899,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u8_ratio_recipe_16",
     "kind": "u8_ratio_recipe",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜比例）調配檸檬水，果汁:水 = 4:8，總共有 912 mL，水有多少 mL？",
     "answer": "608",
@@ -6941,7 +6941,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u8_ratio_recipe_17",
     "kind": "u8_ratio_recipe",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜比例）調配檸檬水，果汁:水 = 7:7，總共有 756 mL，果汁有多少 mL？",
     "answer": "378",
@@ -6983,7 +6983,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u8_ratio_recipe_18",
     "kind": "u8_ratio_recipe",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜比例）調配檸檬水，果汁:水 = 5:4，總共有 1251 mL，水有多少 mL？",
     "answer": "556",
@@ -7025,7 +7025,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u8_ratio_recipe_19",
     "kind": "u8_ratio_recipe",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜比例）調配檸檬水，果汁:水 = 2:1，總共有 1146 mL，果汁有多少 mL？",
     "answer": "764",
@@ -7067,7 +7067,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u8_ratio_recipe_20",
     "kind": "u8_ratio_recipe",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜比例）調配果汁，果汁:水 = 2:6，總共有 896 mL，果汁有多少 mL？",
     "answer": "224",
@@ -7109,7 +7109,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u8_ratio_recipe_21",
     "kind": "u8_ratio_recipe",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
     "question": "（生活應用｜比例）調配奶茶，果汁:水 = 2:3，總共有 760 mL，果汁有多少 mL？",
     "answer": "304",
@@ -7151,7 +7151,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u8_ratio_recipe_22",
     "kind": "u8_ratio_recipe",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜比例）調配運動飲料，果汁:水 = 6:9，總共有 1695 mL，果汁有多少 mL？",
     "answer": "678",
@@ -7193,7 +7193,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u8_ratio_recipe_23",
     "kind": "u8_ratio_recipe",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜比例）調配運動飲料，果汁:水 = 7:5，總共有 2076 mL，果汁有多少 mL？",
     "answer": "1211",
@@ -7235,7 +7235,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u8_ratio_recipe_24",
     "kind": "u8_ratio_recipe",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜比例）調配運動飲料，果汁:水 = 3:8，總共有 2178 mL，水有多少 mL？",
     "answer": "1584",
@@ -7277,7 +7277,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u8_ratio_recipe_25",
     "kind": "u8_ratio_recipe",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜比例）調配果汁，果汁:水 = 7:3，總共有 1000 mL，水有多少 mL？",
     "answer": "300",
@@ -7319,7 +7319,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u8_ratio_recipe_26",
     "kind": "u8_ratio_recipe",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜比例）調配運動飲料，果汁:水 = 5:5，總共有 890 mL，水有多少 mL？",
     "answer": "445",
@@ -7361,7 +7361,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u8_ratio_recipe_27",
     "kind": "u8_ratio_recipe",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜比例）調配檸檬水，果汁:水 = 2:1，總共有 1521 mL，果汁有多少 mL？",
     "answer": "1014",
@@ -7403,7 +7403,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u8_ratio_recipe_28",
     "kind": "u8_ratio_recipe",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
     "question": "（生活應用｜比例）調配檸檬水，果汁:水 = 3:4，總共有 406 mL，果汁有多少 mL？",
     "answer": "174",
@@ -7445,7 +7445,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u8_ratio_recipe_29",
     "kind": "u8_ratio_recipe",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜比例）調配檸檬水，果汁:水 = 7:8，總共有 645 mL，果汁有多少 mL？",
     "answer": "301",
@@ -7487,7 +7487,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u8_ratio_recipe_30",
     "kind": "u8_ratio_recipe",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜比例）調配果汁，果汁:水 = 2:4，總共有 912 mL，果汁有多少 mL？",
     "answer": "304",
@@ -7529,7 +7529,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u9_unit_convert_decimal_01",
     "kind": "u9_unit_convert_decimal",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜單位換算）40.7 kg = 多少 g？（可寫小數）",
     "answer": "40700",
@@ -7571,7 +7571,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u9_unit_convert_decimal_02",
     "kind": "u9_unit_convert_decimal",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜單位換算）9.23 L = 多少 mL？（可寫小數）",
     "answer": "9230",
@@ -7613,7 +7613,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u9_unit_convert_decimal_03",
     "kind": "u9_unit_convert_decimal",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜單位換算）9.31 cm = 多少 m？（可寫小數）",
     "answer": "0.0931",
@@ -7656,7 +7656,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u9_unit_convert_decimal_04",
     "kind": "u9_unit_convert_decimal",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜單位換算）19.5 m = 多少 km？（可寫小數）",
     "answer": "0.0195",
@@ -7699,7 +7699,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u9_unit_convert_decimal_05",
     "kind": "u9_unit_convert_decimal",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜單位換算）7.61 kg = 多少 g？（可寫小數）",
     "answer": "7610",
@@ -7741,7 +7741,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u9_unit_convert_decimal_06",
     "kind": "u9_unit_convert_decimal",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜單位換算）2.96 cm = 多少 m？（可寫小數）",
     "answer": "0.0296",
@@ -7784,7 +7784,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u9_unit_convert_decimal_07",
     "kind": "u9_unit_convert_decimal",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜單位換算）2.11 m = 多少 cm？（可寫小數）",
     "answer": "211",
@@ -7826,7 +7826,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u9_unit_convert_decimal_08",
     "kind": "u9_unit_convert_decimal",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
     "question": "（生活應用｜單位換算）22 m = 多少 cm？（可寫小數）",
     "answer": "22",
@@ -7868,7 +7868,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u9_unit_convert_decimal_09",
     "kind": "u9_unit_convert_decimal",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜單位換算）12.7 L = 多少 mL？（可寫小數）",
     "answer": "12700",
@@ -7910,7 +7910,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u9_unit_convert_decimal_10",
     "kind": "u9_unit_convert_decimal",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜單位換算）20.9 kg = 多少 g？（可寫小數）",
     "answer": "20900",
@@ -7952,7 +7952,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u9_unit_convert_decimal_11",
     "kind": "u9_unit_convert_decimal",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
     "question": "（生活應用｜單位換算）17 m = 多少 cm？（可寫小數）",
     "answer": "17",
@@ -7994,7 +7994,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u9_unit_convert_decimal_12",
     "kind": "u9_unit_convert_decimal",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜單位換算）2.83 mL = 多少 L？（可寫小數）",
     "answer": "0.00283",
@@ -8037,7 +8037,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u9_unit_convert_decimal_13",
     "kind": "u9_unit_convert_decimal",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜單位換算）0.588 g = 多少 kg？（可寫小數）",
     "answer": "0.000588",
@@ -8080,7 +8080,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u9_unit_convert_decimal_14",
     "kind": "u9_unit_convert_decimal",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
     "question": "（生活應用｜單位換算）11 kg = 多少 g？（可寫小數）",
     "answer": "11",
@@ -8122,7 +8122,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u9_unit_convert_decimal_15",
     "kind": "u9_unit_convert_decimal",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜單位換算）1.02 m = 多少 cm？（可寫小數）",
     "answer": "102",
@@ -8164,7 +8164,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u9_unit_convert_decimal_16",
     "kind": "u9_unit_convert_decimal",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜單位換算）0.758 m = 多少 cm？（可寫小數）",
     "answer": "75.8",
@@ -8206,7 +8206,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u9_unit_convert_decimal_17",
     "kind": "u9_unit_convert_decimal",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜單位換算）2.09 m = 多少 cm？（可寫小數）",
     "answer": "209",
@@ -8248,7 +8248,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u9_unit_convert_decimal_18",
     "kind": "u9_unit_convert_decimal",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜單位換算）8.95 m = 多少 km？（可寫小數）",
     "answer": "0.00895",
@@ -8291,7 +8291,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u9_unit_convert_decimal_19",
     "kind": "u9_unit_convert_decimal",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜單位換算）12.5 L = 多少 mL？（可寫小數）",
     "answer": "12500",
@@ -8333,7 +8333,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u9_unit_convert_decimal_20",
     "kind": "u9_unit_convert_decimal",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜單位換算）8.73 mL = 多少 L？（可寫小數）",
     "answer": "0.00873",
@@ -8376,7 +8376,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u9_unit_convert_decimal_21",
     "kind": "u9_unit_convert_decimal",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜單位換算）16.9 m = 多少 cm？（可寫小數）",
     "answer": "1690",
@@ -8418,7 +8418,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u9_unit_convert_decimal_22",
     "kind": "u9_unit_convert_decimal",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜單位換算）0.734 g = 多少 kg？（可寫小數）",
     "answer": "0.000734",
@@ -8461,7 +8461,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u9_unit_convert_decimal_23",
     "kind": "u9_unit_convert_decimal",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜單位換算）22.5 mL = 多少 L？（可寫小數）",
     "answer": "0.0225",
@@ -8504,7 +8504,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u9_unit_convert_decimal_24",
     "kind": "u9_unit_convert_decimal",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜單位換算）2.27 m = 多少 cm？（可寫小數）",
     "answer": "227",
@@ -8546,7 +8546,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u9_unit_convert_decimal_25",
     "kind": "u9_unit_convert_decimal",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜單位換算）5.20 m = 多少 cm？（可寫小數）",
     "answer": "520",
@@ -8588,7 +8588,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u9_unit_convert_decimal_26",
     "kind": "u9_unit_convert_decimal",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜單位換算）4.10 L = 多少 mL？（可寫小數）",
     "answer": "4100",
@@ -8630,7 +8630,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u9_unit_convert_decimal_27",
     "kind": "u9_unit_convert_decimal",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜單位換算）24.9 km = 多少 m？（可寫小數）",
     "answer": "24900",
@@ -8672,7 +8672,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u9_unit_convert_decimal_28",
     "kind": "u9_unit_convert_decimal",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜單位換算）0.23 km = 多少 m？（可寫小數）",
     "answer": "230",
@@ -8714,7 +8714,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u9_unit_convert_decimal_29",
     "kind": "u9_unit_convert_decimal",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
     "question": "（生活應用｜單位換算）34 kg = 多少 g？（可寫小數）",
     "answer": "34",
@@ -8756,7 +8756,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u9_unit_convert_decimal_30",
     "kind": "u9_unit_convert_decimal",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
     "question": "（生活應用｜單位換算）3 L = 多少 mL？（可寫小數）",
     "answer": "3",
@@ -8798,7 +8798,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u10_rate_time_distance_01",
     "kind": "u10_rate_time_distance",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜速率）腳踏車每分鐘走 6 公尺，要走 156 公尺，需要幾分鐘？",
     "answer": "26",
@@ -8837,7 +8837,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u10_rate_time_distance_02",
     "kind": "u10_rate_time_distance",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜速率）腳踏車每分鐘走 6 公尺，走了 13 分鐘，一共走了多少公尺？",
     "answer": "78",
@@ -8877,7 +8877,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u10_rate_time_distance_03",
     "kind": "u10_rate_time_distance",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜速率）腳踏車每分鐘走 14 公尺，走了 39 分鐘，一共走了多少公尺？",
     "answer": "546",
@@ -8917,7 +8917,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u10_rate_time_distance_04",
     "kind": "u10_rate_time_distance",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜速率）腳踏車每分鐘走 15 公尺，走了 20 分鐘，一共走了多少公尺？",
     "answer": "300",
@@ -8957,7 +8957,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u10_rate_time_distance_05",
     "kind": "u10_rate_time_distance",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
     "question": "（生活應用｜速率）腳踏車每分鐘走 8 公尺，走了 7 分鐘，一共走了多少公尺？",
     "answer": "56",
@@ -8997,7 +8997,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u10_rate_time_distance_06",
     "kind": "u10_rate_time_distance",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜速率）腳踏車每分鐘走 9 公尺，要走 234 公尺，需要幾分鐘？",
     "answer": "26",
@@ -9036,7 +9036,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u10_rate_time_distance_07",
     "kind": "u10_rate_time_distance",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜速率）腳踏車每分鐘走 12 公尺，要走 480 公尺，需要幾分鐘？",
     "answer": "40",
@@ -9075,7 +9075,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u10_rate_time_distance_08",
     "kind": "u10_rate_time_distance",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
     "question": "（生活應用｜速率）腳踏車每分鐘走 6 公尺，走了 19 分鐘，一共走了多少公尺？",
     "answer": "114",
@@ -9115,7 +9115,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u10_rate_time_distance_09",
     "kind": "u10_rate_time_distance",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜速率）腳踏車每分鐘走 14 公尺，要走 196 公尺，需要幾分鐘？",
     "answer": "14",
@@ -9154,7 +9154,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u10_rate_time_distance_10",
     "kind": "u10_rate_time_distance",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜速率）腳踏車每分鐘走 10 公尺，要走 220 公尺，需要幾分鐘？",
     "answer": "22",
@@ -9193,7 +9193,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u10_rate_time_distance_11",
     "kind": "u10_rate_time_distance",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜速率）腳踏車每分鐘走 8 公尺，走了 17 分鐘，一共走了多少公尺？",
     "answer": "136",
@@ -9233,7 +9233,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u10_rate_time_distance_12",
     "kind": "u10_rate_time_distance",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜速率）腳踏車每分鐘走 10 公尺，要走 520 公尺，需要幾分鐘？",
     "answer": "52",
@@ -9272,7 +9272,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u10_rate_time_distance_13",
     "kind": "u10_rate_time_distance",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜速率）腳踏車每分鐘走 15 公尺，走了 14 分鐘，一共走了多少公尺？",
     "answer": "210",
@@ -9312,7 +9312,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u10_rate_time_distance_14",
     "kind": "u10_rate_time_distance",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜速率）腳踏車每分鐘走 5 公尺，要走 520 公尺，需要幾分鐘？",
     "answer": "104",
@@ -9351,7 +9351,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u10_rate_time_distance_15",
     "kind": "u10_rate_time_distance",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜速率）腳踏車每分鐘走 10 公尺，走了 11 分鐘，一共走了多少公尺？",
     "answer": "110",
@@ -9391,7 +9391,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u10_rate_time_distance_16",
     "kind": "u10_rate_time_distance",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜速率）腳踏車每分鐘走 11 公尺，要走 352 公尺，需要幾分鐘？",
     "answer": "32",
@@ -9430,7 +9430,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u10_rate_time_distance_17",
     "kind": "u10_rate_time_distance",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜速率）腳踏車每分鐘走 5 公尺，走了 5 分鐘，一共走了多少公尺？",
     "answer": "25",
@@ -9470,7 +9470,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u10_rate_time_distance_18",
     "kind": "u10_rate_time_distance",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜速率）腳踏車每分鐘走 11 公尺，要走 495 公尺，需要幾分鐘？",
     "answer": "45",
@@ -9509,7 +9509,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u10_rate_time_distance_19",
     "kind": "u10_rate_time_distance",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
     "question": "（生活應用｜速率）腳踏車每分鐘走 7 公尺，走了 6 分鐘，一共走了多少公尺？",
     "answer": "42",
@@ -9549,7 +9549,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u10_rate_time_distance_20",
     "kind": "u10_rate_time_distance",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜速率）腳踏車每分鐘走 4 公尺，走了 4 分鐘，一共走了多少公尺？",
     "answer": "16",
@@ -9589,7 +9589,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u10_rate_time_distance_21",
     "kind": "u10_rate_time_distance",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜速率）腳踏車每分鐘走 5 公尺，要走 135 公尺，需要幾分鐘？",
     "answer": "27",
@@ -9628,7 +9628,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u10_rate_time_distance_22",
     "kind": "u10_rate_time_distance",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜速率）腳踏車每分鐘走 9 公尺，走了 18 分鐘，一共走了多少公尺？",
     "answer": "162",
@@ -9668,7 +9668,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u10_rate_time_distance_23",
     "kind": "u10_rate_time_distance",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜速率）腳踏車每分鐘走 9 公尺，走了 16 分鐘，一共走了多少公尺？",
     "answer": "144",
@@ -9708,7 +9708,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u10_rate_time_distance_24",
     "kind": "u10_rate_time_distance",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜速率）腳踏車每分鐘走 12 公尺，走了 5 分鐘，一共走了多少公尺？",
     "answer": "60",
@@ -9748,7 +9748,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u10_rate_time_distance_25",
     "kind": "u10_rate_time_distance",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜速率）腳踏車每分鐘走 5 公尺，走了 11 分鐘，一共走了多少公尺？",
     "answer": "55",
@@ -9788,7 +9788,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u10_rate_time_distance_26",
     "kind": "u10_rate_time_distance",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜速率）腳踏車每分鐘走 9 公尺，要走 234 公尺，需要幾分鐘？",
     "answer": "26",
@@ -9827,7 +9827,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u10_rate_time_distance_27",
     "kind": "u10_rate_time_distance",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜速率）腳踏車每分鐘走 10 公尺，要走 160 公尺，需要幾分鐘？",
     "answer": "16",
@@ -9866,7 +9866,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u10_rate_time_distance_28",
     "kind": "u10_rate_time_distance",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
     "question": "（生活應用｜速率）腳踏車每分鐘走 5 公尺，走了 18 分鐘，一共走了多少公尺？",
     "answer": "90",
@@ -9906,7 +9906,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u10_rate_time_distance_29",
     "kind": "u10_rate_time_distance",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
     "question": "（生活應用｜速率）腳踏車每分鐘走 13 公尺，要走 468 公尺，需要幾分鐘？",
     "answer": "36",
@@ -9945,7 +9945,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
   {
     "id": "g5lp2p_u10_rate_time_distance_30",
     "kind": "u10_rate_time_distance",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "normal",
     "question": "（生活應用｜速率）腳踏車每分鐘走 7 公尺，走了 7 分鐘，一共走了多少公尺？",
     "answer": "49",

@@ -55,6 +55,9 @@ EXTRA_BY_UNIT: Dict[str, int] = {
 }
 
 
+TOPIC = "小五生活應用題｜第二包（加強版）｜帝國"
+
+
 def _rng(seed: int) -> random.Random:
     return random.Random(int(seed))
 
@@ -172,7 +175,7 @@ def q_u1_avg_fraction(r: random.Random, qid: str, difficulty: str) -> Q:
     return Q(
         id=qid,
         kind="u1_avg_fraction",
-        topic="小五生活應用題｜第二包｜帝國",
+        topic=TOPIC,
         difficulty=difficulty,
         question=q,
         answer=ans,
@@ -246,7 +249,7 @@ def q_u2_frac_addsub_life(r: random.Random, qid: str, difficulty: str) -> Q:
     return Q(
         id=qid,
         kind="u2_frac_addsub_life",
-        topic="小五生活應用題｜第二包｜帝國",
+        topic=TOPIC,
         difficulty=difficulty,
         question=q,
         answer=ans,
@@ -291,7 +294,7 @@ def q_u3_frac_times_int(r: random.Random, qid: str, difficulty: str) -> Q:
     return Q(
         id=qid,
         kind="u3_frac_times_int",
-        topic="小五生活應用題｜第二包｜帝國",
+        topic=TOPIC,
         difficulty=difficulty,
         question=q,
         answer=ans,
@@ -432,7 +435,7 @@ def q_u4_money_decimal_addsub(r: random.Random, qid: str, difficulty: str) -> Q:
     return Q(
         id=qid,
         kind="u4_money_decimal_addsub",
-        topic="小五生活應用題｜第二包｜帝國",
+        topic=TOPIC,
         difficulty=difficulty,
         question=q,
         answer=ans,
@@ -527,7 +530,7 @@ def q_u5_decimal_muldiv_price(r: random.Random, qid: str, difficulty: str) -> Q:
     return Q(
         id=qid,
         kind="u5_decimal_muldiv_price",
-        topic="小五生活應用題｜第二包｜帝國",
+        topic=TOPIC,
         difficulty=difficulty,
         question=q,
         answer=ans,
@@ -602,7 +605,7 @@ def q_u6_frac_dec_convert(r: random.Random, qid: str, difficulty: str) -> Q:
     return Q(
         id=qid,
         kind="u6_frac_dec_convert",
-        topic="小五生活應用題｜第二包｜帝國",
+        topic=TOPIC,
         difficulty=difficulty,
         question=q,
         answer=ans,
@@ -670,7 +673,7 @@ def q_u7_discount_percent(r: random.Random, qid: str, difficulty: str) -> Q:
     return Q(
         id=qid,
         kind="u7_discount_percent",
-        topic="小五生活應用題｜第二包｜帝國",
+        topic=TOPIC,
         difficulty=difficulty,
         question=q,
         answer=ans,
@@ -733,7 +736,7 @@ def q_u8_ratio_recipe(r: random.Random, qid: str, difficulty: str) -> Q:
     return Q(
         id=qid,
         kind="u8_ratio_recipe",
-        topic="小五生活應用題｜第二包｜帝國",
+        topic=TOPIC,
         difficulty=difficulty,
         question=q,
         answer=ans,
@@ -826,7 +829,7 @@ def q_u9_unit_convert_decimal(r: random.Random, qid: str, difficulty: str) -> Q:
     return Q(
         id=qid,
         kind="u9_unit_convert_decimal",
-        topic="小五生活應用題｜第二包｜帝國",
+        topic=TOPIC,
         difficulty=difficulty,
         question=q,
         answer=ans,
@@ -903,7 +906,7 @@ def q_u10_rate_time_distance(r: random.Random, qid: str, difficulty: str) -> Q:
     return Q(
         id=qid,
         kind="u10_rate_time_distance",
-        topic="小五生活應用題｜第二包｜帝國",
+        topic=TOPIC,
         difficulty=difficulty,
         question=q,
         answer=ans,
