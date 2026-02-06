@@ -1587,7 +1587,7 @@
 
       // focus map to this question type (preview next expansion size)
       if (q && q.kind){
-        const previewN = Math.max(1, Math.min(8, (Number(state.practiceStreak)||0) + 1));
+        const previewN = Math.max(1, Math.min(EXPAND_MAX, (Number(state.practiceStreak)||0) + 1));
         renderEmpire(null, regionFromKind(q.kind), previewN);
         if (empireBigOpen) renderEmpireBig(null, regionFromKind(q.kind), previewN);
       }
@@ -2138,7 +2138,7 @@
         if (ok){
           const rid = regionFromKind(q.kind);
           state.practiceStreak = (Number(state.practiceStreak) || 0) + 1;
-          const expandN = Math.max(1, Math.min(8, state.practiceStreak));
+          const expandN = Math.max(1, Math.min(EXPAND_MAX, state.practiceStreak));
           const delta = PRACTICE_XP_CORRECT;
           setRegionXP(rid, regionXP(rid) + delta);
           const before = regionStats(rid);
@@ -2156,7 +2156,7 @@
             metaEl: els.empireMeta,
             summaryEl: els.empireSummary,
             gridEl: els.empireGrid,
-            previewN: Math.max(1, Math.min(8, state.practiceStreak + 1)),
+            previewN: Math.max(1, Math.min(EXPAND_MAX, state.practiceStreak + 1)),
             gainedTiles: gained || 1,
             sparkleIds: res.ids || [],
             latestIds: res.ids || [],
@@ -2170,7 +2170,7 @@
               metaEl: els.empireMetaBig,
               summaryEl: els.empireSummaryBig,
               gridEl: els.empireGridBig,
-              previewN: Math.max(1, Math.min(8, state.practiceStreak + 1)),
+              previewN: Math.max(1, Math.min(EXPAND_MAX, state.practiceStreak + 1)),
               gainedTiles: gained || 1,
               sparkleIds: res.ids || [],
               latestIds: res.ids || [],
@@ -2209,6 +2209,7 @@
     const GAME_STREAK_XP_PER = 2;
     const GAME_STREAK_XP_MAX = 16;
     const GAME_NO_HINT_BONUS = 8;
+    const EXPAND_MAX = 12;
     const MAX_TILES_SMALL = 72;
     const MAX_TILES_BIG = 144;
     const gPersistKey = 'g5e_empire_regions_v2';
@@ -2341,9 +2342,9 @@
       // keep selection responsive
       const inGame = !!(g && g.running);
       const previewN = inGame
-        ? Math.max(1, Math.min(8, (Number(g.streak)||0) + 1))
+        ? Math.max(1, Math.min(EXPAND_MAX, (Number(g.streak)||0) + 1))
         : (state?.q && regionFromKind(state.q.kind) === rid)
-          ? Math.max(1, Math.min(8, (Number(state.practiceStreak)||0) + 1))
+          ? Math.max(1, Math.min(EXPAND_MAX, (Number(state.practiceStreak)||0) + 1))
           : 0;
       renderEmpire(null, rid, previewN);
       if (empireBigOpen) renderEmpireBig(null, rid, previewN);
@@ -2586,8 +2587,8 @@
       els.empireModal.setAttribute('aria-hidden', 'false');
       const rid = g?.running ? g.activeRegion : (state?.q ? regionFromKind(state.q.kind) : null);
       const previewN = g?.running
-        ? Math.max(1, Math.min(8, (Number(g.streak)||0) + 1))
-        : Math.max(1, Math.min(8, (Number(state.practiceStreak)||0) + 1));
+        ? Math.max(1, Math.min(EXPAND_MAX, (Number(g.streak)||0) + 1))
+        : Math.max(1, Math.min(EXPAND_MAX, (Number(state.practiceStreak)||0) + 1));
       renderEmpireBig(null, rid, previewN);
     }
     function closeEmpireBig(){
@@ -2841,7 +2842,7 @@
       const nextBonus = g.hintUsedThisQ ? 0 : GAME_NO_HINT_BONUS;
       const nextDelta = nextBase + nextBonus;
 
-      const nextExpand = Math.max(1, Math.min(8, nextStreak));
+      const nextExpand = Math.max(1, Math.min(EXPAND_MAX, nextStreak));
       if (els.gProgressMeta){
         els.gProgressMeta.textContent = `領地：${rs.land} / ${MAX_TILES_SMALL}｜本題答對可擴張 +${nextExpand} 格（可先點灰格自選擴張，可不連續）｜答對預估 +${nextDelta} 分｜本區工程點數：${rs.xp}`;
       }
@@ -2864,7 +2865,7 @@
       const rt = regionById[g.activeRegion]?.title || '本區域';
       gBanner('muted', `本題戰場：${rt}\n答對就擴張（地圖已預覽下一塊領地）｜先讀題抓已知/未知→列式→估算檢查。`);
       gRenderDecTools();
-      const previewN = Math.max(1, Math.min(8, (Number(g.streak)||0) + 1));
+      const previewN = Math.max(1, Math.min(EXPAND_MAX, (Number(g.streak)||0) + 1));
       renderEmpire(null, g.activeRegion, previewN);
       if (empireBigOpen) renderEmpireBig(null, g.activeRegion, previewN);
       gUpdate();
@@ -2932,7 +2933,7 @@
 
           const rid = g.activeRegion || regionFromKind(g.q?.kind);
           const beforeLand = regionStats(rid).land;
-          const expandN = Math.max(1, Math.min(8, g.streak));
+          const expandN = Math.max(1, Math.min(EXPAND_MAX, g.streak));
           setRegionXP(rid, regionXP(rid) + delta);
           const res = claimTiles(rid, expandN, MAX_TILES_SMALL);
           const after = regionStats(rid);
@@ -2948,7 +2949,7 @@
             metaEl: els.empireMeta,
             summaryEl: els.empireSummary,
             gridEl: els.empireGrid,
-            previewN: Math.max(1, Math.min(8, g.streak + 1)),
+            previewN: Math.max(1, Math.min(EXPAND_MAX, g.streak + 1)),
             gainedTiles: gained || 1,
             sparkleIds: res.ids || [],
             latestIds: res.ids || [],
@@ -2962,7 +2963,7 @@
               metaEl: els.empireMetaBig,
               summaryEl: els.empireSummaryBig,
               gridEl: els.empireGridBig,
-              previewN: Math.max(1, Math.min(8, g.streak + 1)),
+              previewN: Math.max(1, Math.min(EXPAND_MAX, g.streak + 1)),
               gainedTiles: gained || 1,
               sparkleIds: res.ids || [],
               latestIds: res.ids || [],
