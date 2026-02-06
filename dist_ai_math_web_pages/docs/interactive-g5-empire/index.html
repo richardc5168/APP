@@ -54,6 +54,9 @@
     .tile{width:var(--tile); height:var(--tile); border-radius:6px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.05); transition:transform .16s ease, filter .16s ease}
     .tile.own{border-color:rgba(88,166,255,.55); background:rgba(88,166,255,.28)}
     .tile.castle{border-color:rgba(46,160,67,.7); background:rgba(46,160,67,.22)}
+    .tile.pickable{cursor:pointer}
+    .tile.pickable:hover{filter:brightness(1.18); transform:scale(1.05)}
+    .tile.target{outline:2px solid rgba(88,166,255,.85); outline-offset:2px; filter:brightness(1.22)}
     .tile.next{outline:2px dashed rgba(210,153,34,.75); outline-offset:2px; filter:brightness(1.25)}
     .tile.latest{outline:3px solid rgba(210,153,34,.95); outline-offset:2px; transform:scale(1.08); filter:brightness(1.35)}
     .tile.spark{animation:tileSpark 1.05s ease-in-out 0s 1}
@@ -122,7 +125,7 @@
 
         <div class="callout">
           <b>玩法</b>：90 秒內答越多越好。連對會加分；看提示不扣分（但不看提示答對會有額外加分）。
-          <br><b>帝國擴張</b>：答對獲得工程點數（XP），會加到該題型的區域，藍色進度條只在答對時前進，滿格獲得一塊領地。
+          <br><b>帝國擴張</b>：答對會擴張領地格子（可自己點選要擴張的位置，不必連續）。連對越多，一次擴張的格子越多：連對 2 題 → +2 格、連對 3 題 → +3 格…看提示也照樣能擴張；答錯不會扣領地。
         </div>
 
         <div class="row">
@@ -860,7 +863,7 @@
 
     // ---------- bank/state ----------
     const bank = Array.isArray(window.INTERACTIVE_G5_EMPIRE_BANK) ? window.INTERACTIVE_G5_EMPIRE_BANK : [];
-    const state = { q: null, revealed: false, hintUsed: 0, shownHintLevels: {1:false,2:false,3:false} };
+    const state = { q: null, revealed: false, hintUsed: 0, practiceStreak: 0, shownHintLevels: {1:false,2:false,3:false} };
 
     const ls = {
       get(k, d){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } },
@@ -1577,8 +1580,12 @@
       els.banner.className = 'banner muted';
       els.banner.textContent = '提示：先抓「已知/未知」→ 再列式。看完不清楚 → 改選 Level 2/3 再按「看提示」。';
 
-      // focus map to this question type (preview next tile)
-      if (q && q.kind) renderEmpire(null, regionFromKind(q.kind));
+      // focus map to this question type (preview next expansion size)
+      if (q && q.kind){
+        const previewN = Math.max(1, Math.min(8, (Number(state.practiceStreak)||0) + 1));
+        renderEmpire(null, regionFromKind(q.kind), previewN);
+        if (empireBigOpen) renderEmpireBig(null, regionFromKind(q.kind), previewN);
+      }
 
       // tools
       hideAllTools();
@@ -2125,13 +2132,15 @@
         const ok = compareByMode(els.answer.value, q.answer, q.answer_mode || 'number');
         if (ok){
           const rid = regionFromKind(q.kind);
-          const beforeLand = regionStats(rid).land;
+          state.practiceStreak = (Number(state.practiceStreak) || 0) + 1;
+          const expandN = Math.max(1, Math.min(8, state.practiceStreak));
           const delta = PRACTICE_XP_CORRECT;
           setRegionXP(rid, regionXP(rid) + delta);
+          const before = regionStats(rid);
+          const res = claimTiles(rid, expandN, MAX_TILES_SMALL);
           const after = regionStats(rid);
-          saveEmpire();
-          const gained = Math.max(0, after.land - beforeLand);
-          const latest = gained ? after.land : null;
+          const gained = Math.max(0, res.claimed || 0);
+          const latest = (res.ids && res.ids.length) ? res.ids[res.ids.length - 1] : null;
 
           // render + sparkle chain on both maps
           renderEmpireCore(latest, rid, MAX_TILES_SMALL, {
@@ -2142,7 +2151,10 @@
             metaEl: els.empireMeta,
             summaryEl: els.empireSummary,
             gridEl: els.empireGrid,
+            previewN: Math.max(1, Math.min(8, state.practiceStreak + 1)),
             gainedTiles: gained || 1,
+            sparkleIds: res.ids || [],
+            latestIds: res.ids || [],
           });
           if (empireBigOpen){
             renderEmpireCore(latest, rid, MAX_TILES_BIG, {
@@ -2153,18 +2165,22 @@
               metaEl: els.empireMetaBig,
               summaryEl: els.empireSummaryBig,
               gridEl: els.empireGridBig,
+              previewN: Math.max(1, Math.min(8, state.practiceStreak + 1)),
               gainedTiles: gained || 1,
+              sparkleIds: res.ids || [],
+              latestIds: res.ids || [],
             });
           }
 
           if (gained){
-            showExpandToast(`擴張成功！+${gained} 領地 ✨`);
+            showExpandToast(`連對 ${state.practiceStreak}｜擴張 +${gained} 格 ✨`);
           } else {
-            showExpandToast(`工程點數 +${delta}（快要擴張了！）`);
+            showExpandToast(`工程點數 +${delta}`);
           }
 
-          showBanner('ok', `答對了！+${delta} 工程點數（練習也能擴張）\n你可以出下一題。`);
+          showBanner('ok', `答對了！+${delta} 工程點數（練習也能擴張）\n連對 ${state.practiceStreak}：擴張 ${gained || 0} 格。你可以出下一題。`);
         } else {
+          state.practiceStreak = 0;
           showBanner('warn', '答案不對沒關係（不扣分）。再試一次；可以先看提示 Level 1/2/3。');
         }
       } catch (e){
@@ -2181,8 +2197,8 @@
     });
 
     // ---------- game mode / empire regions ----------
-    // expansion tuning (kid-friendly): more frequent expansion + bigger celebration
-    const TERRITORY_XP = 36;
+    // XP still exists for score/feedback, but territory expansion is now tile-based (selectable).
+    const TERRITORY_XP = 36; // legacy display only
     const PRACTICE_XP_CORRECT = 18;
     const GAME_BASE_XP = 12;
     const GAME_STREAK_XP_PER = 2;
@@ -2190,7 +2206,7 @@
     const GAME_NO_HINT_BONUS = 8;
     const MAX_TILES_SMALL = 72;
     const MAX_TILES_BIG = 144;
-    const gPersistKey = 'g5e_empire_regions_v1';
+    const gPersistKey = 'g5e_empire_regions_v2';
 
     const REGIONS = [
       { id:'decimal_mul', title:'小數乘法城', kinds:new Set(['decimal_mul']) },
@@ -2206,18 +2222,54 @@
 
     function defaultEmpire(){
       const regions = {};
-      for (const r of REGIONS) regions[r.id] = {xp:0};
+      for (const r of REGIONS) regions[r.id] = {xp:0, owned:[], targets:[]};
       return { regions, selected: REGIONS[0].id };
     }
 
-    let empire = ls.get(gPersistKey, defaultEmpire());
-    if (!empire || !empire.regions) empire = defaultEmpire();
-    for (const r of REGIONS) if (!empire.regions[r.id]) empire.regions[r.id] = {xp:0};
-    if (!empire.selected || !regionById[empire.selected]) empire.selected = REGIONS[0].id;
-
-    function territoriesFromXP(xp){
-      return Math.max(0, Math.floor((Number(xp)||0) / TERRITORY_XP));
+    function uniqSortedInt(arr){
+      const out = [];
+      const seen = new Set();
+      for (const x of (Array.isArray(arr) ? arr : [])){
+        const v = Number(x);
+        if (!Number.isFinite(v)) continue;
+        const i = Math.max(1, Math.floor(v));
+        if (seen.has(i)) continue;
+        seen.add(i);
+        out.push(i);
+      }
+      out.sort((a,b)=>a-b);
+      return out;
     }
+
+    function migrateV1IfNeeded(){
+      const existing = ls.get(gPersistKey, null);
+      if (existing && existing.regions) return existing;
+
+      const v1 = ls.get('g5e_empire_regions_v1', null);
+      if (!v1 || !v1.regions) return null;
+
+      const next = { regions:{}, selected: v1.selected || REGIONS[0].id };
+      for (const r of REGIONS){
+        const xp = Math.max(0, Number(v1?.regions?.[r.id]?.xp) || 0);
+        const land = Math.max(0, Math.floor(xp / TERRITORY_XP));
+        const owned = [];
+        for (let i=1;i<=land;i++) owned.push(i);
+        next.regions[r.id] = { xp, owned, targets:[] };
+      }
+      return next;
+    }
+
+    let empire = migrateV1IfNeeded() || ls.get(gPersistKey, defaultEmpire());
+    if (!empire || !empire.regions) empire = defaultEmpire();
+    for (const r of REGIONS){
+      if (!empire.regions[r.id]) empire.regions[r.id] = {xp:0, owned:[], targets:[]};
+      const d = empire.regions[r.id];
+      d.xp = Math.max(0, Number(d.xp) || 0);
+      d.owned = uniqSortedInt(d.owned);
+      d.targets = uniqSortedInt(d.targets);
+      empire.regions[r.id] = d;
+    }
+    if (!empire.selected || !regionById[empire.selected]) empire.selected = REGIONS[0].id;
 
     const CASTLE_MILESTONES = [12, 30, 50, 70, 90, 120];
 
@@ -2248,15 +2300,102 @@
 
     function setRegionXP(regionId, xp){
       const id = regionById[regionId] ? regionId : REGIONS[0].id;
-      empire.regions[id] = empire.regions[id] || {xp:0};
+      empire.regions[id] = empire.regions[id] || {xp:0, owned:[], targets:[]};
       empire.regions[id].xp = Math.max(0, Number(xp) || 0);
     }
 
     function regionStats(regionId){
-      const xp = regionXP(regionId);
-      const land = territoriesFromXP(xp);
-      const inTile = xp % TERRITORY_XP;
-      return { xp, land, inTile, fort: fortressLevel(land) };
+      const id = regionById[regionId] ? regionId : REGIONS[0].id;
+      const d = empire.regions[id] || {xp:0, owned:[], targets:[]};
+      d.xp = Math.max(0, Number(d.xp) || 0);
+      d.owned = uniqSortedInt(d.owned);
+      d.targets = uniqSortedInt(d.targets);
+      empire.regions[id] = d;
+      const xp = d.xp;
+      const land = d.owned.length;
+      const targets = d.targets.length;
+      return { xp, land, targets, fort: fortressLevel(land) };
+    }
+
+    function toggleTargetTile(regionId, tileIndex, maxTiles){
+      const rid = regionById[regionId] ? regionId : REGIONS[0].id;
+      const d = empire.regions[rid] || {xp:0, owned:[], targets:[]};
+      d.owned = uniqSortedInt(d.owned);
+      d.targets = uniqSortedInt(d.targets);
+      const limit = Math.max(1, Number(maxTiles || MAX_TILES_SMALL));
+      const i = Math.max(1, Math.floor(Number(tileIndex) || 0));
+      if (i < 1 || i > limit) return;
+      const owned = new Set(d.owned);
+      if (owned.has(i)) return;
+      const targets = new Set(d.targets);
+      if (targets.has(i)) targets.delete(i);
+      else targets.add(i);
+      d.targets = uniqSortedInt(Array.from(targets));
+      empire.regions[rid] = d;
+      saveEmpire();
+      // keep selection responsive
+      const inGame = !!(g && g.running);
+      const previewN = inGame
+        ? Math.max(1, Math.min(8, (Number(g.streak)||0) + 1))
+        : (state?.q && regionFromKind(state.q.kind) === rid)
+          ? Math.max(1, Math.min(8, (Number(state.practiceStreak)||0) + 1))
+          : 0;
+      renderEmpire(null, rid, previewN);
+      if (empireBigOpen) renderEmpireBig(null, rid, previewN);
+      if (inGame) gUpdate();
+    }
+
+    function claimPreview(regionId, wantN, maxTiles){
+      const rid = regionById[regionId] ? regionId : REGIONS[0].id;
+      const d = empire.regions[rid] || {xp:0, owned:[], targets:[]};
+      const limit = Math.max(1, Number(maxTiles || MAX_TILES_SMALL));
+      const n = Math.max(0, Math.floor(Number(wantN) || 0));
+      if (!n) return [];
+      const owned = new Set(uniqSortedInt(d.owned));
+      const selected = uniqSortedInt(d.targets).filter(i => i>=1 && i<=limit && !owned.has(i));
+      const out = [];
+      for (const i of selected){
+        if (out.length >= n) break;
+        out.push(i);
+        owned.add(i);
+      }
+      for (let i=1;i<=limit && out.length < n;i++){
+        if (owned.has(i)) continue;
+        out.push(i);
+        owned.add(i);
+      }
+      return out;
+    }
+
+    function claimTiles(regionId, wantN, maxTiles){
+      const rid = regionById[regionId] ? regionId : REGIONS[0].id;
+      const d = empire.regions[rid] || {xp:0, owned:[], targets:[]};
+      d.owned = uniqSortedInt(d.owned);
+      d.targets = uniqSortedInt(d.targets);
+      const limit = Math.max(1, Number(maxTiles || MAX_TILES_SMALL));
+      const n = Math.max(0, Math.floor(Number(wantN) || 0));
+      if (!n) return { claimed:0, ids:[] };
+
+      const owned = new Set(d.owned);
+      const selected = d.targets.filter(i => i>=1 && i<=limit && !owned.has(i));
+      const toClaim = [];
+      for (const i of selected){
+        if (toClaim.length >= n) break;
+        toClaim.push(i);
+        owned.add(i);
+      }
+      for (let i=1;i<=limit && toClaim.length < n;i++){
+        if (owned.has(i)) continue;
+        toClaim.push(i);
+        owned.add(i);
+      }
+
+      d.owned = uniqSortedInt(Array.from(owned));
+      const claimedSet = new Set(toClaim);
+      d.targets = d.targets.filter(i => !claimedSet.has(i));
+      empire.regions[rid] = d;
+      saveEmpire();
+      return { claimed: toClaim.length, ids: toClaim };
     }
 
     function saveEmpire(){
@@ -2287,6 +2426,15 @@
     function renderEmpireCore(latestIndex, viewRegionId, maxTiles, sink){
       const rid = (viewRegionId && regionById[viewRegionId]) ? viewRegionId : (empire.selected || REGIONS[0].id);
       const rs = regionStats(rid);
+      const total = Math.max(1, Number(maxTiles || MAX_TILES_SMALL));
+      const d = empire.regions[rid] || {xp:0, owned:[], targets:[]};
+      const ownedSet = new Set(uniqSortedInt(d.owned).filter(i => i>=1 && i<=total));
+      const targetSet = new Set(uniqSortedInt(d.targets).filter(i => i>=1 && i<=total && !ownedSet.has(i)));
+      const previewN = Math.max(0, Math.floor(Number(sink?.previewN) || 0));
+      const previewIds = previewN ? claimPreview(rid, previewN, total) : [];
+      const previewSet = new Set(previewIds);
+      const latestIds = Array.isArray(sink?.latestIds) ? sink.latestIds : null;
+      const latestSet = latestIds ? new Set(latestIds.map(x => Math.max(1, Math.floor(Number(x)||0)))) : null;
 
       // toggle tab active (small map only)
       if (!sink || sink.toggleTabs){
@@ -2300,7 +2448,11 @@
       if (sink?.landEl) sink.landEl.textContent = String(rs.land);
       if (sink?.xpEl) sink.xpEl.textContent = String(rs.xp);
       if (sink?.fortEl) sink.fortEl.textContent = rs.fort;
-      if (sink?.metaEl) sink.metaEl.textContent = `下一塊領地：${rs.inTile} / ${TERRITORY_XP}`;
+      if (sink?.metaEl){
+        const t = rs.targets || 0;
+        const previewText = previewN ? `｜答對可擴張 +${previewN} 格（可先點格子選擇）` : '｜可先點格子選擇要擴張的位置';
+        sink.metaEl.textContent = `已領地：${rs.land} / ${total}｜已選：${t} 格${previewText}`;
+      }
 
       if (sink?.summaryEl){
         const parts = REGIONS.map(r => `${r.title} ${regionStats(r.id).land}`);
@@ -2310,20 +2462,37 @@
       const grid = sink?.gridEl;
       if (!grid) return;
       grid.innerHTML = '';
-
-      const total = Math.max(1, Number(maxTiles || MAX_TILES_SMALL));
       for (let i=1;i<=total;i++){
         const d = document.createElement('div');
         d.dataset.i = String(i);
-        d.className = 'tile' + (i <= rs.land ? ' own' : '') + (i === (rs.land + 1) ? ' next' : '');
+        const isOwned = ownedSet.has(i);
+        const isTarget = targetSet.has(i);
+        const isPreview = previewSet.has(i) && !isOwned;
+        const isLatest = (latestSet ? latestSet.has(i) : (latestIndex && i === latestIndex));
+        d.className = 'tile'
+          + (isOwned ? ' own' : '')
+          + (!isOwned ? ' pickable' : '')
+          + (isTarget ? ' target' : '')
+          + (isPreview ? ' next' : '')
+          + (isLatest ? ' latest' : '');
         if (CASTLE_MILESTONES.includes(i)) d.className += ' castle';
-        if (latestIndex && i === latestIndex) d.className += ' latest';
-        d.title = i <= rs.land ? `${regionById[rid].title}｜領地 #${i}` : `未取得（還差 ${Math.max(0, (i*TERRITORY_XP) - rs.xp)} 點）`;
+        if (isOwned){
+          d.title = `${regionById[rid].title}｜已擁有領地 #${i}`;
+        } else if (isTarget){
+          d.title = `已選取：答對會優先擴張到 #${i}（再點一次取消）`;
+        } else {
+          d.title = `未取得：點一下選取要擴張的格子（可不連續）`;
+        }
+        if (!isOwned){
+          d.addEventListener('click', () => toggleTargetTile(rid, i, total));
+        }
         grid.appendChild(d);
       }
 
       // celebration sparkle (after DOM paint)
-      if (latestIndex){
+      if (Array.isArray(sink?.sparkleIds) && sink.sparkleIds.length){
+        requestAnimationFrame(() => empireSparkle(grid, sink.sparkleIds));
+      } else if (latestIndex){
         const gained = Math.max(1, Number(sink?.gainedTiles || 1));
         const intensity = Math.min(8, 2 + gained * 2);
         requestAnimationFrame(() => empireSparkle(grid, latestIndex, intensity));
@@ -2344,27 +2513,39 @@
       }, 1400);
     }
 
-    function empireSparkle(gridEl, latestIndex, intensity){
+    function empireSparkle(gridEl, idsOrLatestIndex, intensity){
       if (!gridEl) return;
-      const end = Number(latestIndex) || 0;
-      const n = Math.max(1, Number(intensity) || 3);
-      const start = Math.max(1, end - n + 1);
       const tiles = Array.from(gridEl.querySelectorAll('.tile'));
+
+      let ids = [];
+      if (Array.isArray(idsOrLatestIndex)){
+        ids = idsOrLatestIndex
+          .map(x => Math.max(1, Math.floor(Number(x) || 0)))
+          .filter(Boolean);
+      } else {
+        const end = Math.max(1, Math.floor(Number(idsOrLatestIndex) || 0));
+        const n = Math.max(1, Math.floor(Number(intensity) || 3));
+        const start = Math.max(1, end - n + 1);
+        for (let i=start;i<=end;i++) ids.push(i);
+      }
+      ids = Array.from(new Set(ids)).slice(0, 14);
+
+      const want = new Set(ids);
+      let k = 0;
       for (const t of tiles){
         const i = Number(t.dataset.i || 0);
-        if (!i) continue;
-        if (i >= start && i <= end){
-          const delay = (i - start) * 65;
-          t.classList.remove('spark');
-          setTimeout(() => {
-            t.classList.add('spark');
-            setTimeout(() => t.classList.remove('spark'), 1200);
-          }, delay);
-        }
+        if (!i || !want.has(i)) continue;
+        const delay = k * 70;
+        k += 1;
+        t.classList.remove('spark');
+        setTimeout(() => {
+          t.classList.add('spark');
+          setTimeout(() => t.classList.remove('spark'), 1200);
+        }, delay);
       }
     }
 
-    function renderEmpire(latestIndex, viewRegionId){
+    function renderEmpire(latestIndex, viewRegionId, previewN){
       renderEmpireCore(latestIndex, viewRegionId, MAX_TILES_SMALL, {
         toggleTabs: true,
         landEl: els.empireLand,
@@ -2373,10 +2554,11 @@
         metaEl: els.empireMeta,
         summaryEl: els.empireSummary,
         gridEl: els.empireGrid,
+        previewN: previewN || 0,
       });
     }
 
-    function renderEmpireBig(latestIndex, viewRegionId){
+    function renderEmpireBig(latestIndex, viewRegionId, previewN){
       renderEmpireCore(latestIndex, viewRegionId, MAX_TILES_BIG, {
         toggleTabs: false,
         landEl: els.empireLandBig,
@@ -2385,6 +2567,7 @@
         metaEl: els.empireMetaBig,
         summaryEl: els.empireSummaryBig,
         gridEl: els.empireGridBig,
+        previewN: previewN || 0,
       });
     }
 
@@ -2394,7 +2577,11 @@
       empireBigOpen = true;
       els.empireModal.style.display = '';
       els.empireModal.setAttribute('aria-hidden', 'false');
-      renderEmpireBig(null, g?.running ? g.activeRegion : (state?.q ? regionFromKind(state.q.kind) : null));
+      const rid = g?.running ? g.activeRegion : (state?.q ? regionFromKind(state.q.kind) : null);
+      const previewN = g?.running
+        ? Math.max(1, Math.min(8, (Number(g.streak)||0) + 1))
+        : Math.max(1, Math.min(8, (Number(state.practiceStreak)||0) + 1));
+      renderEmpireBig(null, rid, previewN);
     }
     function closeEmpireBig(){
       if (!els.empireModal) return;
@@ -2406,13 +2593,21 @@
     function resetSelectedRegion(){
       const rid = empire.selected || REGIONS[0].id;
       setRegionXP(rid, 0);
+      empire.regions[rid] = empire.regions[rid] || {xp:0, owned:[], targets:[]};
+      empire.regions[rid].owned = [];
+      empire.regions[rid].targets = [];
       saveEmpire();
       renderEmpire(null);
       gUpdate();
     }
 
     function resetAllRegions(){
-      for (const r of REGIONS) setRegionXP(r.id, 0);
+      for (const r of REGIONS){
+        setRegionXP(r.id, 0);
+        empire.regions[r.id] = empire.regions[r.id] || {xp:0, owned:[], targets:[]};
+        empire.regions[r.id].owned = [];
+        empire.regions[r.id].targets = [];
+      }
       saveEmpire();
       renderEmpire(null);
       gUpdate();
@@ -2632,18 +2827,22 @@
       if (els.gLand) els.gLand.textContent = String(rs.land);
       if (els.gFort) els.gFort.textContent = rs.fort;
 
-      const pct = Math.max(0, Math.min(100, (rs.inTile / TERRITORY_XP) * 100));
+      const pct = Math.max(0, Math.min(100, (rs.land / MAX_TILES_SMALL) * 100));
       els.gBar.style.width = `${pct}%`;
       const nextStreak = (Number(g.streak)||0) + 1;
       const nextBase = GAME_BASE_XP + Math.min(GAME_STREAK_XP_MAX, nextStreak * GAME_STREAK_XP_PER);
       const nextBonus = g.hintUsedThisQ ? 0 : GAME_NO_HINT_BONUS;
       const nextDelta = nextBase + nextBonus;
-      if (els.gProgressMeta) els.gProgressMeta.textContent = `進度：${rs.inTile} / ${TERRITORY_XP}（答對才前進）｜答對預估 +${nextDelta}｜本區工程點數：${rs.xp}`;
+
+      const nextExpand = Math.max(1, Math.min(8, nextStreak));
+      if (els.gProgressMeta){
+        els.gProgressMeta.textContent = `領地：${rs.land} / ${MAX_TILES_SMALL}｜本題答對可擴張 +${nextExpand} 格（可先點格子選）｜答對預估 +${nextDelta} 分｜本區工程點數：${rs.xp}`;
+      }
 
       // show expansion map for the active territory while running
       if (g.running){
-        renderEmpire(null, g.activeRegion);
-        if (empireBigOpen) renderEmpireBig(null, g.activeRegion);
+        renderEmpire(null, g.activeRegion, nextExpand);
+        if (empireBigOpen) renderEmpireBig(null, g.activeRegion, nextExpand);
       }
     }
 
@@ -2657,7 +2856,9 @@
       const rt = regionById[g.activeRegion]?.title || '本區域';
       gBanner('muted', `本題戰場：${rt}\n答對就擴張（地圖已預覽下一塊領地）｜先讀題抓已知/未知→列式→估算檢查。`);
       gRenderDecTools();
-      renderEmpire(null, g.activeRegion);
+      const previewN = Math.max(1, Math.min(8, (Number(g.streak)||0) + 1));
+      renderEmpire(null, g.activeRegion, previewN);
+      if (empireBigOpen) renderEmpireBig(null, g.activeRegion, previewN);
       gUpdate();
     }
 
@@ -2723,11 +2924,12 @@
 
           const rid = g.activeRegion || regionFromKind(g.q?.kind);
           const beforeLand = regionStats(rid).land;
+          const expandN = Math.max(1, Math.min(8, g.streak));
           setRegionXP(rid, regionXP(rid) + delta);
+          const res = claimTiles(rid, expandN, MAX_TILES_SMALL);
           const after = regionStats(rid);
-          saveEmpire();
-          const gained = Math.max(0, after.land - beforeLand);
-          const latest = gained ? after.land : null;
+          const gained = Math.max(0, res.claimed || 0);
+          const latest = (res.ids && res.ids.length) ? res.ids[res.ids.length - 1] : null;
 
           // render + sparkle chain on both maps
           renderEmpireCore(latest, rid, MAX_TILES_SMALL, {
@@ -2738,7 +2940,10 @@
             metaEl: els.empireMeta,
             summaryEl: els.empireSummary,
             gridEl: els.empireGrid,
+            previewN: Math.max(1, Math.min(8, g.streak + 1)),
             gainedTiles: gained || 1,
+            sparkleIds: res.ids || [],
+            latestIds: res.ids || [],
           });
           if (empireBigOpen){
             renderEmpireCore(latest, rid, MAX_TILES_BIG, {
@@ -2749,12 +2954,15 @@
               metaEl: els.empireMetaBig,
               summaryEl: els.empireSummaryBig,
               gridEl: els.empireGridBig,
+              previewN: Math.max(1, Math.min(8, g.streak + 1)),
               gainedTiles: gained || 1,
+              sparkleIds: res.ids || [],
+              latestIds: res.ids || [],
             });
           }
 
           if (gained){
-            showExpandToast(`連對 ${g.streak}｜擴張成功！+${gained} 領地 ✨`);
+            showExpandToast(`連對 ${g.streak}｜擴張 +${gained} 格 ✨`);
           } else {
             showExpandToast(`連對 ${g.streak}｜工程點數 +${delta}`);
           }
@@ -2762,7 +2970,7 @@
           const gotLand = after.land > beforeLand;
           if (gotLand){
             const rt = regionById[rid]?.title || '本區域';
-            gBanner('ok', `答對！+${base}${bonus?`+${bonus}（不看提示加分）`:''}｜連對 ${g.streak}\n${rt} 擴張成功：取得第 ${after.land} 塊領地！`);
+            gBanner('ok', `答對！+${base}${bonus?`+${bonus}（不看提示加分）`:''}｜連對 ${g.streak}\n${rt} 擴張：+${gained || 0} 格（總領地 ${after.land}）`);
           } else if (bonus){
             gBanner('ok', `答對！+${base}+${bonus}（不看提示加分）｜連對 ${g.streak}`);
           } else {
