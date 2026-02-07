@@ -22,14 +22,16 @@
     .card:hover { transform: translateY(-5px); border-color: var(--accent); }
     .card h2 { margin-top: 0; font-size: 1.5rem; color: #fff; }
     .card p { font-size: 0.95rem; color: #8b949e; flex-grow: 1; }
-    .tag { display: inline-block; background: rgba(56,139,253,0.15); color: #58a6ff; font-size: 12px; padding: 2px 8px; border-radius: 12px; margin-right: 5px; margin-bottom: 5px; border: 1px solid rgba(56,139,253,0.3); }
+    .tag { display: inline-block; background: rgba(56,139,253,0.15); color: #58a6ff; font-size: 12px; padding: 2px 8px; border-radius: 12px; margin-right: 5px; margin-bottom: 5px; border: 1px solid rgba(56,139,253,0.3); text-decoration: none; }
+    .tag:hover { filter: brightness(1.08); }
     .tag-nvidia { background: rgba(46, 160, 67, 0.15); color: #3fb950; border-color: rgba(46, 160, 67, 0.3); } 
     .tag-math { background: rgba(210, 153, 34, 0.15); color: #d29922; border-color: rgba(210, 153, 34, 0.3); }
     .btn { display: inline-block; background: var(--btn-bg); color: #fff; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: 600; margin-top: 15px; width: 100%; text-align: center; box-sizing: border-box; }
     .btn:hover { background: var(--btn-hover); }
     .tech-stack { margin-top: 40px; border-top: 1px solid var(--border); padding-top: 20px; }
     .tech-item { margin-bottom: 15px; }
-    .tech-title { font-weight: bold; color: #fff; }
+    .tech-title { font-weight: bold; color: #fff; text-decoration: none; }
+    a.tech-title:hover { text-decoration: underline; }
     footer { text-align: center; margin-top: 50px; font-size: 0.8rem; color: #8b949e; }
   </style>
 </head>
@@ -46,7 +48,7 @@
       <div class="card">
         <h2>一元一次方程式</h2>
         <div>
-          <span class="tag tag-math">MATH Dataset: Levels 1-5</span>
+          <a class="tag tag-math" href="./linear/" title="前往一元一次（Level 1-5）">MATH Dataset: Levels 1-5</a>
         </div>
         <p>
           從基礎的移項法則到複雜的有理方程式。支援適應性測驗 (Adaptive Test) 選題模式。
@@ -63,7 +65,7 @@
       <div class="card">
         <h2>一元二次方程式</h2>
         <div>
-           <span class="tag tag-nvidia">OpenMathInstruct: Step-by-step</span>
+          <a class="tag tag-nvidia" href="./quadratic/" title="前往一元二次（Step-by-step）">OpenMathInstruct: Step-by-step</a>
         </div>
         <p>
           AI 虛擬助教提供百萬級別的步驟解釋。涵蓋因式分解、配方法、公式解。
@@ -334,16 +336,16 @@
         <h3 style="color:var(--text); text-align:center;">核心競爭力 (Key Competencies)</h3>
         
         <div class="tech-item">
-            <span class="tag tag-math">MATH Dataset</span>
-            <span class="tech-title">分級標籤 (Level 1-5)</span>
+          <a class="tag tag-math" href="./linear/" title="前往一元一次（Level 1-5）">MATH Dataset</a>
+          <a class="tech-title" href="./linear/" title="前往一元一次（Level 1-5）">分級標籤 (Level 1-5)</a>
             <span style="font-size:0.9rem; color:#8b949e; display:block; margin-top:5px;">
                 包含 12,500 個高中競賽題目。其核心競爭力在於細緻的難度分級，非常適合用來做「適應性測驗（Adaptive Test）」的題庫基礎。
             </span>
         </div>
 
         <div class="tech-item">
-            <span class="tag tag-nvidia">OpenMathInstruct</span>
-            <span class="tech-title">AI 逐步引導 (Step-by-step)</span>
+          <a class="tag tag-nvidia" href="./quadratic/" title="前往一元二次（Step-by-step）">OpenMathInstruct</a>
+          <a class="tech-title" href="./quadratic/" title="前往一元二次（Step-by-step）">AI 逐步引導 (Step-by-step)</a>
             <span style="font-size:0.9rem; color:#8b949e; display:block; margin-top:5px;">
                 關鍵競爭力：百萬級別的步驟解釋。專門用於訓練 AI 如何給出「逐步引導」而非直接給答案，是開發「AI 虛擬助教」的絕佳素材。
             </span>
