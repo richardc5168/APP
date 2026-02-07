@@ -326,6 +326,11 @@
       if (fac) {
         const f1 = `${fac.m === 1 ? '' : (fac.m === -1 ? '-' : fac.m)}x${fac.n >= 0 ? '+' : ''}${fac.n}`;
         const f2 = `${fac.r === 1 ? '' : (fac.r === -1 ? '-' : fac.r)}x${fac.s >= 0 ? '+' : ''}${fac.s}`;
+        if (f1 === f2) {
+          const root = (-fac.n / fac.m);
+          const rootStr = Number.isFinite(root) ? String(root) : '（解一次方程）';
+          return `因式分解：${formatPoly(a, b, c)} = (${f1})^2。同一個因式出現兩次，所以是重根。令 (${f1})=0 → x=${rootStr}（重根）。`;
+        }
         return `因式分解：${formatPoly(a, b, c)} = (${f1})(${f2})，令每個因式=0。`;
       }
       if (a === 1) return `先試因式分解：找兩數 p、q，使 p×q=${c} 且 p+q=${b}，寫成 (x+p)(x+q)=0。`;

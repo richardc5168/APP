@@ -53,8 +53,42 @@ class QuadraticEngine:
             f = sp.factor(expr)
             # If factor() actually changed the expression, show it.
             if f != expr:
-                f_str = str(f).replace('**', '^').replace('*', '')
-                factoring_hint = f"因式分解：{self._fmt(expr)} = {f_str}，令每個因式=0。"
+                # Special-case: repeated root (perfect square)
+                repeated_base = None
+                try:
+                    if isinstance(f, sp.Pow) and f.exp == 2:
+                        repeated_base = f.base
+                    elif isinstance(f, sp.Mul):
+                        args = list(f.args)
+                        if len(args) == 2 and args[0] == args[1]:
+                            repeated_base = args[0]
+                except Exception:
+                    repeated_base = None
+
+                if repeated_base is not None:
+                    base_str = self._fmt(repeated_base)
+                    root_val = None
+                    try:
+                        sol = solve(repeated_base, x)
+                        if sol:
+                            root_val = str(sol[0]).replace('sqrt', '√')
+                    except Exception:
+                        root_val = None
+
+                    if root_val is not None:
+                        factoring_hint = (
+                            f"因式分解：{self._fmt(expr)} = ({base_str})^2。"
+                            f"同一個因式出現兩次，所以是重根。"
+                            f"令 ({base_str})=0 → x={root_val}（重根）。"
+                        )
+                    else:
+                        factoring_hint = (
+                            f"因式分解：{self._fmt(expr)} = ({base_str})^2。"
+                            f"同一個因式出現兩次，所以是重根。令 ({base_str})=0。"
+                        )
+                else:
+                    f_str = str(f).replace('**', '^').replace('*', '')
+                    factoring_hint = f"因式分解：{self._fmt(expr)} = {f_str}，令每個因式=0。"
             else:
                 # Give classic guidance.
                 if a == 1:
