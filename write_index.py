@@ -102,8 +102,8 @@ content = """<!DOCTYPE html>
         </div>
 
         <div class="tech-item">
-            <span class="tag">SageMath / SymPy</span>
-            <span class="tech-title">開源數學界的「大百科全書」</span>
+          <a class="tag" href="https://www.sympy.org/" target="_blank" rel="noopener noreferrer" title="前往 SymPy 官方網站">SageMath / SymPy</a>
+          <a class="tech-title" href="https://www.sympy.org/" target="_blank" rel="noopener noreferrer" title="前往 SymPy 官方網站">開源數學界的「大百科全書」</a>
             <span style="font-size:0.9rem; color:#8b949e; display:block; margin-top:5px;">
                 整合了 NumPy, SciPy, SymPy, R 等數十個專業數學包，是目前最強大的免費、開源數學計算環境，可替代付費的 Mathematica 或 MATLAB。
             </span>
