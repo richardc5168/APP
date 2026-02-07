@@ -322,30 +322,26 @@
     const fac = findIntegerFactorization(a, b, c);
     const D = b * b - 4 * a * c;
 
-    const base = `先確認標準型：${formatPoly(a, b, c)} = 0\n係數：a=${a}, b=${b}, c=${c}`;
-    if (topicId === 'A3') {
+    const factoringHint = (() => {
       if (fac) {
         const f1 = `${fac.m === 1 ? '' : (fac.m === -1 ? '-' : fac.m)}x${fac.n >= 0 ? '+' : ''}${fac.n}`;
         const f2 = `${fac.r === 1 ? '' : (fac.r === -1 ? '-' : fac.r)}x${fac.s >= 0 ? '+' : ''}${fac.s}`;
-        return {
-          h1: `${base}\nHint：先試因式分解（找兩個一次因式）。`,
-          h2: `觀察可分解：${formatPoly(a, b, c)} = (${f1})(${f2})`,
-          h3: `令每個因式為 0：(${f1})=0 或 (${f2})=0，再各自解出 x。`,
-          factoring: { f1, f2 }
-        };
+        return `因式分解：${formatPoly(a, b, c)} = (${f1})(${f2})，令每個因式=0。`;
       }
-      return {
-        h1: `${base}\nHint：先嘗試因式分解（若卡住再改配方法）。`,
-        h2: `配方法：把常數移到右邊，在左邊補成完全平方。`,
-        h3: `若要公式解：先算判別式 D=b^2-4ac = ${D}，再代入 x=(-b±√D)/(2a)。`
-      };
-    }
+      if (a === 1) return `先試因式分解：找兩數 p、q，使 p×q=${c} 且 p+q=${b}，寫成 (x+p)(x+q)=0。`;
+      return `先試因式分解（a≠1）：可用 ac 分解：找兩數乘積=ac、和=b，拆中間項後分組分解。`;
+    })();
 
-    // Non-A3 topics: still prefer flexible approaches before formula
+    const completingSquareHint = (a === 1)
+      ? `配方法：x^2+(${b})x=-(${c})，補上 (b/2)^2=(${b}/2)^2，左邊成 (x+b/2)^2，再開根號。`
+      : `配方法：先兩邊同除以 a：x^2+(b/a)x+(c/a)=0；移項後補上 (b/2a)^2 成完全平方，再開根號。`;
+
+    const formulaHint = `公式解（最後手段）：D=b^2-4ac=${D}，x=(-b±√D)/(2a)=(${-b}±√${D})/${2 * a}。`;
+
     return {
-      h1: `${base}\nHint：先觀察能否配方法補成平方。`,
-      h2: `配方法：把常數移到右邊，在左邊補成完全平方，再開根號。`,
-      h3: `最後才用公式解：D=${D}，x=(-b±√D)/(2a)。`
+      h1: factoringHint,
+      h2: completingSquareHint,
+      h3: formulaHint,
     };
   }
 
