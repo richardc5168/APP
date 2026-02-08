@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>家長週報（MVP）</title>
+  <title>家長週報（最近 7 天）</title>
   <style>
     :root{
       --bg:#0d1117; --card:#161b22; --border:#30363d; --text:#c9d1d9; --muted:#8b949e;
@@ -29,13 +29,14 @@
     .tag.ok{ border-color:rgba(46,160,67,0.6); color:#3fb950; }
     .tag.warn{ border-color:rgba(210,153,34,0.6); color:#d29922; }
     .tag.bad{ border-color:rgba(248,81,73,0.6); color:#ff7b72; }
+    .tag.pill{ background:#0b1220; }
     textarea{ width:100%; min-height:160px; background:#0b1220; color:var(--text); border:1px solid var(--border); border-radius:8px; padding:10px; }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <h1>家長週報（MVP）</h1>
-    <div class="small">白話中文版本：以四象限 A/B/C/D + 提示深度統計為核心。</div>
+    <h1>家長週報（最近 7 天）</h1>
+    <div class="small">白話中文版本：最近 N 天（預設 7 天）作答統計 + 提示卡關 + 弱點 TOP3（規則推薦）。</div>
 
     <div class="card" style="margin-top:12px">
       <div class="row">
@@ -57,6 +58,24 @@
           <button id="btnExport" class="ghost">匯出 Attempts JSON</button>
           <button id="btnClear" class="ghost">清除本機紀錄</button>
         </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:12px">
+      <div class="row" style="justify-content:space-between; align-items:flex-start">
+        <div>
+          <div style="font-weight:900; font-size:16px">最近 <span id="txtRangeDays">7</span> 天重點摘要</div>
+          <div id="txtRangeDates" class="small" style="margin-top:4px"></div>
+        </div>
+        <div class="row" style="gap:8px">
+          <span id="pillStuck" class="tag pill warn">卡關提示階：—</span>
+          <span id="pillWeak" class="tag pill warn">弱點：—</span>
+        </div>
+      </div>
+      <div id="summaryBox" style="margin-top:10px"></div>
+      <div style="margin-top:10px">
+        <div style="font-weight:800">家長建議（本週 3 個重點）</div>
+        <div id="summaryAdvice" class="small" style="margin-top:6px"></div>
       </div>
     </div>
 
@@ -146,6 +165,57 @@
       const v = Number(ms);
       if (!Number.isFinite(v)) return '0s';
       return Math.round(v / 1000) + 's';
+    }
+
+    function min1(ms){
+      const v = Math.max(0, Number(ms || 0));
+      const m = v / 60000;
+      if (m < 1) return '不到 1 分';
+      return Math.round(m) + ' 分';
+    }
+
+    function sumDurationMs(attempts){
+      const items = Array.isArray(attempts) ? attempts : [];
+      let s = 0;
+      for (const evt of items){
+        const a = Number(evt?.ts_start || 0);
+        const b = Number(evt?.ts_end || 0);
+        const d = Math.max(0, (Number.isFinite(b) ? b : 0) - (Number.isFinite(a) ? a : 0));
+        s += d;
+      }
+      return s;
+    }
+
+    function sumHintMs(attempts){
+      const items = Array.isArray(attempts) ? attempts : [];
+      let s = 0;
+      for (const evt of items){
+        const v = Number(evt?.hint?.total_hint_ms || 0);
+        if (Number.isFinite(v) && v > 0) s += v;
+      }
+      return s;
+    }
+
+    function hintHist(attempts, filterFn){
+      const hist = { none: 0, L1: 0, L2: 0, L3: 0, solution: 0 };
+      const items = Array.isArray(attempts) ? attempts : [];
+      for (const evt of items){
+        if (typeof filterFn === 'function' && !filterFn(evt)) continue;
+        const k = window.AIMathReportAggregate?.hintDepthKey?.(evt) || 'none';
+        hist[k] = (hist[k] || 0) + 1;
+      }
+      return hist;
+    }
+
+    function argmaxHist(hist, keys){
+      const ks = Array.isArray(keys) ? keys : Object.keys(hist || {});
+      let bestK = null;
+      let bestV = -1;
+      for (const k of ks){
+        const v = Number(hist?.[k] || 0);
+        if (v > bestV){ bestV = v; bestK = k; }
+      }
+      return { k: bestK, v: bestV };
     }
 
     function statusTag(row){
@@ -248,6 +318,16 @@
         if (bRate >= 0.45) reasons.push('「依賴提示才答對」→ 可以練習先自己寫出算式再看提示');
         if (!reasons.length) reasons.push('資料顯示仍有一些不穩定，做一輪強化會更穩。');
 
+        const advice = [];
+        if (cRate >= 0.30) advice.push('提示用了還會錯：先做 3 題「示範題」，照步驟寫、每步寫完就檢查，再回來做類似題。');
+        if (dRate >= 0.30) advice.push('無提示錯較多：建議用「短回合」練習（一次 10 題），每題都寫出算式，不要跳步。');
+        if (bRate >= 0.45) advice.push('提示偏多：先口頭說出「下一步要算什麼」再動筆；真的卡住再看 L1。');
+        if (/四則運算|括號|乘除/.test(String(r.kind || ''))) advice.push('觀念提醒：先算括號，再算乘除，最後加減。');
+        if (/通分|分數/.test(String(r.kind || '')) || String(r.unit_id || '') === 'fraction') advice.push('觀念提醒：先找最小公倍數，再一起通分。');
+        if (/面積/.test(String(r.kind || ''))) advice.push('觀念提醒：先確認單位與公式，分區塊的就先切開再相加。');
+        if (/文字題|應用題/.test(String(r.kind || '')) || String(r.unit_id || '') === 'life') advice.push('觀念提醒：先把題目句子改成算式，再計算。');
+        if (!advice.length) advice.push('建議：先做 3 題示範（照步驟寫）→ 再做 10 題加強。');
+
         const qs = pickPracticeQuestions(uid, r.unit_id, r.kind, attempts, 10);
         plans.push({ unit_id: r.unit_id, kind: r.kind, questions: qs.map(q => ({ id: String(q?.id || ''), text: qText(q) })) });
 
@@ -265,6 +345,10 @@
           <div style="margin-top:8px">
             <div style="font-weight:700">為什麼列為弱點</div>
             <div class="small">- ${reasons.join('<br>- ')}</div>
+          </div>
+          <div style="margin-top:10px">
+            <div style="font-weight:700">題型加強建議</div>
+            <div class="small">- ${advice.join('<br>- ')}</div>
           </div>
           <div style="margin-top:10px">
             <div style="font-weight:700">下一步練哪 10 題（建議）</div>
@@ -311,6 +395,16 @@
       const attempts = window.AIMathAttemptTelemetry?.listAttempts?.(uid, sinceMs != null ? { sinceMs } : {}) || [];
       const agg = window.AIMathReportAggregate?.aggregate?.(attempts) || { overall: {n:0}, by_kind: [], kpi: {} };
 
+      $('txtRangeDays').textContent = String(days);
+      if (sinceMs != null){
+        const start = new Date(sinceMs);
+        const end = new Date();
+        const fmt = (d) => `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;
+        $('txtRangeDates').textContent = `期間：${fmt(start)} ～ ${fmt(end)}`;
+      } else {
+        $('txtRangeDates').textContent = '期間：全部紀錄';
+      }
+
       $('kpiTotal').textContent = String(agg.kpi.total || 0);
       $('kpiAcc').textContent = pct(agg.kpi.accuracy || 0);
       $('kpiInd').textContent = pct(agg.kpi.independent_rate || 0);
@@ -318,9 +412,82 @@
       $('kpiFirst').textContent = pct(agg.kpi.first_try_accuracy || 0);
       $('kpiTime').textContent = sec(agg.kpi.avg_time_ms || 0);
 
+      // Sellable summary (最近 N 天)
+      const totalTimeMs = sumDurationMs(attempts);
+      const totalHintMs = sumHintMs(attempts);
+      const qHist = { A: 0, B: 0, C: 0, D: 0 };
+      for (const evt of attempts){
+        const q = window.AIMathReportAggregate?.classifyQuadrant?.(evt) || 'D';
+        qHist[q] = (qHist[q] || 0) + 1;
+      }
+      const helpHist = hintHist(attempts, (e) => {
+        const q = window.AIMathReportAggregate?.classifyQuadrant?.(e);
+        return q === 'B' || q === 'C';
+      });
+      const wrongHintHist = hintHist(attempts, (e) => (window.AIMathReportAggregate?.classifyQuadrant?.(e) === 'C'));
+      const hintedN = (helpHist.L1 || 0) + (helpHist.L2 || 0) + (helpHist.L3 || 0) + (helpHist.solution || 0);
+      const wrongHintN = (wrongHintHist.L1 || 0) + (wrongHintHist.L2 || 0) + (wrongHintHist.L3 || 0) + (wrongHintHist.solution || 0);
+      const stuck1 = argmaxHist(helpHist, ['L1','L2','L3','solution']);
+      const stuck2 = argmaxHist(wrongHintHist, ['L1','L2','L3','solution']);
+      const stuckKey = (stuck1.v > 0 ? stuck1.k : '—');
+
+      const summaryLines = [];
+      summaryLines.push(`<span class="tag pill ok">總題數 ${agg.kpi.total || 0}</span>`);
+      summaryLines.push(`<span class="tag pill ok">正確率 ${pct(agg.kpi.accuracy || 0)}</span>`);
+      summaryLines.push(`<span class="tag pill warn">總耗時 ${min1(totalTimeMs)}</span>`);
+      summaryLines.push(`<span class="tag pill warn">平均 ${sec(agg.kpi.avg_time_ms || 0)}/題</span>`);
+      summaryLines.push(`<span class="tag pill warn">提示依賴 ${pct(agg.kpi.hint_dependency || 0)}</span>`);
+      summaryLines.push(`<span class="tag pill warn">提示總耗時 ${min1(totalHintMs)}</span>`);
+
+      $('summaryBox').innerHTML = `
+        <div class="row" style="gap:8px; margin-top:6px; flex-wrap:wrap">${summaryLines.join('')}</div>
+        <div class="small" style="margin-top:10px">
+          本週四象限：A ${qHist.A||0}｜B ${qHist.B||0}｜C ${qHist.C||0}｜D ${qHist.D||0}
+          <span class="mono" style="margin-left:10px">提示深度（B+C）：L1 ${helpHist.L1||0}｜L2 ${helpHist.L2||0}｜L3 ${helpHist.L3||0}｜解答 ${helpHist.solution||0}</span>
+        </div>
+      `;
+
+      const pillStuck = (stuck1.v > 0)
+        ? `卡關提示階：${stuckKey}（${stuck1.v}/${hintedN || 0}）`
+        : '卡關提示階：—';
+      $('pillStuck').textContent = pillStuck;
+
+      const advice = [];
+      const totalN = Math.max(0, Number(agg.kpi.total || 0));
+      const cRate = totalN ? (Number(qHist.C || 0) / totalN) : 0;
+      const dRate = totalN ? (Number(qHist.D || 0) / totalN) : 0;
+      const hintDep = Number(agg.kpi.hint_dependency || 0);
+
+      if (totalN < 10){
+        advice.push('本週樣本較少（題數偏少），建議再累積 10–20 題，統計會更準。');
+      }
+      if (hintDep >= 0.45){
+        advice.push('提示偏多：代表觀念還不夠熟，建議先做 3 題示範（照步驟寫），再做一輪 10 題。');
+        advice.push('看到題目先口頭說出「下一步要算什麼」再動筆；真的卡住再看 L1。');
+      }
+      if (cRate >= 0.30){
+        advice.push('看提示仍常錯：請把每一步都寫出來，每步寫完就檢查（最常見是算錯一小步或漏寫）。');
+      }
+      if (dRate >= 0.30){
+        advice.push('不看提示就容易錯：建議用短回合刷題（一次 10 題），每題都先寫算式、不跳步。');
+      }
+      if (stuckKey === 'L2' || stuckKey === 'L3' || stuckKey === 'solution'){
+        advice.push(`卡關多在 ${stuckKey}：代表前一階（L1）還沒穩，建議回到「寫算式 + 寫出每一步」，不要只看答案。`);
+      }
+      if (!advice.length){
+        advice.push('整體表現穩定：保持每週 2–3 次、每次 10 題的小練習，效果最好。');
+        advice.push('進階做法：每次挑 2 題「最慢的題」當作示範題，要求完整步驟。');
+      }
+      $('summaryAdvice').innerHTML = `- ${advice.slice(0, 3).join('<br>- ')}`;
+
       renderKinds(agg.by_kind || []);
 
       const remedy = renderWeaknesses(uid, attempts);
+
+      const top1 = (remedy.top || [])[0];
+      $('pillWeak').textContent = top1
+        ? `弱點：${unitName(top1.unit_id)} / ${String(top1.kind || 'unknown')}`
+        : '弱點：—';
 
       $('txtOut').value = JSON.stringify({
         generated_at_ms: Date.now(),
@@ -328,6 +495,16 @@
         range_days: days,
         kpi: agg.kpi,
         by_kind: agg.by_kind,
+        summary: {
+          total_time_ms: Math.round(totalTimeMs),
+          total_hint_ms: Math.round(totalHintMs),
+          hint_depth_hist_help: helpHist,
+          hint_depth_hist_wrong_with_hint: wrongHintHist,
+          stuck_hint_level: stuckKey,
+          stuck_hint_level_count: Math.max(0, Number(stuck1.v || 0)),
+          stuck_hint_level_wrong_with_hint: (stuck2.v > 0 ? stuck2.k : '—'),
+          stuck_hint_level_wrong_with_hint_count: Math.max(0, Number(stuck2.v || 0)),
+        },
         remedy_top3: (remedy.top || []).map(x => ({ unit_id: x.unit_id, kind: x.kind, n: x.n, A:x.A, B:x.B, C:x.C, D:x.D, weakness_score: x.weakness_score })),
         next_practice_10: remedy.plans,
       }, null, 2);
