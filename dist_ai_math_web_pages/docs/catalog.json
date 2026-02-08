@@ -20,6 +20,12 @@
       "description": "自動掃描所有離線題庫 bank.js，彙整每個模組的題型（kind）、核心觀念、常見步驟與題數/難度分布；適合考前快速複習與查漏補缺。"
     },
     {
+      "id": "exam-sprint",
+      "title": "考前衝刺｜國小數學整合進階題（離線）",
+      "path": "exam-sprint/",
+      "description": "整合全站國小離線題庫，只挑深入活用/進階題：3 層提示 + 完整詳解 + 最近 7 天報告（正確率/耗時/卡關提示階/弱點 TOP3）與下一步練題建議。"
+    },
+    {
       "id": "mixed-multiply",
       "title": "國小｜帶分數乘法（練習）",
       "path": "mixed-multiply/",
