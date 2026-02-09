@@ -336,16 +336,28 @@ def build_exam_sprint_bank(
     # User goal: hard questions should be more multi-step.
     # Enforce a higher step bar for hard items, but keep generation robust by falling back
     # to slightly lower step counts if strict filtering cannot satisfy target_hard.
-    min_hard_steps_primary = 4
-    min_hard_steps_fallback = 3
+    min_hard_steps_primary = 5
+    min_hard_steps_fallback_1 = 4
+    min_hard_steps_fallback_2 = 3
 
     hard_primary = [it for it in hard_items if step_count(it) >= min_hard_steps_primary]
-    hard_fallback = [it for it in hard_items if min_hard_steps_fallback <= step_count(it) < min_hard_steps_primary]
+    hard_fallback_1 = [
+        it
+        for it in hard_items
+        if min_hard_steps_fallback_1 <= step_count(it) < min_hard_steps_primary
+    ]
+    hard_fallback_2 = [
+        it
+        for it in hard_items
+        if min_hard_steps_fallback_2 <= step_count(it) < min_hard_steps_fallback_1
+    ]
 
     hard_ranked: List[Dict[str, Any]] = []
     hard_ranked.extend(hard_primary)
     if len(hard_ranked) < hard_take:
-        hard_ranked.extend(hard_fallback)
+        hard_ranked.extend(hard_fallback_1)
+    if len(hard_ranked) < hard_take:
+        hard_ranked.extend(hard_fallback_2)
 
     # If still not enough (rare), use the remaining hard items as last resort.
     if len(hard_ranked) < hard_take:

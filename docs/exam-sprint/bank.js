@@ -143,36 +143,33 @@ window.EXAM_SPRINT_BANK = [
     }
   },
   {
-    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u4_money_decimal_addsub_05",
-    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
-    "kind": "u4_money_decimal_addsub",
+    "id": "exam_interactive-g5-life-pack2-empire__g5lp2_u5_decimal_muldiv_price_03",
+    "topic": "小五生活應用題｜第二包｜帝國",
+    "kind": "u5_decimal_muldiv_price",
     "difficulty": "hard",
-    "question": "（生活應用｜金錢找零）買了 礦泉水 13.25 元、三明治 9.1 元、優格 9.7 元、水果杯 2.45 元，共 34.5 元。付了 37 元，要找回多少元？",
-    "answer": "2.5",
+    "question": "（生活應用｜總價平均分）一盒點心 5.3 元，買 15 盒共多少元？若 5 人平均分攤，每人要付多少元？",
+    "answer": "15.9",
     "answer_unit": "money2",
     "hints": [
-      "先把所有價格加起來得到總價。",
-      "找零 = 付的錢 − 總價。",
-      "也可以先都換成『分』再做減法。",
-      "最後檢查：找零加總價是否等於付的錢。"
+      "這題有兩步：先乘後除。",
+      "總價 = 單價 × 數量。",
+      "每人分攤 = 總價 ÷ 人數。",
+      "最後檢查：每人×人數應等於總價。"
     ],
     "steps": [
-      "先算總價（把小數點對齊相加）。",
-      "列式：付的金額 − 總價 = 找零。",
-      "用『分』計算可避免小數誤差。",
-      "檢查：付的金額應大於總價，找零應為正。"
+      "先算總價：單價×盒數。",
+      "再算每人：總價÷人數。",
+      "用『分』計算避免小數誤差，再換回元。",
+      "檢查：人數越多，每人分攤越少。"
     ],
-    "explanation": "找零：37 − 34.5 = 2.5（元）。",
+    "explanation": "總價 5.3×15 = 79.5（元），每人 79.5÷5 = 15.9（元）。",
     "meta": {
-      "prices_cents": [
-        1325,
-        910,
-        970,
-        245
-      ],
-      "scenario": "找零",
-      "source_module": "interactive-g5-life-pack2plus-empire",
-      "source_id": "g5lp2p_u4_money_decimal_addsub_05"
+      "unit_cents": 530,
+      "qty": 15,
+      "mode": "split",
+      "people": 5,
+      "source_module": "interactive-g5-life-pack2-empire",
+      "source_id": "g5lp2_u5_decimal_muldiv_price_03"
     }
   },
   {
@@ -264,12 +261,12 @@ window.EXAM_SPRINT_BANK = [
     }
   },
   {
-    "id": "exam_interactive-g5-life-pack1-empire__g5lp1_u4_money_decimal_addsub_06",
-    "topic": "小五生活應用題｜第一包｜帝國",
+    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u4_money_decimal_addsub_10",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "kind": "u4_money_decimal_addsub",
     "difficulty": "hard",
-    "question": "（生活應用｜金錢找零）買了 鉛筆 11.9 元、橡皮擦 3.45 元、尺 7.95 元，共 23.3 元。付了 30.3 元，要找回多少元？",
-    "answer": "7",
+    "question": "（生活應用｜金錢找零）買了 飯糰 2.7 元、豆漿 7.1 元、茶葉蛋 11.15 元、口香糖 9.1 元，共 30.05 元。付了 38.55 元，要找回多少元？",
+    "answer": "8.5",
     "answer_unit": "money2",
     "hints": [
       "先把所有價格加起來得到總價。",
@@ -283,16 +280,17 @@ window.EXAM_SPRINT_BANK = [
       "用『分』計算可避免小數誤差。",
       "檢查：付的金額應大於總價，找零應為正。"
     ],
-    "explanation": "找零：30.3 − 23.3 = 7（元）。",
+    "explanation": "找零：38.55 − 30.05 = 8.5（元）。",
     "meta": {
       "prices_cents": [
-        1190,
-        345,
-        795
+        270,
+        710,
+        1115,
+        910
       ],
       "scenario": "找零",
-      "source_module": "interactive-g5-life-pack1-empire",
-      "source_id": "g5lp1_u4_money_decimal_addsub_06"
+      "source_module": "interactive-g5-life-pack2plus-empire",
+      "source_id": "g5lp2p_u4_money_decimal_addsub_10"
     }
   },
   {
@@ -386,59 +384,59 @@ window.EXAM_SPRINT_BANK = [
     }
   },
   {
-    "id": "exam_interactive-g5-life-pack2-empire__g5lp2_u1_avg_fraction_09",
-    "topic": "小五生活應用題｜第二包｜帝國",
-    "kind": "u1_avg_fraction",
-    "difficulty": "hard",
-    "question": "（生活應用｜平均分配｜社團活動）有 1 個果汁，平均分給 3 人，每人得到多少個？（用最簡分數 a/b 表示）",
-    "answer": "1/3",
-    "answer_unit": "fraction",
-    "hints": [
-      "觀念：平均分配就是『總量 ÷ 人數』。",
-      "把除法改成乘法：除以 n 等於乘以 1/n。",
-      "列式：1 × 1/3。先算分母：1×3。",
-      "最後要記得把分數約分到最簡。"
-    ],
-    "steps": [
-      "把『平均分給 3 人』寫成 ÷3",
-      "列式：1 ÷ 3",
-      "等於 1/3（最簡分數）",
-      "檢查：人數越多，每人分到應越少。"
-    ],
-    "explanation": "平均分配：1 ÷ 3 = 1/3。",
-    "meta": {
-      "people": 3,
-      "total": "1",
-      "source_module": "interactive-g5-life-pack2-empire",
-      "source_id": "g5lp2_u1_avg_fraction_09"
-    }
-  },
-  {
-    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u1_avg_fraction_08",
+    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u1_avg_fraction_12",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "kind": "u1_avg_fraction",
     "difficulty": "hard",
-    "question": "（生活應用｜平均分配｜班級點心）有 1 個西瓜，平均分給 4 人，每人得到多少個？（用最簡分數 a/b 表示）",
-    "answer": "1/4",
+    "question": "（生活應用｜平均分配｜社團活動）有 2/1 個果汁，平均分給 7 人，每人得到多少個？（用最簡分數 a/b 表示）",
+    "answer": "2/7",
     "answer_unit": "fraction",
     "hints": [
       "觀念：平均分配就是『總量 ÷ 人數』。",
       "把除法改成乘法：除以 n 等於乘以 1/n。",
-      "列式：1 × 1/4。先算分母：1×4。",
+      "列式：2/1 × 1/7。先算分母：3×7。",
       "最後要記得把分數約分到最簡。"
     ],
     "steps": [
-      "把『平均分給 4 人』寫成 ÷4",
-      "列式：1 ÷ 4",
-      "等於 1/4（最簡分數）",
+      "把『平均分給 7 人』寫成 ÷7",
+      "列式：2/1 ÷ 7",
+      "等於 2/7（最簡分數）",
       "檢查：人數越多，每人分到應越少。"
     ],
-    "explanation": "平均分配：1 ÷ 4 = 1/4。",
+    "explanation": "平均分配：2/1 ÷ 7 = 2/7。",
     "meta": {
-      "people": 4,
-      "total": "1",
+      "people": 7,
+      "total": "2/1",
       "source_module": "interactive-g5-life-pack2plus-empire",
-      "source_id": "g5lp2p_u1_avg_fraction_08"
+      "source_id": "g5lp2p_u1_avg_fraction_12"
+    }
+  },
+  {
+    "id": "exam_interactive-g5-life-pack2-empire__g5lp2_u1_avg_fraction_04",
+    "topic": "小五生活應用題｜第二包｜帝國",
+    "kind": "u1_avg_fraction",
+    "difficulty": "hard",
+    "question": "（生活應用｜平均分配｜園遊會）有 4/3 個披薩，平均分給 6 人，每人得到多少個？（用最簡分數 a/b 表示）",
+    "answer": "2/9",
+    "answer_unit": "fraction",
+    "hints": [
+      "觀念：平均分配就是『總量 ÷ 人數』。",
+      "把除法改成乘法：除以 n 等於乘以 1/n。",
+      "列式：4/3 × 1/6。先算分母：3×6。",
+      "最後要記得把分數約分到最簡。"
+    ],
+    "steps": [
+      "把『平均分給 6 人』寫成 ÷6",
+      "列式：4/3 ÷ 6",
+      "等於 2/9（最簡分數）",
+      "檢查：人數越多，每人分到應越少。"
+    ],
+    "explanation": "平均分配：4/3 ÷ 6 = 2/9。",
+    "meta": {
+      "people": 6,
+      "total": "4/3",
+      "source_module": "interactive-g5-life-pack2-empire",
+      "source_id": "g5lp2_u1_avg_fraction_04"
     }
   },
   {
@@ -585,59 +583,64 @@ window.EXAM_SPRINT_BANK = [
     }
   },
   {
-    "id": "exam_interactive-g5-life-pack2-empire__g5lp2_u1_avg_fraction_16",
-    "topic": "小五生活應用題｜第二包｜帝國",
-    "kind": "u1_avg_fraction",
-    "difficulty": "hard",
-    "question": "（生活應用｜平均分配｜班級點心）有 1 個緞帶，平均分給 7 人，每人得到多少個？（用最簡分數 a/b 表示）",
-    "answer": "1/7",
-    "answer_unit": "fraction",
-    "hints": [
-      "觀念：平均分配就是『總量 ÷ 人數』。",
-      "把除法改成乘法：除以 n 等於乘以 1/n。",
-      "列式：1 × 1/7。先算分母：1×7。",
-      "最後要記得把分數約分到最簡。"
-    ],
-    "steps": [
-      "把『平均分給 7 人』寫成 ÷7",
-      "列式：1 ÷ 7",
-      "等於 1/7（最簡分數）",
-      "檢查：人數越多，每人分到應越少。"
-    ],
-    "explanation": "平均分配：1 ÷ 7 = 1/7。",
-    "meta": {
-      "people": 7,
-      "total": "1",
-      "source_module": "interactive-g5-life-pack2-empire",
-      "source_id": "g5lp2_u1_avg_fraction_16"
-    }
-  },
-  {
-    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u1_avg_fraction_11",
+    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u1_avg_fraction_05",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "kind": "u1_avg_fraction",
     "difficulty": "hard",
-    "question": "（生活應用｜平均分配｜班級點心）有 7/5 個蛋糕，平均分給 5 人，每人得到多少個？（用最簡分數 a/b 表示）",
-    "answer": "7/25",
+    "question": "（生活應用｜平均分配｜園遊會）有 2/1 個緞帶，平均分給 3 人，每人得到多少個？（用最簡分數 a/b 表示）",
+    "answer": "2/3",
     "answer_unit": "fraction",
     "hints": [
       "觀念：平均分配就是『總量 ÷ 人數』。",
       "把除法改成乘法：除以 n 等於乘以 1/n。",
-      "列式：7/5 × 1/5。先算分母：5×5。",
+      "列式：2/1 × 1/3。先算分母：3×3。",
       "最後要記得把分數約分到最簡。"
     ],
     "steps": [
-      "把『平均分給 5 人』寫成 ÷5",
-      "列式：7/5 ÷ 5",
-      "等於 7/25（最簡分數）",
+      "把『平均分給 3 人』寫成 ÷3",
+      "列式：2/1 ÷ 3",
+      "等於 2/3（最簡分數）",
       "檢查：人數越多，每人分到應越少。"
     ],
-    "explanation": "平均分配：7/5 ÷ 5 = 7/25。",
+    "explanation": "平均分配：2/1 ÷ 3 = 2/3。",
     "meta": {
-      "people": 5,
-      "total": "7/5",
+      "people": 3,
+      "total": "2/1",
       "source_module": "interactive-g5-life-pack2plus-empire",
-      "source_id": "g5lp2p_u1_avg_fraction_11"
+      "source_id": "g5lp2p_u1_avg_fraction_05"
+    }
+  },
+  {
+    "id": "exam_interactive-g5-life-pack2-empire__g5lp2_u4_money_decimal_addsub_02",
+    "topic": "小五生活應用題｜第二包｜帝國",
+    "kind": "u4_money_decimal_addsub",
+    "difficulty": "hard",
+    "question": "（生活應用｜金錢小數加法）買了 礦泉水 15.2 元、三明治 12.05 元、優格 3.05 元、水果杯 3 元，一共要付多少元？（可寫小數）",
+    "answer": "33.3",
+    "answer_unit": "money2",
+    "hints": [
+      "觀念：金額相加，小數點要對齊。",
+      "可以先把金額都換成『分』再加總。",
+      "加完後再把『分』換回『元』（除以 100）。",
+      "最後檢查：合計是否合理（大約幾元）。"
+    ],
+    "steps": [
+      "把每個金額的小數點對齊。",
+      "先算總分（元/角/分），再合併成總金額。",
+      "答案用到小數點後兩位（或可省略尾端 0）。",
+      "檢查：總價應大於任何單一商品價格。"
+    ],
+    "explanation": "合計：33.3 元。答案：33.3 元。",
+    "meta": {
+      "prices_cents": [
+        1520,
+        1205,
+        305,
+        300
+      ],
+      "scenario": "合計",
+      "source_module": "interactive-g5-life-pack2-empire",
+      "source_id": "g5lp2_u4_money_decimal_addsub_02"
     }
   },
   {
@@ -967,31 +970,34 @@ window.EXAM_SPRINT_BANK = [
     }
   },
   {
-    "id": "exam_interactive-g5-life-pack1plus-empire__g5lp1p_u1_avg_fraction_01",
-    "topic": "小五生活應用題｜第一包｜加強版｜帝國",
-    "kind": "u1_avg_fraction",
+    "id": "exam_interactive-g5-life-pack2-empire__g5lp2_u2_frac_addsub_life_11",
+    "topic": "小五生活應用題｜第二包｜帝國",
+    "kind": "u2_frac_addsub_life",
     "difficulty": "hard",
-    "question": "（生活應用｜平均分配）有 7/4 個巧克力，平均分給 7 人，每人得到多少個？（用最簡分數 a/b 表示）",
-    "answer": "1/4",
+    "question": "（生活應用｜分數加法）小明喝了 1/3 公升牛奶，又喝了 4/5 公升牛奶，一共喝了多少 公升牛奶？（最簡分數）",
+    "answer": "17/15",
     "answer_unit": "fraction",
     "hints": [
-      "觀念：平均分配就是『總量 ÷ 人數』。",
-      "把除法改成乘法：除以 n 等於乘以 1/n。",
-      "列式：7/4 × 1/7。先算分母：4×7。",
-      "最後要記得把分數約分到最簡。"
+      "觀念：分母不同要先通分，才能加/減分子。",
+      "先找最小公倍數：LCM(3,5)。",
+      "把兩個分數都改成分母 15，再做 +。",
+      "最後把答案約分成最簡。"
     ],
     "steps": [
-      "把『平均分給 7 人』寫成 ÷7",
-      "列式：7/4 ÷ 7",
-      "等於 1/4（最簡分數）",
-      "檢查：人數越多，每人分到應越少。"
+      "判斷分母是否相同，不同就通分。",
+      "通分後做分子加/減。",
+      "把結果約分成最簡分數。",
+      "檢查：加法結果應比其中一個大；減法結果應變小且不為負。"
     ],
-    "explanation": "平均分配：7/4 ÷ 7 = 1/4。",
+    "explanation": "通分後相加：1/3+4/5=17/15。",
     "meta": {
-      "people": 7,
-      "total": "7/4",
-      "source_module": "interactive-g5-life-pack1plus-empire",
-      "source_id": "g5lp1p_u1_avg_fraction_01"
+      "op": "+",
+      "a": "1/3",
+      "b": "4/5",
+      "d1": 3,
+      "d2": 5,
+      "source_module": "interactive-g5-life-pack2-empire",
+      "source_id": "g5lp2_u2_frac_addsub_life_11"
     }
   },
   {
@@ -1025,34 +1031,31 @@ window.EXAM_SPRINT_BANK = [
     }
   },
   {
-    "id": "exam_interactive-g5-life-pack2-empire__g5lp2_u2_frac_addsub_life_10",
+    "id": "exam_interactive-g5-life-pack2-empire__g5lp2_u1_avg_fraction_11",
     "topic": "小五生活應用題｜第二包｜帝國",
-    "kind": "u2_frac_addsub_life",
+    "kind": "u1_avg_fraction",
     "difficulty": "hard",
-    "question": "（生活應用｜分數加法）小明喝了 1/6 升酵素飲，又喝了 3/5 升酵素飲，一共喝了多少 升酵素飲？（最簡分數）",
-    "answer": "23/30",
+    "question": "（生活應用｜平均分配｜班級點心）有 1 個巧克力，平均分給 8 人，每人得到多少個？（用最簡分數 a/b 表示）",
+    "answer": "1/8",
     "answer_unit": "fraction",
     "hints": [
-      "觀念：分母不同要先通分，才能加/減分子。",
-      "先找最小公倍數：LCM(6,10)。",
-      "把兩個分數都改成分母 30，再做 +。",
-      "最後把答案約分成最簡。"
+      "觀念：平均分配就是『總量 ÷ 人數』。",
+      "把除法改成乘法：除以 n 等於乘以 1/n。",
+      "列式：1 × 1/8。先算分母：1×8。",
+      "最後要記得把分數約分到最簡。"
     ],
     "steps": [
-      "判斷分母是否相同，不同就通分。",
-      "通分後做分子加/減。",
-      "把結果約分成最簡分數。",
-      "檢查：加法結果應比其中一個大；減法結果應變小且不為負。"
+      "把『平均分給 8 人』寫成 ÷8",
+      "列式：1 ÷ 8",
+      "等於 1/8（最簡分數）",
+      "檢查：人數越多，每人分到應越少。"
     ],
-    "explanation": "通分後相加：1/6+3/5=23/30。",
+    "explanation": "平均分配：1 ÷ 8 = 1/8。",
     "meta": {
-      "op": "+",
-      "a": "1/6",
-      "b": "3/5",
-      "d1": 6,
-      "d2": 10,
+      "people": 8,
+      "total": "1",
       "source_module": "interactive-g5-life-pack2-empire",
-      "source_id": "g5lp2_u2_frac_addsub_life_10"
+      "source_id": "g5lp2_u1_avg_fraction_11"
     }
   },
   {
@@ -1199,36 +1202,33 @@ window.EXAM_SPRINT_BANK = [
     }
   },
   {
-    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u4_money_decimal_addsub_01",
+    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u5_decimal_muldiv_price_19",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
-    "kind": "u4_money_decimal_addsub",
+    "kind": "u5_decimal_muldiv_price",
     "difficulty": "hard",
-    "question": "（生活應用｜金錢找零）買了 貼紙 7.35 元、筆記本 9.55 元、原子筆 4.4 元、口香糖 4.1 元，共 25.4 元。付了 27.9 元，要找回多少元？",
-    "answer": "2.5",
+    "question": "（生活應用｜總價平均分）一盒點心 5.45 元，買 4 盒共多少元？若 2 人平均分攤，每人要付多少元？",
+    "answer": "10.9",
     "answer_unit": "money2",
     "hints": [
-      "先把所有價格加起來得到總價。",
-      "找零 = 付的錢 − 總價。",
-      "也可以先都換成『分』再做減法。",
-      "最後檢查：找零加總價是否等於付的錢。"
+      "這題有兩步：先乘後除。",
+      "總價 = 單價 × 數量。",
+      "每人分攤 = 總價 ÷ 人數。",
+      "最後檢查：每人×人數應等於總價。"
     ],
     "steps": [
-      "先算總價（把小數點對齊相加）。",
-      "列式：付的金額 − 總價 = 找零。",
-      "用『分』計算可避免小數誤差。",
-      "檢查：付的金額應大於總價，找零應為正。"
+      "先算總價：單價×盒數。",
+      "再算每人：總價÷人數。",
+      "用『分』計算避免小數誤差，再換回元。",
+      "檢查：人數越多，每人分攤越少。"
     ],
-    "explanation": "找零：27.9 − 25.4 = 2.5（元）。",
+    "explanation": "總價 5.45×4 = 21.8（元），每人 21.8÷2 = 10.9（元）。",
     "meta": {
-      "prices_cents": [
-        735,
-        955,
-        440,
-        410
-      ],
-      "scenario": "找零",
+      "unit_cents": 545,
+      "qty": 4,
+      "mode": "split",
+      "people": 2,
       "source_module": "interactive-g5-life-pack2plus-empire",
-      "source_id": "g5lp2p_u4_money_decimal_addsub_01"
+      "source_id": "g5lp2p_u5_decimal_muldiv_price_19"
     }
   },
   {
@@ -1260,31 +1260,34 @@ window.EXAM_SPRINT_BANK = [
     }
   },
   {
-    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u1_avg_fraction_04",
-    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
-    "kind": "u1_avg_fraction",
+    "id": "exam_interactive-g5-life-pack2-empire__g5lp2_u2_frac_addsub_life_10",
+    "topic": "小五生活應用題｜第二包｜帝國",
+    "kind": "u2_frac_addsub_life",
     "difficulty": "hard",
-    "question": "（生活應用｜平均分配｜園遊會）有 1 個緞帶，平均分給 4 人，每人得到多少個？（用最簡分數 a/b 表示）",
-    "answer": "1/4",
+    "question": "（生活應用｜分數加法）小明喝了 1/6 升酵素飲，又喝了 3/5 升酵素飲，一共喝了多少 升酵素飲？（最簡分數）",
+    "answer": "23/30",
     "answer_unit": "fraction",
     "hints": [
-      "觀念：平均分配就是『總量 ÷ 人數』。",
-      "把除法改成乘法：除以 n 等於乘以 1/n。",
-      "列式：1 × 1/4。先算分母：1×4。",
-      "最後要記得把分數約分到最簡。"
+      "觀念：分母不同要先通分，才能加/減分子。",
+      "先找最小公倍數：LCM(6,10)。",
+      "把兩個分數都改成分母 30，再做 +。",
+      "最後把答案約分成最簡。"
     ],
     "steps": [
-      "把『平均分給 4 人』寫成 ÷4",
-      "列式：1 ÷ 4",
-      "等於 1/4（最簡分數）",
-      "檢查：人數越多，每人分到應越少。"
+      "判斷分母是否相同，不同就通分。",
+      "通分後做分子加/減。",
+      "把結果約分成最簡分數。",
+      "檢查：加法結果應比其中一個大；減法結果應變小且不為負。"
     ],
-    "explanation": "平均分配：1 ÷ 4 = 1/4。",
+    "explanation": "通分後相加：1/6+3/5=23/30。",
     "meta": {
-      "people": 4,
-      "total": "1",
-      "source_module": "interactive-g5-life-pack2plus-empire",
-      "source_id": "g5lp2p_u1_avg_fraction_04"
+      "op": "+",
+      "a": "1/6",
+      "b": "3/5",
+      "d1": 6,
+      "d2": 10,
+      "source_module": "interactive-g5-life-pack2-empire",
+      "source_id": "g5lp2_u2_frac_addsub_life_10"
     }
   },
   {
@@ -1378,6 +1381,62 @@ window.EXAM_SPRINT_BANK = [
     }
   },
   {
+    "id": "exam_interactive-g5-life-pack1-empire__g5lp1_u1_avg_fraction_12",
+    "topic": "小五生活應用題｜第一包｜帝國",
+    "kind": "u1_avg_fraction",
+    "difficulty": "hard",
+    "question": "（生活應用｜平均分配）有 7/4 個蛋糕，平均分給 7 人，每人得到多少個？（用最簡分數 a/b 表示）",
+    "answer": "1/4",
+    "answer_unit": "fraction",
+    "hints": [
+      "觀念：平均分配就是『總量 ÷ 人數』。",
+      "把除法改成乘法：除以 n 等於乘以 1/n。",
+      "列式：7/4 × 1/7。先算分母：4×7。",
+      "最後要記得把分數約分到最簡。"
+    ],
+    "steps": [
+      "把『平均分給 7 人』寫成 ÷7",
+      "列式：7/4 ÷ 7",
+      "等於 1/4（最簡分數）",
+      "檢查：人數越多，每人分到應越少。"
+    ],
+    "explanation": "平均分配：7/4 ÷ 7 = 1/4。",
+    "meta": {
+      "people": 7,
+      "total": "7/4",
+      "source_module": "interactive-g5-life-pack1-empire",
+      "source_id": "g5lp1_u1_avg_fraction_12"
+    }
+  },
+  {
+    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u1_avg_fraction_02",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
+    "kind": "u1_avg_fraction",
+    "difficulty": "hard",
+    "question": "（生活應用｜平均分配｜班級點心）有 3/2 個巧克力，平均分給 3 人，每人得到多少個？（用最簡分數 a/b 表示）",
+    "answer": "1/2",
+    "answer_unit": "fraction",
+    "hints": [
+      "觀念：平均分配就是『總量 ÷ 人數』。",
+      "把除法改成乘法：除以 n 等於乘以 1/n。",
+      "列式：3/2 × 1/3。先算分母：2×3。",
+      "最後要記得把分數約分到最簡。"
+    ],
+    "steps": [
+      "把『平均分給 3 人』寫成 ÷3",
+      "列式：3/2 ÷ 3",
+      "等於 1/2（最簡分數）",
+      "檢查：人數越多，每人分到應越少。"
+    ],
+    "explanation": "平均分配：3/2 ÷ 3 = 1/2。",
+    "meta": {
+      "people": 3,
+      "total": "3/2",
+      "source_module": "interactive-g5-life-pack2plus-empire",
+      "source_id": "g5lp2p_u1_avg_fraction_02"
+    }
+  },
+  {
     "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u10_rate_time_distance_23",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "kind": "u10_rate_time_distance",
@@ -1404,69 +1463,6 @@ window.EXAM_SPRINT_BANK = [
       "mode": "d",
       "source_module": "interactive-g5-life-pack2plus-empire",
       "source_id": "g5lp2p_u10_rate_time_distance_23"
-    }
-  },
-  {
-    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u2_frac_addsub_life_20",
-    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
-    "kind": "u2_frac_addsub_life",
-    "difficulty": "hard",
-    "question": "（生活應用｜分數加法）小明喝了 9/10 罐酵素飲，又喝了 4/5 罐酵素飲，一共喝了多少 罐酵素飲？（最簡分數）",
-    "answer": "17/10",
-    "answer_unit": "fraction",
-    "hints": [
-      "觀念：分母不同要先通分，才能加/減分子。",
-      "先找最小公倍數：LCM(10,5)。",
-      "把兩個分數都改成分母 10，再做 +。",
-      "最後把答案約分成最簡。"
-    ],
-    "steps": [
-      "判斷分母是否相同，不同就通分。",
-      "通分後做分子加/減。",
-      "把結果約分成最簡分數。",
-      "檢查：加法結果應比其中一個大；減法結果應變小且不為負。"
-    ],
-    "explanation": "通分後相加：9/10+4/5=17/10。",
-    "meta": {
-      "op": "+",
-      "a": "9/10",
-      "b": "4/5",
-      "d1": 10,
-      "d2": 5,
-      "source_module": "interactive-g5-life-pack2plus-empire",
-      "source_id": "g5lp2p_u2_frac_addsub_life_20"
-    }
-  },
-  {
-    "id": "exam_interactive-g5-life-pack1-empire__g5lp1_u4_money_decimal_addsub_13",
-    "topic": "小五生活應用題｜第一包｜帝國",
-    "kind": "u4_money_decimal_addsub",
-    "difficulty": "hard",
-    "question": "（生活應用｜金錢找零）買了 果汁 10.4 元、麵包 6.6 元、餅乾 5.75 元，共 22.75 元。付了 32.75 元，要找回多少元？",
-    "answer": "10",
-    "answer_unit": "money2",
-    "hints": [
-      "先把所有價格加起來得到總價。",
-      "找零 = 付的錢 − 總價。",
-      "也可以先都換成『分』再做減法。",
-      "最後檢查：找零加總價是否等於付的錢。"
-    ],
-    "steps": [
-      "先算總價（把小數點對齊相加）。",
-      "列式：付的金額 − 總價 = 找零。",
-      "用『分』計算可避免小數誤差。",
-      "檢查：付的金額應大於總價，找零應為正。"
-    ],
-    "explanation": "找零：32.75 − 22.75 = 10（元）。",
-    "meta": {
-      "prices_cents": [
-        1040,
-        660,
-        575
-      ],
-      "scenario": "找零",
-      "source_module": "interactive-g5-life-pack1-empire",
-      "source_id": "g5lp1_u4_money_decimal_addsub_13"
     }
   },
   {
@@ -1501,31 +1497,31 @@ window.EXAM_SPRINT_BANK = [
     }
   },
   {
-    "id": "exam_interactive-g5-life-pack2-empire__g5lp2_u1_avg_fraction_08",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u1_avg_fraction_09",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "kind": "u1_avg_fraction",
     "difficulty": "hard",
-    "question": "（生活應用｜平均分配｜社團活動）有 1 個果汁，平均分給 4 人，每人得到多少個？（用最簡分數 a/b 表示）",
-    "answer": "1/4",
+    "question": "（生活應用｜平均分配｜社團活動）有 3/2 個果汁，平均分給 5 人，每人得到多少個？（用最簡分數 a/b 表示）",
+    "answer": "3/10",
     "answer_unit": "fraction",
     "hints": [
       "觀念：平均分配就是『總量 ÷ 人數』。",
       "把除法改成乘法：除以 n 等於乘以 1/n。",
-      "列式：1 × 1/4。先算分母：1×4。",
+      "列式：3/2 × 1/5。先算分母：4×5。",
       "最後要記得把分數約分到最簡。"
     ],
     "steps": [
-      "把『平均分給 4 人』寫成 ÷4",
-      "列式：1 ÷ 4",
-      "等於 1/4（最簡分數）",
+      "把『平均分給 5 人』寫成 ÷5",
+      "列式：3/2 ÷ 5",
+      "等於 3/10（最簡分數）",
       "檢查：人數越多，每人分到應越少。"
     ],
-    "explanation": "平均分配：1 ÷ 4 = 1/4。",
+    "explanation": "平均分配：3/2 ÷ 5 = 3/10。",
     "meta": {
-      "people": 4,
-      "total": "1",
-      "source_module": "interactive-g5-life-pack2-empire",
-      "source_id": "g5lp2_u1_avg_fraction_08"
+      "people": 5,
+      "total": "3/2",
+      "source_module": "interactive-g5-life-pack2plus-empire",
+      "source_id": "g5lp2p_u1_avg_fraction_09"
     }
   },
   {
@@ -1682,33 +1678,35 @@ window.EXAM_SPRINT_BANK = [
     }
   },
   {
-    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u5_decimal_muldiv_price_09",
-    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
-    "kind": "u5_decimal_muldiv_price",
+    "id": "exam_interactive-g5-life-pack1-empire__g5lp1_u4_money_decimal_addsub_13",
+    "topic": "小五生活應用題｜第一包｜帝國",
+    "kind": "u4_money_decimal_addsub",
     "difficulty": "hard",
-    "question": "（生活應用｜總價平均分）一盒點心 6 元，買 3 盒共多少元？若 4 人平均分攤，每人要付多少元？",
-    "answer": "4.5",
+    "question": "（生活應用｜金錢找零）買了 果汁 10.4 元、麵包 6.6 元、餅乾 5.75 元，共 22.75 元。付了 32.75 元，要找回多少元？",
+    "answer": "10",
     "answer_unit": "money2",
     "hints": [
-      "這題有兩步：先乘後除。",
-      "總價 = 單價 × 數量。",
-      "每人分攤 = 總價 ÷ 人數。",
-      "最後檢查：每人×人數應等於總價。"
+      "先把所有價格加起來得到總價。",
+      "找零 = 付的錢 − 總價。",
+      "也可以先都換成『分』再做減法。",
+      "最後檢查：找零加總價是否等於付的錢。"
     ],
     "steps": [
-      "先算總價：單價×盒數。",
-      "再算每人：總價÷人數。",
-      "用『分』計算避免小數誤差，再換回元。",
-      "檢查：人數越多，每人分攤越少。"
+      "先算總價（把小數點對齊相加）。",
+      "列式：付的金額 − 總價 = 找零。",
+      "用『分』計算可避免小數誤差。",
+      "檢查：付的金額應大於總價，找零應為正。"
     ],
-    "explanation": "總價 6×3 = 18（元），每人 18÷4 = 4.5（元）。",
+    "explanation": "找零：32.75 − 22.75 = 10（元）。",
     "meta": {
-      "unit_cents": 600,
-      "qty": 3,
-      "mode": "split",
-      "people": 4,
-      "source_module": "interactive-g5-life-pack2plus-empire",
-      "source_id": "g5lp2p_u5_decimal_muldiv_price_09"
+      "prices_cents": [
+        1040,
+        660,
+        575
+      ],
+      "scenario": "找零",
+      "source_module": "interactive-g5-life-pack1-empire",
+      "source_id": "g5lp1_u4_money_decimal_addsub_13"
     }
   },
   {
@@ -2032,64 +2030,61 @@ window.EXAM_SPRINT_BANK = [
     }
   },
   {
-    "id": "exam_interactive-g5-life-pack2-empire__g5lp2_u4_money_decimal_addsub_02",
-    "topic": "小五生活應用題｜第二包｜帝國",
-    "kind": "u4_money_decimal_addsub",
+    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u5_decimal_muldiv_price_18",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
+    "kind": "u5_decimal_muldiv_price",
     "difficulty": "hard",
-    "question": "（生活應用｜金錢小數加法）買了 礦泉水 15.2 元、三明治 12.05 元、優格 3.05 元、水果杯 3 元，一共要付多少元？（可寫小數）",
-    "answer": "33.3",
+    "question": "（生活應用｜總價平均分）一盒點心 4.5 元，買 16 盒共多少元？若 3 人平均分攤，每人要付多少元？",
+    "answer": "24",
     "answer_unit": "money2",
     "hints": [
-      "觀念：金額相加，小數點要對齊。",
-      "可以先把金額都換成『分』再加總。",
-      "加完後再把『分』換回『元』（除以 100）。",
-      "最後檢查：合計是否合理（大約幾元）。"
+      "這題有兩步：先乘後除。",
+      "總價 = 單價 × 數量。",
+      "每人分攤 = 總價 ÷ 人數。",
+      "最後檢查：每人×人數應等於總價。"
     ],
     "steps": [
-      "把每個金額的小數點對齊。",
-      "先算總分（元/角/分），再合併成總金額。",
-      "答案用到小數點後兩位（或可省略尾端 0）。",
-      "檢查：總價應大於任何單一商品價格。"
+      "先算總價：單價×盒數。",
+      "再算每人：總價÷人數。",
+      "用『分』計算避免小數誤差，再換回元。",
+      "檢查：人數越多，每人分攤越少。"
     ],
-    "explanation": "合計：33.3 元。答案：33.3 元。",
+    "explanation": "總價 4.5×16 = 72（元），每人 72÷3 = 24（元）。",
     "meta": {
-      "prices_cents": [
-        1520,
-        1205,
-        305,
-        300
-      ],
-      "scenario": "合計",
-      "source_module": "interactive-g5-life-pack2-empire",
-      "source_id": "g5lp2_u4_money_decimal_addsub_02"
+      "unit_cents": 450,
+      "qty": 16,
+      "mode": "split",
+      "people": 3,
+      "source_module": "interactive-g5-life-pack2plus-empire",
+      "source_id": "g5lp2p_u5_decimal_muldiv_price_18"
     }
   },
   {
-    "id": "exam_interactive-g5-life-pack1-empire__g5lp1_u1_avg_fraction_19",
-    "topic": "小五生活應用題｜第一包｜帝國",
+    "id": "exam_interactive-g5-life-pack1plus-empire__g5lp1p_u1_avg_fraction_16",
+    "topic": "小五生活應用題｜第一包｜加強版｜帝國",
     "kind": "u1_avg_fraction",
     "difficulty": "hard",
-    "question": "（生活應用｜平均分配）有 5/4 個果汁，平均分給 7 人，每人得到多少個？（用最簡分數 a/b 表示）",
-    "answer": "5/28",
+    "question": "（生活應用｜平均分配）有 7/4 個緞帶，平均分給 8 人，每人得到多少個？（用最簡分數 a/b 表示）",
+    "answer": "7/32",
     "answer_unit": "fraction",
     "hints": [
       "觀念：平均分配就是『總量 ÷ 人數』。",
       "把除法改成乘法：除以 n 等於乘以 1/n。",
-      "列式：5/4 × 1/7。先算分母：4×7。",
+      "列式：7/4 × 1/8。先算分母：4×8。",
       "最後要記得把分數約分到最簡。"
     ],
     "steps": [
-      "把『平均分給 7 人』寫成 ÷7",
-      "列式：5/4 ÷ 7",
-      "等於 5/28（最簡分數）",
+      "把『平均分給 8 人』寫成 ÷8",
+      "列式：7/4 ÷ 8",
+      "等於 7/32（最簡分數）",
       "檢查：人數越多，每人分到應越少。"
     ],
-    "explanation": "平均分配：5/4 ÷ 7 = 5/28。",
+    "explanation": "平均分配：7/4 ÷ 8 = 7/32。",
     "meta": {
-      "people": 7,
-      "total": "5/4",
-      "source_module": "interactive-g5-life-pack1-empire",
-      "source_id": "g5lp1_u1_avg_fraction_19"
+      "people": 8,
+      "total": "7/4",
+      "source_module": "interactive-g5-life-pack1plus-empire",
+      "source_id": "g5lp1p_u1_avg_fraction_16"
     }
   },
   {
@@ -2210,35 +2205,31 @@ window.EXAM_SPRINT_BANK = [
     }
   },
   {
-    "id": "exam_interactive-g5-life-pack1-empire__g5lp1_u4_money_decimal_addsub_02",
+    "id": "exam_interactive-g5-life-pack1-empire__g5lp1_u1_avg_fraction_19",
     "topic": "小五生活應用題｜第一包｜帝國",
-    "kind": "u4_money_decimal_addsub",
+    "kind": "u1_avg_fraction",
     "difficulty": "hard",
-    "question": "（生活應用｜金錢小數加法）買了 貼紙 8.7 元、筆記本 10.75 元、原子筆 2.95 元，一共要付多少元？（可寫小數）",
-    "answer": "22.4",
-    "answer_unit": "money2",
+    "question": "（生活應用｜平均分配）有 5/4 個果汁，平均分給 7 人，每人得到多少個？（用最簡分數 a/b 表示）",
+    "answer": "5/28",
+    "answer_unit": "fraction",
     "hints": [
-      "觀念：金額相加，小數點要對齊。",
-      "可以先把金額都換成『分』再加總。",
-      "加完後再把『分』換回『元』（除以 100）。",
-      "最後檢查：合計是否合理（大約幾元）。"
+      "觀念：平均分配就是『總量 ÷ 人數』。",
+      "把除法改成乘法：除以 n 等於乘以 1/n。",
+      "列式：5/4 × 1/7。先算分母：4×7。",
+      "最後要記得把分數約分到最簡。"
     ],
     "steps": [
-      "把每個金額的小數點對齊。",
-      "先算總分（元/角/分），再合併成總金額。",
-      "答案用到小數點後兩位（或可省略尾端 0）。",
-      "檢查：總價應大於任何單一商品價格。"
+      "把『平均分給 7 人』寫成 ÷7",
+      "列式：5/4 ÷ 7",
+      "等於 5/28（最簡分數）",
+      "檢查：人數越多，每人分到應越少。"
     ],
-    "explanation": "合計：22.4 元。",
+    "explanation": "平均分配：5/4 ÷ 7 = 5/28。",
     "meta": {
-      "prices_cents": [
-        870,
-        1075,
-        295
-      ],
-      "scenario": "合計",
+      "people": 7,
+      "total": "5/4",
       "source_module": "interactive-g5-life-pack1-empire",
-      "source_id": "g5lp1_u4_money_decimal_addsub_02"
+      "source_id": "g5lp1_u1_avg_fraction_19"
     }
   },
   {
@@ -2300,31 +2291,34 @@ window.EXAM_SPRINT_BANK = [
     }
   },
   {
-    "id": "exam_interactive-g5-life-pack1-empire__g5lp1_u1_avg_fraction_02",
+    "id": "exam_interactive-g5-life-pack1-empire__g5lp1_u2_frac_addsub_life_14",
     "topic": "小五生活應用題｜第一包｜帝國",
-    "kind": "u1_avg_fraction",
+    "kind": "u2_frac_addsub_life",
     "difficulty": "hard",
-    "question": "（生活應用｜平均分配）有 8/5 個披薩，平均分給 7 人，每人得到多少個？（用最簡分數 a/b 表示）",
-    "answer": "8/35",
+    "question": "（生活應用｜分數加法）小明喝了 1/4 公升果汁，又喝了 3/4 公升果汁，一共喝了多少 公升果汁？（最簡分數）",
+    "answer": "1/1",
     "answer_unit": "fraction",
     "hints": [
-      "觀念：平均分配就是『總量 ÷ 人數』。",
-      "把除法改成乘法：除以 n 等於乘以 1/n。",
-      "列式：8/5 × 1/7。先算分母：5×7。",
-      "最後要記得把分數約分到最簡。"
+      "觀念：分母不同要先通分，才能加/減分子。",
+      "先找最小公倍數：LCM(4,4)。",
+      "把兩個分數都改成分母 4，再做 +。",
+      "最後把答案約分成最簡。"
     ],
     "steps": [
-      "把『平均分給 7 人』寫成 ÷7",
-      "列式：8/5 ÷ 7",
-      "等於 8/35（最簡分數）",
-      "檢查：人數越多，每人分到應越少。"
+      "判斷分母是否相同，不同就通分。",
+      "通分後做分子加/減。",
+      "把結果約分成最簡分數。",
+      "檢查：加法結果應比其中一個大；減法結果應變小且不為負。"
     ],
-    "explanation": "平均分配：8/5 ÷ 7 = 8/35。",
+    "explanation": "通分後相加：1/4+3/4=1/1。",
     "meta": {
-      "people": 7,
-      "total": "8/5",
+      "op": "+",
+      "a": "1/4",
+      "b": "3/4",
+      "d1": 4,
+      "d2": 4,
       "source_module": "interactive-g5-life-pack1-empire",
-      "source_id": "g5lp1_u1_avg_fraction_02"
+      "source_id": "g5lp1_u2_frac_addsub_life_14"
     }
   },
   {
@@ -2532,31 +2526,31 @@ window.EXAM_SPRINT_BANK = [
     }
   },
   {
-    "id": "exam_interactive-g5-life-pack1plus-empire__g5lp1p_u1_avg_fraction_16",
-    "topic": "小五生活應用題｜第一包｜加強版｜帝國",
+    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u1_avg_fraction_04",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "kind": "u1_avg_fraction",
     "difficulty": "hard",
-    "question": "（生活應用｜平均分配）有 7/4 個緞帶，平均分給 8 人，每人得到多少個？（用最簡分數 a/b 表示）",
-    "answer": "7/32",
+    "question": "（生活應用｜平均分配｜園遊會）有 1 個緞帶，平均分給 4 人，每人得到多少個？（用最簡分數 a/b 表示）",
+    "answer": "1/4",
     "answer_unit": "fraction",
     "hints": [
       "觀念：平均分配就是『總量 ÷ 人數』。",
       "把除法改成乘法：除以 n 等於乘以 1/n。",
-      "列式：7/4 × 1/8。先算分母：4×8。",
+      "列式：1 × 1/4。先算分母：1×4。",
       "最後要記得把分數約分到最簡。"
     ],
     "steps": [
-      "把『平均分給 8 人』寫成 ÷8",
-      "列式：7/4 ÷ 8",
-      "等於 7/32（最簡分數）",
+      "把『平均分給 4 人』寫成 ÷4",
+      "列式：1 ÷ 4",
+      "等於 1/4（最簡分數）",
       "檢查：人數越多，每人分到應越少。"
     ],
-    "explanation": "平均分配：7/4 ÷ 8 = 7/32。",
+    "explanation": "平均分配：1 ÷ 4 = 1/4。",
     "meta": {
-      "people": 8,
-      "total": "7/4",
-      "source_module": "interactive-g5-life-pack1plus-empire",
-      "source_id": "g5lp1p_u1_avg_fraction_16"
+      "people": 4,
+      "total": "1",
+      "source_module": "interactive-g5-life-pack2plus-empire",
+      "source_id": "g5lp2p_u1_avg_fraction_04"
     }
   },
   {
@@ -2590,32 +2584,31 @@ window.EXAM_SPRINT_BANK = [
     }
   },
   {
-    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u10_rate_time_distance_22",
-    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
-    "kind": "u10_rate_time_distance",
+    "id": "exam_interactive-g5-life-pack2-empire__g5lp2_u1_avg_fraction_09",
+    "topic": "小五生活應用題｜第二包｜帝國",
+    "kind": "u1_avg_fraction",
     "difficulty": "hard",
-    "question": "（生活應用｜速率）腳踏車每分鐘走 12 公尺，走了 19 分鐘，一共走了多少公尺？",
-    "answer": "228",
-    "answer_unit": "number",
+    "question": "（生活應用｜平均分配｜社團活動）有 1 個果汁，平均分給 3 人，每人得到多少個？（用最簡分數 a/b 表示）",
+    "answer": "1/3",
+    "answer_unit": "fraction",
     "hints": [
-      "關鍵字：每分鐘…（單位率）。",
-      "若題目有『休息/停下』，休息時間不算前進。",
-      "距離 = 每分鐘走的距離 ×（真正前進的分鐘數）。",
-      "最後檢查單位：公尺。"
+      "觀念：平均分配就是『總量 ÷ 人數』。",
+      "把除法改成乘法：除以 n 等於乘以 1/n。",
+      "列式：1 × 1/3。先算分母：1×3。",
+      "最後要記得把分數約分到最簡。"
     ],
     "steps": [
-      "距離=速率×時間。",
-      "若有休息：先算真正前進時間=總時間−休息時間。",
-      "列式：12×19。",
-      "計算並寫出答案。",
-      "檢查：時間越久距離越大。"
+      "把『平均分給 3 人』寫成 ÷3",
+      "列式：1 ÷ 3",
+      "等於 1/3（最簡分數）",
+      "檢查：人數越多，每人分到應越少。"
     ],
-    "explanation": "距離 = 12×19 = 228（公尺）。",
+    "explanation": "平均分配：1 ÷ 3 = 1/3。",
     "meta": {
-      "rate": 12,
-      "mode": "d",
-      "source_module": "interactive-g5-life-pack2plus-empire",
-      "source_id": "g5lp2p_u10_rate_time_distance_22"
+      "people": 3,
+      "total": "1",
+      "source_module": "interactive-g5-life-pack2-empire",
+      "source_id": "g5lp2_u1_avg_fraction_09"
     }
   },
   {
@@ -2769,31 +2762,35 @@ window.EXAM_SPRINT_BANK = [
     }
   },
   {
-    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u1_avg_fraction_09",
-    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
-    "kind": "u1_avg_fraction",
+    "id": "exam_interactive-g5-life-pack1-empire__g5lp1_u4_money_decimal_addsub_06",
+    "topic": "小五生活應用題｜第一包｜帝國",
+    "kind": "u4_money_decimal_addsub",
     "difficulty": "hard",
-    "question": "（生活應用｜平均分配｜社團活動）有 3/2 個果汁，平均分給 5 人，每人得到多少個？（用最簡分數 a/b 表示）",
-    "answer": "3/10",
-    "answer_unit": "fraction",
+    "question": "（生活應用｜金錢找零）買了 鉛筆 11.9 元、橡皮擦 3.45 元、尺 7.95 元，共 23.3 元。付了 30.3 元，要找回多少元？",
+    "answer": "7",
+    "answer_unit": "money2",
     "hints": [
-      "觀念：平均分配就是『總量 ÷ 人數』。",
-      "把除法改成乘法：除以 n 等於乘以 1/n。",
-      "列式：3/2 × 1/5。先算分母：4×5。",
-      "最後要記得把分數約分到最簡。"
+      "先把所有價格加起來得到總價。",
+      "找零 = 付的錢 − 總價。",
+      "也可以先都換成『分』再做減法。",
+      "最後檢查：找零加總價是否等於付的錢。"
     ],
     "steps": [
-      "把『平均分給 5 人』寫成 ÷5",
-      "列式：3/2 ÷ 5",
-      "等於 3/10（最簡分數）",
-      "檢查：人數越多，每人分到應越少。"
+      "先算總價（把小數點對齊相加）。",
+      "列式：付的金額 − 總價 = 找零。",
+      "用『分』計算可避免小數誤差。",
+      "檢查：付的金額應大於總價，找零應為正。"
     ],
-    "explanation": "平均分配：3/2 ÷ 5 = 3/10。",
+    "explanation": "找零：30.3 − 23.3 = 7（元）。",
     "meta": {
-      "people": 5,
-      "total": "3/2",
-      "source_module": "interactive-g5-life-pack2plus-empire",
-      "source_id": "g5lp2p_u1_avg_fraction_09"
+      "prices_cents": [
+        1190,
+        345,
+        795
+      ],
+      "scenario": "找零",
+      "source_module": "interactive-g5-life-pack1-empire",
+      "source_id": "g5lp1_u4_money_decimal_addsub_06"
     }
   },
   {
@@ -2926,36 +2923,33 @@ window.EXAM_SPRINT_BANK = [
     }
   },
   {
-    "id": "exam_interactive-g5-life-pack2-empire__g5lp2_u4_money_decimal_addsub_03",
-    "topic": "小五生活應用題｜第二包｜帝國",
-    "kind": "u4_money_decimal_addsub",
+    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u5_decimal_muldiv_price_06",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
+    "kind": "u5_decimal_muldiv_price",
     "difficulty": "hard",
-    "question": "（生活應用｜金錢小數加法）買了 明信片 3.35 元、紙膠帶 6.5 元、貼紙包 6.8 元、口香糖 2.5 元，一共要付多少元？（可寫小數）",
-    "answer": "19.15",
+    "question": "（生活應用｜總價平均分）一盒點心 8.1 元，買 19 盒共多少元？若 2 人平均分攤，每人要付多少元？",
+    "answer": "76.95",
     "answer_unit": "money2",
     "hints": [
-      "觀念：金額相加，小數點要對齊。",
-      "可以先把金額都換成『分』再加總。",
-      "加完後再把『分』換回『元』（除以 100）。",
-      "最後檢查：合計是否合理（大約幾元）。"
+      "這題有兩步：先乘後除。",
+      "總價 = 單價 × 數量。",
+      "每人分攤 = 總價 ÷ 人數。",
+      "最後檢查：每人×人數應等於總價。"
     ],
     "steps": [
-      "把每個金額的小數點對齊。",
-      "先算總分（元/角/分），再合併成總金額。",
-      "答案用到小數點後兩位（或可省略尾端 0）。",
-      "檢查：總價應大於任何單一商品價格。"
+      "先算總價：單價×盒數。",
+      "再算每人：總價÷人數。",
+      "用『分』計算避免小數誤差，再換回元。",
+      "檢查：人數越多，每人分攤越少。"
     ],
-    "explanation": "合計：19.15 元。答案：19.15 元。",
+    "explanation": "總價 8.1×19 = 153.9（元），每人 153.9÷2 = 76.95（元）。",
     "meta": {
-      "prices_cents": [
-        335,
-        650,
-        680,
-        250
-      ],
-      "scenario": "合計",
-      "source_module": "interactive-g5-life-pack2-empire",
-      "source_id": "g5lp2_u4_money_decimal_addsub_03"
+      "unit_cents": 810,
+      "qty": 19,
+      "mode": "split",
+      "people": 2,
+      "source_module": "interactive-g5-life-pack2plus-empire",
+      "source_id": "g5lp2p_u5_decimal_muldiv_price_06"
     }
   },
   {
@@ -2990,40 +2984,12 @@ window.EXAM_SPRINT_BANK = [
     }
   },
   {
-    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u1_avg_fraction_12",
-    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
-    "kind": "u1_avg_fraction",
-    "difficulty": "hard",
-    "question": "（生活應用｜平均分配｜社團活動）有 2/1 個果汁，平均分給 7 人，每人得到多少個？（用最簡分數 a/b 表示）",
-    "answer": "2/7",
-    "answer_unit": "fraction",
-    "hints": [
-      "觀念：平均分配就是『總量 ÷ 人數』。",
-      "把除法改成乘法：除以 n 等於乘以 1/n。",
-      "列式：2/1 × 1/7。先算分母：3×7。",
-      "最後要記得把分數約分到最簡。"
-    ],
-    "steps": [
-      "把『平均分給 7 人』寫成 ÷7",
-      "列式：2/1 ÷ 7",
-      "等於 2/7（最簡分數）",
-      "檢查：人數越多，每人分到應越少。"
-    ],
-    "explanation": "平均分配：2/1 ÷ 7 = 2/7。",
-    "meta": {
-      "people": 7,
-      "total": "2/1",
-      "source_module": "interactive-g5-life-pack2plus-empire",
-      "source_id": "g5lp2p_u1_avg_fraction_12"
-    }
-  },
-  {
-    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u5_decimal_muldiv_price_19",
+    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u5_decimal_muldiv_price_09",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "kind": "u5_decimal_muldiv_price",
     "difficulty": "hard",
-    "question": "（生活應用｜總價平均分）一盒點心 5.45 元，買 4 盒共多少元？若 2 人平均分攤，每人要付多少元？",
-    "answer": "10.9",
+    "question": "（生活應用｜總價平均分）一盒點心 6 元，買 3 盒共多少元？若 4 人平均分攤，每人要付多少元？",
+    "answer": "4.5",
     "answer_unit": "money2",
     "hints": [
       "這題有兩步：先乘後除。",
@@ -3037,14 +3003,43 @@ window.EXAM_SPRINT_BANK = [
       "用『分』計算避免小數誤差，再換回元。",
       "檢查：人數越多，每人分攤越少。"
     ],
-    "explanation": "總價 5.45×4 = 21.8（元），每人 21.8÷2 = 10.9（元）。",
+    "explanation": "總價 6×3 = 18（元），每人 18÷4 = 4.5（元）。",
     "meta": {
-      "unit_cents": 545,
-      "qty": 4,
+      "unit_cents": 600,
+      "qty": 3,
       "mode": "split",
-      "people": 2,
+      "people": 4,
       "source_module": "interactive-g5-life-pack2plus-empire",
-      "source_id": "g5lp2p_u5_decimal_muldiv_price_19"
+      "source_id": "g5lp2p_u5_decimal_muldiv_price_09"
+    }
+  },
+  {
+    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u10_rate_time_distance_22",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
+    "kind": "u10_rate_time_distance",
+    "difficulty": "hard",
+    "question": "（生活應用｜速率）腳踏車每分鐘走 12 公尺，走了 19 分鐘，一共走了多少公尺？",
+    "answer": "228",
+    "answer_unit": "number",
+    "hints": [
+      "關鍵字：每分鐘…（單位率）。",
+      "若題目有『休息/停下』，休息時間不算前進。",
+      "距離 = 每分鐘走的距離 ×（真正前進的分鐘數）。",
+      "最後檢查單位：公尺。"
+    ],
+    "steps": [
+      "距離=速率×時間。",
+      "若有休息：先算真正前進時間=總時間−休息時間。",
+      "列式：12×19。",
+      "計算並寫出答案。",
+      "檢查：時間越久距離越大。"
+    ],
+    "explanation": "距離 = 12×19 = 228（公尺）。",
+    "meta": {
+      "rate": 12,
+      "mode": "d",
+      "source_module": "interactive-g5-life-pack2plus-empire",
+      "source_id": "g5lp2p_u10_rate_time_distance_22"
     }
   },
   {
@@ -3132,17 +3127,17 @@ window.EXAM_SPRINT_BANK = [
     }
   },
   {
-    "id": "exam_interactive-g5-life-pack2-empire__g5lp2_u2_frac_addsub_life_11",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u2_frac_addsub_life_20",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "kind": "u2_frac_addsub_life",
     "difficulty": "hard",
-    "question": "（生活應用｜分數加法）小明喝了 1/3 公升牛奶，又喝了 4/5 公升牛奶，一共喝了多少 公升牛奶？（最簡分數）",
-    "answer": "17/15",
+    "question": "（生活應用｜分數加法）小明喝了 9/10 罐酵素飲，又喝了 4/5 罐酵素飲，一共喝了多少 罐酵素飲？（最簡分數）",
+    "answer": "17/10",
     "answer_unit": "fraction",
     "hints": [
       "觀念：分母不同要先通分，才能加/減分子。",
-      "先找最小公倍數：LCM(3,5)。",
-      "把兩個分數都改成分母 15，再做 +。",
+      "先找最小公倍數：LCM(10,5)。",
+      "把兩個分數都改成分母 10，再做 +。",
       "最後把答案約分成最簡。"
     ],
     "steps": [
@@ -3151,15 +3146,15 @@ window.EXAM_SPRINT_BANK = [
       "把結果約分成最簡分數。",
       "檢查：加法結果應比其中一個大；減法結果應變小且不為負。"
     ],
-    "explanation": "通分後相加：1/3+4/5=17/15。",
+    "explanation": "通分後相加：9/10+4/5=17/10。",
     "meta": {
       "op": "+",
-      "a": "1/3",
+      "a": "9/10",
       "b": "4/5",
-      "d1": 3,
+      "d1": 10,
       "d2": 5,
-      "source_module": "interactive-g5-life-pack2-empire",
-      "source_id": "g5lp2_u2_frac_addsub_life_11"
+      "source_module": "interactive-g5-life-pack2plus-empire",
+      "source_id": "g5lp2p_u2_frac_addsub_life_20"
     }
   },
   {
@@ -3282,42 +3277,12 @@ window.EXAM_SPRINT_BANK = [
     }
   },
   {
-    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u5_decimal_muldiv_price_18",
-    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
-    "kind": "u5_decimal_muldiv_price",
-    "difficulty": "hard",
-    "question": "（生活應用｜總價平均分）一盒點心 4.5 元，買 16 盒共多少元？若 3 人平均分攤，每人要付多少元？",
-    "answer": "24",
-    "answer_unit": "money2",
-    "hints": [
-      "這題有兩步：先乘後除。",
-      "總價 = 單價 × 數量。",
-      "每人分攤 = 總價 ÷ 人數。",
-      "最後檢查：每人×人數應等於總價。"
-    ],
-    "steps": [
-      "先算總價：單價×盒數。",
-      "再算每人：總價÷人數。",
-      "用『分』計算避免小數誤差，再換回元。",
-      "檢查：人數越多，每人分攤越少。"
-    ],
-    "explanation": "總價 4.5×16 = 72（元），每人 72÷3 = 24（元）。",
-    "meta": {
-      "unit_cents": 450,
-      "qty": 16,
-      "mode": "split",
-      "people": 3,
-      "source_module": "interactive-g5-life-pack2plus-empire",
-      "source_id": "g5lp2p_u5_decimal_muldiv_price_18"
-    }
-  },
-  {
-    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u10_rate_time_distance_06",
-    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
+    "id": "exam_interactive-g5-life-pack2-empire__g5lp2_u10_rate_time_distance_04",
+    "topic": "小五生活應用題｜第二包｜帝國",
     "kind": "u10_rate_time_distance",
     "difficulty": "hard",
-    "question": "（生活應用｜速率）腳踏車每分鐘走 11 公尺，走了 26 分鐘，一共走了多少公尺？",
-    "answer": "286",
+    "question": "（生活應用｜速率）腳踏車每分鐘走 14 公尺，走了 35 分鐘，一共走了多少公尺？",
+    "answer": "490",
     "answer_unit": "number",
     "hints": [
       "關鍵字：每分鐘…（單位率）。",
@@ -3328,44 +3293,72 @@ window.EXAM_SPRINT_BANK = [
     "steps": [
       "距離=速率×時間。",
       "若有休息：先算真正前進時間=總時間−休息時間。",
-      "列式：11×26。",
+      "列式：14×35。",
       "計算並寫出答案。",
       "檢查：時間越久距離越大。"
     ],
-    "explanation": "距離 = 11×26 = 286（公尺）。",
+    "explanation": "距離 = 14×35 = 490（公尺）。",
     "meta": {
-      "rate": 11,
+      "rate": 14,
       "mode": "d",
-      "source_module": "interactive-g5-life-pack2plus-empire",
-      "source_id": "g5lp2p_u10_rate_time_distance_06"
+      "source_module": "interactive-g5-life-pack2-empire",
+      "source_id": "g5lp2_u10_rate_time_distance_04"
     }
   },
   {
-    "id": "exam_interactive-g5-life-pack2-empire__g5lp2_u1_avg_fraction_07",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u1_avg_fraction_08",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "kind": "u1_avg_fraction",
     "difficulty": "hard",
-    "question": "（生活應用｜平均分配｜家庭分享）有 1 個蛋糕，平均分給 3 人，每人得到多少個？（用最簡分數 a/b 表示）",
-    "answer": "1/3",
+    "question": "（生活應用｜平均分配｜班級點心）有 1 個西瓜，平均分給 4 人，每人得到多少個？（用最簡分數 a/b 表示）",
+    "answer": "1/4",
     "answer_unit": "fraction",
     "hints": [
       "觀念：平均分配就是『總量 ÷ 人數』。",
       "把除法改成乘法：除以 n 等於乘以 1/n。",
-      "列式：1 × 1/3。先算分母：1×3。",
+      "列式：1 × 1/4。先算分母：1×4。",
       "最後要記得把分數約分到最簡。"
     ],
     "steps": [
-      "把『平均分給 3 人』寫成 ÷3",
-      "列式：1 ÷ 3",
-      "等於 1/3（最簡分數）",
+      "把『平均分給 4 人』寫成 ÷4",
+      "列式：1 ÷ 4",
+      "等於 1/4（最簡分數）",
       "檢查：人數越多，每人分到應越少。"
     ],
-    "explanation": "平均分配：1 ÷ 3 = 1/3。",
+    "explanation": "平均分配：1 ÷ 4 = 1/4。",
     "meta": {
-      "people": 3,
+      "people": 4,
       "total": "1",
-      "source_module": "interactive-g5-life-pack2-empire",
-      "source_id": "g5lp2_u1_avg_fraction_07"
+      "source_module": "interactive-g5-life-pack2plus-empire",
+      "source_id": "g5lp2p_u1_avg_fraction_08"
+    }
+  },
+  {
+    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u1_avg_fraction_11",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
+    "kind": "u1_avg_fraction",
+    "difficulty": "hard",
+    "question": "（生活應用｜平均分配｜班級點心）有 7/5 個蛋糕，平均分給 5 人，每人得到多少個？（用最簡分數 a/b 表示）",
+    "answer": "7/25",
+    "answer_unit": "fraction",
+    "hints": [
+      "觀念：平均分配就是『總量 ÷ 人數』。",
+      "把除法改成乘法：除以 n 等於乘以 1/n。",
+      "列式：7/5 × 1/5。先算分母：5×5。",
+      "最後要記得把分數約分到最簡。"
+    ],
+    "steps": [
+      "把『平均分給 5 人』寫成 ÷5",
+      "列式：7/5 ÷ 5",
+      "等於 7/25（最簡分數）",
+      "檢查：人數越多，每人分到應越少。"
+    ],
+    "explanation": "平均分配：7/5 ÷ 5 = 7/25。",
+    "meta": {
+      "people": 5,
+      "total": "7/5",
+      "source_module": "interactive-g5-life-pack2plus-empire",
+      "source_id": "g5lp2p_u1_avg_fraction_11"
     }
   },
   {
@@ -3546,31 +3539,35 @@ window.EXAM_SPRINT_BANK = [
     }
   },
   {
-    "id": "exam_interactive-g5-life-pack1-empire__g5lp1_u1_avg_fraction_12",
+    "id": "exam_interactive-g5-life-pack1-empire__g5lp1_u4_money_decimal_addsub_02",
     "topic": "小五生活應用題｜第一包｜帝國",
-    "kind": "u1_avg_fraction",
+    "kind": "u4_money_decimal_addsub",
     "difficulty": "hard",
-    "question": "（生活應用｜平均分配）有 7/4 個蛋糕，平均分給 7 人，每人得到多少個？（用最簡分數 a/b 表示）",
-    "answer": "1/4",
-    "answer_unit": "fraction",
+    "question": "（生活應用｜金錢小數加法）買了 貼紙 8.7 元、筆記本 10.75 元、原子筆 2.95 元，一共要付多少元？（可寫小數）",
+    "answer": "22.4",
+    "answer_unit": "money2",
     "hints": [
-      "觀念：平均分配就是『總量 ÷ 人數』。",
-      "把除法改成乘法：除以 n 等於乘以 1/n。",
-      "列式：7/4 × 1/7。先算分母：4×7。",
-      "最後要記得把分數約分到最簡。"
+      "觀念：金額相加，小數點要對齊。",
+      "可以先把金額都換成『分』再加總。",
+      "加完後再把『分』換回『元』（除以 100）。",
+      "最後檢查：合計是否合理（大約幾元）。"
     ],
     "steps": [
-      "把『平均分給 7 人』寫成 ÷7",
-      "列式：7/4 ÷ 7",
-      "等於 1/4（最簡分數）",
-      "檢查：人數越多，每人分到應越少。"
+      "把每個金額的小數點對齊。",
+      "先算總分（元/角/分），再合併成總金額。",
+      "答案用到小數點後兩位（或可省略尾端 0）。",
+      "檢查：總價應大於任何單一商品價格。"
     ],
-    "explanation": "平均分配：7/4 ÷ 7 = 1/4。",
+    "explanation": "合計：22.4 元。",
     "meta": {
-      "people": 7,
-      "total": "7/4",
+      "prices_cents": [
+        870,
+        1075,
+        295
+      ],
+      "scenario": "合計",
       "source_module": "interactive-g5-life-pack1-empire",
-      "source_id": "g5lp1_u1_avg_fraction_12"
+      "source_id": "g5lp1_u4_money_decimal_addsub_02"
     }
   },
   {
@@ -3776,31 +3773,34 @@ window.EXAM_SPRINT_BANK = [
     }
   },
   {
-    "id": "exam_interactive-g5-life-pack1-empire__g5lp1_u3_frac_times_int_01",
-    "topic": "小五生活應用題｜第一包｜帝國",
-    "kind": "u3_frac_times_int",
+    "id": "exam_interactive-g5-life-pack2-empire__g5lp2_u2_frac_addsub_life_06",
+    "topic": "小五生活應用題｜第二包｜帝國",
+    "kind": "u2_frac_addsub_life",
     "difficulty": "hard",
-    "question": "（生活應用｜分數×整數）每份是 19/10 個桶果汁，共有 9 份，一共有多少個桶果汁？（最簡分數）",
-    "answer": "171/10",
+    "question": "（生活應用｜分數加法）小明喝了 5/6 公升水，又喝了 1/10 公升水，一共喝了多少 公升水？（最簡分數）",
+    "answer": "14/15",
     "answer_unit": "fraction",
     "hints": [
-      "觀念：分數×整數 → 分子乘整數、分母不變。",
-      "列式：19/10×9。",
-      "先算分子：19×9=171，分母仍是 10。",
-      "最後把結果約分成最簡。"
+      "觀念：分母不同要先通分，才能加/減分子。",
+      "先找最小公倍數：LCM(6,10)。",
+      "把兩個分數都改成分母 30，再做 +。",
+      "最後把答案約分成最簡。"
     ],
     "steps": [
-      "列出『每份』×『份數』。",
-      "分子乘整數，分母不變。",
+      "判斷分母是否相同，不同就通分。",
+      "通分後做分子加/減。",
       "把結果約分成最簡分數。",
-      "檢查：份數>1 時答案應比一份多。"
+      "檢查：加法結果應比其中一個大；減法結果應變小且不為負。"
     ],
-    "explanation": "19/10×9=171/10。",
+    "explanation": "通分後相加：5/6+1/10=14/15。",
     "meta": {
-      "frac": "19/10",
-      "k": 9,
-      "source_module": "interactive-g5-life-pack1-empire",
-      "source_id": "g5lp1_u3_frac_times_int_01"
+      "op": "+",
+      "a": "5/6",
+      "b": "1/10",
+      "d1": 6,
+      "d2": 10,
+      "source_module": "interactive-g5-life-pack2-empire",
+      "source_id": "g5lp2_u2_frac_addsub_life_06"
     }
   },
   {
@@ -3864,36 +3864,33 @@ window.EXAM_SPRINT_BANK = [
     }
   },
   {
-    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u4_money_decimal_addsub_17",
-    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
-    "kind": "u4_money_decimal_addsub",
+    "id": "exam_interactive-g5-life-pack2-empire__g5lp2_u5_decimal_muldiv_price_11",
+    "topic": "小五生活應用題｜第二包｜帝國",
+    "kind": "u5_decimal_muldiv_price",
     "difficulty": "hard",
-    "question": "（生活應用｜金錢小數加法）買了 礦泉水 6.05 元、三明治 4.75 元、優格 9.95 元、水果杯 8.1 元，一共要付多少元？（可寫小數）",
-    "answer": "28.85",
+    "question": "（生活應用｜總價平均分）一盒點心 4.15 元，買 18 盒共多少元？若 3 人平均分攤，每人要付多少元？",
+    "answer": "24.9",
     "answer_unit": "money2",
     "hints": [
-      "觀念：金額相加，小數點要對齊。",
-      "可以先把金額都換成『分』再加總。",
-      "加完後再把『分』換回『元』（除以 100）。",
-      "最後檢查：合計是否合理（大約幾元）。"
+      "這題有兩步：先乘後除。",
+      "總價 = 單價 × 數量。",
+      "每人分攤 = 總價 ÷ 人數。",
+      "最後檢查：每人×人數應等於總價。"
     ],
     "steps": [
-      "把每個金額的小數點對齊。",
-      "先算總分（元/角/分），再合併成總金額。",
-      "答案用到小數點後兩位（或可省略尾端 0）。",
-      "檢查：總價應大於任何單一商品價格。"
+      "先算總價：單價×盒數。",
+      "再算每人：總價÷人數。",
+      "用『分』計算避免小數誤差，再換回元。",
+      "檢查：人數越多，每人分攤越少。"
     ],
-    "explanation": "合計：28.85 元。答案：28.85 元。",
+    "explanation": "總價 4.15×18 = 74.7（元），每人 74.7÷3 = 24.9（元）。",
     "meta": {
-      "prices_cents": [
-        605,
-        475,
-        995,
-        810
-      ],
-      "scenario": "合計",
-      "source_module": "interactive-g5-life-pack2plus-empire",
-      "source_id": "g5lp2p_u4_money_decimal_addsub_17"
+      "unit_cents": 415,
+      "qty": 18,
+      "mode": "split",
+      "people": 3,
+      "source_module": "interactive-g5-life-pack2-empire",
+      "source_id": "g5lp2_u5_decimal_muldiv_price_11"
     }
   },
   {
@@ -4129,32 +4126,31 @@ window.EXAM_SPRINT_BANK = [
     }
   },
   {
-    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u10_rate_time_distance_05",
-    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
-    "kind": "u10_rate_time_distance",
+    "id": "exam_interactive-g5-life-pack2-empire__g5lp2_u1_avg_fraction_07",
+    "topic": "小五生活應用題｜第二包｜帝國",
+    "kind": "u1_avg_fraction",
     "difficulty": "hard",
-    "question": "（生活應用｜速率）腳踏車每分鐘走 13 公尺，走了 34 分鐘，一共走了多少公尺？",
-    "answer": "442",
-    "answer_unit": "number",
+    "question": "（生活應用｜平均分配｜家庭分享）有 1 個蛋糕，平均分給 3 人，每人得到多少個？（用最簡分數 a/b 表示）",
+    "answer": "1/3",
+    "answer_unit": "fraction",
     "hints": [
-      "關鍵字：每分鐘…（單位率）。",
-      "若題目有『休息/停下』，休息時間不算前進。",
-      "距離 = 每分鐘走的距離 ×（真正前進的分鐘數）。",
-      "最後檢查單位：公尺。"
+      "觀念：平均分配就是『總量 ÷ 人數』。",
+      "把除法改成乘法：除以 n 等於乘以 1/n。",
+      "列式：1 × 1/3。先算分母：1×3。",
+      "最後要記得把分數約分到最簡。"
     ],
     "steps": [
-      "距離=速率×時間。",
-      "若有休息：先算真正前進時間=總時間−休息時間。",
-      "列式：13×34。",
-      "計算並寫出答案。",
-      "檢查：時間越久距離越大。"
+      "把『平均分給 3 人』寫成 ÷3",
+      "列式：1 ÷ 3",
+      "等於 1/3（最簡分數）",
+      "檢查：人數越多，每人分到應越少。"
     ],
-    "explanation": "距離 = 13×34 = 442（公尺）。",
+    "explanation": "平均分配：1 ÷ 3 = 1/3。",
     "meta": {
-      "rate": 13,
-      "mode": "d",
-      "source_module": "interactive-g5-life-pack2plus-empire",
-      "source_id": "g5lp2p_u10_rate_time_distance_05"
+      "people": 3,
+      "total": "1",
+      "source_module": "interactive-g5-life-pack2-empire",
+      "source_id": "g5lp2_u1_avg_fraction_07"
     }
   },
   {
@@ -4282,33 +4278,32 @@ window.EXAM_SPRINT_BANK = [
     }
   },
   {
-    "id": "exam_interactive-g5-life-pack2-empire__g5lp2_u5_decimal_muldiv_price_11",
-    "topic": "小五生活應用題｜第二包｜帝國",
-    "kind": "u5_decimal_muldiv_price",
+    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u10_rate_time_distance_05",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
+    "kind": "u10_rate_time_distance",
     "difficulty": "hard",
-    "question": "（生活應用｜總價平均分）一盒點心 4.15 元，買 18 盒共多少元？若 3 人平均分攤，每人要付多少元？",
-    "answer": "24.9",
-    "answer_unit": "money2",
+    "question": "（生活應用｜速率）腳踏車每分鐘走 13 公尺，走了 34 分鐘，一共走了多少公尺？",
+    "answer": "442",
+    "answer_unit": "number",
     "hints": [
-      "這題有兩步：先乘後除。",
-      "總價 = 單價 × 數量。",
-      "每人分攤 = 總價 ÷ 人數。",
-      "最後檢查：每人×人數應等於總價。"
+      "關鍵字：每分鐘…（單位率）。",
+      "若題目有『休息/停下』，休息時間不算前進。",
+      "距離 = 每分鐘走的距離 ×（真正前進的分鐘數）。",
+      "最後檢查單位：公尺。"
     ],
     "steps": [
-      "先算總價：單價×盒數。",
-      "再算每人：總價÷人數。",
-      "用『分』計算避免小數誤差，再換回元。",
-      "檢查：人數越多，每人分攤越少。"
+      "距離=速率×時間。",
+      "若有休息：先算真正前進時間=總時間−休息時間。",
+      "列式：13×34。",
+      "計算並寫出答案。",
+      "檢查：時間越久距離越大。"
     ],
-    "explanation": "總價 4.15×18 = 74.7（元），每人 74.7÷3 = 24.9（元）。",
+    "explanation": "距離 = 13×34 = 442（公尺）。",
     "meta": {
-      "unit_cents": 415,
-      "qty": 18,
-      "mode": "split",
-      "people": 3,
-      "source_module": "interactive-g5-life-pack2-empire",
-      "source_id": "g5lp2_u5_decimal_muldiv_price_11"
+      "rate": 13,
+      "mode": "d",
+      "source_module": "interactive-g5-life-pack2plus-empire",
+      "source_id": "g5lp2p_u10_rate_time_distance_05"
     }
   },
   {
@@ -4545,12 +4540,40 @@ window.EXAM_SPRINT_BANK = [
     }
   },
   {
-    "id": "exam_interactive-g5-life-pack2-empire__g5lp2_u10_rate_time_distance_04",
+    "id": "exam_interactive-g5-life-pack2-empire__g5lp2_u1_avg_fraction_16",
     "topic": "小五生活應用題｜第二包｜帝國",
+    "kind": "u1_avg_fraction",
+    "difficulty": "hard",
+    "question": "（生活應用｜平均分配｜班級點心）有 1 個緞帶，平均分給 7 人，每人得到多少個？（用最簡分數 a/b 表示）",
+    "answer": "1/7",
+    "answer_unit": "fraction",
+    "hints": [
+      "觀念：平均分配就是『總量 ÷ 人數』。",
+      "把除法改成乘法：除以 n 等於乘以 1/n。",
+      "列式：1 × 1/7。先算分母：1×7。",
+      "最後要記得把分數約分到最簡。"
+    ],
+    "steps": [
+      "把『平均分給 7 人』寫成 ÷7",
+      "列式：1 ÷ 7",
+      "等於 1/7（最簡分數）",
+      "檢查：人數越多，每人分到應越少。"
+    ],
+    "explanation": "平均分配：1 ÷ 7 = 1/7。",
+    "meta": {
+      "people": 7,
+      "total": "1",
+      "source_module": "interactive-g5-life-pack2-empire",
+      "source_id": "g5lp2_u1_avg_fraction_16"
+    }
+  },
+  {
+    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u10_rate_time_distance_18",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "kind": "u10_rate_time_distance",
     "difficulty": "hard",
-    "question": "（生活應用｜速率）腳踏車每分鐘走 14 公尺，走了 35 分鐘，一共走了多少公尺？",
-    "answer": "490",
+    "question": "（生活應用｜速率）腳踏車每分鐘走 14 公尺，走了 24 分鐘，一共走了多少公尺？",
+    "answer": "336",
     "answer_unit": "number",
     "hints": [
       "關鍵字：每分鐘…（單位率）。",
@@ -4561,46 +4584,16 @@ window.EXAM_SPRINT_BANK = [
     "steps": [
       "距離=速率×時間。",
       "若有休息：先算真正前進時間=總時間−休息時間。",
-      "列式：14×35。",
+      "列式：14×24。",
       "計算並寫出答案。",
       "檢查：時間越久距離越大。"
     ],
-    "explanation": "距離 = 14×35 = 490（公尺）。",
+    "explanation": "距離 = 14×24 = 336（公尺）。",
     "meta": {
       "rate": 14,
       "mode": "d",
-      "source_module": "interactive-g5-life-pack2-empire",
-      "source_id": "g5lp2_u10_rate_time_distance_04"
-    }
-  },
-  {
-    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u5_decimal_muldiv_price_06",
-    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
-    "kind": "u5_decimal_muldiv_price",
-    "difficulty": "hard",
-    "question": "（生活應用｜總價平均分）一盒點心 8.1 元，買 19 盒共多少元？若 2 人平均分攤，每人要付多少元？",
-    "answer": "76.95",
-    "answer_unit": "money2",
-    "hints": [
-      "這題有兩步：先乘後除。",
-      "總價 = 單價 × 數量。",
-      "每人分攤 = 總價 ÷ 人數。",
-      "最後檢查：每人×人數應等於總價。"
-    ],
-    "steps": [
-      "先算總價：單價×盒數。",
-      "再算每人：總價÷人數。",
-      "用『分』計算避免小數誤差，再換回元。",
-      "檢查：人數越多，每人分攤越少。"
-    ],
-    "explanation": "總價 8.1×19 = 153.9（元），每人 153.9÷2 = 76.95（元）。",
-    "meta": {
-      "unit_cents": 810,
-      "qty": 19,
-      "mode": "split",
-      "people": 2,
       "source_module": "interactive-g5-life-pack2plus-empire",
-      "source_id": "g5lp2p_u5_decimal_muldiv_price_06"
+      "source_id": "g5lp2p_u10_rate_time_distance_18"
     }
   },
   {
@@ -4658,32 +4651,31 @@ window.EXAM_SPRINT_BANK = [
     }
   },
   {
-    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u10_rate_time_distance_18",
-    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
-    "kind": "u10_rate_time_distance",
+    "id": "exam_interactive-g5-life-pack2-empire__g5lp2_u1_avg_fraction_08",
+    "topic": "小五生活應用題｜第二包｜帝國",
+    "kind": "u1_avg_fraction",
     "difficulty": "hard",
-    "question": "（生活應用｜速率）腳踏車每分鐘走 14 公尺，走了 24 分鐘，一共走了多少公尺？",
-    "answer": "336",
-    "answer_unit": "number",
+    "question": "（生活應用｜平均分配｜社團活動）有 1 個果汁，平均分給 4 人，每人得到多少個？（用最簡分數 a/b 表示）",
+    "answer": "1/4",
+    "answer_unit": "fraction",
     "hints": [
-      "關鍵字：每分鐘…（單位率）。",
-      "若題目有『休息/停下』，休息時間不算前進。",
-      "距離 = 每分鐘走的距離 ×（真正前進的分鐘數）。",
-      "最後檢查單位：公尺。"
+      "觀念：平均分配就是『總量 ÷ 人數』。",
+      "把除法改成乘法：除以 n 等於乘以 1/n。",
+      "列式：1 × 1/4。先算分母：1×4。",
+      "最後要記得把分數約分到最簡。"
     ],
     "steps": [
-      "距離=速率×時間。",
-      "若有休息：先算真正前進時間=總時間−休息時間。",
-      "列式：14×24。",
-      "計算並寫出答案。",
-      "檢查：時間越久距離越大。"
+      "把『平均分給 4 人』寫成 ÷4",
+      "列式：1 ÷ 4",
+      "等於 1/4（最簡分數）",
+      "檢查：人數越多，每人分到應越少。"
     ],
-    "explanation": "距離 = 14×24 = 336（公尺）。",
+    "explanation": "平均分配：1 ÷ 4 = 1/4。",
     "meta": {
-      "rate": 14,
-      "mode": "d",
-      "source_module": "interactive-g5-life-pack2plus-empire",
-      "source_id": "g5lp2p_u10_rate_time_distance_18"
+      "people": 4,
+      "total": "1",
+      "source_module": "interactive-g5-life-pack2-empire",
+      "source_id": "g5lp2_u1_avg_fraction_08"
     }
   },
   {
@@ -4718,32 +4710,31 @@ window.EXAM_SPRINT_BANK = [
     }
   },
   {
-    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u10_rate_time_distance_28",
-    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
-    "kind": "u10_rate_time_distance",
+    "id": "exam_interactive-g5-life-pack1-empire__g5lp1_u3_frac_times_int_01",
+    "topic": "小五生活應用題｜第一包｜帝國",
+    "kind": "u3_frac_times_int",
     "difficulty": "hard",
-    "question": "（生活應用｜速率）腳踏車每分鐘走 8 公尺，走了 35 分鐘，一共走了多少公尺？",
-    "answer": "280",
-    "answer_unit": "number",
+    "question": "（生活應用｜分數×整數）每份是 19/10 個桶果汁，共有 9 份，一共有多少個桶果汁？（最簡分數）",
+    "answer": "171/10",
+    "answer_unit": "fraction",
     "hints": [
-      "關鍵字：每分鐘…（單位率）。",
-      "若題目有『休息/停下』，休息時間不算前進。",
-      "距離 = 每分鐘走的距離 ×（真正前進的分鐘數）。",
-      "最後檢查單位：公尺。"
+      "觀念：分數×整數 → 分子乘整數、分母不變。",
+      "列式：19/10×9。",
+      "先算分子：19×9=171，分母仍是 10。",
+      "最後把結果約分成最簡。"
     ],
     "steps": [
-      "距離=速率×時間。",
-      "若有休息：先算真正前進時間=總時間−休息時間。",
-      "列式：8×35。",
-      "計算並寫出答案。",
-      "檢查：時間越久距離越大。"
+      "列出『每份』×『份數』。",
+      "分子乘整數，分母不變。",
+      "把結果約分成最簡分數。",
+      "檢查：份數>1 時答案應比一份多。"
     ],
-    "explanation": "距離 = 8×35 = 280（公尺）。",
+    "explanation": "19/10×9=171/10。",
     "meta": {
-      "rate": 8,
-      "mode": "d",
-      "source_module": "interactive-g5-life-pack2plus-empire",
-      "source_id": "g5lp2p_u10_rate_time_distance_28"
+      "frac": "19/10",
+      "k": 9,
+      "source_module": "interactive-g5-life-pack1-empire",
+      "source_id": "g5lp1_u3_frac_times_int_01"
     }
   },
   {
@@ -4838,34 +4829,31 @@ window.EXAM_SPRINT_BANK = [
     }
   },
   {
-    "id": "exam_interactive-g5-life-pack1-empire__g5lp1_u2_frac_addsub_life_14",
-    "topic": "小五生活應用題｜第一包｜帝國",
-    "kind": "u2_frac_addsub_life",
+    "id": "exam_interactive-g5-life-pack1plus-empire__g5lp1p_u1_avg_fraction_01",
+    "topic": "小五生活應用題｜第一包｜加強版｜帝國",
+    "kind": "u1_avg_fraction",
     "difficulty": "hard",
-    "question": "（生活應用｜分數加法）小明喝了 1/4 公升果汁，又喝了 3/4 公升果汁，一共喝了多少 公升果汁？（最簡分數）",
-    "answer": "1/1",
+    "question": "（生活應用｜平均分配）有 7/4 個巧克力，平均分給 7 人，每人得到多少個？（用最簡分數 a/b 表示）",
+    "answer": "1/4",
     "answer_unit": "fraction",
     "hints": [
-      "觀念：分母不同要先通分，才能加/減分子。",
-      "先找最小公倍數：LCM(4,4)。",
-      "把兩個分數都改成分母 4，再做 +。",
-      "最後把答案約分成最簡。"
+      "觀念：平均分配就是『總量 ÷ 人數』。",
+      "把除法改成乘法：除以 n 等於乘以 1/n。",
+      "列式：7/4 × 1/7。先算分母：4×7。",
+      "最後要記得把分數約分到最簡。"
     ],
     "steps": [
-      "判斷分母是否相同，不同就通分。",
-      "通分後做分子加/減。",
-      "把結果約分成最簡分數。",
-      "檢查：加法結果應比其中一個大；減法結果應變小且不為負。"
+      "把『平均分給 7 人』寫成 ÷7",
+      "列式：7/4 ÷ 7",
+      "等於 1/4（最簡分數）",
+      "檢查：人數越多，每人分到應越少。"
     ],
-    "explanation": "通分後相加：1/4+3/4=1/1。",
+    "explanation": "平均分配：7/4 ÷ 7 = 1/4。",
     "meta": {
-      "op": "+",
-      "a": "1/4",
-      "b": "3/4",
-      "d1": 4,
-      "d2": 4,
-      "source_module": "interactive-g5-life-pack1-empire",
-      "source_id": "g5lp1_u2_frac_addsub_life_14"
+      "people": 7,
+      "total": "7/4",
+      "source_module": "interactive-g5-life-pack1plus-empire",
+      "source_id": "g5lp1p_u1_avg_fraction_01"
     }
   },
   {
@@ -4958,33 +4946,32 @@ window.EXAM_SPRINT_BANK = [
     }
   },
   {
-    "id": "exam_interactive-g5-life-pack2-empire__g5lp2_u5_decimal_muldiv_price_03",
-    "topic": "小五生活應用題｜第二包｜帝國",
-    "kind": "u5_decimal_muldiv_price",
+    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u10_rate_time_distance_06",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
+    "kind": "u10_rate_time_distance",
     "difficulty": "hard",
-    "question": "（生活應用｜總價平均分）一盒點心 5.3 元，買 15 盒共多少元？若 5 人平均分攤，每人要付多少元？",
-    "answer": "15.9",
-    "answer_unit": "money2",
+    "question": "（生活應用｜速率）腳踏車每分鐘走 11 公尺，走了 26 分鐘，一共走了多少公尺？",
+    "answer": "286",
+    "answer_unit": "number",
     "hints": [
-      "這題有兩步：先乘後除。",
-      "總價 = 單價 × 數量。",
-      "每人分攤 = 總價 ÷ 人數。",
-      "最後檢查：每人×人數應等於總價。"
+      "關鍵字：每分鐘…（單位率）。",
+      "若題目有『休息/停下』，休息時間不算前進。",
+      "距離 = 每分鐘走的距離 ×（真正前進的分鐘數）。",
+      "最後檢查單位：公尺。"
     ],
     "steps": [
-      "先算總價：單價×盒數。",
-      "再算每人：總價÷人數。",
-      "用『分』計算避免小數誤差，再換回元。",
-      "檢查：人數越多，每人分攤越少。"
+      "距離=速率×時間。",
+      "若有休息：先算真正前進時間=總時間−休息時間。",
+      "列式：11×26。",
+      "計算並寫出答案。",
+      "檢查：時間越久距離越大。"
     ],
-    "explanation": "總價 5.3×15 = 79.5（元），每人 79.5÷5 = 15.9（元）。",
+    "explanation": "距離 = 11×26 = 286（公尺）。",
     "meta": {
-      "unit_cents": 530,
-      "qty": 15,
-      "mode": "split",
-      "people": 5,
-      "source_module": "interactive-g5-life-pack2-empire",
-      "source_id": "g5lp2_u5_decimal_muldiv_price_03"
+      "rate": 11,
+      "mode": "d",
+      "source_module": "interactive-g5-life-pack2plus-empire",
+      "source_id": "g5lp2p_u10_rate_time_distance_06"
     }
   },
   {
@@ -5014,31 +5001,31 @@ window.EXAM_SPRINT_BANK = [
     }
   },
   {
-    "id": "exam_interactive-g5-life-pack2-empire__g5lp2_u1_avg_fraction_11",
-    "topic": "小五生活應用題｜第二包｜帝國",
+    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u1_avg_fraction_15",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "kind": "u1_avg_fraction",
     "difficulty": "hard",
-    "question": "（生活應用｜平均分配｜班級點心）有 1 個巧克力，平均分給 8 人，每人得到多少個？（用最簡分數 a/b 表示）",
-    "answer": "1/8",
+    "question": "（生活應用｜平均分配｜家庭分享）有 9/5 個蛋糕，平均分給 7 人，每人得到多少個？（用最簡分數 a/b 表示）",
+    "answer": "9/35",
     "answer_unit": "fraction",
     "hints": [
       "觀念：平均分配就是『總量 ÷ 人數』。",
       "把除法改成乘法：除以 n 等於乘以 1/n。",
-      "列式：1 × 1/8。先算分母：1×8。",
+      "列式：9/5 × 1/7。先算分母：5×7。",
       "最後要記得把分數約分到最簡。"
     ],
     "steps": [
-      "把『平均分給 8 人』寫成 ÷8",
-      "列式：1 ÷ 8",
-      "等於 1/8（最簡分數）",
+      "把『平均分給 7 人』寫成 ÷7",
+      "列式：9/5 ÷ 7",
+      "等於 9/35（最簡分數）",
       "檢查：人數越多，每人分到應越少。"
     ],
-    "explanation": "平均分配：1 ÷ 8 = 1/8。",
+    "explanation": "平均分配：9/5 ÷ 7 = 9/35。",
     "meta": {
-      "people": 8,
-      "total": "1",
-      "source_module": "interactive-g5-life-pack2-empire",
-      "source_id": "g5lp2_u1_avg_fraction_11"
+      "people": 7,
+      "total": "9/5",
+      "source_module": "interactive-g5-life-pack2plus-empire",
+      "source_id": "g5lp2p_u1_avg_fraction_15"
     }
   },
   {
@@ -5198,31 +5185,33 @@ window.EXAM_SPRINT_BANK = [
     }
   },
   {
-    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u1_avg_fraction_05",
+    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u5_decimal_muldiv_price_20",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
-    "kind": "u1_avg_fraction",
+    "kind": "u5_decimal_muldiv_price",
     "difficulty": "hard",
-    "question": "（生活應用｜平均分配｜園遊會）有 2/1 個緞帶，平均分給 3 人，每人得到多少個？（用最簡分數 a/b 表示）",
-    "answer": "2/3",
-    "answer_unit": "fraction",
+    "question": "（生活應用｜總價平均分）一盒點心 9 元，買 4 盒共多少元？若 4 人平均分攤，每人要付多少元？",
+    "answer": "9",
+    "answer_unit": "money2",
     "hints": [
-      "觀念：平均分配就是『總量 ÷ 人數』。",
-      "把除法改成乘法：除以 n 等於乘以 1/n。",
-      "列式：2/1 × 1/3。先算分母：3×3。",
-      "最後要記得把分數約分到最簡。"
+      "這題有兩步：先乘後除。",
+      "總價 = 單價 × 數量。",
+      "每人分攤 = 總價 ÷ 人數。",
+      "最後檢查：每人×人數應等於總價。"
     ],
     "steps": [
-      "把『平均分給 3 人』寫成 ÷3",
-      "列式：2/1 ÷ 3",
-      "等於 2/3（最簡分數）",
-      "檢查：人數越多，每人分到應越少。"
+      "先算總價：單價×盒數。",
+      "再算每人：總價÷人數。",
+      "用『分』計算避免小數誤差，再換回元。",
+      "檢查：人數越多，每人分攤越少。"
     ],
-    "explanation": "平均分配：2/1 ÷ 3 = 2/3。",
+    "explanation": "總價 9×4 = 36（元），每人 36÷4 = 9（元）。",
     "meta": {
-      "people": 3,
-      "total": "2/1",
+      "unit_cents": 900,
+      "qty": 4,
+      "mode": "split",
+      "people": 4,
       "source_module": "interactive-g5-life-pack2plus-empire",
-      "source_id": "g5lp2p_u1_avg_fraction_05"
+      "source_id": "g5lp2p_u5_decimal_muldiv_price_20"
     }
   },
   {
@@ -5401,33 +5390,36 @@ window.EXAM_SPRINT_BANK = [
     }
   },
   {
-    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u5_decimal_muldiv_price_20",
-    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
-    "kind": "u5_decimal_muldiv_price",
+    "id": "exam_interactive-g5-life-pack2-empire__g5lp2_u4_money_decimal_addsub_03",
+    "topic": "小五生活應用題｜第二包｜帝國",
+    "kind": "u4_money_decimal_addsub",
     "difficulty": "hard",
-    "question": "（生活應用｜總價平均分）一盒點心 9 元，買 4 盒共多少元？若 4 人平均分攤，每人要付多少元？",
-    "answer": "9",
+    "question": "（生活應用｜金錢小數加法）買了 明信片 3.35 元、紙膠帶 6.5 元、貼紙包 6.8 元、口香糖 2.5 元，一共要付多少元？（可寫小數）",
+    "answer": "19.15",
     "answer_unit": "money2",
     "hints": [
-      "這題有兩步：先乘後除。",
-      "總價 = 單價 × 數量。",
-      "每人分攤 = 總價 ÷ 人數。",
-      "最後檢查：每人×人數應等於總價。"
+      "觀念：金額相加，小數點要對齊。",
+      "可以先把金額都換成『分』再加總。",
+      "加完後再把『分』換回『元』（除以 100）。",
+      "最後檢查：合計是否合理（大約幾元）。"
     ],
     "steps": [
-      "先算總價：單價×盒數。",
-      "再算每人：總價÷人數。",
-      "用『分』計算避免小數誤差，再換回元。",
-      "檢查：人數越多，每人分攤越少。"
+      "把每個金額的小數點對齊。",
+      "先算總分（元/角/分），再合併成總金額。",
+      "答案用到小數點後兩位（或可省略尾端 0）。",
+      "檢查：總價應大於任何單一商品價格。"
     ],
-    "explanation": "總價 9×4 = 36（元），每人 36÷4 = 9（元）。",
+    "explanation": "合計：19.15 元。答案：19.15 元。",
     "meta": {
-      "unit_cents": 900,
-      "qty": 4,
-      "mode": "split",
-      "people": 4,
-      "source_module": "interactive-g5-life-pack2plus-empire",
-      "source_id": "g5lp2p_u5_decimal_muldiv_price_20"
+      "prices_cents": [
+        335,
+        650,
+        680,
+        250
+      ],
+      "scenario": "合計",
+      "source_module": "interactive-g5-life-pack2-empire",
+      "source_id": "g5lp2_u4_money_decimal_addsub_03"
     }
   },
   {
@@ -5546,35 +5538,36 @@ window.EXAM_SPRINT_BANK = [
     }
   },
   {
-    "id": "exam_interactive-g5-life-pack1plus-empire__g5lp1p_u4_money_decimal_addsub_17",
-    "topic": "小五生活應用題｜第一包｜加強版｜帝國",
+    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u4_money_decimal_addsub_17",
+    "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "kind": "u4_money_decimal_addsub",
     "difficulty": "hard",
-    "question": "（生活應用｜金錢找零）買了 鉛筆 4.25 元、橡皮擦 8.1 元、尺 7.45 元，共 19.8 元。付了 23.8 元，要找回多少元？",
-    "answer": "4",
+    "question": "（生活應用｜金錢小數加法）買了 礦泉水 6.05 元、三明治 4.75 元、優格 9.95 元、水果杯 8.1 元，一共要付多少元？（可寫小數）",
+    "answer": "28.85",
     "answer_unit": "money2",
     "hints": [
-      "先把所有價格加起來得到總價。",
-      "找零 = 付的錢 − 總價。",
-      "也可以先都換成『分』再做減法。",
-      "最後檢查：找零加總價是否等於付的錢。"
+      "觀念：金額相加，小數點要對齊。",
+      "可以先把金額都換成『分』再加總。",
+      "加完後再把『分』換回『元』（除以 100）。",
+      "最後檢查：合計是否合理（大約幾元）。"
     ],
     "steps": [
-      "先算總價（把小數點對齊相加）。",
-      "列式：付的金額 − 總價 = 找零。",
-      "用『分』計算可避免小數誤差。",
-      "檢查：付的金額應大於總價，找零應為正。"
+      "把每個金額的小數點對齊。",
+      "先算總分（元/角/分），再合併成總金額。",
+      "答案用到小數點後兩位（或可省略尾端 0）。",
+      "檢查：總價應大於任何單一商品價格。"
     ],
-    "explanation": "找零：23.8 − 19.8 = 4（元）。",
+    "explanation": "合計：28.85 元。答案：28.85 元。",
     "meta": {
       "prices_cents": [
-        425,
-        810,
-        745
+        605,
+        475,
+        995,
+        810
       ],
-      "scenario": "找零",
-      "source_module": "interactive-g5-life-pack1plus-empire",
-      "source_id": "g5lp1p_u4_money_decimal_addsub_17"
+      "scenario": "合計",
+      "source_module": "interactive-g5-life-pack2plus-empire",
+      "source_id": "g5lp2p_u4_money_decimal_addsub_17"
     }
   },
   {
@@ -6075,34 +6068,31 @@ window.EXAM_SPRINT_BANK = [
     }
   },
   {
-    "id": "exam_interactive-g5-life-pack2-empire__g5lp2_u2_frac_addsub_life_06",
-    "topic": "小五生活應用題｜第二包｜帝國",
-    "kind": "u2_frac_addsub_life",
+    "id": "exam_interactive-g5-life-pack1-empire__g5lp1_u1_avg_fraction_02",
+    "topic": "小五生活應用題｜第一包｜帝國",
+    "kind": "u1_avg_fraction",
     "difficulty": "hard",
-    "question": "（生活應用｜分數加法）小明喝了 5/6 公升水，又喝了 1/10 公升水，一共喝了多少 公升水？（最簡分數）",
-    "answer": "14/15",
+    "question": "（生活應用｜平均分配）有 8/5 個披薩，平均分給 7 人，每人得到多少個？（用最簡分數 a/b 表示）",
+    "answer": "8/35",
     "answer_unit": "fraction",
     "hints": [
-      "觀念：分母不同要先通分，才能加/減分子。",
-      "先找最小公倍數：LCM(6,10)。",
-      "把兩個分數都改成分母 30，再做 +。",
-      "最後把答案約分成最簡。"
+      "觀念：平均分配就是『總量 ÷ 人數』。",
+      "把除法改成乘法：除以 n 等於乘以 1/n。",
+      "列式：8/5 × 1/7。先算分母：5×7。",
+      "最後要記得把分數約分到最簡。"
     ],
     "steps": [
-      "判斷分母是否相同，不同就通分。",
-      "通分後做分子加/減。",
-      "把結果約分成最簡分數。",
-      "檢查：加法結果應比其中一個大；減法結果應變小且不為負。"
+      "把『平均分給 7 人』寫成 ÷7",
+      "列式：8/5 ÷ 7",
+      "等於 8/35（最簡分數）",
+      "檢查：人數越多，每人分到應越少。"
     ],
-    "explanation": "通分後相加：5/6+1/10=14/15。",
+    "explanation": "平均分配：8/5 ÷ 7 = 8/35。",
     "meta": {
-      "op": "+",
-      "a": "5/6",
-      "b": "1/10",
-      "d1": 6,
-      "d2": 10,
-      "source_module": "interactive-g5-life-pack2-empire",
-      "source_id": "g5lp2_u2_frac_addsub_life_06"
+      "people": 7,
+      "total": "8/5",
+      "source_module": "interactive-g5-life-pack1-empire",
+      "source_id": "g5lp1_u1_avg_fraction_02"
     }
   },
   {
@@ -6226,31 +6216,35 @@ window.EXAM_SPRINT_BANK = [
     }
   },
   {
-    "id": "exam_interactive-g5-life-pack2-empire__g5lp2_u1_avg_fraction_04",
-    "topic": "小五生活應用題｜第二包｜帝國",
-    "kind": "u1_avg_fraction",
+    "id": "exam_interactive-g5-life-pack1plus-empire__g5lp1p_u4_money_decimal_addsub_17",
+    "topic": "小五生活應用題｜第一包｜加強版｜帝國",
+    "kind": "u4_money_decimal_addsub",
     "difficulty": "hard",
-    "question": "（生活應用｜平均分配｜園遊會）有 4/3 個披薩，平均分給 6 人，每人得到多少個？（用最簡分數 a/b 表示）",
-    "answer": "2/9",
-    "answer_unit": "fraction",
+    "question": "（生活應用｜金錢找零）買了 鉛筆 4.25 元、橡皮擦 8.1 元、尺 7.45 元，共 19.8 元。付了 23.8 元，要找回多少元？",
+    "answer": "4",
+    "answer_unit": "money2",
     "hints": [
-      "觀念：平均分配就是『總量 ÷ 人數』。",
-      "把除法改成乘法：除以 n 等於乘以 1/n。",
-      "列式：4/3 × 1/6。先算分母：3×6。",
-      "最後要記得把分數約分到最簡。"
+      "先把所有價格加起來得到總價。",
+      "找零 = 付的錢 − 總價。",
+      "也可以先都換成『分』再做減法。",
+      "最後檢查：找零加總價是否等於付的錢。"
     ],
     "steps": [
-      "把『平均分給 6 人』寫成 ÷6",
-      "列式：4/3 ÷ 6",
-      "等於 2/9（最簡分數）",
-      "檢查：人數越多，每人分到應越少。"
+      "先算總價（把小數點對齊相加）。",
+      "列式：付的金額 − 總價 = 找零。",
+      "用『分』計算可避免小數誤差。",
+      "檢查：付的金額應大於總價，找零應為正。"
     ],
-    "explanation": "平均分配：4/3 ÷ 6 = 2/9。",
+    "explanation": "找零：23.8 − 19.8 = 4（元）。",
     "meta": {
-      "people": 6,
-      "total": "4/3",
-      "source_module": "interactive-g5-life-pack2-empire",
-      "source_id": "g5lp2_u1_avg_fraction_04"
+      "prices_cents": [
+        425,
+        810,
+        745
+      ],
+      "scenario": "找零",
+      "source_module": "interactive-g5-life-pack1plus-empire",
+      "source_id": "g5lp1p_u4_money_decimal_addsub_17"
     }
   },
   {
@@ -6337,36 +6331,32 @@ window.EXAM_SPRINT_BANK = [
     }
   },
   {
-    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u4_money_decimal_addsub_10",
+    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u10_rate_time_distance_28",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
-    "kind": "u4_money_decimal_addsub",
+    "kind": "u10_rate_time_distance",
     "difficulty": "hard",
-    "question": "（生活應用｜金錢找零）買了 飯糰 2.7 元、豆漿 7.1 元、茶葉蛋 11.15 元、口香糖 9.1 元，共 30.05 元。付了 38.55 元，要找回多少元？",
-    "answer": "8.5",
-    "answer_unit": "money2",
+    "question": "（生活應用｜速率）腳踏車每分鐘走 8 公尺，走了 35 分鐘，一共走了多少公尺？",
+    "answer": "280",
+    "answer_unit": "number",
     "hints": [
-      "先把所有價格加起來得到總價。",
-      "找零 = 付的錢 − 總價。",
-      "也可以先都換成『分』再做減法。",
-      "最後檢查：找零加總價是否等於付的錢。"
+      "關鍵字：每分鐘…（單位率）。",
+      "若題目有『休息/停下』，休息時間不算前進。",
+      "距離 = 每分鐘走的距離 ×（真正前進的分鐘數）。",
+      "最後檢查單位：公尺。"
     ],
     "steps": [
-      "先算總價（把小數點對齊相加）。",
-      "列式：付的金額 − 總價 = 找零。",
-      "用『分』計算可避免小數誤差。",
-      "檢查：付的金額應大於總價，找零應為正。"
+      "距離=速率×時間。",
+      "若有休息：先算真正前進時間=總時間−休息時間。",
+      "列式：8×35。",
+      "計算並寫出答案。",
+      "檢查：時間越久距離越大。"
     ],
-    "explanation": "找零：38.55 − 30.05 = 8.5（元）。",
+    "explanation": "距離 = 8×35 = 280（公尺）。",
     "meta": {
-      "prices_cents": [
-        270,
-        710,
-        1115,
-        910
-      ],
-      "scenario": "找零",
+      "rate": 8,
+      "mode": "d",
       "source_module": "interactive-g5-life-pack2plus-empire",
-      "source_id": "g5lp2p_u4_money_decimal_addsub_10"
+      "source_id": "g5lp2p_u10_rate_time_distance_28"
     }
   },
   {
@@ -6492,31 +6482,36 @@ window.EXAM_SPRINT_BANK = [
     }
   },
   {
-    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u1_avg_fraction_15",
+    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u4_money_decimal_addsub_05",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
-    "kind": "u1_avg_fraction",
+    "kind": "u4_money_decimal_addsub",
     "difficulty": "hard",
-    "question": "（生活應用｜平均分配｜家庭分享）有 9/5 個蛋糕，平均分給 7 人，每人得到多少個？（用最簡分數 a/b 表示）",
-    "answer": "9/35",
-    "answer_unit": "fraction",
+    "question": "（生活應用｜金錢找零）買了 礦泉水 13.25 元、三明治 9.1 元、優格 9.7 元、水果杯 2.45 元，共 34.5 元。付了 37 元，要找回多少元？",
+    "answer": "2.5",
+    "answer_unit": "money2",
     "hints": [
-      "觀念：平均分配就是『總量 ÷ 人數』。",
-      "把除法改成乘法：除以 n 等於乘以 1/n。",
-      "列式：9/5 × 1/7。先算分母：5×7。",
-      "最後要記得把分數約分到最簡。"
+      "先把所有價格加起來得到總價。",
+      "找零 = 付的錢 − 總價。",
+      "也可以先都換成『分』再做減法。",
+      "最後檢查：找零加總價是否等於付的錢。"
     ],
     "steps": [
-      "把『平均分給 7 人』寫成 ÷7",
-      "列式：9/5 ÷ 7",
-      "等於 9/35（最簡分數）",
-      "檢查：人數越多，每人分到應越少。"
+      "先算總價（把小數點對齊相加）。",
+      "列式：付的金額 − 總價 = 找零。",
+      "用『分』計算可避免小數誤差。",
+      "檢查：付的金額應大於總價，找零應為正。"
     ],
-    "explanation": "平均分配：9/5 ÷ 7 = 9/35。",
+    "explanation": "找零：37 − 34.5 = 2.5（元）。",
     "meta": {
-      "people": 7,
-      "total": "9/5",
+      "prices_cents": [
+        1325,
+        910,
+        970,
+        245
+      ],
+      "scenario": "找零",
       "source_module": "interactive-g5-life-pack2plus-empire",
-      "source_id": "g5lp2p_u1_avg_fraction_15"
+      "source_id": "g5lp2p_u4_money_decimal_addsub_05"
     }
   },
   {
@@ -6661,31 +6656,36 @@ window.EXAM_SPRINT_BANK = [
     }
   },
   {
-    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u1_avg_fraction_02",
+    "id": "exam_interactive-g5-life-pack2plus-empire__g5lp2p_u4_money_decimal_addsub_01",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
-    "kind": "u1_avg_fraction",
+    "kind": "u4_money_decimal_addsub",
     "difficulty": "hard",
-    "question": "（生活應用｜平均分配｜班級點心）有 3/2 個巧克力，平均分給 3 人，每人得到多少個？（用最簡分數 a/b 表示）",
-    "answer": "1/2",
-    "answer_unit": "fraction",
+    "question": "（生活應用｜金錢找零）買了 貼紙 7.35 元、筆記本 9.55 元、原子筆 4.4 元、口香糖 4.1 元，共 25.4 元。付了 27.9 元，要找回多少元？",
+    "answer": "2.5",
+    "answer_unit": "money2",
     "hints": [
-      "觀念：平均分配就是『總量 ÷ 人數』。",
-      "把除法改成乘法：除以 n 等於乘以 1/n。",
-      "列式：3/2 × 1/3。先算分母：2×3。",
-      "最後要記得把分數約分到最簡。"
+      "先把所有價格加起來得到總價。",
+      "找零 = 付的錢 − 總價。",
+      "也可以先都換成『分』再做減法。",
+      "最後檢查：找零加總價是否等於付的錢。"
     ],
     "steps": [
-      "把『平均分給 3 人』寫成 ÷3",
-      "列式：3/2 ÷ 3",
-      "等於 1/2（最簡分數）",
-      "檢查：人數越多，每人分到應越少。"
+      "先算總價（把小數點對齊相加）。",
+      "列式：付的金額 − 總價 = 找零。",
+      "用『分』計算可避免小數誤差。",
+      "檢查：付的金額應大於總價，找零應為正。"
     ],
-    "explanation": "平均分配：3/2 ÷ 3 = 1/2。",
+    "explanation": "找零：27.9 − 25.4 = 2.5（元）。",
     "meta": {
-      "people": 3,
-      "total": "3/2",
+      "prices_cents": [
+        735,
+        955,
+        440,
+        410
+      ],
+      "scenario": "找零",
       "source_module": "interactive-g5-life-pack2plus-empire",
-      "source_id": "g5lp2p_u1_avg_fraction_02"
+      "source_id": "g5lp2p_u4_money_decimal_addsub_01"
     }
   },
   {
