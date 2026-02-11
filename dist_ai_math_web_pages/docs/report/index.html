@@ -31,6 +31,8 @@
     .tag.bad{ border-color:rgba(248,81,73,0.6); color:#ff7b72; }
     .tag.pill{ background:#0b1220; }
     textarea{ width:100%; min-height:160px; background:#0b1220; color:var(--text); border:1px solid var(--border); border-radius:8px; padding:10px; }
+    .section-title{ font-weight:800; }
+    .subgrid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:12px; margin-top:10px; }
   </style>
 </head>
 <body>
@@ -104,6 +106,30 @@
       <div class="card">
         <div class="small">平均每題時間</div>
         <div id="kpiTime" class="kpi">0s</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:12px">
+      <div class="section-title">家長週報（math-offline 版整合）</div>
+      <div class="small">整合 parent_report 的統計/建議/四象限圖表，不影響原題型與提示流程。</div>
+      <div id="offlineCards" class="grid" style="margin-top:10px"></div>
+      <div class="subgrid">
+        <div class="card">
+          <div style="font-weight:700">四象限（A/B/C/D）</div>
+          <div id="offlineQuadrant" style="margin-top:6px"></div>
+        </div>
+        <div class="card">
+          <div style="font-weight:700">每日趨勢（正確率）</div>
+          <div id="offlineTrend" style="margin-top:6px"></div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:10px">
+        <div style="font-weight:700">本週建議</div>
+        <div id="offlineRecommend" class="small" style="margin-top:6px"></div>
+      </div>
+      <div class="card" style="margin-top:10px">
+        <div style="font-weight:700">統計表（單元/題型/標籤）</div>
+        <div id="offlineTable" style="margin-top:6px"></div>
       </div>
     </div>
 
@@ -223,6 +249,13 @@
       const v = Number(ms);
       if (!Number.isFinite(v)) return '0s';
       return Math.round(v / 1000) + 's';
+    }
+
+    function fmtDate(ts){
+      const t = Number(ts || 0);
+      if (!Number.isFinite(t) || t <= 0) return '-';
+      const d = new Date(t);
+      return `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;
     }
 
     function min1(ms){
@@ -416,6 +449,180 @@
           </div>
         </div>
       `;
+    }
+
+    function renderOfflineCards(stats){
+      const box = $('offlineCards');
+      if (!box) return;
+      if (!stats){
+        box.innerHTML = '<div class="small">（尚無作答紀錄）</div>';
+        return;
+      }
+      const overall = stats.overall || { n: 0 };
+      const cards = [
+        { label: '總題數', value: String(overall.n || 0) },
+        { label: '正確率', value: pct(overall.accuracy || 0) },
+        { label: '獨立解題率', value: pct(overall.independent_rate || 0) },
+        { label: '提示依賴率', value: pct(overall.hint_dependency || 0) },
+        { label: '平均時間', value: sec(overall.avg_time_ms || 0) },
+        { label: '最後作答', value: fmtDate(stats.last_attempt_ts || 0) },
+      ];
+      box.innerHTML = cards.map(c => `
+        <div class="card">
+          <div class="small">${c.label}</div>
+          <div class="kpi">${c.value}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderOfflineQuadrant(stats){
+      const el = $('offlineQuadrant');
+      if (!el) return;
+      const q = stats?.quadrants || { A: 0, B: 0, C: 0, D: 0, total: 0 };
+      const total = Math.max(0, Number(q.total || 0));
+      if (!total){
+        el.innerHTML = '<div class="small">（尚無作答紀錄）</div>';
+        return;
+      }
+
+      const w = 240;
+      const h = 240;
+      const mid = 120;
+      const cell = 120;
+      const color = {
+        A: 'rgba(46,160,67,0.25)',
+        B: 'rgba(88,166,255,0.25)',
+        C: 'rgba(248,81,73,0.25)',
+        D: 'rgba(210,153,34,0.25)',
+      };
+
+      function label(k){
+        const n = Number(q[k] || 0);
+        const r = total ? Math.round((n / total) * 100) : 0;
+        return `${k} ${n}｜${r}%`;
+      }
+
+      const svg = `
+        <svg viewBox="0 0 ${w} ${h}" width="100%" height="220" role="img" aria-label="quadrant">
+          <rect x="0" y="0" width="${cell}" height="${cell}" fill="${color.A}" stroke="#30363d" />
+          <rect x="${cell}" y="0" width="${cell}" height="${cell}" fill="${color.B}" stroke="#30363d" />
+          <rect x="${cell}" y="${cell}" width="${cell}" height="${cell}" fill="${color.C}" stroke="#30363d" />
+          <rect x="0" y="${cell}" width="${cell}" height="${cell}" fill="${color.D}" stroke="#30363d" />
+
+          <text x="60" y="60" fill="#c9d1d9" font-size="12" text-anchor="middle">${label('A')}</text>
+          <text x="180" y="60" fill="#c9d1d9" font-size="12" text-anchor="middle">${label('B')}</text>
+          <text x="180" y="180" fill="#c9d1d9" font-size="12" text-anchor="middle">${label('C')}</text>
+          <text x="60" y="180" fill="#c9d1d9" font-size="12" text-anchor="middle">${label('D')}</text>
+
+          <text x="60" y="18" fill="#8b949e" font-size="10" text-anchor="middle">正確＋無提示</text>
+          <text x="180" y="18" fill="#8b949e" font-size="10" text-anchor="middle">正確＋有提示</text>
+          <text x="60" y="232" fill="#8b949e" font-size="10" text-anchor="middle">錯誤＋無提示</text>
+          <text x="180" y="232" fill="#8b949e" font-size="10" text-anchor="middle">錯誤＋有提示</text>
+        </svg>
+      `;
+      el.innerHTML = svg;
+    }
+
+    function renderOfflineTrend(stats){
+      const el = $('offlineTrend');
+      if (!el) return;
+      const items = Array.isArray(stats?.series_by_day) ? stats.series_by_day : [];
+      if (!items.length){
+        el.innerHTML = '<div class="small">（尚無作答紀錄）</div>';
+        return;
+      }
+
+      const w = 520;
+      const h = 120;
+      const pad = 10;
+      const points = items.map((e,i) => ({ i, rate: Number(e.accuracy || 0) }));
+      const xs = (i) => pad + (w - pad*2) * (i / Math.max(1, points.length-1));
+      const ys = (r) => pad + (h - pad*2) * (1 - r);
+      const path = points.map((p,i) => `${i===0?'M':'L'}${xs(p.i)},${ys(p.rate)}`).join(' ');
+      const labels = items.map((e,i) => {
+        const x = xs(i);
+        const y = h - 2;
+        return `<text x="${x}" y="${y}" fill="#8b949e" font-size="9" text-anchor="middle">${String(e.date).slice(5)}</text>`;
+      }).join('');
+
+      const svg = `
+        <svg viewBox="0 0 ${w} ${h}" width="100%" height="120" role="img" aria-label="daily-trend">
+          <rect x="0" y="0" width="${w}" height="${h}" fill="#0b1220" stroke="#30363d" />
+          <path d="${path}" fill="none" stroke="#58a6ff" stroke-width="2" />
+          ${labels}
+        </svg>
+      `;
+      el.innerHTML = svg;
+    }
+
+    function renderOfflineTable(stats){
+      const el = $('offlineTable');
+      if (!el) return;
+      const rowsUnit = Array.isArray(stats?.by_unit) ? stats.by_unit : [];
+      const rowsKind = Array.isArray(stats?.by_kind) ? stats.by_kind : [];
+      const rowsUnitKind = Array.isArray(stats?.by_unit_kind) ? stats.by_unit_kind : [];
+      const rowsTag = Array.isArray(stats?.by_tag) ? stats.by_tag : [];
+
+      function fmtRate(v){
+        return pct(Number(v || 0));
+      }
+
+      function rowHtml(row, name){
+        return `
+          <tr>
+            <td>${safeStr(name)}</td>
+            <td>${row.n || 0}</td>
+            <td>${fmtRate(row.accuracy || 0)}</td>
+            <td>${fmtRate(row.independent_rate || 0)}</td>
+            <td>${fmtRate(row.hint_dependency || 0)}</td>
+            <td>${sec(row.avg_time_ms || 0)}</td>
+          </tr>
+        `;
+      }
+
+      function section(title, rows, nameFn){
+        if (!rows.length) return '';
+        const body = rows.map(r => rowHtml(r, nameFn(r))).join('');
+        return `
+          <tr><td colspan="6" class="small" style="padding-top:12px">${title}</td></tr>
+          ${body}
+        `;
+      }
+
+      const html = `
+        <table>
+          <thead>
+            <tr>
+              <th>名稱</th>
+              <th>題數</th>
+              <th>正確率</th>
+              <th>獨立率</th>
+              <th>提示依賴</th>
+              <th>平均時間</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${section('單元', rowsUnit, r => unitName(r.kind))}
+            ${section('題型', rowsKind, r => r.kind)}
+            ${section('單元 + 題型', rowsUnitKind, r => `${unitName(r.unit_id)} / ${r.kind}`)}
+            ${section('標籤', rowsTag, r => r.kind)}
+          </tbody>
+        </table>
+      `;
+
+      el.innerHTML = html;
+    }
+
+    function renderOfflineRecommend(stats){
+      const el = $('offlineRecommend');
+      if (!el) return;
+      const rec = window.AIMathReportAggregate?.recommend?.(stats || {}) || { summary: [] };
+      if (!rec.summary?.length){
+        el.innerHTML = '（尚無作答紀錄）';
+        return;
+      }
+      const focus = rec.focus?.length ? `<div style="margin-top:6px">${rec.focus.join('<br>')}</div>` : '';
+      el.innerHTML = `- ${rec.summary.join('<br>- ')}${focus}`;
     }
 
     function renderAttemptTable(attempts){
@@ -649,6 +856,7 @@
         attempts = attempts.filter(x => String(x?.unit_id || '') === unitFilter);
       }
       const agg = window.AIMathReportAggregate?.aggregate?.(attempts) || { overall: {n:0}, by_kind: [], kpi: {} };
+      const offlineStats = window.AIMathReportAggregate?.computeStats?.(attempts) || null;
 
       $('pillUnit').textContent = unitFilter ? `單元：${unitName(unitFilter)}` : '單元：全部';
 
@@ -668,6 +876,12 @@
       $('kpiHint').textContent = pct(agg.kpi.hint_dependency || 0);
       $('kpiFirst').textContent = pct(agg.kpi.first_try_accuracy || 0);
       $('kpiTime').textContent = sec(agg.kpi.avg_time_ms || 0);
+
+      renderOfflineCards(offlineStats);
+      renderOfflineQuadrant(offlineStats);
+      renderOfflineTrend(offlineStats);
+      renderOfflineRecommend(offlineStats);
+      renderOfflineTable(offlineStats);
 
       // Sellable summary (最近 N 天)
       const totalTimeMs = sumDurationMs(attempts);
@@ -754,6 +968,7 @@
         range_days: days,
         kpi: agg.kpi,
         by_kind: agg.by_kind,
+        offline_stats: offlineStats,
         summary: {
           total_time_ms: Math.round(totalTimeMs),
           total_hint_ms: Math.round(totalHintMs),

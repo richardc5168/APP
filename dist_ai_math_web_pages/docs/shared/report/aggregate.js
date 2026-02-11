@@ -205,11 +205,218 @@
     return { overall, by_kind: kindList, kpi };
   }
 
+  function normalizeTags(evt){
+    const raw = evt?.tags || evt?.question_tags || evt?.extra?.tags || evt?.question?.tags || [];
+    const list = Array.isArray(raw) ? raw : [raw];
+    return list
+      .map(x => String(x || '').trim())
+      .filter(Boolean);
+  }
+
+  function aggregateByUnit(attempts){
+    const items = Array.isArray(attempts) ? attempts : [];
+    const byUnit = {};
+
+    for (const evt of items){
+      const unitId = String(evt?.unit_id || '');
+      const st = byUnit[unitId] || (byUnit[unitId] = emptyTopicStats(unitId));
+      const q = classifyQuadrant(evt);
+      const dkey = hintDepthKey(evt);
+      const duration = Math.max(0, toInt(evt?.ts_end, 0) - toInt(evt?.ts_start, 0));
+      const isCorrect = !!evt?.is_correct;
+      const attemptsCount = Math.max(1, toInt(evt?.attempts_count, 1));
+
+      st.n += 1;
+      if (isCorrect) st.correct += 1;
+      if (q === 'A') st.independent_correct += 1;
+      if (q === 'B') st.hint_correct += 1;
+      if (q === 'C') st.hint_wrong += 1;
+      if (q === 'D') st.nohint_wrong += 1;
+      st.hint_level_hist[dkey] = (st.hint_level_hist[dkey] || 0) + 1;
+      if (isCorrect && attemptsCount === 1) st.first_try_correct += 1;
+      st.avg_time_ms += duration;
+    }
+
+    const list = Object.values(byUnit);
+    for (const st of list){
+      if (st.n) st.avg_time_ms = Math.round(st.avg_time_ms / st.n);
+    }
+    list.sort((a,b) => (b.n - a.n) || String(a.kind).localeCompare(String(b.kind)));
+    return list;
+  }
+
+  function aggregateByTag(attempts){
+    const items = Array.isArray(attempts) ? attempts : [];
+    const byTag = {};
+
+    for (const evt of items){
+      const tags = normalizeTags(evt);
+      if (!tags.length) continue;
+
+      for (const tag of tags){
+        const st = byTag[tag] || (byTag[tag] = emptyTopicStats(tag));
+        const q = classifyQuadrant(evt);
+        const dkey = hintDepthKey(evt);
+        const duration = Math.max(0, toInt(evt?.ts_end, 0) - toInt(evt?.ts_start, 0));
+        const isCorrect = !!evt?.is_correct;
+        const attemptsCount = Math.max(1, toInt(evt?.attempts_count, 1));
+
+        st.n += 1;
+        if (isCorrect) st.correct += 1;
+        if (q === 'A') st.independent_correct += 1;
+        if (q === 'B') st.hint_correct += 1;
+        if (q === 'C') st.hint_wrong += 1;
+        if (q === 'D') st.nohint_wrong += 1;
+        st.hint_level_hist[dkey] = (st.hint_level_hist[dkey] || 0) + 1;
+        if (isCorrect && attemptsCount === 1) st.first_try_correct += 1;
+        st.avg_time_ms += duration;
+      }
+    }
+
+    const list = Object.values(byTag);
+    for (const st of list){
+      if (st.n) st.avg_time_ms = Math.round(st.avg_time_ms / st.n);
+    }
+    list.sort((a,b) => (b.n - a.n) || String(a.kind).localeCompare(String(b.kind)));
+    return list;
+  }
+
+  function finalizeRates(row){
+    const n = Math.max(0, toInt(row?.n, 0));
+    return {
+      ...row,
+      accuracy: n ? (toInt(row?.correct, 0) / n) : 0,
+      independent_rate: n ? (toInt(row?.independent_correct, 0) / n) : 0,
+      hint_dependency: n ? ((toInt(row?.hint_correct, 0) + toInt(row?.hint_wrong, 0)) / n) : 0,
+      first_try_accuracy: n ? (toInt(row?.first_try_correct, 0) / n) : 0,
+    };
+  }
+
+  function computeSeriesByDay(attempts){
+    const items = Array.isArray(attempts) ? attempts : [];
+    const byDay = {};
+
+    for (const evt of items){
+      const ts = toInt(evt?.ts_end, 0) || toInt(evt?.ts_start, 0);
+      if (!ts) continue;
+      const d = new Date(ts);
+      const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+      const row = byDay[key] || (byDay[key] = { date: key, n: 0, correct: 0, hint: 0, avg_time_ms: 0 });
+
+      const isCorrect = !!evt?.is_correct;
+      const duration = Math.max(0, toInt(evt?.ts_end, 0) - toInt(evt?.ts_start, 0));
+      const hintUsed = (hintDepthKey(evt) !== 'none');
+
+      row.n += 1;
+      if (isCorrect) row.correct += 1;
+      if (hintUsed) row.hint += 1;
+      row.avg_time_ms += duration;
+    }
+
+    const list = Object.values(byDay).map(row => {
+      const n = Math.max(0, toInt(row.n, 0));
+      return {
+        ...row,
+        accuracy: n ? row.correct / n : 0,
+        hint_dependency: n ? row.hint / n : 0,
+        avg_time_ms: n ? Math.round(row.avg_time_ms / n) : 0,
+      };
+    });
+
+    list.sort((a,b) => String(a.date).localeCompare(String(b.date)));
+    return list;
+  }
+
+  function computeStats(attempts){
+    const items = Array.isArray(attempts) ? attempts : [];
+    const agg = aggregate(items);
+    const byUnit = aggregateByUnit(items);
+    const byTag = aggregateByTag(items);
+    const byUnitKind = aggregateByUnitKind(items);
+
+    const quadrants = { A: 0, B: 0, C: 0, D: 0 };
+    let lastTs = 0;
+    for (const evt of items){
+      const q = classifyQuadrant(evt);
+      quadrants[q] = (quadrants[q] || 0) + 1;
+      const ts = toInt(evt?.ts_end, 0) || toInt(evt?.ts_start, 0);
+      if (ts > lastTs) lastTs = ts;
+    }
+    const totalQ = Math.max(0, toInt(agg?.overall?.n, 0));
+
+    return {
+      overall: finalizeRates(agg.overall || emptyTopicStats('overall')),
+      quadrants: {
+        ...quadrants,
+        total: totalQ,
+        rateA: totalQ ? quadrants.A / totalQ : 0,
+        rateB: totalQ ? quadrants.B / totalQ : 0,
+        rateC: totalQ ? quadrants.C / totalQ : 0,
+        rateD: totalQ ? quadrants.D / totalQ : 0,
+      },
+      by_kind: (agg.by_kind || []).map(finalizeRates),
+      by_unit: byUnit.map(finalizeRates),
+      by_tag: byTag.map(finalizeRates),
+      by_unit_kind: byUnitKind.map(finalizeRates),
+      series_by_day: computeSeriesByDay(items),
+      last_attempt_ts: lastTs,
+    };
+  }
+
+  function recommend(stats){
+    const tips = [];
+    const focus = [];
+    const overall = stats?.overall || { n: 0, accuracy: 0, hint_dependency: 0, avg_time_ms: 0 };
+    const quad = stats?.quadrants || { A: 0, B: 0, C: 0, D: 0, total: 0 };
+
+    if ((overall.n || 0) < 10){
+      tips.push('本週樣本偏少，建議再累積 10–20 題，報告會更準。');
+    }
+    if ((overall.accuracy || 0) < 0.6){
+      tips.push('正確率偏低：先做示範題，要求完整步驟與算式。');
+    }
+    if ((overall.hint_dependency || 0) >= 0.45){
+      tips.push('提示依賴偏高：先口頭說下一步，再動筆；真的卡住再看 L1。');
+    }
+    if ((quad.rateC || 0) >= 0.3){
+      tips.push('看提示仍常錯：觀念與步驟需重整，建議逐步寫、每步檢查。');
+    }
+    if ((quad.rateD || 0) >= 0.3){
+      tips.push('不看提示就容易錯：用短回合刷題（10 題），每題都先寫算式。');
+    }
+    if ((overall.avg_time_ms || 0) >= 90000){
+      tips.push('平均時間偏久：建議做「時間限制」的小練習，先求正確再求速度。');
+    }
+
+    const lowAccKinds = (stats?.by_kind || [])
+      .filter(r => (r.n || 0) >= 3)
+      .sort((a,b) => (a.accuracy - b.accuracy) || (b.n - a.n))
+      .slice(0, 3)
+      .map(r => r.kind);
+    if (lowAccKinds.length){
+      focus.push(`優先補強題型：${lowAccKinds.join('、')}`);
+    }
+
+    if (!tips.length){
+      tips.push('整體表現穩定：保持每週 2–3 次、每次 10 題的小練習即可。');
+    }
+
+    return {
+      summary: tips.slice(0, 3),
+      tips,
+      focus,
+    };
+  }
+
   window.AIMathReportAggregate = {
     classifyQuadrant,
     hintDepthKey,
     aggregate,
     aggregateByUnitKind,
+    aggregateByUnit,
+    aggregateByTag,
+    computeStats,
+    recommend,
     pickTopWeaknesses,
     remedyLabel,
   };
