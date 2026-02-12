@@ -67,6 +67,19 @@ checks:
       Optional chaining (?.) can cause a syntax error and blank screen on older embedded browsers.
       Keep offline-math critical scripts compatible.
 
+  - id: strict_frontend_shared_no_optional_chaining
+    type: forbid_string
+    enabled: false
+    globs:
+      - docs/shared/**/*.js
+      - dist_ai_math_web_pages/docs/shared/**/*.js
+    forbid:
+      - "?."
+      - "??"
+    message: >-
+      Optional stricter scan (disabled by default). Run with:
+      python scripts/run_checklist.py --spec tests/specs/precommit_checklist.json --include-disabled
+
   - id: api_smoke
     type: api_smoke
     enabled: true

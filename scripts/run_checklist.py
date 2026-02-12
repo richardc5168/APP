@@ -158,12 +158,12 @@ def load_spec(path: Path) -> dict[str, Any]:
     raise ValueError(f"Unsupported spec extension: {path.suffix}")
 
 
-def run_check(item: dict[str, Any]) -> CheckResult:
+def run_check(item: dict[str, Any], *, include_disabled: bool) -> CheckResult:
     check_id = str(item.get("id") or item.get("type") or "unknown")
     check_type = str(item.get("type") or "")
 
-    if not item.get("enabled", True):
-        return CheckResult(True, check_id, "SKIP")
+    if not item.get("enabled", True) and not include_disabled:
+        return CheckResult(True, check_id, "SKIP (disabled)")
 
     if check_type == "docs_dist_identical":
         ok, msg = docs_dist_identical(ROOT)
@@ -219,6 +219,11 @@ def main() -> int:
         default="tests/specs/precommit_checklist.json",
         help="Checklist spec path (.json; .yaml if PyYAML installed)",
     )
+    ap.add_argument(
+        "--include-disabled",
+        action="store_true",
+        help="Also run checks with enabled=false (useful for optional stricter scans)",
+    )
     args = ap.parse_args()
 
     spec_path = (ROOT / args.spec).resolve() if not Path(args.spec).is_absolute() else Path(args.spec)
@@ -237,7 +242,9 @@ def main() -> int:
         print("ERROR: spec missing 'checks' list")
         return 1
 
-    results: list[CheckResult] = [run_check(item or {}) for item in checks]
+    results: list[CheckResult] = [
+        run_check(item or {}, include_disabled=bool(args.include_disabled)) for item in checks
+    ]
 
     all_ok = True
     for r in results:

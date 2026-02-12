@@ -73,6 +73,11 @@ Date: 2026-02-12
   - strict checklist（docs/dist 同步、API smoke、forbid patterns、offline-math 黑屏防呆、debug_note 必備）
 - 若任何一項 FAIL，commit 會被阻擋，直到修正後重新 commit。
 
+可選加強：更嚴格的前端相容性掃描（不影響預設 commit）
+- 目的：提早抓到 `?.` / `??` 這類語法在舊/內嵌瀏覽器可能直接語法錯誤 → 黑屏。
+- 執行方式（會把 spec 裡 enabled=false 的「可選檢查」也跑起來）：
+  - `C:/Users/Richard/Documents/RAGWEB/.venv/Scripts/python.exe scripts/run_checklist.py --spec tests/specs/precommit_checklist.json --include-disabled`
+
 六、回朔前一版（保留彈性）
 推薦：git revert（安全、保留歷史）
 - 查 commit：`git log --oneline -n 20`
