@@ -65,6 +65,7 @@
     <div id="bootMsg" class="card" style="margin-bottom:12px;">
       <div style="font-weight:700">載入中…</div>
       <div class="sub">若畫面空白或卡住，請重新載入或改用主頁入口。</div>
+      <div id="bootSlow" style="display:none;margin-top:8px;color:#fbbf24;font-size:12px;"></div>
       <div class="row" style="margin-top:8px;">
         <a class="btn" href="./?v=3">重新載入</a>
         <a class="btn secondary" href="../" target="_top" rel="noopener">回主頁</a>
@@ -194,12 +195,16 @@
     });
     setTimeout(function(){
       if(!window.__bootDone){
-        showBootError('載入超時：請確認 bank.js 與瀏覽器快取');
+        var slow = document.getElementById('bootSlow');
+        if(slow){
+          slow.style.display = 'block';
+          slow.textContent = '載入較慢：第一次載入題庫可能需要 10–30 秒（請先等待）。若仍卡住，請按「重新載入」。';
+        }
       }
-    }, 3000);
+    }, 12000);
   </script>
   <script src="../shared/attempt_telemetry.js"></script>
-  <script src="../shared/report/aggregate.js"></script>
+  <script src="./aggregate_compat.js?v=1"></script>
   <script src="./bank.js?v=3"></script>
   <script>
   function startOfflineMath(){
@@ -459,7 +464,12 @@
         },
       };
 
-      window.AIMathAttemptTelemetry?.appendAttempt?.(uid, evt, { maxAttempts: 5000 });
+      try {
+        const tel = window.AIMathAttemptTelemetry;
+        if (tel && typeof tel.appendAttempt === 'function') {
+          tel.appendAttempt(uid, evt, { maxAttempts: 5000 });
+        }
+      } catch (e) {}
 
       const correctText = isCorrect ? '正確' : '不正確';
       const cls = isCorrect ? 'ok' : 'bad';
@@ -482,9 +492,23 @@
     function renderReport(){
       const uid = String(($('uid').value || '').trim() || 'guest');
       const sinceMs = Date.now() - 7*24*60*60*1000;
-      const attempts = (window.AIMathAttemptTelemetry?.listAttempts?.(uid, { sinceMs }) || []).filter(x => String(x && x.unit_id) === UNIT_ID);
+      let allAttempts = [];
+      try {
+        const tel = window.AIMathAttemptTelemetry;
+        if (tel && typeof tel.listAttempts === 'function') {
+          allAttempts = tel.listAttempts(uid, { sinceMs }) || [];
+        }
+      } catch (e) {}
+      const attempts = allAttempts.filter(x => String(x && x.unit_id) === UNIT_ID);
 
-      const agg = window.AIMathReportAggregate?.aggregate?.(attempts) || { overall:{n:0,correct:0,avg_time_ms:0,hint_level_hist:{}}, kpi:{total:0,accuracy:0,avg_time_ms:0}, by_kind:[] };
+      let agg = null;
+      try {
+        const ra = window.AIMathReportAggregate;
+        if (ra && typeof ra.aggregate === 'function') {
+          agg = ra.aggregate(attempts);
+        }
+      } catch (e) {}
+      if (!agg) agg = { overall:{n:0,correct:0,avg_time_ms:0,hint_level_hist:{}}, kpi:{total:0,accuracy:0,avg_time_ms:0}, by_kind:[] };
       const overall = agg.overall || { n:0, correct:0, avg_time_ms:0, hint_level_hist:{} };
 
       $('kTotal').textContent = String(overall.n || 0);
@@ -501,13 +525,22 @@
       const bestLabel = best === 'none' ? '無提示' : (best === 'solution' ? '解答' : best);
       $('kHint').textContent = bestLabel;
 
-      const rows = window.AIMathReportAggregate?.aggregateByUnitKind?.(attempts) || [];
-      const top = window.AIMathReportAggregate?.pickTopWeaknesses?.(rows, 3) || [];
+      let rows = [];
+      let top = [];
+      try {
+        const ra = window.AIMathReportAggregate;
+        if (ra && typeof ra.aggregateByUnitKind === 'function') rows = ra.aggregateByUnitKind(attempts) || [];
+        if (ra && typeof ra.pickTopWeaknesses === 'function') top = ra.pickTopWeaknesses(rows, 3) || [];
+      } catch (e) {}
 
       $('weakList').innerHTML = '';
       for(const r of top){
         const li = document.createElement('li');
-        const remedy = window.AIMathReportAggregate?.remedyLabel?.(r) || { title: '' };
+        let remedy = { title: '' };
+        try {
+          const ra = window.AIMathReportAggregate;
+          if (ra && typeof ra.remedyLabel === 'function') remedy = ra.remedyLabel(r) || remedy;
+        } catch (e) {}
         const label = `${r.kind}｜${remedy.title}`;
         li.textContent = label;
         $('weakList').appendChild(li);

@@ -10,6 +10,7 @@
       "contains": [
         "GitHub Pages",
         "docs/ 與 dist_ai_math_web_pages/docs",
+        "offline-math",
         "回朔"
       ]
     },
@@ -17,6 +18,51 @@
       "id": "docs_dist_identical",
       "type": "docs_dist_identical",
       "enabled": true
+    },
+    {
+      "id": "offline_math_bank_present",
+      "type": "file_exists",
+      "enabled": true,
+      "path": "docs/offline-math/bank.js",
+      "contains": [
+        "window.OFFLINE_MATH_BANK"
+      ]
+    },
+    {
+      "id": "offline_math_compat_aggregate_present",
+      "type": "file_exists",
+      "enabled": true,
+      "path": "docs/offline-math/aggregate_compat.js",
+      "contains": [
+        "window.AIMathReportAggregate"
+      ]
+    },
+    {
+      "id": "offline_math_page_assets_linked",
+      "type": "file_exists",
+      "enabled": true,
+      "path": "docs/offline-math/index.html",
+      "contains": [
+        "./aggregate_compat.js?v=1",
+        "./bank.js?v=3"
+      ]
+    },
+    {
+      "id": "offline_math_no_optional_chaining",
+      "type": "forbid_string",
+      "enabled": true,
+      "globs": [
+        "docs/offline-math/index.html",
+        "docs/shared/attempt_telemetry.js",
+        "docs/offline-math/aggregate_compat.js",
+        "dist_ai_math_web_pages/docs/offline-math/index.html",
+        "dist_ai_math_web_pages/docs/shared/attempt_telemetry.js",
+        "dist_ai_math_web_pages/docs/offline-math/aggregate_compat.js"
+      ],
+      "forbid": [
+        "?."
+      ],
+      "message": "Optional chaining (?.) can cause a syntax error and blank screen on older embedded browsers. Keep offline-math critical scripts compatible."
     },
     {
       "id": "api_smoke",

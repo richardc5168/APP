@@ -83,3 +83,24 @@ Date: 2026-02-12
 
 解法
 - 等 1–3 分鐘、重新整理（Ctrl+F5 強制刷新）。
+
+八、offline-math 畫面出不來 / 卡在「載入中…」
+症狀
+- 打開 https://richardc5168.github.io/ai-math-web/offline-math/?v=2
+  - UI 可能出現，但題目一直停在「載入中...」
+  - 或直接黑屏 / 顯示載入超時
+
+常見原因（曾經發生過）
+- 依賴的 JS 使用了較新的語法（尤其 `?.` optional chaining、或 object spread），在某些較舊/內嵌瀏覽器會直接「語法錯誤」，導致整頁 JS 不執行。
+- bank.js 載入方式不穩定（曾用 fetch + Function/eval 類方式），在某些環境會被擋或行為不一致。
+
+解法 / 防呆（本 repo 已採用）
+- offline-math 改為用 `<script src="./bank.js?...">` 直接載入題庫（避免 eval）。
+- offline-math 使用相容版統計腳本（`aggregate_compat.js`），並避免在關鍵流程使用 `?.`。
+
+commit 前必跑驗證（已納入 strict checklist）
+- 確認 offline-math 必備檔存在：
+  - `docs/offline-math/bank.js`
+  - `docs/offline-math/aggregate_compat.js`
+- 確認 offline-math 頁面有引用上述檔案（contains 檢查）。
+- 禁止在 offline-math 關鍵腳本出現 `?.`（避免語法錯誤黑屏）。

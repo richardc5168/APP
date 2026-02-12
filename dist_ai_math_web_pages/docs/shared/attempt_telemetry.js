@@ -46,7 +46,7 @@
     const log = loadLog(userId);
     log.user_id = String(userId || 'guest');
 
-    const maxN = Math.max(100, Number(opts?.maxAttempts || 5000));
+    const maxN = Math.max(100, Number((opts && opts.maxAttempts) || 5000));
     log.attempts.push(attemptEvent);
     if (log.attempts.length > maxN){
       log.attempts.splice(0, log.attempts.length - maxN);
@@ -58,12 +58,12 @@
 
   function listAttempts(userId, opts){
     const log = loadLog(userId);
-    const sinceMs = opts?.sinceMs != null ? Number(opts.sinceMs) : null;
-    const limit = opts?.limit != null ? Math.max(1, Number(opts.limit)) : null;
+    const sinceMs = (opts && opts.sinceMs != null) ? Number(opts.sinceMs) : null;
+    const limit = (opts && opts.limit != null) ? Math.max(1, Number(opts.limit)) : null;
 
     let items = log.attempts || [];
     if (Number.isFinite(sinceMs)){
-      items = items.filter(x => Number(x?.ts_end) >= sinceMs);
+      items = items.filter(x => Number(x && x.ts_end) >= sinceMs);
     }
     if (Number.isFinite(limit)){
       items = items.slice(-limit);
