@@ -187,6 +187,28 @@ def run_check(item: dict[str, Any]) -> CheckResult:
         ok, msg = run_pytest(args)
         return CheckResult(ok, check_id, msg)
 
+    if check_type == "file_exists":
+        rel_path = str(item.get("path") or "").strip()
+        if not rel_path:
+            return CheckResult(False, check_id, "Missing required field: path")
+        p = (ROOT / rel_path)
+        if not p.exists() or not p.is_file():
+            return CheckResult(False, check_id, f"Missing file: {rel_path}")
+
+        contains = item.get("contains") or []
+        if contains:
+            try:
+                text = p.read_text(encoding="utf-8", errors="ignore")
+            except Exception as e:
+                return CheckResult(False, check_id, f"Failed to read {rel_path}: {type(e).__name__}")
+            missing = [str(s) for s in contains if str(s) not in text]
+            if missing:
+                head = ", ".join(missing[:5])
+                more = f" (+{len(missing)-5} more)" if len(missing) > 5 else ""
+                return CheckResult(False, check_id, f"{rel_path} missing required text: {head}{more}")
+
+        return CheckResult(True, check_id, f"OK: file_exists ({rel_path})")
+
     return CheckResult(False, check_id, f"Unknown check type: {check_type}")
 
 

@@ -3,6 +3,17 @@
   "name": "RAGWEB strict pre-commit checklist",
   "checks": [
     {
+      "id": "debug_note_present",
+      "type": "file_exists",
+      "enabled": true,
+      "path": "debug_note.txt",
+      "contains": [
+        "GitHub Pages",
+        "docs/ 與 dist_ai_math_web_pages/docs",
+        "回朔"
+      ]
+    },
+    {
       "id": "docs_dist_identical",
       "type": "docs_dist_identical",
       "enabled": true
