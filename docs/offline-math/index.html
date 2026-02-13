@@ -375,16 +375,21 @@
       return 'https://www.youtube.com/results?search_query=' + encodeURIComponent(q);
     }
 
-    function buildJunyiVideoUrl(kind){
+    function buildJunyiVideoUrl(kind, remedyTitle){
       const k = String(kind || '').trim();
+      const title = String(remedyTitle || '').trim();
       const map = {
-        'word_problem_div_with_remainder::div_with_remainder': '均一 國小 五年級 有餘數 除法 文字題 教學',
-        'arithmetic_distributive::arithmetic_distributive_sub': '均一 國小 五年級 分配律 簡便計算 教學',
-        'time_calc::time_mul_day_hour': '均一 國小 五年級 時間 日 小時 乘法 教學',
-        'time_calc::time_div_seconds': '均一 國小 五年級 秒 除法 單位換算 教學',
-        'time_calc::time_div_ratio': '均一 國小 五年級 時間 日 小時 相除 倍數 教學',
+        'word_problem_div_with_remainder::div_with_remainder': '國小 五年級 有餘數 除法 文字題',
+        'arithmetic_distributive::arithmetic_distributive_sub': '國小 五年級 分配律 簡便計算',
+        'time_calc::time_mul_day_hour': '國小 五年級 時間 日 小時 乘法',
+        'time_calc::time_div_seconds': '國小 五年級 秒 除法 單位換算',
+        'time_calc::time_div_ratio': '國小 五年級 時間 日 小時 相除 倍數',
       };
-      const q = map[k] || ('均一 國小 五年級 ' + k.replace('::', ' ') + ' 教學');
+
+      let q = '均一教育平台 ' + (map[k] || (k.replace('::', ' ')));
+      if (title) q += ' ' + title;
+      q += ' 教學';
+
       return 'https://www.youtube.com/results?search_query=' + encodeURIComponent(q);
     }
 
@@ -574,7 +579,7 @@
         li.appendChild(document.createTextNode(label));
 
         const a1 = document.createElement('a');
-        a1.href = buildJunyiVideoUrl(r.kind);
+        a1.href = buildJunyiVideoUrl(r.kind, remedy && remedy.title);
         a1.target = '_blank';
         a1.rel = 'noopener';
         a1.textContent = '📺 均一影片';
