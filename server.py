@@ -73,6 +73,17 @@ try:
 except Exception:
     engine = None
 
+# Learning analytics / parent weekly report (optional; should not break core API)
+try:
+    from learning.db import connect as learning_connect, ensure_learning_schema
+    from learning.parent_report import generate_parent_weekly_report
+    from learning.service import recordAttempt as learning_record_attempt
+except Exception:
+    learning_connect = None
+    ensure_learning_schema = None
+    generate_parent_weekly_report = None
+    learning_record_attempt = None
+
 DB_PATH = os.environ.get("DB_PATH", "app.db")
 
 @asynccontextmanager
@@ -159,6 +170,57 @@ class HintNextRequest(BaseModel):
     question_data: Optional[Dict[str, Any]] = None
     student_state: str = Field(default="", description="Student's current thought / partial work")
     level: int = Field(default=1, ge=1, le=3)
+
+
+class WeeklyReportRequest(BaseModel):
+    student_id: int = Field(..., ge=1)
+    window_days: int = Field(default=7, ge=1, le=60)
+    top_k: int = Field(default=3, ge=1, le=5)
+    questions_per_skill: int = Field(default=3, ge=1, le=8)
+
+
+def _skill_tags_from_topic(topic: str) -> List[str]:
+    t = str(topic or "").strip()
+    if not t:
+        return ["unknown"]
+    # Heuristic mapping: keep it simple and stable.
+    if "分數" in t or "小數" in t or "折扣" in t:
+        return ["分數/小數"]
+    if "四則" in t or "括號" in t or "乘除" in t:
+        return ["四則運算"]
+    if "比例" in t:
+        return ["比例"]
+    if "單位" in t:
+        return ["單位換算"]
+    if "路程" in t or "速度" in t or "時間" in t:
+        return ["路程時間"]
+    return [t]
+
+
+def _mistake_code_from_error_code(err_code: Optional[ErrorCode]) -> Optional[str]:
+    if err_code is None:
+        return None
+    v = str(err_code.value)
+    if v == ErrorCode.CAL.value:
+        return "calculation"
+    if v == ErrorCode.CON.value:
+        return "concept"
+    if v == ErrorCode.READ.value:
+        return "reading"
+    if v == ErrorCode.CARE.value:
+        return "careless"
+    if v == ErrorCode.TIME.value:
+        return "careless"
+    return None
+
+
+def _safe_learning_record_attempt(*, event: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    if learning_record_attempt is None:
+        return None
+    try:
+        return learning_record_attempt(event, db_path=DB_PATH, dev_mode=True)
+    except Exception:
+        return None
 
 @app.post("/v1/quadratic/next", summary="Generate Quadratic Problem (MATH Dataset Level 1-5)")
 def next_quadratic(req: QuadraticGenRequest):
@@ -1686,6 +1748,44 @@ async def question_hint(request: Request, x_api_key: str = Header(..., alias="X-
     return {"hint": hint}
 
 
+@app.post("/v1/learning/weekly_report", summary="Parent weekly report (weak skills + practice + teaching guide)")
+def learning_weekly_report(req: WeeklyReportRequest, x_api_key: str = Header(..., alias="X-API-Key")):
+    acc = get_account_by_api_key(x_api_key)
+    ensure_subscription_active(acc["id"])
+
+    if learning_connect is None or ensure_learning_schema is None or generate_parent_weekly_report is None:
+        raise HTTPException(status_code=500, detail="Learning module not available")
+
+    # Verify student belongs to account.
+    conn = db()
+    st = conn.execute("SELECT * FROM students WHERE id=? AND account_id=?", (int(req.student_id), acc["id"])).fetchone()
+    conn.close()
+    if not st:
+        raise HTTPException(status_code=404, detail="Student not found")
+
+    lconn = learning_connect(DB_PATH)
+    try:
+        ensure_learning_schema(lconn)
+        report = generate_parent_weekly_report(
+            lconn,
+            student_id=str(req.student_id),
+            window_days=int(req.window_days),
+            top_k=int(req.top_k),
+            questions_per_skill=int(req.questions_per_skill),
+        )
+        return {
+            "ok": True,
+            "student": {"id": int(st["id"]), "display_name": st["display_name"], "grade": st["grade"]},
+            "window_days": int(req.window_days),
+            "report": report,
+        }
+    finally:
+        try:
+            lconn.close()
+        except Exception:
+            pass
+
+
 @app.post("/v1/hints/next", summary="Next-step hint (3 levels, student-aware)")
 async def hints_next(req: HintNextRequest, x_api_key: str = Header(..., alias="X-API-Key")):
     acc = get_account_by_api_key(x_api_key)
@@ -1904,6 +2004,37 @@ async def submit_answer(request: Request, x_api_key: str = Header(..., alias="X-
 
     _save_student_concept(conn, student_id=student_id, state=st_state)
 
+    # ---- Learning analytics bridge (normalized attempt events) ----
+    learning_ack = None
+    if learning_record_attempt is not None:
+        hint_steps_viewed: List[int] = []
+        hints_viewed_count = 0
+        if hint_level_used_int is not None:
+            # Interpret as the highest hint level used; treat lower levels as seen.
+            hint_steps_viewed = list(range(1, int(hint_level_used_int) + 1))
+            hints_viewed_count = len(hint_steps_viewed)
+
+        learning_event = {
+            "student_id": str(student_id),
+            "question_id": str(question_id),
+            "timestamp": now_iso(),
+            "is_correct": bool(is_correct == 1),
+            "answer_raw": user_answer,
+            "duration_ms": int(max(0, time_spent) * 1000),
+            "hints_viewed_count": int(hints_viewed_count),
+            "hint_steps_viewed": hint_steps_viewed,
+            "mistake_code": _mistake_code_from_error_code(err_code),
+            "topic": str(q["topic"] or ""),
+            "question_type": "interactive",
+            "session_id": f"acc:{acc['id']}",
+            "extra": {
+                "error_tag": error_tag,
+                "error_detail": error_detail,
+            },
+            "skill_tags": _skill_tags_from_topic(str(q["topic"] or "")),
+        }
+        learning_ack = _safe_learning_record_attempt(event=learning_event)
+
     conn.close()
 
     # 回傳詳解與結果（你現有 INCORRECT_CUSTOM_FEEDBACK 可在前端呈現）
@@ -1919,6 +2050,10 @@ async def submit_answer(request: Request, x_api_key: str = Header(..., alias="X-
         "drill_reco": drill_reco,
         "resources_reco": resources_reco
         ,
+        "learning": {
+            "recorded": bool(learning_ack and learning_ack.get("ok") is True),
+            "attempt_id": (learning_ack.get("attempt_id") if isinstance(learning_ack, dict) else None),
+        },
         "adaptive": {
             "concept_id": st_state.concept_id,
             "stage": st_state.stage.value,
