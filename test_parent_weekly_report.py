@@ -129,10 +129,16 @@ def test_generate_parent_weekly_report_deterministic(tmp_path: pytest.TempPathFa
     assert report1["report_markdown"] == report2["report_markdown"]
     assert "家長週報" in report1["report_markdown"]
 
+    assert "summary" in report1
+    assert "kpi" in report1["summary"]
+    assert isinstance(report1["summary"]["kpi"].get("attempts_7d"), int)
+
     # Ensure it generated practice questions and kept answers separate.
     assert len(report1["practice_set"]) >= 1
     first = report1["practice_set"][0]
     assert "practice" in first
+    assert "status" in first
+    assert first["status"]["code"] in ("NEED_FOCUS", "IMPROVING", "MASTERED", "NOT_ENOUGH_DATA")
     assert len(first["practice"]["questions"]) == 2
     assert len(first["practice"]["answer_key"]) == 2
 
