@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>外部 QA（提示優化流程）</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --card-bg: #161b22;
+      --border: #30363d;
+      --text: #c9d1d9;
+      --accent: #58a6ff;
+      --btn-bg: #238636;
+      --btn-hover: #2ea043;
+    }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; line-height: 1.6; }
+    .container { max-width: 900px; margin: 0 auto; }
+    h1 { text-align: center; border-bottom: 1px solid var(--border); padding-bottom: 20px; color: var(--accent); }
+    .sub { text-align: center; max-width: 720px; margin: 0 auto; color: #8b949e; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 30px; }
+    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 6px; padding: 20px; display: flex; flex-direction: column; }
+    .card h2 { margin-top: 0; font-size: 1.25rem; color: #fff; }
+    .card p { font-size: 0.95rem; color: #8b949e; }
+    .tag { display: inline-block; background: rgba(56,139,253,0.15); color: #58a6ff; font-size: 12px; padding: 2px 8px; border-radius: 12px; margin-right: 5px; margin-bottom: 5px; border: 1px solid rgba(56,139,253,0.3); text-decoration: none; }
+    .tag:hover { filter: brightness(1.08); }
+    .tag-nvidia { background: rgba(46, 160, 67, 0.15); color: #3fb950; border-color: rgba(46, 160, 67, 0.3); }
+    .tag-math { background: rgba(210, 153, 34, 0.15); color: #d29922; border-color: rgba(210, 153, 34, 0.3); }
+    .btn { display: inline-block; background: var(--btn-bg); color: #fff; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: 600; margin-top: 12px; width: 100%; text-align: center; box-sizing: border-box; }
+    .btn:hover { background: var(--btn-hover); }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    pre { background: #0b0f14; border: 1px solid var(--border); border-radius: 6px; padding: 12px; overflow: auto; color: var(--text); }
+    footer { text-align: center; margin-top: 40px; font-size: 0.85rem; color: #8b949e; }
+    a { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>外部 QA（提示優化流程）</h1>
+    <p class="sub">
+      目標：把所有題型的題目/答案/提示匯出 → 交給外部模型做 QA → 產生可人工確認的 patch →
+      逐步把提示變得更清楚（小五能懂）。
+    </p>
+
+    <div class="grid">
+      <div class="card">
+        <h2>流程（一步一步）</h2>
+        <div>
+          <span class="tag tag-math">匯出</span>
+          <span class="tag tag-nvidia">外部模型</span>
+          <span class="tag">回填</span>
+        </div>
+        <ol style="padding-left: 20px; color:#8b949e;">
+          <li>匯出所有題型：<span class="mono">scripts/export_all_questions.py</span></li>
+          <li>把 JSONL 丟給外部模型，要求只輸出 review JSONL</li>
+          <li>驗證回饋檔：<span class="mono">scripts/validate_question_reviews.py</span></li>
+          <li>產生 patch：<span class="mono">scripts/apply_question_reviews.py</span></li>
+          <li>人工確認後套用 patch，並把要啟用的 override 設為 <span class="mono">approved=True</span></li>
+        </ol>
+        <a class="btn" href="../">回到主頁</a>
+      </div>
+
+      <div class="card">
+        <h2>連結（規格與提示詞）</h2>
+        <p>這些連結會開啟 GitHub（方便直接複製給外部模型）。</p>
+        <a class="tag" target="_blank" rel="noopener" href="https://github.com/richardc5168/ai-math-web/blob/main/prompts/external_llm_question_review_prompt_zh_tw.md">外部 QA 提示詞（繁中）</a>
+        <a class="tag" target="_blank" rel="noopener" href="https://github.com/richardc5168/ai-math-web/blob/main/schemas/question_dump.schema.json">題目匯出 schema</a>
+        <a class="tag" target="_blank" rel="noopener" href="https://github.com/richardc5168/ai-math-web/blob/main/schemas/question_review.schema.json">回饋 review schema</a>
+        <a class="tag tag-nvidia" target="_blank" rel="noopener" href="https://github.com/richardc5168/ai-math-web/blob/main/hint_overrides.py">hint_overrides（人工核准）</a>
+        <a class="btn" target="_blank" rel="noopener" href="https://github.com/richardc5168/ai-math-web">開啟 GitHub Repo</a>
+      </div>
+
+      <div class="card" style="grid-column: 1 / -1;">
+        <h2>QA 回饋摘要（網頁顯示）</h2>
+        <div>
+          <span class="tag tag-math">summary.md</span>
+          <span class="tag">可更新</span>
+        </div>
+        <p>
+          這裡會讀取同資料夾的 <span class="mono">question_reviews_summary.md</span> 並顯示內容。
+          如果你還沒把摘要放進來，會看到預設說明。
+        </p>
+        <pre id="summary" aria-label="QA summary">載入中…</pre>
+      </div>
+    </div>
+
+    <footer>
+      <div>QA 頁面：只做「流程 + 摘要顯示」，不自動改題目。</div>
+    </footer>
+  </div>
+
+  <script>
+    async function loadSummary() {
+      const el = document.getElementById('summary');
+      try {
+        const res = await fetch('./question_reviews_summary.md', { cache: 'no-store' });
+        if (!res.ok) {
+          el.textContent = '找不到 question_reviews_summary.md（尚未上傳摘要）。';
+          return;
+        }
+        const text = await res.text();
+        el.textContent = text.trim() ? text : '摘要檔是空的。';
+      } catch (e) {
+        el.textContent = '載入失敗：' + String(e);
+      }
+    }
+    loadSummary();
+  </script>
+</body>
+</html>

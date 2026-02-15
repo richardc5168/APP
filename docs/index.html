@@ -63,6 +63,25 @@
         <a href="./report/" class="btn" style="background:#1f6feb;">查看家長週報 (Report)</a>
       </div>
 
+      <!-- ★ 外部 QA：匯出→外部模型檢查→回填提示 ★ -->
+      <div class="card" style="border-color:var(--border);">
+        <h2>外部 QA（提示優化流程）</h2>
+        <div>
+          <span class="tag tag-nvidia">JSONL 批次檢查</span>
+          <span class="tag tag-math">人工審核才套用</span>
+        </div>
+        <p>
+          把所有題型的「題目/答案/三階提示」匯出成一個檔案，丟給 Gemini / GPT-5 做品質檢查，
+          再把建議整理成可人工確認的 patch，逐步讓提示更像小五老師。
+        </p>
+        <ul style="padding-left: 20px; font-size: 0.9rem; color: #8b949e;">
+          <li>匯出：questions_dump.jsonl / .md</li>
+          <li>外部模型：輸出 review JSONL</li>
+          <li>半自動回填：產 patch + approved gate</li>
+        </ul>
+        <a href="./qa/" class="btn">打開外部 QA 頁面 (QA)</a>
+      </div>
+
       <!-- 模組 1: 一元一次方程式 -->
       <div class="card">
         <h2>一元一次方程式</h2>
