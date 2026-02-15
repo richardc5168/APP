@@ -142,6 +142,11 @@ git apply artifacts/review_apply/hint_overrides_candidates.patch
 
 4) 打開 `hint_overrides.py`，把你同意的題型 `approved` 改成 `True` 才會真的生效。
 
+5) （建議）開啟 approved 前先跑回歸檢查：
+```powershell
+./.venv/Scripts/python.exe scripts/check_hint_overrides_regression.py --per_template 5 --seed 12345
+```
+
 ## 常見問題
 - 如果 PowerShell 阻止執行 `.ps1`，暫時允許（僅當前 shell）：
   ```powershell
