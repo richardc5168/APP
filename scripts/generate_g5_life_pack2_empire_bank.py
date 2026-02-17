@@ -235,10 +235,12 @@ def q_u2_frac_addsub_life(r: random.Random, qid: str, difficulty: str) -> Q:
     ]
 
     steps = [
-        "判斷分母是否相同，不同就通分。",
-        "通分後做分子加/減。",
-        "把結果約分成最簡分數。",
-        "檢查：加法結果應比其中一個大；減法結果應變小且不為負。",
+        f"讀題：兩個分數的分母是 {d1} 和 {d2}，{'相同' if d1==d2 else '不同，需要通分'}。",
+        f"找最小公倍數：LCM({d1}, {d2}) = {l}。",
+        f"通分：{s1} = {a}/{l}，{s2} = {b}/{l}。",
+        f"分子做{'+' if op=='+' else '−'}：{a} {'+'  if op=='+' else '−'} {b} = {res}，得到 {res}/{l}。",
+        f"約分成最簡分數：{res}/{l} = {ans}。",
+        f"檢查：{'加法結果應比兩個加數都大' if op=='+' else '減法結果應比被減數小且不為負'}。",
     ]
 
     return Q(
@@ -279,11 +281,13 @@ def q_u3_frac_times_int(r: random.Random, qid: str, difficulty: str) -> Q:
         "最後把結果約分成最簡。",
     ]
 
+    raw_n = num * k
+    g3 = _gcd(raw_n, den)
     steps = [
-        "列出『每份』×『份數』。",
-        "分子乘整數，分母不變。",
-        "把結果約分成最簡分數。",
-        "檢查：份數>1 時答案應比一份多。",
+        f"讀題：每份 {frac}，共 {k} 份，列式 {frac} × {k}。",
+        f"分子乘整數：{num} × {k} = {raw_n}，分母不變仍是 {den}，得到 {raw_n}/{den}。",
+        f"約分：GCD({raw_n}, {den}) = {g3}，{raw_n}/{den} = {ans}（最簡分數）。" if g3 > 1 else f"檢查：{raw_n}/{den} 已是最簡分數，答案 = {ans}。",
+        f"合理性：{k} 份比 1 份多，{ans} 應大於 {frac}。",
     ]
 
     return Q(
@@ -365,14 +369,15 @@ def q_u4_money_decimal_addsub(r: random.Random, qid: str, difficulty: str) -> Q:
         else:
             q = f"（生活應用｜金錢小數加法）買了 {parts}，一共要付多少元？（可寫小數）"
         ans = _money2_from_cents(pay_total)
+        price_strs = [_money2_from_cents(p) for p in prices[:k]]
         steps = [
-            "把每個金額的小數點對齊。",
-            "先算總分（元/角/分），再合併成總金額。",
-            "答案用到小數點後兩位（或可省略尾端 0）。",
-            "檢查：總價應大於任何單一商品價格。",
+            f"把金額小數點對齊：{' + '.join(price_strs)}。",
+            f"相加得到合計：{'+ '.join(price_strs)} = {_money2_from_cents(total)} 元。",
+            f"答案：{_money2_from_cents(total)} 元（小數點後兩位，可省略尾端 0）。",
+            f"檢查：合計 {_money2_from_cents(total)} 應大於任何單一商品價格。",
         ]
         if coupon_cents:
-            steps.insert(2, "再做一次減法：合計 − 折價券 = 實付。")
+            steps.insert(2, f"扣折價券：{_money2_from_cents(total)} − {_money2_from_cents(coupon_cents)} = {_money2_from_cents(pay_total)} 元。")
         hints = [
             "觀念：金額相加，小數點要對齊。",
             "可以先把金額都換成『分』再加總。",
@@ -405,13 +410,13 @@ def q_u4_money_decimal_addsub(r: random.Random, qid: str, difficulty: str) -> Q:
             q = f"（生活應用｜金錢找零）買了 {parts}，共 { _money2_from_cents(total) } 元。付了 { _money2_from_cents(pay) } 元，要找回多少元？"
         ans = _money2_from_cents(change)
         steps = [
-            "先算總價（把小數點對齊相加）。",
-            "列式：付的金額 − 總價 = 找零。",
-            "用『分』計算可避免小數誤差。",
-            "檢查：付的金額應大於總價，找零應為正。",
+            f"先算總價：{' + '.join(_money2_from_cents(p) for p in prices[:k])} = {_money2_from_cents(total)} 元。",
+            f"列式找零：{_money2_from_cents(pay)} − {_money2_from_cents(pay_total)} = {_money2_from_cents(change)} 元。",
+            f"答案：找零 {ans} 元。",
+            f"檢查：{_money2_from_cents(pay)} > {_money2_from_cents(pay_total)}，找零為正 ✓。",
         ]
         if coupon_cents:
-            steps.insert(1, "先扣掉折價券：合計 − 折價券 = 實付。")
+            steps.insert(1, f"扣折價券：{_money2_from_cents(total)} − {_money2_from_cents(coupon_cents)} = {_money2_from_cents(pay_total)} 元。")
         hints = [
             "先把所有價格加起來得到總價。",
             "找零 = 付的錢 − 總價。",
@@ -464,7 +469,11 @@ def q_u5_decimal_muldiv_price(r: random.Random, qid: str, difficulty: str) -> Q:
         total = unit_cents * qty
         q = f"（生活應用｜單價×數量）一瓶飲料 { _money2_from_cents(unit_cents) } 元，買 {qty} 瓶，一共多少元？"
         ans = _money2_from_cents(total)
-        steps = ["列式：單價×數量=總價。", "用『分』計算，再換回元。", "檢查：買多瓶總價應變大。"]
+        steps = [
+            f"列式：{_money2_from_cents(unit_cents)} × {qty} = ？",
+            f"計算：{_money2_from_cents(unit_cents)} × {qty} = {_money2_from_cents(total)} 元。",
+            f"檢查：買 {qty} 瓶，總價 {_money2_from_cents(total)} 元應比單價 {_money2_from_cents(unit_cents)} 元大 ✓。",
+        ]
         hints = [
             "關鍵字：單價、買幾瓶。",
             "用乘法：單價×數量。",
@@ -479,7 +488,11 @@ def q_u5_decimal_muldiv_price(r: random.Random, qid: str, difficulty: str) -> Q:
         total = unit_cents * qty
         q = f"（生活應用｜平均/單價）{qty} 瓶飲料共 { _money2_from_cents(total) } 元，平均每瓶多少元？"
         ans = _money2_from_cents(unit_cents)
-        steps = ["列式：總價÷瓶數=每瓶單價。", "用『分』計算避免小數誤差。", "檢查：平均單價應比總價小。"]
+        steps = [
+            f"列式：{_money2_from_cents(total)} ÷ {qty} = ？",
+            f"計算：{_money2_from_cents(total)} ÷ {qty} = {_money2_from_cents(unit_cents)} 元。",
+            f"檢查：平均單價 {_money2_from_cents(unit_cents)} 應比總價 {_money2_from_cents(total)} 小 ✓。",
+        ]
         hints = [
             "關鍵字：平均每瓶。",
             "用除法：總價÷瓶數。",
@@ -508,10 +521,10 @@ def q_u5_decimal_muldiv_price(r: random.Random, qid: str, difficulty: str) -> Q:
         )
         ans = _money2_from_cents(each)
         steps = [
-            "先算總價：單價×盒數。",
-            "再算每人：總價÷人數。",
-            "用『分』計算避免小數誤差，再換回元。",
-            "檢查：人數越多，每人分攤越少。",
+            f"先算總價：{_money2_from_cents(unit_cents)} × {qty} = {_money2_from_cents(total)} 元。",
+            f"再算每人：{_money2_from_cents(total)} ÷ {people} = {_money2_from_cents(each)} 元。",
+            f"答案：每人付 {ans} 元。",
+            f"檢查：{_money2_from_cents(each)} × {people} = {_money2_from_cents(total)}（等於總價）✓。",
         ]
         hints = [
             "這題有兩步：先乘後除。",
@@ -558,7 +571,11 @@ def q_u6_frac_dec_convert(r: random.Random, qid: str, difficulty: str) -> Q:
         ctx = _pick(r, ["量杯刻度", "地圖比例", "跑步進度", "飲料容量"])
         q = f"（生活應用｜等值｜{ctx}）把分數 {f} 寫成小數。"
         mode = "number"
-        steps = ["把分母變成 10、100、1000…（或用除法）。", "計算並寫成小數。", "檢查：小數應介於 0 和 1 之間。"]
+        steps = [
+            f"方法：分子÷分母 = {num} ÷ {den}。",
+            f"計算：{num} ÷ {den} = {ans}。",
+            f"檢查：{ans} 應介於 0 和 1 之間（因為 {num} < {den}）✓。",
+        ]
         hints = [
             "可以用『分子÷分母』得到小數。",
             "若分母能變成 10/100/1000，就很好寫。",
@@ -584,7 +601,11 @@ def q_u6_frac_dec_convert(r: random.Random, qid: str, difficulty: str) -> Q:
         ctx = _pick(r, ["秤重標示", "價格折扣倍率", "溫度/比例", "計時器"])
         q = f"（生活應用｜等值｜{ctx}）把小數 {dec} 寫成最簡分數 a/b。"
         mode = "fraction"
-        steps = ["看小數點後有幾位 → 分母用 10/100/1000。", "把小數變成分數。", "約分到最簡。"]
+        steps = [
+            f"小數 {dec} 的小數點後有 {places} 位，分母用 {base}。",
+            f"寫成分數：{dec} = {n}/{base}。",
+            f"約分到最簡：GCD({n}, {base}) = {_gcd(n, base)}，{n}/{base} = {ans}。",
+        ]
         hints = [
             f"{dec} 小數點後有 {places} 位，所以分母用 {base}。",
             f"先寫成 {n}/{base}。",
@@ -635,9 +656,10 @@ def q_u7_discount_percent(r: random.Random, qid: str, difficulty: str) -> Q:
         q = f"（生活應用｜折扣）一件{item}原價 { _money2_from_cents(price) } 元，打 {disc_text}，折後價是多少元？"
         ans = _money2_from_cents(sale)
         steps = [
-            "把『x折』換成小數倍率（例如 8 折=0.8）。",
-            "列式：原價×倍率=折後價。",
-            "用『分』計算再換回元。",
+            f"把『{disc_text}』換成小數倍率：{disc}。",
+            f"列式：{_money2_from_cents(price)} × {disc} = ？",
+            f"計算：{_money2_from_cents(price)} × {disc} = {_money2_from_cents(sale)} 元。",
+            f"檢查：折後價 {_money2_from_cents(sale)} 應小於原價 {_money2_from_cents(price)} ✓。",
         ]
         hints = [
             "關鍵字：打折後要付多少。",
@@ -652,9 +674,9 @@ def q_u7_discount_percent(r: random.Random, qid: str, difficulty: str) -> Q:
         q = f"（生活應用｜折扣）一件{item}原價 { _money2_from_cents(price) } 元，打 {disc_text}，省下多少元？"
         ans = _money2_from_cents(save)
         steps = [
-            "先算折後價：原價×倍率。",
-            "省下 = 原價 − 折後價。",
-            "用『分』計算避免小數誤差。",
+            f"先算折後價：{_money2_from_cents(price)} × {disc} = {_money2_from_cents(sale)} 元。",
+            f"省下 = 原價 − 折後價 = {_money2_from_cents(price)} − {_money2_from_cents(sale)} = {_money2_from_cents(save)} 元。",
+            f"檢查：省下 {_money2_from_cents(save)} + 折後價 {_money2_from_cents(sale)} = 原價 {_money2_from_cents(price)} ✓。",
         ]
         hints = [
             "先求折後價，再求省下多少。",
@@ -722,10 +744,10 @@ def q_u8_ratio_recipe(r: random.Random, qid: str, difficulty: str) -> Q:
     ]
 
     steps = [
-        "算總份數 a+b。",
-        "用總量÷總份數得到每份。",
-        "用需要的份數×每份得到需要的量。",
-        "檢查：兩部分相加應等於總量。",
+        f"算總份數：{a} + {b} = {parts}。",
+        f"每份 = {total} ÷ {parts} = {each} mL。",
+        f"{'果汁' if ask=='a' else '水'} = {a if ask=='a' else b} × {each} = {ans} mL。",
+        f"檢查：{x} + {y} = {total}（應等於總量）✓。",
     ]
 
     return Q(
@@ -814,12 +836,20 @@ def q_u9_unit_convert_decimal(r: random.Random, qid: str, difficulty: str) -> Q:
         ]
         meta = {"from": u_from, "to": u_to, "mul": mul, "a": a_val, "dir": "div", "pow10": pow10}
 
-    steps = [
-        "寫出 1 單位的換算關係。",
-        "判斷方向（大→小用乘，小→大用除）。",
-        "計算並寫出答案。",
-        "做合理性檢查（數字變大/變小是否合理）。",
-    ]
+    if direction == "big_to_small":
+        steps = [
+            f"換算關係：1 {big_u} = {mul} {small_u}。",
+            f"大→小，用乘法：{a_val} × {mul} = {ans}。",
+            f"答案：{a_val} {u_from} = {ans} {u_to}。",
+            f"檢查：換成小單位數字變大 ✓。",
+        ]
+    else:
+        steps = [
+            f"換算關係：1 {big_u} = {mul} {small_u}。",
+            f"小→大，用除法：{a_val} ÷ {mul} = {ans}。",
+            f"答案：{a_val} {u_from} = {ans} {u_to}。",
+            f"檢查：換成大單位數字變小 ✓。",
+        ]
 
     return Q(
         id=qid,
@@ -860,11 +890,10 @@ def q_u10_rate_time_distance(r: random.Random, qid: str, difficulty: str) -> Q:
             q = f"（生活應用｜速率）腳踏車每分鐘走 {rate} 公尺，走了 {t} 分鐘，一共走了多少公尺？"
         ans = str(d)
         steps = [
-            "距離=速率×時間。",
-            "若有休息：先算真正前進時間=總時間−休息時間。",
-            f"列式：{rate}×（{t}−{rest}）。" if rest else f"列式：{rate}×{t}。",
-            "計算並寫出答案。",
-            "檢查：時間越久距離越大。",
+            f"距離 = 速率 × 時間。",
+            f"真正前進時間 = {t} − {rest} = {active_t} 分鐘。" if rest else f"前進時間 = {t} 分鐘。",
+            f"列式：{rate} × {active_t} = {d} 公尺。",
+            f"檢查：時間越久距離越大 ✓。",
         ]
         hints = [
             "關鍵字：每分鐘…（單位率）。",
@@ -888,7 +917,12 @@ def q_u10_rate_time_distance(r: random.Random, qid: str, difficulty: str) -> Q:
         t = d // rate
         q = f"（生活應用｜速率）腳踏車每分鐘走 {rate} 公尺，要走 {d} 公尺，需要幾分鐘？"
         ans = str(t)
-        steps = ["時間=距離÷速率。", f"列式：{d}÷{rate}。", "計算並寫出答案。", "檢查：速率越快時間越短。"]
+        steps = [
+            f"時間 = 距離 ÷ 速率。",
+            f"列式：{d} ÷ {rate} = {t} 分鐘。",
+            f"答案：{t} 分鐘。",
+            f"檢查：{rate} × {t} = {d}（應等於距離）✓。",
+        ]
         hints = [
             "關鍵字：需要幾分鐘（求時間）。",
             "時間 = 距離 ÷ 每分鐘走的距離。",
