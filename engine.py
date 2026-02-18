@@ -610,6 +610,139 @@ def _hint_pack(*levels: str) -> List[str]:
     return packed[:3]
 
 
+def _fmt_frac_cn(fr: Fraction) -> str:
+    fr = Fraction(fr)
+    if fr.denominator == 1:
+        return str(fr.numerator)
+    return f"{fr.numerator}/{fr.denominator}"
+
+
+def _fmt_mixed_cn(fr: Fraction) -> str:
+    fr = Fraction(fr)
+    if fr.denominator == 1:
+        return str(fr.numerator)
+    sign = -1 if fr < 0 else 1
+    n = abs(fr.numerator)
+    d = fr.denominator
+    whole = n // d
+    rem = n % d
+    if whole == 0:
+        out = f"{rem}/{d}"
+    else:
+        out = f"{whole} 又 {rem}/{d}"
+    return f"-{out}" if sign < 0 else out
+
+
+def _extract_ratio_reverse_case(qtext: str) -> Optional[Dict[str, Any]]:
+    """Parse 『全程的 a/b 用了 c/d 時間，求全程』類題型。"""
+    q = str(qtext or "").strip()
+    if not q:
+        return None
+
+    patterns = [
+        r"(?:走了全程的|做了全程的)\s*(\d+)\s*/\s*(\d+)(?:\s*時|\s*路程)?[^。；]*?用(?:了)?\s*(\d+)\s*/\s*(\d+)\s*(小時|分鐘)",
+        r"完成了\s*(\d+)\s*/\s*(\d+)\s*路程[^。；]*?用(?:了)?\s*(\d+)\s*/\s*(\d+)\s*(小時|分鐘)",
+    ]
+    m = None
+    for pat in patterns:
+        m = re.search(pat, q)
+        if m:
+            break
+    if not m:
+        return None
+
+    a = int(m.group(1))
+    b = int(m.group(2))
+    c = int(m.group(3))
+    d = int(m.group(4))
+    unit = str(m.group(5) or "小時")
+    if b == 0 or d == 0:
+        return None
+
+    frac_part = Fraction(a, b)
+    used_time = Fraction(c, d)
+    if frac_part == 0:
+        return None
+    total_time = used_time / frac_part
+    return {
+        "a": a,
+        "b": b,
+        "c": c,
+        "d": d,
+        "unit": unit,
+        "frac_part": frac_part,
+        "used_time": used_time,
+        "total_time": total_time,
+    }
+
+
+def build_ratio_reverse_hint_ladder(qobj: Dict[str, Any]) -> Optional[List[Dict[str, Any]]]:
+    """7-step structured hint ladder for 比例反推（已走分率/已用時間→全程）."""
+    parsed = _extract_ratio_reverse_case(str(qobj.get("question") or ""))
+    if not parsed:
+        return None
+
+    a, b = parsed["a"], parsed["b"]
+    c, d = parsed["c"], parsed["d"]
+    unit = parsed["unit"]
+    frac_part = parsed["frac_part"]
+    total_time = parsed["total_time"]
+    reciprocal = Fraction(b, a)
+    verify = total_time * frac_part
+
+    return [
+        {
+            "title": "Step 1｜抓未知數",
+            "prompt": "先把全程時間設成 T，題目問的就是 T。",
+            "expected_answer": "T",
+            "explanation": "全程未知，所以用 T 表示。",
+            "formula": "全程時間 = T",
+        },
+        {
+            "title": "Step 2｜翻譯語句",
+            "prompt": f"『全程的 {a}/{b}』就是 T×{a}/{b}，這裡要用乘法。",
+            "expected_answer": "乘",
+            "explanation": "某個量的幾分之幾，就是乘法。",
+            "formula": f"T × {a}/{b}",
+        },
+        {
+            "title": "Step 3｜列式",
+            "prompt": f"把已知時間 {c}/{d}{unit} 放右邊，完成：T×{a}/{b}={c}/{d}。",
+            "expected_answer": f"T×{a}/{b}={c}/{d}",
+            "explanation": "已走部分對應已知時間。",
+            "formula": f"T × {a}/{b} = {c}/{d}",
+        },
+        {
+            "title": "Step 4｜倒回去算",
+            "prompt": f"T 乘 {a}/{b} 才會變 {c}/{d}，要倒回去算 T，就用 {c}/{d} ÷ {a}/{b}。",
+            "expected_answer": f"T=({c}/{d})÷({a}/{b})",
+            "explanation": "除以分數，等於乘它的倒數。",
+            "formula": f"T = ({c}/{d}) ÷ ({a}/{b})",
+        },
+        {
+            "title": "Step 5｜找倒數",
+            "prompt": f"{a}/{b} 的倒數是什麼？",
+            "expected_answer": _fmt_frac_cn(reciprocal),
+            "explanation": "倒數就是分子分母交換。",
+            "formula": f"{a}/{b} 的倒數 = {b}/{a}",
+        },
+        {
+            "title": "Step 6｜計算",
+            "prompt": f"T = {c}/{d} × {b}/{a}，算出答案並約分。",
+            "expected_answer": _fmt_frac_cn(total_time),
+            "explanation": f"T = {_fmt_frac_cn(total_time)}{unit}，也可寫成 {_fmt_mixed_cn(total_time)}{unit}。",
+            "formula": f"T = {c}/{d} × {b}/{a} = {_fmt_frac_cn(total_time)} = {_fmt_mixed_cn(total_time)}",
+        },
+        {
+            "title": "Step 7｜驗算（必做）",
+            "prompt": f"把 T 代回：{_fmt_frac_cn(total_time)} × {a}/{b} 是否等於 {c}/{d}？",
+            "expected_answer": f"{_fmt_frac_cn(verify)}={c}/{d}",
+            "explanation": "左右相等，表示反推正確。",
+            "formula": f"驗算：{_fmt_frac_cn(total_time)} × {a}/{b} = {_fmt_frac_cn(verify)} = {c}/{d}",
+        },
+    ]
+
+
 def _drill(topic_key: str, count: int, note: str = "") -> Dict[str, Any]:
     name = GENERATORS.get(topic_key, (topic_key, None))[0]
     return {"topic_key": topic_key, "topic_name": name, "count": int(count), "note": note}
@@ -650,6 +783,14 @@ def get_question_hints(qobj: Dict[str, Any]) -> Dict[str, str]:
     topic = str(qobj.get("topic") or "")
     qtext = str(qobj.get("question") or "")
     steps = qobj.get("steps")
+
+    ratio_ladder = build_ratio_reverse_hint_ladder(qobj)
+    if ratio_ladder:
+        return {
+            "level1": str(ratio_ladder[0].get("prompt") or "先把全程時間設成 T。"),
+            "level2": str(ratio_ladder[2].get("formula") or "T × a/b = c/d"),
+            "level3": str(ratio_ladder[6].get("formula") or "把算出的 T 代回去驗算。"),
+        }
 
     def _fraction_guidance() -> Optional[Dict[str, str]]:
         # 詳細分數引導（小學五年級）
@@ -904,6 +1045,8 @@ def get_next_step_hint(qobj: Dict[str, Any], student_state: str = "", level: int
     kind = "generic_fraction_word" if _is_fraction_topic() else "generic"
     if re.search(r"平均.*(杯|份|段|人|盒|袋|盤)", qtext):
         kind = "average_division"
+    elif _extract_ratio_reverse_case(qtext):
+        kind = "ratio_reverse_total_time"
     elif re.search(r"(原來|原價|全程(長|需要)|原本)", qtext) and re.search(r"(還剩|折後|剩)", qtext):
         kind = "reverse_fraction"
     elif re.search(r"剩下的又", qtext) or (
@@ -927,6 +1070,32 @@ def get_next_step_hint(qobj: Dict[str, Any], student_state: str = "", level: int
 
     def _base(level1: str, level2: str, level3: str) -> str:
         return _hint_pack(level1, level2, level3)[level_int - 1]
+
+    if kind == "ratio_reverse_total_time":
+        ladder = build_ratio_reverse_hint_ladder(qobj) or []
+        if ladder:
+            idx = 0
+            if level_int == 2:
+                idx = 2
+            elif level_int == 3:
+                idx = 5
+            if stage >= 2:
+                idx = min(idx + 1, len(ladder) - 1)
+            step_obj = ladder[idx]
+            hint = str(step_obj.get("prompt") or "先列式再倒回去算。")
+            return {
+                "hint": _sanitize_hint_text(hint),
+                "level": level_int,
+                "mode": "offline_rule",
+                "hint_ladder": ladder,
+                "current_step": step_obj,
+            }
+        hint = _pack_and_sanitize(
+            "先把全程時間設成 T，再找出已知是『全程的幾分之幾』。",
+            "列式：T × (已走分率) = 已用時間。",
+            "倒回去算：T = 已用時間 ÷ 已走分率；除以分數等於乘倒數，最後記得驗算。",
+        )
+        return {"hint": hint, "level": level_int, "mode": "offline_rule"}
 
     # Student-aware next step guidance per kind
     if kind == "average_division":

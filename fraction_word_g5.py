@@ -400,6 +400,8 @@ def _infer_kind(qtext: str) -> str:
     qtext = str(qtext or "")
     if re.search(r"平均.*(杯|份|段|人|盒|袋|盤)", qtext):
         return "average_division"
+    if re.search(r"(?:走了全程的|做了全程的|完成了)\s*\d+\s*/\s*\d+", qtext) and re.search(r"用[了]?\s*\d+\s*/\s*\d+\s*(小時|分鐘)", qtext):
+        return "reverse_fraction"
     if re.search(r"(原來|原價|全程(長|需要)|原本)", qtext) and re.search(r"(還剩|折後|剩)", qtext):
         return "reverse_fraction"
     if re.search(r"剩下的又", qtext) or (
@@ -426,8 +428,8 @@ def _scaffold_steps(kind: str) -> List[str]:
         s2 = "判斷題型：『平均分配』通常用除法（總量 ÷ 份數）。"
         s3 = "先列式（不急著算）：把總量寫成分數或帶分數，再除以份數。"
     elif kind == "reverse_fraction":
-        s2 = "判斷題型：『剩下/折後』已知，要反推『原來』。"
-        s3 = "先求『剩下比例』，再用：原來 = 剩下量 ÷ 剩下比例。"
+        s2 = "判斷題型：這是反推題，已知『全程的一部分』對應的量（或剩下/折後），要倒回去求全程。"
+        s3 = "可列式：全程 × 已知分率 = 已知量；倒回去算用『已知量 ÷ 已知分率』（除以分數=乘倒數）。"
     elif kind == "remain_then_fraction":
         s2 = "判斷題型：『先用掉一些 → 剩下一些 → 再用掉剩下的一部分』，分兩段。"
         s3 = "列式：第一次剩下 = 1 − 第一次用掉分數；第二次用掉 = 第一次剩下 × 第二次用掉分數；最後剩下 = 第一次剩下 − 第二次用掉（或 第一次剩下 × (1 − 第二次用掉分數)）。"

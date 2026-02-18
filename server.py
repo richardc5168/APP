@@ -1963,11 +1963,16 @@ async def hints_next(req: HintNextRequest, x_api_key: str = Header(..., alias="X
         try:
             out = engine.get_next_step_hint(qobj, student_state=req.student_state, level=int(req.level))
             if isinstance(out, dict) and out.get("hint"):
-                return {
+                resp = {
                     "hint": str(out.get("hint")),
                     "level": int(out.get("level") or req.level),
                     "mode": str(out.get("mode") or "engine"),
                 }
+                if isinstance(out.get("hint_ladder"), list):
+                    resp["hint_ladder"] = out.get("hint_ladder")
+                if isinstance(out.get("current_step"), dict):
+                    resp["current_step"] = out.get("current_step")
+                return resp
         except Exception:
             pass
 
