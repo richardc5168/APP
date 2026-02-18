@@ -97,9 +97,10 @@
         <div class="row">
           <label>提示層級</label>
           <select id="hintLevel">
-            <option value="1" selected>Level 1（觀念方向）</option>
-            <option value="2">Level 2（列式）</option>
-            <option value="3">Level 3（計算策略）</option>
+            <option value="1" selected>Level 1（判斷題型）</option>
+            <option value="2">Level 2（畫圖切分）</option>
+            <option value="3">Level 3（算式通分）</option>
+            <option value="4">Level 4（合理性檢查）</option>
           </select>
           <button class="btn" id="btnHint">看提示</button>
           <button class="btn" id="btnShowSteps">看完整解題</button>
@@ -262,186 +263,501 @@
 
     function fracStr(f){ return f.d === 1 ? String(f.n) : `${f.n}/${f.d}`; }
 
-    function buildVisualHintSteps(q){
-      // Returns array of DOM elements for progressive visual hints
-      const p = extractRemainThenFractionParams(q);
+
+    /* ========== Fraction Bar Model – Structured Visual Hints ========== */
+    function lcm(a,b){ return a*b/gcd(a,b); }
+
+    function escapeHtml(s){
+      return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+
+    /**
+     * buildFractionBarModel(q) → { parts, unit_label, levels: [{title,text,cells,brackets}] }
+     * Returns null if no visual model available for this kind.
+     */
+    function buildFractionBarModel(q){
+      const kind = String(q.kind);
+      if (kind === 'remaining_after_fraction'){
+        const p = extractRAFParams(q);
+        if (p.sub === 'B') return buildBarModel_RAF_B(q, p);
+        if (p.sub === 'C') return buildBarModel_RAF_C(q, p);
+        if (p.sub === 'A2') return buildBarModel_RAF_A(q, p, true);
+        return buildBarModel_RAF_A(q, p, false);
+      }
+      if (kind === 'remain_then_fraction') return buildBarModel_RTF(q);
+      if (kind === 'average_division') return buildBarModel_AVG(q);
+      return null;
+    }
+
+    /* --- RAF Pattern B: 兩次都從原整體 (蛋糕) → 通分加法 --- */
+    function buildBarModel_RAF_B(q, p){
+      const f1 = p.frac1, f2 = p.frac2 || {n:1,d:2};
+      const cd = lcm(f1.d, f2.d);
+      const c1 = f1.n * (cd / f1.d);
+      const c2 = f2.n * (cd / f2.d);
+      const remain = cd - c1 - c2;
+      const g0 = gcd(Math.abs(remain), cd);
+      const txt = String(q.question || '');
+      const unitM = txt.match(/[塊顆條盒瓶杯張公][尺升斤克里]?/);
+      const unit = unitM ? unitM[0] : '';
+
+      const empty_cells = new Array(cd).fill('empty');
+      const full_cells = [];
+      for (let i = 0; i < c1; i++) full_cells.push('red');
+      for (let i = 0; i < c2; i++) full_cells.push('orange');
+      for (let i = 0; i < Math.max(0, remain); i++) full_cells.push('blue');
+
+      return {
+        parts: cd, unit_label: unit,
+        levels: [
+          {
+            title: '🔍 Level 1：判斷題型',
+            text: '題目：先吃了 ' + fracStr(f1) + '、又吃了 ' + fracStr(f2) + '。\n' +
+                  '兩次都是從「同一個整體」來算\n' +
+                  '→ 用「通分 → 加法合併 → 1 減掉」！\n\n' +
+                  '📌 判斷口訣：\n' +
+                  '• 「又吃了(整' + (unit||'塊') + '的)…」→ 同一整體 → 加法\n' +
+                  '• 「又吃了(剩下的)…」→ 基準變了 → 乘法',
+            cells: empty_cells,
+            brackets: [{ start:0, count:cd, label:'全部 = 1', color:'white' }]
+          },
+          {
+            title: '📊 Level 2：畫圖切分（LCM = ' + cd + '）',
+            text: '把整個切成 ' + cd + ' 等份\n' +
+                  '（' + f1.d + ' 和 ' + f2.d + ' 的最小公倍數 = ' + cd + '）\n\n' +
+                  '🟥 第1次吃 ' + fracStr(f1) + ' = ' + c1 + '/' + cd + ' → ' + c1 + ' 格紅\n' +
+                  '🟧 第2次吃 ' + fracStr(f2) + ' = ' + c2 + '/' + cd + ' → ' + c2 + ' 格橙\n' +
+                  '🟦 剩下 ' + remain + '/' + cd + (g0>1?' = '+remain/g0+'/'+cd/g0:'') + ' → ' + remain + ' 格藍',
+            cells: full_cells.slice(),
+            brackets: [
+              { start:0, count:c1, label:fracStr(f1)+'='+c1+'/'+cd, color:'red' },
+              { start:c1, count:c2, label:fracStr(f2)+'='+c2+'/'+cd, color:'orange' },
+              { start:c1+c2, count:Math.max(0,remain), label:'剩 '+remain+'/'+cd, color:'blue' }
+            ]
+          },
+          {
+            title: '✏️ Level 3：算式（通分相加）',
+            text: '① 通分：' + fracStr(f1) + ' = ' + c1 + '/' + cd + '，' + fracStr(f2) + ' = ' + c2 + '/' + cd + '\n' +
+                  '② 共吃掉 = ' + c1 + '/' + cd + ' + ' + c2 + '/' + cd + ' = ' + (c1+c2) + '/' + cd + '\n' +
+                  '③ 剩下 = 1 − ' + (c1+c2) + '/' + cd + ' = ' + cd + '/' + cd + ' − ' + (c1+c2) + '/' + cd + ' = ' + remain + '/' + cd +
+                  (g0>1 ? ' = ' + remain/g0 + '/' + cd/g0 + '（約分）' : ''),
+            cells: full_cells.slice(),
+            brackets: [
+              { start:0, count:c1+c2, label:'共吃 '+(c1+c2)+'/'+cd, color:'red' },
+              { start:c1+c2, count:Math.max(0,remain), label:'剩 '+remain+'/'+cd+(g0>1?'='+remain/g0+'/'+cd/g0:''), color:'blue' }
+            ]
+          },
+          {
+            title: '🎯 Level 4：合理性檢查',
+            text: (function(){
+              var lines = [];
+              var usedVal = (c1+c2)/cd;
+              if (usedVal > 0.5) lines.push('✅ 吃掉超過一半，剩下不到一半 → 合理');
+              else lines.push('✅ 吃掉不到一半，剩下超過一半 → 合理');
+              if (remain >= 0) lines.push('✅ 剩下 ≥ 0 → 合理');
+              lines.push('✅ ' + remain + '/' + cd + (g0>1?' = '+remain/g0+'/'+cd/g0:'') + ' 已是最簡分數');
+              lines.push('\n🏁 把答案填上去吧！');
+              return lines.join('\n');
+            })(),
+            cells: full_cells.slice(),
+            brackets: [
+              { start:c1+c2, count:Math.max(0,remain), label:'答案 '+remain+'/'+cd+(g0>1?'='+remain/g0+'/'+cd/g0:''), color:'blue' }
+            ]
+          }
+        ]
+      };
+    }
+
+    /* --- RAF Pattern A1/A2: 單次分數，整數或帶分數總量 --- */
+    function buildBarModel_RAF_A(q, p, isMixed){
       const f1 = p.frac1;
-      const f2 = p.frac2;
-      const totalVal = p.total;  // may be null
+      const rn = f1.d - f1.n, rd = f1.d;
+      const g0 = gcd(rn, rd);
+      const parts = f1.d;
+      const txt = String(q.question || '');
+      const unitM = txt.match(/[頁公條盒瓶杯塊顆張][尺升斤克里]?/);
+      const unit = unitM ? unitM[0] : '';
+      const totalStr = isMixed && p.totalFrac ? p.totalFrac.n+'/'+p.totalFrac.d : String(p.total||'');
+
+      const empty_cells = new Array(parts).fill('empty');
+      const full_cells = [];
+      for (let i = 0; i < f1.n; i++) full_cells.push('red');
+      for (let i = f1.n; i < parts; i++) full_cells.push('blue');
+
+      return {
+        parts: parts, unit_label: unit,
+        levels: [
+          {
+            title: '🔍 Level 1：判斷題型',
+            text: '全部 = ' + totalStr + (unit?' '+unit:'') + '\n' +
+                  '用了 ' + fracStr(f1) + ' → 是「全部的 ' + fracStr(f1) + '」\n' +
+                  '看到「的」就用「乘」！\n' +
+                  '→ 用掉 = ' + totalStr + ' × ' + fracStr(f1) + '\n' +
+                  '→ 剩下 = ' + totalStr + ' × ' + rn + '/' + rd,
+            cells: empty_cells,
+            brackets: [{ start:0, count:parts, label:'全部='+totalStr+(unit?' '+unit:''), color:'white' }]
+          },
+          {
+            title: '📊 Level 2：畫圖切分（' + parts + ' 等份）',
+            text: '把全部切成 ' + parts + ' 等份\n\n' +
+                  '🟥 用掉 ' + fracStr(f1) + ' = ' + f1.n + ' 格紅\n' +
+                  '🟦 剩下 ' + rn + '/' + rd + (g0>1?' = '+rn/g0+'/'+rd/g0:'') + ' = ' + rn + ' 格藍',
+            cells: full_cells.slice(),
+            brackets: [
+              { start:0, count:f1.n, label:'用 '+fracStr(f1), color:'red' },
+              { start:f1.n, count:rn, label:'剩 '+rn+'/'+rd, color:'blue' }
+            ]
+          },
+          {
+            title: '✏️ Level 3：算式',
+            text: (function(){
+              if (isMixed && p.totalFrac) {
+                var tf = p.totalFrac;
+                var remN = tf.n * rn, remD = tf.d * rd;
+                var gr = gcd(remN, remD);
+                return '① 全部 = ' + tf.n + '/' + tf.d + '\n' +
+                       '② 剩下 = ' + tf.n + '/' + tf.d + ' × ' + rn + '/' + rd +
+                       ' = ' + remN + '/' + remD + (gr>1?' = '+remN/gr+'/'+remD/gr:'');
+              } else {
+                var usedAmt = p.total * f1.n / f1.d;
+                var remAmt = p.total * rn / rd;
+                return '① 全部 = ' + p.total + (unit?' '+unit:'') + '\n' +
+                       '② 用掉 = ' + p.total + ' × ' + fracStr(f1) + ' = ' + usedAmt + (unit?' '+unit:'') + '\n' +
+                       '③ 剩下 = ' + p.total + ' − ' + usedAmt + ' = ' + remAmt + (unit?' '+unit:'');
+              }
+            })(),
+            cells: full_cells.slice(),
+            brackets: [
+              { start:0, count:f1.n, label:'用掉', color:'red' },
+              { start:f1.n, count:rn, label:'剩下', color:'blue' }
+            ]
+          },
+          {
+            title: '🎯 Level 4：合理性檢查',
+            text: (function(){
+              var lines = [];
+              if (f1.n < f1.d/2) lines.push('✅ 用不到一半，剩下超過一半 → 合理');
+              else lines.push('✅ 用超過一半，剩下不到一半 → 合理');
+              lines.push('✅ 剩下 > 0 → 合理');
+              lines.push('\n🏁 把答案填上去吧！');
+              return lines.join('\n');
+            })(),
+            cells: full_cells.slice(),
+            brackets: [
+              { start:f1.n, count:rn, label:'答案', color:'blue' }
+            ]
+          }
+        ]
+      };
+    }
+
+    /* --- RAF Pattern C: 水箱兩段 --- */
+    function buildBarModel_RAF_C(q, p){
+      const total = p.total || 0;
+      const f1 = p.frac1;
+      const f2 = p.frac2 || {n:1,d:2};
+      const txt = String(q.question || '');
+      const unitM = txt.match(/公[升斤]/);
+      const unit = unitM ? unitM[0] : '公升';
+
+      const currentAmt = total * f1.n / f1.d;
+      const pourOut = currentAmt * f2.n / f2.d;
+      const remain = currentAmt - pourOut;
+
+      // Fine grid: f1.d × f2.d to ensure integer cells
+      const fp = f1.d * f2.d;
+      const fWater = f1.n * f2.d;
+      const fEmpty = fp - fWater;
+      const fPour = f1.n * f2.n;     // fWater × f2.n/f2.d = integer
+      const fRemain = fWater - fPour;
+
+      const cells_s1 = new Array(fp).fill('empty');
+      for (let i = 0; i < fWater; i++) cells_s1[i] = 'green';
+
+      const cells_s2 = new Array(fp).fill('empty');
+      for (let i = 0; i < fRemain; i++) cells_s2[i] = 'blue';
+      for (let i = fRemain; i < fWater; i++) cells_s2[i] = 'red';
+
+      return {
+        parts: fp, unit_label: unit,
+        levels: [
+          {
+            title: '🔍 Level 1：判斷題型',
+            text: '水箱容量 = ' + total + ' ' + unit + '\n' +
+                  '現有 ' + fracStr(f1) + ' 的水 → 水量 = ' + total + ' × ' + fracStr(f1) + ' = ' + currentAmt + ' ' + unit + '\n\n' +
+                  '再倒出「現有水的 ' + fracStr(f2) + '」\n' +
+                  '⚠️ 基準是「現有水」不是「容量」→ 兩次都用乘法！',
+            cells: cells_s1.slice(),
+            brackets: [
+              { start:0, count:fWater, label:'水 '+currentAmt+' '+unit, color:'green' },
+              { start:fWater, count:fEmpty, label:'空', color:'white' }
+            ]
+          },
+          {
+            title: '📊 Level 2：畫圖切分',
+            text: '🟩 水 = ' + fWater + '/' + fp + ' 格\n' +
+                  '倒出水的 ' + fracStr(f2) + ' = ' + fPour + ' 格 → 🟥 紅\n' +
+                  '🟦 剩下 = ' + fRemain + ' 格藍',
+            cells: cells_s2.slice(),
+            brackets: [
+              { start:0, count:fRemain, label:'剩 '+remain+' '+unit, color:'blue' },
+              { start:fRemain, count:fPour, label:'倒出', color:'red' }
+            ]
+          },
+          {
+            title: '✏️ Level 3：算式',
+            text: '① 水量 = ' + total + ' × ' + fracStr(f1) + ' = ' + currentAmt + ' ' + unit + '\n' +
+                  '② 倒出 = ' + currentAmt + ' × ' + fracStr(f2) + ' = ' + pourOut + ' ' + unit + '\n' +
+                  '③ 剩下 = ' + currentAmt + ' − ' + pourOut + ' = ' + remain + ' ' + unit,
+            cells: cells_s2.slice(),
+            brackets: [
+              { start:0, count:fRemain, label:'答案 '+remain+' '+unit, color:'blue' }
+            ]
+          },
+          {
+            title: '🎯 Level 4：合理性檢查',
+            text: '✅ 剩 ' + remain + ' < 水量 ' + currentAmt + ' → 合理\n' +
+                  '✅ 剩下 > 0 → 合理\n\n' +
+                  '🏁 把答案填上去吧！',
+            cells: cells_s2.slice(),
+            brackets: [
+              { start:0, count:fRemain, label:remain+' '+unit, color:'blue' }
+            ]
+          }
+        ]
+      };
+    }
+
+    /* --- remain_then_fraction: 兩段 (第二段基準 = 剩下的) --- */
+    function buildBarModel_RTF(q){
+      const p = extractRemainThenFractionParams(q);
+      const f1 = p.frac1, f2 = p.frac2;
+      const totalVal = p.total;
       const hasTotal = totalVal != null && totalVal > 0;
-      const totalLabel = hasTotal ? `${totalVal}` : '全部';
+      const txt = String(q.question || '');
+      const unitM = txt.match(/[頁公條盒瓶杯塊顆張][尺升斤克里]?/);
+      const unit = unitM ? unitM[0] : '';
+      const totalLabel = hasTotal ? String(totalVal) : '1';
 
-      // calculate fractions
-      const remain1_n = f1.d - f1.n;  // numerator of remaining after step 1
-      const remain1_d = f1.d;
-      const pctUsed1 = f1.n / f1.d * 100;
-      const pctRemain1 = 100 - pctUsed1;
+      // parts = f1.d × f2.d guarantees both fractions divide evenly
+      const parts = f1.d * f2.d;
+      const used1 = f1.n * f2.d;
+      const remain1 = parts - used1;
+      const used2 = remain1 * f2.n / f2.d;   // integer guaranteed
+      const finalR = remain1 - used2;
+      const gF = gcd(Math.abs(finalR), parts);
 
-      // step 2: used fraction of remainder
-      const pctUsed2ofRemain = f2.n / f2.d * 100;
-      const pctUsed2 = pctRemain1 * f2.n / f2.d;
-      const pctFinal = pctRemain1 - pctUsed2;
+      const r1n = f1.d - f1.n, r1d = f1.d;
+      const r2n = f2.d - f2.n, r2d = f2.d;
 
-      const steps = [];
+      const empty_cells = new Array(parts).fill('empty');
+      const cells_s1 = new Array(parts).fill('empty');
+      for (let i = 0; i < used1; i++) cells_s1[i] = 'red';
+      for (let i = used1; i < parts; i++) cells_s1[i] = 'green';
 
-      // ---- Visual Step 1: show the whole bar ----
-      const s1 = document.createElement('div');
-      s1.className = 'hint-visual';
-      s1.innerHTML = `
-        <div class="hv-title">📊 圖解步驟 1：畫出全部</div>
-        <div class="bar-row">
-          <span class="bar-label">全部</span>
-          <div class="bar-track">
-            <div class="bar-remain" style="width:100%">${totalLabel}</div>
-          </div>
-        </div>
-        <div class="hv-text">先把「全部」畫成一整條：
-${hasTotal ? `全部 = ${totalVal}` : '全部 = 1（整體）'}
+      const cells_s2 = new Array(parts).fill('empty');
+      for (let i = 0; i < used1; i++) cells_s2[i] = 'red';
+      for (let i = used1; i < used1 + used2; i++) cells_s2[i] = 'orange';
+      for (let i = used1 + used2; i < parts; i++) cells_s2[i] = 'blue';
 
-🔍 題目說「先${q.question.match(/先[看用吃喝]了/)?.[0] || '用掉'} ${fracStr(f1)}」
-→ 想一想：「${fracStr(f1)}」是「全部的 ${fracStr(f1)}」
-→ 所以要用「乘法」：${totalLabel} × ${fracStr(f1)}</div>`;
-      steps.push(s1);
+      return {
+        parts: parts, unit_label: unit,
+        levels: [
+          {
+            title: '🔍 Level 1：判斷題型',
+            text: '先用掉全部的 ' + fracStr(f1) + '，\n'+
+                  '「剩下的」又用掉 ' + fracStr(f2) + '。\n\n' +
+                  '⚠️ 第二次的 ' + fracStr(f2) + ' 是「剩下的」' + fracStr(f2) + '！\n' +
+                  '→ 基準不同，每次都用乘法\n\n' +
+                  '📌 看到「剩下的幾分之幾」→ 先算剩下，再乘',
+            cells: empty_cells,
+            brackets: [{ start:0, count:parts, label:'全部='+totalLabel+(unit?' '+unit:''), color:'white' }]
+          },
+          {
+            title: '📊 Level 2：畫圖切分（' + parts + ' 格）',
+            text: '全部切成 ' + parts + ' 格（' + f1.d + '×' + f2.d + '）\n\n' +
+                  '🟥 第1次用 ' + fracStr(f1) + ' = ' + used1 + '/' + parts + ' → ' + used1 + ' 格紅\n' +
+                  '🟢 剩下 = ' + remain1 + '/' + parts + ' → ' + remain1 + ' 格綠\n\n' +
+                  '🟧 第2次用「剩下的 ' + fracStr(f2) + '」\n' +
+                  '   = ' + remain1 + ' × ' + fracStr(f2) + ' = ' + used2 + ' 格橙\n' +
+                  '🟦 最後剩 ' + finalR + '/' + parts + (gF>1?' = '+finalR/gF+'/'+parts/gF:'') + ' → ' + finalR + ' 格藍',
+            cells: cells_s2.slice(),
+            brackets: [
+              { start:0, count:used1, label:'第1次 '+fracStr(f1), color:'red' },
+              { start:used1, count:used2, label:'第2次(of剩)', color:'orange' },
+              { start:used1+used2, count:finalR, label:'最後剩 '+finalR+'/'+parts, color:'blue' }
+            ]
+          },
+          {
+            title: '✏️ Level 3：算式',
+            text: (function(){
+              if (hasTotal) {
+                var step1 = totalVal * r1n / r1d;
+                var step2u = step1 * f2.n / f2.d;
+                var stepF = step1 * r2n / r2d;
+                return '① 第1次剩 = ' + totalVal + ' × ' + r1n + '/' + r1d + ' = ' + step1 + (unit?' '+unit:'') + '\n' +
+                       '② 第2次用 = ' + step1 + ' × ' + fracStr(f2) + ' = ' + step2u + (unit?' '+unit:'') + '\n' +
+                       '③ 最後剩 = ' + step1 + ' − ' + step2u + ' = ' + stepF + (unit?' '+unit:'');
+              } else {
+                var fn = r1n * r2n, fd = r1d * r2d;
+                var g = gcd(fn, fd);
+                return '① 第1次剩 = 1 × ' + r1n + '/' + r1d + ' = ' + r1n + '/' + r1d + '\n' +
+                       '② 最後剩 = ' + r1n + '/' + r1d + ' × ' + r2n + '/' + r2d +
+                       ' = ' + fn + '/' + fd + (g>1?' = '+fn/g+'/'+fd/g:'');
+              }
+            })(),
+            cells: cells_s2.slice(),
+            brackets: [
+              { start:used1+used2, count:finalR, label:'答案', color:'blue' }
+            ]
+          },
+          {
+            title: '🎯 Level 4：合理性檢查',
+            text: '✅ 最後剩下 < 第1次剩下 → 合理\n' +
+                  '✅ 剩下 > 0 → 合理\n\n' +
+                  '❌ 常見錯誤：1 − ' + fracStr(f1) + ' − ' + fracStr(f2) + ' ← 錯！\n' +
+                  '   第二次的 ' + fracStr(f2) + ' 不是從全部算的\n\n' +
+                  '🏁 把答案填上去吧！',
+            cells: cells_s2.slice(),
+            brackets: [
+              { start:used1+used2, count:finalR, label:'最終答案', color:'blue' }
+            ]
+          }
+        ]
+      };
+    }
 
-      // ---- Visual Step 2: first fraction used ----
-      const s2 = document.createElement('div');
-      s2.className = 'hint-visual';
-      const remain1Str = remain1_n === 0 ? '0' : `${remain1_n}/${remain1_d}`;
-      const firstUsedLabel = hasTotal ? `${totalVal} × ${fracStr(f1)} = ${Math.round(totalVal * f1.n / f1.d)}` : `${fracStr(f1)}`;
-      const firstRemainLabel = hasTotal ? `${Math.round(totalVal * remain1_n / remain1_d)}` : `${remain1Str}`;
-      s2.innerHTML = `
-        <div class="hv-title">📊 圖解步驟 2：切掉第一刀</div>
-        <div class="bar-row">
-          <span class="bar-label">第一次用掉</span>
-          <div class="bar-track">
-            <div class="bar-used" style="width:${pctUsed1}%">用 ${fracStr(f1)}</div>
-            <div class="bar-remain" style="width:${pctRemain1}%">剩 ${remain1Str}</div>
-          </div>
-        </div>
-        <div class="hv-text">🔴 用掉的 = ${totalLabel} × ${fracStr(f1)} = ${firstUsedLabel}
-🟢 剩下的 = ${totalLabel} × (1 − ${fracStr(f1)}) = ${totalLabel} × ${remain1Str} = ${firstRemainLabel}
+    /* --- average_division: 平均分配 (分數 ÷ 整數) --- */
+    function buildBarModel_AVG(q){
+      const txt = String(q.question || '');
+      const fracM = txt.match(/(\d+)\/(\d+)/);
+      if (!fracM) return null;
+      const tN = parseInt(fracM[1],10), tD = parseInt(fracM[2],10);
+      const portionM = txt.match(/(\d+)\s*[杯人份個組隊袋]/);
+      if (!portionM) return null;
+      const n = parseInt(portionM[1],10);
+      const unitM = txt.match(/[頁公條盒瓶杯塊顆張][尺升斤克里]?/);
+      const unit = unitM ? unitM[0] : '';
 
-💡 關鍵觀念：
-「${hasTotal ? totalVal : '全部'}的${fracStr(f1)}」→ 用「乘法」！
-不是直接減 ${fracStr(f1)}！</div>`;
-      steps.push(s2);
+      const ansN = tN, ansD = tD * n;
+      const g = gcd(ansN, ansD);
+      const parts = tD;
 
-      // ---- Visual Step 3: WHY multiplication, not subtraction ----
-      const s3 = document.createElement('div');
-      s3.className = 'hint-visual';
-      const wrongWay = hasTotal
-        ? `❌ 錯誤想法：${totalVal} − ${fracStr(f1)} = ${totalVal} − ${f1.n}/${f1.d}（整數減分數？不對！）`
-        : `❌ 錯誤想法：直接 1 − ${fracStr(f1)} − ${fracStr(f2)}（但第二次不是從全部扣！）`;
-      s3.innerHTML = `
-        <div class="hv-title">⚠️ 圖解步驟 3：為什麼用「乘法」而不是「直接減」？</div>
-        <div class="hv-warn">${wrongWay}</div>
-        <div class="hv-ok">✅ 正確想法：「幾分之幾」= 佔全體的比例 → 要用乘法！
+      const cells = new Array(parts).fill('empty');
+      for (let i = 0; i < tN; i++) cells[i] = 'green';
 
-想像一下：
-• 一條蛋糕切成 ${f1.d} 等份，用掉 ${f1.n} 份 → 用掉了 ${f1.n}/${f1.d}
-• 「用掉 ${fracStr(f1)}」= 全部 × ${fracStr(f1)} ← 這就是乘法！
-• 剩下 = 全部 × (1 − ${fracStr(f1)}) = 全部 × ${remain1Str}</div>
-        <div class="hv-text">📌 口訣：看到「的」就用「乘」！
-「全部 的 ${fracStr(f1)}」→ 全部 × ${fracStr(f1)}</div>`;
-      steps.push(s3);
+      return {
+        parts: parts, unit_label: unit,
+        levels: [
+          {
+            title: '🔍 Level 1：判斷題型',
+            text: '看到「平均分成 ' + n + ' 份」→ 用除法！\n' +
+                  '全部 = ' + tN + '/' + tD + (unit?' '+unit:'') + '\n' +
+                  '每份 = ' + tN + '/' + tD + ' ÷ ' + n + '\n\n' +
+                  '📌 分數 ÷ 整數 = 分母乘以那個整數',
+            cells: cells.slice(),
+            brackets: [{ start:0, count:tN, label:tN+'/'+tD+(unit?' '+unit:''), color:'green' }]
+          },
+          {
+            title: '📊 Level 2：畫圖切分',
+            text: '全部 ' + tN + '/' + tD + '（' + parts + ' 格中塗 ' + tN + ' 格綠色）\n' +
+                  '再把塗色的 ' + tN + ' 格平均分成 ' + n + ' 份\n' +
+                  '→ 每份佔多少格？',
+            cells: cells.slice(),
+            brackets: [
+              { start:0, count:tN, label:tN+'/'+tD+' ÷ '+n, color:'green' }
+            ]
+          },
+          {
+            title: '✏️ Level 3：算式',
+            text: tN + '/' + tD + ' ÷ ' + n + '\n' +
+                  '= ' + tN + ' / (' + tD + ' × ' + n + ')\n' +
+                  '= ' + ansN + '/' + ansD +
+                  (g>1 ? ' = ' + ansN/g + '/' + ansD/g + '（約分）' : ''),
+            cells: cells.slice(),
+            brackets: [
+              { start:0, count:tN, label:'每份='+(g>1?String(ansN/g)+'/'+String(ansD/g):String(ansN)+'/'+String(ansD)), color:'green' }
+            ]
+          },
+          {
+            title: '🎯 Level 4：合理性檢查',
+            text: '✅ 每份 ' + (g>1?String(ansN/g)+'/'+String(ansD/g):String(ansN)+'/'+String(ansD)) +
+                  ' < 全部 ' + tN + '/' + tD + ' → 合理\n' +
+                  '✅ 驗算：' + (g>1?String(ansN/g)+'/'+String(ansD/g):String(ansN)+'/'+String(ansD)) +
+                  ' × ' + n + ' = ' + tN + '/' + tD + ' ✓\n\n' +
+                  '🏁 把答案填上去吧！',
+            cells: cells.slice(),
+            brackets: [
+              { start:0, count:tN, label:'答案', color:'green' }
+            ]
+          }
+        ]
+      };
+    }
 
-      // ---- Visual Step 4: second fraction (of the remainder!) ----
-      const s4 = document.createElement('div');
-      s4.className = 'hint-visual';
-      const remain2_n = f2.d - f2.n;
-      const remain2_d = f2.d;
-      const remain2Str = remain2_n === 0 ? '0' : `${remain2_n}/${remain2_d}`;
-      const secondBaseLabel = hasTotal ? `${firstRemainLabel}` : `${remain1Str}`;
-      s4.innerHTML = `
-        <div class="hv-title">📊 圖解步驟 4：在「剩下的」上面再切第二刀</div>
-        <div class="bar-row">
-          <span class="bar-label">第一次</span>
-          <div class="bar-track">
-            <div class="bar-used" style="width:${pctUsed1}%">已用</div>
-            <div class="bar-remain" style="width:${pctRemain1}%">← 剩下的</div>
-          </div>
-        </div>
-        <div class="bar-row">
-          <span class="bar-label">第二次</span>
-          <div class="bar-track">
-            <div class="bar-empty" style="width:${pctUsed1}%"></div>
-            <div class="bar-used2" style="width:${pctUsed2}%">又用 ${fracStr(f2)}</div>
-            <div class="bar-final" style="width:${Math.max(0,pctFinal)}%">最後剩</div>
-          </div>
-        </div>
-        <div class="hv-text">⚠️ 注意：題目說「剩下的又用掉 ${fracStr(f2)}」
-→ 「${fracStr(f2)}」是「剩下的 ${fracStr(f2)}」，不是全部的 ${fracStr(f2)}！
-→ 所以第二次用掉 = 剩下 × ${fracStr(f2)} = ${secondBaseLabel} × ${fracStr(f2)}
+    /* ========== SVG Bar Renderer ========== */
+    function renderBarSVG(parts, cells, brackets){
+      var W = 400, H = 32, padX = 10, padY = 8;
+      var cellW = W / parts;
+      var bH = (brackets && brackets.length > 0) ? 30 : 4;
+      var svgH = padY + H + bH;
+      var colors = {
+        red:'#f85149', orange:'#d29922', blue:'#58a6ff',
+        green:'#2ea043', white:'rgba(255,255,255,0.7)',
+        empty:'rgba(255,255,255,0.06)'
+      };
 
-🟡 第二次用掉 = ${secondBaseLabel} × ${fracStr(f2)}
-🔵 最後剩下 = ${secondBaseLabel} × (1 − ${fracStr(f2)}) = ${secondBaseLabel} × ${remain2Str}</div>`;
-      steps.push(s4);
+      var s = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '
+            + (W+padX*2) + ' ' + svgH
+            + '" style="width:100%;max-width:500px;display:block;margin:6px 0">';
 
-      // ---- Visual Step 5: the trap — comparing wrong vs right ----
-      const s5 = document.createElement('div');
-      s5.className = 'hint-visual';
-      s5.innerHTML = `
-        <div class="hv-title">🎯 圖解步驟 5：常見錯誤 vs 正確做法</div>
-        <div class="hv-warn">❌ 常見錯誤：
-• 把兩次直接相減：1 − ${fracStr(f1)} − ${fracStr(f2)} ← 錯！
-• 因為第二次的 ${fracStr(f2)} 不是從「全部」算的
-• 第二次的 ${fracStr(f2)} 是從「剩下的 ${remain1Str}」算的</div>
-        <div class="hv-ok">✅ 正確做法：分兩段，每段都用乘法
+      // cells
+      for (var i = 0; i < parts; i++){
+        var x = padX + i * cellW;
+        var c = cells[i] || 'empty';
+        s += '<rect x="'+x+'" y="'+padY+'" width="'+cellW+'" height="'+H
+           + '" fill="'+(colors[c]||colors.empty)
+           + '" stroke="rgba(255,255,255,0.18)" stroke-width="0.7"/>';
+      }
+      // outer border
+      s += '<rect x="'+padX+'" y="'+padY+'" width="'+W+'" height="'+H
+         + '" rx="3" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>';
 
-第一段：剩下 = ${totalLabel} × (1 − ${fracStr(f1)}) = ${totalLabel} × ${remain1Str}
-第二段：最後剩 = 第一段剩下 × (1 − ${fracStr(f2)}) = 第一段剩下 × ${remain2Str}</div>
-        <div class="hv-text">📌 記住：每次「用掉幾分之幾」都是對「當時剩下的」做乘法！
-不能把分數直接從全部扣掉。</div>`;
-      steps.push(s5);
-
-      // ---- Visual Step 6: final calculation with numbers ----
-      if (hasTotal){
-        const s6 = document.createElement('div');
-        s6.className = 'hint-visual';
-        const step1Result = totalVal * remain1_n / remain1_d;
-        const step2UsedAmt = step1Result * f2.n / f2.d;
-        const finalAmt = step1Result * remain2_n / remain2_d;
-        s6.innerHTML = `
-          <div class="hv-title">🔢 圖解步驟 6：帶入數字計算</div>
-          <div class="bar-row">
-            <span class="bar-label">完整圖</span>
-            <div class="bar-track">
-              <div class="bar-used" style="width:${pctUsed1}%">${Math.round(totalVal * f1.n / f1.d)}</div>
-              <div class="bar-used2" style="width:${pctUsed2}%">${Math.round(step2UsedAmt)}</div>
-              <div class="bar-final" style="width:${Math.max(0,pctFinal)}%">${Math.round(finalAmt)}</div>
-            </div>
-          </div>
-          <div class="hv-text">① 全部 = ${totalVal}
-② 第一次剩下 = ${totalVal} × ${remain1Str} = ${step1Result}
-③ 第二次用掉 = ${step1Result} × ${fracStr(f2)} = ${step2UsedAmt}
-④ 最後剩下 = ${step1Result} − ${step2UsedAmt} = ${finalAmt}
-
-現在試算看看，把答案填上去吧！</div>`;
-        steps.push(s6);
-      } else {
-        const s6 = document.createElement('div');
-        s6.className = 'hint-visual';
-        // pure fraction calculation
-        const rn1 = remain1_n;
-        const rd1 = remain1_d;
-        const rn2 = remain2_n;
-        const rd2 = remain2_d;
-        const finalN = rn1 * rn2;
-        const finalD = rd1 * rd2;
-        const g = gcd(finalN, finalD);
-        s6.innerHTML = `
-          <div class="hv-title">🔢 圖解步驟 6：帶入分數計算</div>
-          <div class="hv-text">① 全部 = 1
-② 第一次剩下 = 1 × ${remain1Str} = ${remain1Str}
-③ 第二次：最後剩 = ${remain1Str} × ${remain2Str}
-④ = ${rn1}×${rn2} / ${rd1}×${rd2} = ${finalN}/${finalD}${g > 1 ? ` = ${finalN/g}/${finalD/g}（約分）` : ''}
-
-現在試算看看，把答案填上去吧！</div>`;
-        steps.push(s6);
+      // brackets below bar
+      if (brackets && brackets.length){
+        var bY = padY + H + 3;
+        for (var j = 0; j < brackets.length; j++){
+          var b = brackets[j];
+          if (!b || b.count <= 0) continue;
+          var x1 = padX + b.start * cellW;
+          var x2 = padX + (b.start + b.count) * cellW;
+          var mx = (x1 + x2) / 2;
+          var bc = colors[b.color] || colors.white;
+          s += '<line x1="'+(x1+1)+'" y1="'+bY+'" x2="'+(x1+1)+'" y2="'+(bY+8)+'" stroke="'+bc+'" stroke-width="1" opacity="0.7"/>';
+          s += '<line x1="'+(x2-1)+'" y1="'+bY+'" x2="'+(x2-1)+'" y2="'+(bY+8)+'" stroke="'+bc+'" stroke-width="1" opacity="0.7"/>';
+          s += '<line x1="'+(x1+1)+'" y1="'+(bY+8)+'" x2="'+(x2-1)+'" y2="'+(bY+8)+'" stroke="'+bc+'" stroke-width="1" opacity="0.7"/>';
+          s += '<text x="'+mx+'" y="'+(bY+20)+'" text-anchor="middle" fill="'+bc+'" font-size="10" font-family="system-ui,sans-serif">'
+             + escapeHtml(b.label) + '</text>';
+        }
       }
 
-      return steps;
+      s += '</svg>';
+      return s;
     }
+
+    /** Render a single level of the bar model as a DOM element */
+    function renderBarHintLevel(model, levelIdx){
+      var level = model.levels[levelIdx];
+      if (!level) return null;
+      var div = document.createElement('div');
+      div.className = 'hint-visual';
+      var h = '<div class="hv-title">' + escapeHtml(level.title) + '</div>';
+      h += renderBarSVG(model.parts, level.cells, level.brackets || []);
+      h += '<div class="hv-text">' + escapeHtml(level.text) + '</div>';
+      div.innerHTML = h;
+      return div;
+    }
+
 
     /* ========== remaining_after_fraction 視覺化提示 ========== */
     function detectRAFSubtype(q){
@@ -495,358 +811,7 @@ ${hasTotal ? `全部 = ${totalVal}` : '全部 = 1（整體）'}
       };
     }
 
-    function buildVisualHintSteps_RAF(q){
-      const p = extractRAFParams(q);
-      const sub = p.sub;
-      const f1 = p.frac1;
-      const f2 = p.frac2;
 
-      if (sub === 'B') return buildVisualHintSteps_RAF_B(q, f1, f2);
-      if (sub === 'C') return buildVisualHintSteps_RAF_C(q, p);
-      if (sub === 'A2') return buildVisualHintSteps_RAF_A(q, p, true);
-      return buildVisualHintSteps_RAF_A(q, p, false);
-    }
-
-    /* --- Pattern B: 兩次都從原整體 (蛋糕題) --- */
-    function buildVisualHintSteps_RAF_B(q, f1, f2){
-      const steps = [];
-      // common denominator
-      function lcm(a,b){ return a*b/gcd(a,b); }
-      const cd = lcm(f1.d, f2.d);
-      const f1cd = { n: f1.n*(cd/f1.d), d: cd };
-      const f2cd = { n: f2.n*(cd/f2.d), d: cd };
-      const usedTotal = f1cd.n + f2cd.n;
-      const remainN = cd - usedTotal;
-      const g0 = gcd(Math.abs(remainN), cd);
-
-      const pct1 = f1.n / f1.d * 100;
-      const pct2 = f2.n / f2.d * 100;
-      const pctR = Math.max(0, 100 - pct1 - pct2);
-
-      // Step 1: 畫出全部
-      const s1 = document.createElement('div');
-      s1.className = 'hint-visual';
-      s1.innerHTML = `
-        <div class="hv-title">📊 圖解步驟 1：畫出整塊蛋糕</div>
-        <div class="bar-row">
-          <span class="bar-label">全部蛋糕</span>
-          <div class="bar-track">
-            <div class="bar-remain" style="width:100%">1（整塊）</div>
-          </div>
-        </div>
-        <div class="hv-text">先畫出「整塊蛋糕 = 1」。
-
-🔍 題目說：
-• 先吃了 ${fracStr(f1)}
-• 又吃了 ${fracStr(f2)}
-
-重點：兩次吃的都是從「整塊蛋糕」來算！</div>`;
-      steps.push(s1);
-
-      // Step 2: 第一刀
-      const s2 = document.createElement('div');
-      s2.className = 'hint-visual';
-      s2.innerHTML = `
-        <div class="hv-title">📊 圖解步驟 2：切出第一次吃掉的</div>
-        <div class="bar-row">
-          <span class="bar-label">第一次吃</span>
-          <div class="bar-track">
-            <div class="bar-used" style="width:${pct1}%">🍰 ${fracStr(f1)}</div>
-            <div class="bar-remain" style="width:${100-pct1}%"></div>
-          </div>
-        </div>
-        <div class="hv-text">把整塊蛋糕切成 ${f1.d} 等份，吃掉 ${f1.n} 份。
-
-想像一下：
-┌${'─'.repeat(f1.d)}┐
-│${'🟥'.repeat(f1.n)}${'⬜'.repeat(f1.d - f1.n)}│  ← 全部 ${f1.d} 份，紅色 = 吃掉的
-└${'─'.repeat(f1.d)}┘
-
-🔴 第一次吃掉 = 整塊的 ${fracStr(f1)}
-⬜ 還沒動的 = ${f1.d - f1.n}/${f1.d}</div>`;
-      steps.push(s2);
-
-      // Step 3: 第二刀（也是從整體）
-      const s3 = document.createElement('div');
-      s3.className = 'hint-visual';
-      s3.innerHTML = `
-        <div class="hv-title">📊 圖解步驟 3：切出第二次吃掉的</div>
-        <div class="bar-row">
-          <span class="bar-label">兩次都從整塊</span>
-          <div class="bar-track">
-            <div class="bar-used" style="width:${pct1}%">第1次 ${fracStr(f1)}</div>
-            <div class="bar-used2" style="width:${pct2}%">第2次 ${fracStr(f2)}</div>
-            <div class="bar-final" style="width:${pctR}%">剩</div>
-          </div>
-        </div>
-        <div class="hv-text">⚠️ 關鍵觀念：「又吃了 ${fracStr(f2)}」
-→ 這裡的 ${fracStr(f2)} 也是從「整塊」來算，不是從「剩下的」！
-
-所以要把蛋糕切成 ${cd} 等份（通分）：
-┌${'─'.repeat(Math.min(cd,20))}┐
-│${'🟥'.repeat(Math.min(f1cd.n,20))}${'🟨'.repeat(Math.min(f2cd.n,20))}${'🟦'.repeat(Math.min(Math.max(remainN,0),20))}│
-└${'─'.repeat(Math.min(cd,20))}┘
-🟥 = 第1次吃 ${f1cd.n}/${cd}　🟨 = 第2次吃 ${f2cd.n}/${cd}　🟦 = 剩下</div>`;
-      steps.push(s3);
-
-      // Step 4: 為什麼用加法（通分）不是乘法
-      const s4 = document.createElement('div');
-      s4.className = 'hint-visual';
-      s4.innerHTML = `
-        <div class="hv-title">⚠️ 圖解步驟 4：這題用「通分後加法」不是乘法！</div>
-        <div class="hv-warn">❌ 常見錯誤：
-• ${fracStr(f1)} × ${fracStr(f2)} ← 錯！這不是「${fracStr(f1)} 的 ${fracStr(f2)}」
-• 兩次吃的都是從同一塊蛋糕，應該用「加法」合併</div>
-        <div class="hv-ok">✅ 正確做法：
-兩次都是從「整塊」吃的 → 把吃掉的「加起來」→ 再從 1 減掉
-
-步驟：
-① 通分：${fracStr(f1)} = ${f1cd.n}/${cd}，${fracStr(f2)} = ${f2cd.n}/${cd}
-② 總共吃掉 = ${f1cd.n}/${cd} + ${f2cd.n}/${cd} = ${usedTotal}/${cd}
-③ 剩下 = 1 − ${usedTotal}/${cd} = ${cd}/${cd} − ${usedTotal}/${cd} = ${remainN}/${cd}${g0 > 1 ? ` = ${remainN/g0}/${cd/g0}（約分）` : ''}</div>
-        <div class="hv-text">📌 判斷口訣：
-• 「又吃了整塊的 ${fracStr(f2)}」→ 兩次從同一整體 → 用加法合併
-• 「又吃了剩下的 ${fracStr(f2)}」→ 第二次基準變了 → 用乘法
-
-這題是「又吃了」（= 整塊的），所以用加法！</div>`;
-      steps.push(s4);
-
-      // Step 5: 帶入計算
-      const s5 = document.createElement('div');
-      s5.className = 'hint-visual';
-      s5.innerHTML = `
-        <div class="hv-title">🔢 圖解步驟 5：完整計算過程</div>
-        <div class="bar-row">
-          <span class="bar-label">完整圖</span>
-          <div class="bar-track">
-            <div class="bar-used" style="width:${pct1}%">${fracStr(f1)}</div>
-            <div class="bar-used2" style="width:${pct2}%">${fracStr(f2)}</div>
-            <div class="bar-final" style="width:${pctR}%">${remainN > 0 ? (g0 > 1 ? `${remainN/g0}/${cd/g0}` : `${remainN}/${cd}`) : '0'}</div>
-          </div>
-        </div>
-        <div class="hv-text">① 全部 = 1 = ${cd}/${cd}
-② 第一次吃 ${fracStr(f1)} = ${f1cd.n}/${cd}
-③ 第二次吃 ${fracStr(f2)} = ${f2cd.n}/${cd}
-④ 總共吃掉 = ${f1cd.n}/${cd} + ${f2cd.n}/${cd} = ${usedTotal}/${cd}
-⑤ 剩下 = ${cd}/${cd} − ${usedTotal}/${cd} = ${remainN}/${cd}${g0 > 1 ? ` = ${remainN/g0}/${cd/g0}` : ''}
-
-現在試算看看，把答案填上去吧！</div>`;
-      steps.push(s5);
-
-      return steps;
-    }
-
-    /* --- Pattern A1/A2: 單次分數，整數或帶分數總量 --- */
-    function buildVisualHintSteps_RAF_A(q, p, isMixed){
-      const steps = [];
-      const f1 = p.frac1;
-      const totalStr = isMixed ? `${p.totalFrac.n}/${p.totalFrac.d}` : `${p.total}`;
-      const totalLabel = isMixed ? `${p.totalFrac.n}/${p.totalFrac.d}` : `${p.total}`;
-      const pctUsed = f1.n / f1.d * 100;
-      const pctRemain = 100 - pctUsed;
-      const remain_n = f1.d - f1.n;
-      const remain_d = f1.d;
-      const remainStr = `${remain_n}/${remain_d}`;
-
-      const txt = String(q.question || '');
-      const unitMatch = txt.match(/[頁公條盒瓶杯塊顆張][尺升斤克里]?/);
-      const unit = unitMatch ? unitMatch[0] : '';
-
-      // Step 1
-      const s1 = document.createElement('div');
-      s1.className = 'hint-visual';
-      s1.innerHTML = `
-        <div class="hv-title">📊 圖解步驟 1：畫出全部</div>
-        <div class="bar-row">
-          <span class="bar-label">全部</span>
-          <div class="bar-track">
-            <div class="bar-remain" style="width:100%">${totalLabel}${unit ? ' '+unit : ''}</div>
-          </div>
-        </div>
-        <div class="hv-text">先認清：全部 = ${totalLabel}${unit ? ' '+unit : ''}
-
-題目問：用了 ${fracStr(f1)}，剩下多少？
-→ 「用了 ${fracStr(f1)}」= 全部的 ${fracStr(f1)} → 用乘法！</div>`;
-      steps.push(s1);
-
-      // Step 2: bar diagram
-      const s2 = document.createElement('div');
-      s2.className = 'hint-visual';
-      s2.innerHTML = `
-        <div class="hv-title">📊 圖解步驟 2：切出用掉和剩下</div>
-        <div class="bar-row">
-          <span class="bar-label">用掉 vs 剩下</span>
-          <div class="bar-track">
-            <div class="bar-used" style="width:${pctUsed}%">用 ${fracStr(f1)}</div>
-            <div class="bar-final" style="width:${pctRemain}%">剩 ${remainStr}</div>
-          </div>
-        </div>
-        <div class="hv-text">把全部切成 ${f1.d} 等份：
-┌${'─'.repeat(f1.d)}┐
-│${'🟥'.repeat(f1.n)}${'🟦'.repeat(remain_n)}│
-└${'─'.repeat(f1.d)}┘
-🟥 用掉 ${f1.n} 份 = ${fracStr(f1)}　🟦 剩下 ${remain_n} 份 = ${remainStr}
-
-💡 「用了 ${fracStr(f1)}」→ 用乘法：${totalLabel} × ${fracStr(f1)} = 用掉的量
-💡 「剩下」= ${totalLabel} × (1 − ${fracStr(f1)}) = ${totalLabel} × ${remainStr}</div>`;
-      steps.push(s2);
-
-      // Step 3: why multiply
-      const s3 = document.createElement('div');
-      s3.className = 'hint-visual';
-      s3.innerHTML = `
-        <div class="hv-title">⚠️ 圖解步驟 3：為什麼用「乘法」？</div>
-        <div class="hv-warn">❌ 常見錯誤：${totalLabel} − ${fracStr(f1)} ← 錯！
-不能直接拿${isMixed ? '分數' : '整數'}減分數！</div>
-        <div class="hv-ok">✅ 正確想法：看到「幾分之幾」就想「佔多少比例」
-
-• 用掉 = 全部 × ${fracStr(f1)}（乘法）
-• 剩下 = 全部 × (1 − ${fracStr(f1)}) = 全部 × ${remainStr}（也是乘法）
-• 或者：剩下 = 全部 − 用掉 = ${totalLabel} − ${totalLabel}×${fracStr(f1)}</div>
-        <div class="hv-text">📌 口訣：「的」就是「×」！
-「全部 的 ${fracStr(f1)}」→ ${totalLabel} × ${fracStr(f1)}</div>`;
-      steps.push(s3);
-
-      // Step 4: 帶數字計算
-      const s4 = document.createElement('div');
-      s4.className = 'hint-visual';
-      if (isMixed && p.totalFrac){
-        const tf = p.totalFrac;
-        const usedN = tf.n * f1.n;
-        const usedD = tf.d * f1.d;
-        const gu = gcd(usedN, usedD);
-        const remN = tf.n * remain_n;
-        const remD = tf.d * remain_d;
-        const gr = gcd(remN, remD);
-        s4.innerHTML = `
-          <div class="hv-title">🔢 圖解步驟 4：帶入計算</div>
-          <div class="bar-row">
-            <span class="bar-label">結果</span>
-            <div class="bar-track">
-              <div class="bar-used" style="width:${pctUsed}%">用掉</div>
-              <div class="bar-final" style="width:${pctRemain}%">剩下</div>
-            </div>
-          </div>
-          <div class="hv-text">① 全部 = ${tf.n}/${tf.d}
-② 剩下 = ${tf.n}/${tf.d} × ${remainStr} = ${remN}/${remD}${gr > 1 ? ` = ${remN/gr}/${remD/gr}` : ''}
-
-現在試算看看，把答案填上去吧！</div>`;
-      } else {
-        const usedAmt = p.total * f1.n / f1.d;
-        const remAmt = p.total * remain_n / remain_d;
-        s4.innerHTML = `
-          <div class="hv-title">🔢 圖解步驟 4：帶入數字計算</div>
-          <div class="bar-row">
-            <span class="bar-label">結果</span>
-            <div class="bar-track">
-              <div class="bar-used" style="width:${pctUsed}%">${usedAmt}${unit}</div>
-              <div class="bar-final" style="width:${pctRemain}%">${remAmt}${unit}</div>
-            </div>
-          </div>
-          <div class="hv-text">① 全部 = ${p.total}${unit ? ' '+unit : ''}
-② 用掉 = ${p.total} × ${fracStr(f1)} = ${usedAmt}${unit ? ' '+unit : ''}
-③ 剩下 = ${p.total} − ${usedAmt} = ${remAmt}${unit ? ' '+unit : ''}
-　 或 剩下 = ${p.total} × ${remainStr} = ${remAmt}${unit ? ' '+unit : ''}
-
-現在試算看看，把答案填上去吧！</div>`;
-      }
-      steps.push(s4);
-
-      return steps;
-    }
-
-    /* --- Pattern C: 水箱兩段 --- */
-    function buildVisualHintSteps_RAF_C(q, p){
-      const steps = [];
-      const total = p.total || 0;
-      const f1 = p.frac1;  // 現有比例
-      const f2 = p.frac2 || {n:1,d:2};  // 倒出比例
-      const currentAmt = total * f1.n / f1.d;
-      const pourOut = currentAmt * f2.n / f2.d;
-      const remain = currentAmt - pourOut;
-      const pctCurrent = f1.n / f1.d * 100;
-      const pctPour = pctCurrent * f2.n / f2.d;
-      const pctFinal = Math.max(0, pctCurrent - pctPour);
-      const pctEmpty = 100 - pctCurrent;
-
-      const txt = String(q.question || '');
-      const unitMatch = txt.match(/公[升斤]/);
-      const unit = unitMatch ? unitMatch[0] : '公升';
-
-      // Step 1: 水箱全景
-      const s1 = document.createElement('div');
-      s1.className = 'hint-visual';
-      s1.innerHTML = `
-        <div class="hv-title">📊 圖解步驟 1：認識水箱</div>
-        <div class="bar-row">
-          <span class="bar-label">水箱容量</span>
-          <div class="bar-track">
-            <div class="bar-remain" style="width:${pctCurrent}%">水 ${fracStr(f1)}</div>
-            <div class="bar-empty" style="width:${pctEmpty}%"></div>
-          </div>
-        </div>
-        <div class="hv-text">水箱容量 = ${total} ${unit}
-現在有 ${fracStr(f1)} → 現有水量 = ${total} × ${fracStr(f1)} = ${currentAmt} ${unit}
-
-⚠️ 注意：「現在有 ${fracStr(f1)}」→ 是容量的 ${fracStr(f1)} → 乘法！</div>`;
-      steps.push(s1);
-
-      // Step 2: 倒出
-      const s2 = document.createElement('div');
-      s2.className = 'hint-visual';
-      s2.innerHTML = `
-        <div class="hv-title">📊 圖解步驟 2：從現有水中倒出</div>
-        <div class="bar-row">
-          <span class="bar-label">倒出前</span>
-          <div class="bar-track">
-            <div class="bar-remain" style="width:${pctCurrent}%">現有 ${currentAmt}${unit}</div>
-            <div class="bar-empty" style="width:${pctEmpty}%"></div>
-          </div>
-        </div>
-        <div class="bar-row">
-          <span class="bar-label">倒出後</span>
-          <div class="bar-track">
-            <div class="bar-final" style="width:${pctFinal}%">剩</div>
-            <div class="bar-used" style="width:${pctPour}%">倒 ${fracStr(f2)}</div>
-            <div class="bar-empty" style="width:${pctEmpty}%"></div>
-          </div>
-        </div>
-        <div class="hv-text">⚠️ 關鍵：「倒出現有水的 ${fracStr(f2)}」
-→ ${fracStr(f2)} 是對「現有水 ${currentAmt}${unit}」算的，不是對「容量 ${total}」！
-→ 倒出 = ${currentAmt} × ${fracStr(f2)} = ${pourOut} ${unit}
-
-💡 「現有水 的 ${fracStr(f2)}」→ ${currentAmt} × ${fracStr(f2)} ← 乘法！</div>`;
-      steps.push(s2);
-
-      // Step 3: 計算
-      const s3 = document.createElement('div');
-      s3.className = 'hint-visual';
-      // format remain nicely
-      let remainLabel;
-      if (Number.isInteger(remain)) { remainLabel = `${remain}`; }
-      else {
-        const rn = currentAmt * (f2.d - f2.n);
-        const rd = f2.d;
-        const gr = gcd(Math.abs(Math.round(rn*1000)), Math.round(rd*1000));
-        remainLabel = `${remain}`;
-      }
-      s3.innerHTML = `
-        <div class="hv-title">🔢 圖解步驟 3：帶入計算</div>
-        <div class="hv-text">① 容量 = ${total} ${unit}
-② 現有水 = ${total} × ${fracStr(f1)} = ${currentAmt} ${unit}
-③ 倒出 = ${currentAmt} × ${fracStr(f2)} = ${pourOut} ${unit}
-④ 還剩 = ${currentAmt} − ${pourOut} = ${remain} ${unit}
-　 或 還剩 = ${currentAmt} × (1 − ${fracStr(f2)}) = ${currentAmt} × ${f2.d - f2.n}/${f2.d} = ${remain} ${unit}
-
-現在試算看看，把答案填上去吧！</div>`;
-      steps.push(s3);
-
-      return steps;
-    }
-
-    function escapeHtml(s){
-      return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-    }
 
     // --------- state ---------
     const bank = Array.isArray(window.FRACTION_WORD_G5_BANK) ? window.FRACTION_WORD_G5_BANK : [];
@@ -875,7 +840,7 @@ ${hasTotal ? `全部 = ${totalVal}` : '全部 = 1（整體）'}
       state.startedAt = Date.now();
       state.attemptsCount = 0;
       state.hintStepIndex = 0;
-      state._visualSteps = null;
+      state._barModel = null;
       state.hintShownLevels = new Set();
       state.hintShownCount = 0;
       state.hintStartAt = null;
@@ -1078,31 +1043,30 @@ ${hasTotal ? `全部 = ${totalVal}` : '全部 = 1（整體）'}
       const q = state.q;
       if (!q){ setBannerBad('請先按「出新題」出一題。'); return; }
 
-      // visual diagram hints for fraction kinds
-      const kind = String(q.kind);
-      if (kind === 'remain_then_fraction' || kind === 'remaining_after_fraction'){
-        if (!state._visualSteps){
-          state._visualSteps = kind === 'remain_then_fraction'
-            ? buildVisualHintSteps(q)
-            : buildVisualHintSteps_RAF(q);
-        }
-        const vs = state._visualSteps;
-        if (state.hintStepIndex >= vs.length){
-          setBannerMuted('已顯示全部圖解提示步驟，可按「看完整解題」看答案。');
+      // Try structured bar model hints
+      if (state._barModel === null){
+        const model = buildFractionBarModel(q);
+        state._barModel = model || false;
+      }
+
+      if (state._barModel){
+        const model = state._barModel;
+        const levels = model.levels;
+        if (state.hintStepIndex >= levels.length){
+          setBannerMuted('已顯示全部圖解提示（共 ' + levels.length + ' 層），可按「看完整解題」看答案。');
           return;
         }
-        const stepEl = vs[state.hintStepIndex];
         const stepNum = state.hintStepIndex + 1;
-        const level = Math.min(3, Math.ceil(stepNum * 3 / vs.length));
-        markHint(level);
-        els.hints.appendChild(stepEl);
+        markHint(stepNum);
+        const el = renderBarHintLevel(model, state.hintStepIndex);
+        els.hints.appendChild(el);
         state.hintStepIndex++;
-        state.hintUsed = Math.max(state.hintUsed, level);
-        setBannerMuted(`已顯示圖解步驟 ${stepNum}/${vs.length}（不含最終答案）。`);
+        state.hintUsed = Math.max(state.hintUsed, stepNum);
+        setBannerMuted(`已顯示圖解 Level ${stepNum}/${levels.length}（不含最終答案）。`);
         return;
       }
 
-      // other kinds: original text-only progressive stepping
+      // Fallback: text-only progressive stepping
       const steps = Array.isArray(q.steps) ? q.steps : [];
       if (!steps.length){ setBannerMuted('（此題無提示步驟）'); return; }
       if (state.hintStepIndex >= steps.length){
@@ -1111,7 +1075,7 @@ ${hasTotal ? `全部 = ${totalVal}` : '全部 = 1（整體）'}
       }
       const text = steps[state.hintStepIndex];
       const stepNum = state.hintStepIndex + 1;
-      const level = Math.min(3, Math.ceil(stepNum * 3 / steps.length));
+      const level = Math.min(4, Math.ceil(stepNum * 4 / steps.length));
       markHint(level);
       els.hints.appendChild(renderHint(`步驟 ${stepNum}：${text}`));
       state.hintStepIndex++;
