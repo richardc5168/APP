@@ -65,9 +65,9 @@
     <div style="max-width:1280px;margin:0 auto;">
         <h1>題型觀念地圖（提示 / 題型 / 核心觀念快速摘要）</h1>
         <div class="sub">
-            來源：自動掃描 <span class="k">docs/**/bank.js</span>，彙整每個模組的 <b>題型（含代碼）</b>、<b>常見觀念</b>、<b>步驟要點</b> 與 <b>題數/難度分布</b>。<br/>
+            來源：自動掃描 <span class="k">docs/**/bank.js</span>，彙整每個模組的 <b>題型</b>、<b>常見觀念</b>、<b>步驟要點</b> 與 <b>題數/難度分布</b>。<br/>
             使用方式：左側搜尋（建議中文關鍵字）→ 右側展開題型細節。<br/>
-            生成時間：2026-02-18 18:45
+            生成時間：2026-02-18 18:50
         </div>
         <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">
             <a class="pill lvl" href="../">回首頁</a>
@@ -82,7 +82,7 @@
         <div class="search">
             <input id="q" placeholder="輸入關鍵字，例如：通分、約分、折扣、小數點移位、平均分配…" />
         </div>
-        <div class="hint">提示：可用「題型 kind」或「觀念句子」搜尋，例如：小數點移動、平均分配、%↔小數。</div>
+        <div class="hint">提示：可用「題型名稱」或「觀念句子」搜尋，例如：小數點移動、平均分配、百分率。</div>
         <ul id="toc">
             <li><a href="#m_decimal-unit4">五下第4單元｜小數 <span class="k">(94 題 / 6 題型)</span></a></li>
       <li><a href="#m_exam-sprint">分數乘分數 <span class="k">(1503 題 / 93 題型)</span></a></li>
@@ -96,7 +96,7 @@
       <li><a href="#m_interactive-g5-life-pack2-empire">小五生活應用題｜第二包｜帝國 <span class="k">(200 題 / 10 題型)</span></a></li>
       <li><a href="#m_interactive-g5-life-pack2plus-empire">小五生活應用題｜第二包（加強版）｜帝國 <span class="k">(240 題 / 10 題型)</span></a></li>
       <li><a href="#m_life-applications-g5">小五生活應用題 <span class="k">(300 題 / 14 題型)</span></a></li>
-      <li><a href="#m_offline-math">time_calc <span class="k">(30 題 / 1 題型)</span></a></li>
+      <li><a href="#m_offline-math">離線數學練習 <span class="k">(30 題 / 1 題型)</span></a></li>
       <li><a href="#m_ratio-percent-g5">國小五年級下｜比率與百分率 <span class="k">(179 題 / 17 題型)</span></a></li>
       <li><a href="#m_volume-g5">國小五年級｜體積（長方體/正方體） <span class="k">(147 題 / 11 題型)</span></a></li>
         </ul>
@@ -107,7 +107,7 @@
             <b>這頁適合怎麼用？</b>
             <ul>
                 <li>考前 10 分鐘：用搜尋找出弱點（例如「通分」「補 0」「折扣」「速率」）。</li>
-                <li>做題卡住：看同 kind 的「常見步驟」與「核心觀念」。</li>
+                <li>做題卡住：看同一題型的「常見步驟」與「核心觀念」。</li>
                 <li>教學備課：用題型統計抓出出題面向是否齊全。</li>
             </ul>
         </div>
@@ -122,26 +122,26 @@
     <button class="pill clickable" type="button" data-set-q="LCM">多值(空格) 19</button>
   </div>
   <div class="k" style="margin-top:6px;">
-    規則：小學算術優先用 Fraction/格式正規化；遇到代數/方程類才啟用 Guarded SymPy（安全限制）。
+    規則：小學算術優先用分數格式正規化（Fraction）；遇到代數/方程類才啟用安全版 SymPy（Guarded SymPy）。
   </div>
   <div style="margin-top:10px;">
     <b>需要特殊判題/格式支援的模組（前 8）</b>
     <ul style="margin-top:6px;">
       <li><button class="k linklike" type="button" data-set-q="interactive-g5-empire">五年級帝國闖關</button> — 其他格式:40</li><li><button class="k linklike" type="button" data-set-q="g5-grand-slam">大單位換算大滿貫</button> — 等式/符號:5 / 其他格式:26 / 多值(空格):8</li><li><button class="k linklike" type="button" data-set-q="life-applications-g5">小五生活應用題</button> — 其他格式:20</li>
     </ul>
-    <div class="hint">點上面的 pill / 模組名可自動套用左側搜尋。</div>
+    <div class="hint">點上面的按鈕／模組名稱可自動套用左側搜尋。</div>
   </div>
 </div>
 
         <section id="m_decimal-unit4" data-keywords="decimal-unit4 五下第4單元｜小數 五下第4單元｜小數 DECIMAL_UNIT4_BANK">
   <h2>五下第4單元｜小數</h2>
-  <div class="meta"><span class="pill lvl">模組</span><span class="pill">五下第4單元｜小數</span><span class="pill">decimal-unit4</span><span class="pill">94 題</span><span class="pill">6 題型</span><span class="pill">DECIMAL_UNIT4_BANK</span></div>
-  <details data-keywords="decimal-unit4 五下第4單元｜小數 五下第4單元｜小數 DECIMAL_UNIT4_BANK d_div_int  直式除法計算 不夠除就補 0 列式：8.4 ÷ 6 商 = 1.4 公斤 驗算：1.4×6 ≈ 8.4 ✓ 列式：0.63 ÷ 9 ">
-  <summary>小數÷整數（平均分） <span class="pills"><span class="pill lvl mid">16 題</span><span class="pill">難度 簡單:9 / 中等:7</span><span class="pill">d_div_int</span></span></summary>
+  <div class="meta"><span class="pill lvl">模組</span><span class="pill">五下第4單元｜小數</span><span class="pill">94 題</span><span class="pill">6 題型</span></div>
+  <details data-keywords="decimal-unit4 五下第4單元｜小數 五下第4單元｜小數 DECIMAL_UNIT4_BANK d_div_int 平均分配 → 用除法（總量 ÷ 份數）。 直式除法計算 不夠除就補 0 列式：8.4 ÷ 6 商 = 1.4 公斤 驗算：1.4×6 ≈ 8.4 ✓ 列式：0.63 ÷ 9 ">
+  <summary>小數÷整數（平均分） <span class="pills"><span class="pill lvl mid">16 題</span><span class="pill">難度 簡單:9 / 中等:7</span></span></summary>
   <div class="grid2">
     <div>
       <div class="meta"><span class="pill lvl">核心觀念（常見）</span></div>
-      <ul>        <li>（題庫未提供 core/觀念標註，請以提示文字為主）</li>
+      <ul>        <li>平均分配 → 用除法（總量 ÷ 份數）。</li>
       </ul>
       <div class="meta"><span class="pill lvl mid">常見步驟</span></div>
       <ul>        <li>直式除法計算</li>
@@ -162,12 +162,12 @@
     </div>
   </div>
 </details>
-  <details data-keywords="decimal-unit4 五下第4單元｜小數 五下第4單元｜小數 DECIMAL_UNIT4_BANK d_mul_d  去掉小數點做整數乘 小數位數加起來放回 大小合理 ✓ 估算 7.33×4.2 = 30.79 元 估算 14×3.8 ">
-  <summary>小數×小數（面積/單價） <span class="pills"><span class="pill lvl mid">18 題</span><span class="pill">難度 簡單:11 / 中等:7</span><span class="pill">d_mul_d</span></span></summary>
+  <details data-keywords="decimal-unit4 五下第4單元｜小數 五下第4單元｜小數 DECIMAL_UNIT4_BANK d_mul_d 小數×小數常見在面積（長×寬）或單價×數量。 去掉小數點做整數乘 小數位數加起來放回 大小合理 ✓ 估算 7.33×4.2 = 30.79 元 估算 14×3.8 ">
+  <summary>小數×小數（面積/單價） <span class="pills"><span class="pill lvl mid">18 題</span><span class="pill">難度 簡單:11 / 中等:7</span></span></summary>
   <div class="grid2">
     <div>
       <div class="meta"><span class="pill lvl">核心觀念（常見）</span></div>
-      <ul>        <li>（題庫未提供 core/觀念標註，請以提示文字為主）</li>
+      <ul>        <li>小數×小數常見在面積（長×寬）或單價×數量。</li>
       </ul>
       <div class="meta"><span class="pill lvl mid">常見步驟</span></div>
       <ul>        <li>去掉小數點做整數乘</li>
@@ -188,12 +188,12 @@
     </div>
   </div>
 </details>
-  <details data-keywords="decimal-unit4 五下第4單元｜小數 五下第4單元｜小數 DECIMAL_UNIT4_BANK d_mul_int  先忽略小數點做整數乘法 檢查大小合理 ✓ 估算 2.51×6 列式：2.51 × 6 放回小數點 → 15.06 公斤 估算 18.8×7 ">
-  <summary>小數×整數（買多份） <span class="pills"><span class="pill lvl mid">20 題</span><span class="pill">難度 簡單:11 / 中等:9</span><span class="pill">d_mul_int</span></span></summary>
+  <details data-keywords="decimal-unit4 五下第4單元｜小數 五下第4單元｜小數 DECIMAL_UNIT4_BANK d_mul_int 同一份量有很多份 → 用乘法。 先忽略小數點做整數乘法 檢查大小合理 ✓ 估算 2.51×6 列式：2.51 × 6 放回小數點 → 15.06 公斤 估算 18.8×7 ">
+  <summary>小數×整數（買多份） <span class="pills"><span class="pill lvl mid">20 題</span><span class="pill">難度 簡單:11 / 中等:9</span></span></summary>
   <div class="grid2">
     <div>
       <div class="meta"><span class="pill lvl">核心觀念（常見）</span></div>
-      <ul>        <li>（題庫未提供 core/觀念標註，請以提示文字為主）</li>
+      <ul>        <li>同一份量有很多份 → 用乘法。</li>
       </ul>
       <div class="meta"><span class="pill lvl mid">常見步驟</span></div>
       <ul>        <li>先忽略小數點做整數乘法</li>
@@ -214,12 +214,12 @@
     </div>
   </div>
 </details>
-  <details data-keywords="decimal-unit4 五下第4單元｜小數 五下第4單元｜小數 DECIMAL_UNIT4_BANK int_div_int_to_decimal  不夠除就補 0 繼續 216 ÷ 10 商 = 21.6 驗算：21.6×10 = 216 92.25 ÷ 25 商 = 3.69 ">
-  <summary>整數÷整數（商是小數） <span class="pills"><span class="pill lvl mid">12 題</span><span class="pill">難度 簡單:6 / 中等:6</span><span class="pill">int_div_int_to_decimal</span></span></summary>
+  <details data-keywords="decimal-unit4 五下第4單元｜小數 五下第4單元｜小數 DECIMAL_UNIT4_BANK int_div_int_to_decimal 整數÷整數也可能得到小數；不夠除就補 0。 不夠除就補 0 繼續 216 ÷ 10 商 = 21.6 驗算：21.6×10 = 216 92.25 ÷ 25 商 = 3.69 ">
+  <summary>整數÷整數（商是小數） <span class="pills"><span class="pill lvl mid">12 題</span><span class="pill">難度 簡單:6 / 中等:6</span></span></summary>
   <div class="grid2">
     <div>
       <div class="meta"><span class="pill lvl">核心觀念（常見）</span></div>
-      <ul>        <li>（題庫未提供 core/觀念標註，請以提示文字為主）</li>
+      <ul>        <li>整數÷整數也可能得到小數；不夠除就補 0。</li>
       </ul>
       <div class="meta"><span class="pill lvl mid">常見步驟</span></div>
       <ul>        <li>不夠除就補 0 繼續</li>
@@ -240,12 +240,12 @@
     </div>
   </div>
 </details>
-  <details data-keywords="decimal-unit4 五下第4單元｜小數 五下第4單元｜小數 DECIMAL_UNIT4_BANK int_mul_d  先做整數乘法 乘 0.3（&lt;1）→ 答案 &lt; 110 列式：110 × 0.3 放回小數點 → 33 元 答案 33 &lt; 110 ✓ 乘 0.75（&lt;1）→ 答案 &lt; 416 ">
-  <summary>整數×小數（比例/折扣） <span class="pills"><span class="pill lvl mid">16 題</span><span class="pill">難度 簡單:9 / 中等:7</span><span class="pill">int_mul_d</span></span></summary>
+  <details data-keywords="decimal-unit4 五下第4單元｜小數 五下第4單元｜小數 DECIMAL_UNIT4_BANK int_mul_d 乘上小於 1 的小數，結果會變小。 先做整數乘法 乘 0.3（&lt;1）→ 答案 &lt; 110 列式：110 × 0.3 放回小數點 → 33 元 答案 33 &lt; 110 ✓ 乘 0.75（&lt;1）→ 答案 &lt; 416 ">
+  <summary>整數×小數（比例/折扣） <span class="pills"><span class="pill lvl mid">16 題</span><span class="pill">難度 簡單:9 / 中等:7</span></span></summary>
   <div class="grid2">
     <div>
       <div class="meta"><span class="pill lvl">核心觀念（常見）</span></div>
-      <ul>        <li>（題庫未提供 core/觀念標註，請以提示文字為主）</li>
+      <ul>        <li>乘上小於 1 的小數，結果會變小。</li>
       </ul>
       <div class="meta"><span class="pill lvl mid">常見步驟</span></div>
       <ul>        <li>先做整數乘法</li>
@@ -266,12 +266,12 @@
     </div>
   </div>
 </details>
-  <details data-keywords="decimal-unit4 五下第4單元｜小數 五下第4單元｜小數 DECIMAL_UNIT4_BANK x10_shift  小數點往右移 變大 ✓ 小數點往左移 變小 ✓ 確認 ×1000 確認 ×10 ">
-  <summary>小數點位移（×10/÷10） <span class="pills"><span class="pill lvl mid">12 題</span><span class="pill">難度 簡單:12</span><span class="pill">x10_shift</span></span></summary>
+  <details data-keywords="decimal-unit4 五下第4單元｜小數 五下第4單元｜小數 DECIMAL_UNIT4_BANK x10_shift 只有乘以 10/100/1000（或 0.1/0.01/0.001）才是『小數點移動』。 小數點往右移 變大 ✓ 小數點往左移 變小 ✓ 確認 ×1000 確認 ×10 ">
+  <summary>小數點位移（×10/÷10） <span class="pills"><span class="pill lvl mid">12 題</span><span class="pill">難度 簡單:12</span></span></summary>
   <div class="grid2">
     <div>
       <div class="meta"><span class="pill lvl">核心觀念（常見）</span></div>
-      <ul>        <li>（題庫未提供 core/觀念標註，請以提示文字為主）</li>
+      <ul>        <li>只有乘以 10/100/1000（或 0.1/0.01/0.001）才是『小數點移動』。</li>
       </ul>
       <div class="meta"><span class="pill lvl mid">常見步驟</span></div>
       <ul>        <li>小數點往右移</li>

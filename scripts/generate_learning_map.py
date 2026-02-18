@@ -37,6 +37,7 @@ MODULE_ALIAS_ZH: dict[str, str] = {
     "g5-grand-slam": "大單位換算大滿貫",
     "life-applications-g5": "小五生活應用題",
     "decimal-unit4": "五下第4單元｜小數",
+    "offline-math": "離線數學練習",
 }
 
 KIND_ALIAS_ZH: dict[str, str] = {
@@ -136,7 +137,7 @@ def _render_audit_block(report: dict[str, Any] | None) -> str:
                     "<li>",
                     f'<button class="k linklike" type="button" data-set-q="{_html_escape(qterm)}">{_html_escape(mid_zh)}</button>',
                     " — ",
-                    _html_escape(" / ".join(parts) or "special"),
+                    _html_escape(" / ".join(parts) or "需特殊支援"),
                     "</li>",
                 ]
             )
@@ -156,14 +157,14 @@ def _render_audit_block(report: dict[str, Any] | None) -> str:
             f'    {pill(f"多值(空格) {g("multi_space_numbers")}", "LCM")}',
             '  </div>',
             '  <div class="k" style="margin-top:6px;">',
-            '    規則：小學算術優先用 Fraction/格式正規化；遇到代數/方程類才啟用 Guarded SymPy（安全限制）。',
+            '    規則：小學算術優先用分數格式正規化（Fraction）；遇到代數/方程類才啟用安全版 SymPy（Guarded SymPy）。',
             '  </div>',
             '  <div style="margin-top:10px;">',
             '    <b>需要特殊判題/格式支援的模組（前 8）</b>',
             '    <ul style="margin-top:6px;">',
             f"      {focus_html}",
             '    </ul>',
-            '    <div class="hint">點上面的 pill / 模組名可自動套用左側搜尋。</div>',
+            '    <div class="hint">點上面的按鈕／模組名稱可自動套用左側搜尋。</div>',
             '  </div>',
             '</div>',
         ]
@@ -214,6 +215,16 @@ def _extract_concepts_from_hints(hints: list[str]) -> list[str]:
                 if line.startswith(prefix):
                     concepts.append(line.split("：", 1)[1].strip())
                     break
+            else:
+                m = re.search(r"觀念[:：]\s*(.+)$", line)
+                if m:
+                    concepts.append(m.group(1).strip())
+                    continue
+                if line.startswith("提示 1｜"):
+                    txt = line.split("｜", 1)[1].strip() if "｜" in line else line
+                    txt = re.sub(r"^先懂觀念[:：]\s*", "", txt)
+                    if txt:
+                        concepts.append(txt)
     return concepts
 
 
@@ -230,7 +241,32 @@ def _module_display(module_id: str, fallback_title: str) -> str:
 
 
 def _kind_display(kind: str) -> str:
-    return KIND_ALIAS_ZH.get(kind, kind)
+    if kind in KIND_ALIAS_ZH:
+        return KIND_ALIAS_ZH[kind]
+    token_map = {
+        "add": "加",
+        "sub": "減",
+        "mul": "乘",
+        "div": "除",
+        "int": "整數",
+        "decimal": "小數",
+        "fraction": "分數",
+        "ratio": "比率",
+        "percent": "百分率",
+        "word": "應用",
+        "time": "時間",
+        "area": "面積",
+        "volume": "體積",
+        "speed": "速率",
+        "distance": "距離",
+        "money": "金額",
+        "shift": "位移",
+        "equation": "方程",
+    }
+    parts = [p for p in str(kind).split("_") if p]
+    zh_parts = [token_map.get(p, p) for p in parts]
+    text = "・".join(zh_parts)
+    return text if text else kind
 
 
 @dataclass
@@ -400,10 +436,8 @@ def _render_html(mods: list[ModuleAgg]) -> str:
             f'<div class="meta">'
             f'{_pill("模組", "pill lvl")}'
             f'{_pill(display_title)}'
-            f'{_pill(m.module_id)}'
             f'{_pill(f"{total} 題")}'
             f'{_pill(f"{len(m.kinds)} 題型")}'
-            f'{_pill(m.bank_var, "pill") if m.bank_var else ""}'
             f'</div>'
         )
 
@@ -436,7 +470,7 @@ def _render_html(mods: list[ModuleAgg]) -> str:
                         f'<details data-keywords="{_html_escape(kw)}">',
                         f'  <summary>{_html_escape(_kind_display(kind_name))} <span class="pills">'
                         f'{_pill(f"{agg.count} 題", "pill lvl mid")}'
-                        f'{_pill(f"難度 {diff_text}", "pill")}{_pill(kind_name, "pill")}</span></summary>',
+                        f'{_pill(f"難度 {diff_text}", "pill")}</span></summary>',
                         '  <div class="grid2">',
                         '    <div>',
                         '      <div class="meta"><span class="pill lvl">核心觀念（常見）</span></div>',
@@ -549,7 +583,7 @@ def _render_html(mods: list[ModuleAgg]) -> str:
     <div style="max-width:1280px;margin:0 auto;">
         <h1>題型觀念地圖（提示 / 題型 / 核心觀念快速摘要）</h1>
         <div class="sub">
-            來源：自動掃描 <span class="k">docs/**/bank.js</span>，彙整每個模組的 <b>題型（含代碼）</b>、<b>常見觀念</b>、<b>步驟要點</b> 與 <b>題數/難度分布</b>。<br/>
+            來源：自動掃描 <span class="k">docs/**/bank.js</span>，彙整每個模組的 <b>題型</b>、<b>常見觀念</b>、<b>步驟要點</b> 與 <b>題數/難度分布</b>。<br/>
             使用方式：左側搜尋（建議中文關鍵字）→ 右側展開題型細節。<br/>
             生成時間：__GEN_TIME__
         </div>
@@ -566,7 +600,7 @@ def _render_html(mods: list[ModuleAgg]) -> str:
         <div class="search">
             <input id="q" placeholder="輸入關鍵字，例如：通分、約分、折扣、小數點移位、平均分配…" />
         </div>
-        <div class="hint">提示：可用「題型 kind」或「觀念句子」搜尋，例如：小數點移動、平均分配、%↔小數。</div>
+        <div class="hint">提示：可用「題型名稱」或「觀念句子」搜尋，例如：小數點移動、平均分配、百分率。</div>
         <ul id="toc">
             __TOC__
         </ul>
@@ -577,7 +611,7 @@ def _render_html(mods: list[ModuleAgg]) -> str:
             <b>這頁適合怎麼用？</b>
             <ul>
                 <li>考前 10 分鐘：用搜尋找出弱點（例如「通分」「補 0」「折扣」「速率」）。</li>
-                <li>做題卡住：看同 kind 的「常見步驟」與「核心觀念」。</li>
+                <li>做題卡住：看同一題型的「常見步驟」與「核心觀念」。</li>
                 <li>教學備課：用題型統計抓出出題面向是否齊全。</li>
             </ul>
         </div>
