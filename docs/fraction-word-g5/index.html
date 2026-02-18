@@ -532,7 +532,7 @@
       };
     }
 
-    /* --- remain_then_fraction: 兩段 (第二段基準 = 剩下的) --- */
+    /* --- remain_then_fraction: 2D 網格模型 (先直切再橫切) --- */
     function buildBarModel_RTF(q){
       const p = extractRemainThenFractionParams(q);
       const f1 = p.frac1, f2 = p.frac2;
@@ -543,88 +543,144 @@
       const unit = unitM ? unitM[0] : '';
       const totalLabel = hasTotal ? String(totalVal) : '1';
 
-      // parts = f1.d × f2.d guarantees both fractions divide evenly
-      const parts = f1.d * f2.d;
-      const used1 = f1.n * f2.d;
-      const remain1 = parts - used1;
-      const used2 = remain1 * f2.n / f2.d;   // integer guaranteed
-      const finalR = remain1 - used2;
-      const gF = gcd(Math.abs(finalR), parts);
+      // Grid dimensions: cols = first denominator (vertical), rows = second denominator (horizontal)
+      const cols = f1.d;
+      const rows = f2.d;
+      const n1 = f1.n;  // first eaten columns
+      const n2 = f2.n;  // second eaten rows (of remaining cols)
+      const remainCols = cols - n1;
+      const totalCells = cols * rows;
+
+      // Cell counts
+      const eaten1Cells = n1 * rows;           // first eaten (whole columns)
+      const eaten2Cells = n2 * remainCols;     // second eaten (n2 rows × remaining cols)
+      const leftCells = totalCells - eaten1Cells - eaten2Cells;
+
+      // Simplified fraction strings
+      const e1g = gcd(eaten1Cells, totalCells);
+      const e2g = gcd(eaten2Cells, totalCells);
+      const lg = gcd(leftCells, totalCells);
+      const eaten1Frac = eaten1Cells/e1g + '/' + totalCells/e1g;
+      const eaten2Frac = eaten2Cells/e2g + '/' + totalCells/e2g;
+      const leftFrac = leftCells/lg + '/' + totalCells/lg;
+      const totalEaten = eaten1Cells + eaten2Cells;
+      const teg = gcd(totalEaten, totalCells);
+      const totalEatenFrac = totalEaten/teg + '/' + totalCells/teg;
 
       const r1n = f1.d - f1.n, r1d = f1.d;
       const r2n = f2.d - f2.n, r2d = f2.d;
 
-      const empty_cells = new Array(parts).fill('empty');
-      const cells_s1 = new Array(parts).fill('empty');
-      for (let i = 0; i < used1; i++) cells_s1[i] = 'red';
-      for (let i = used1; i < parts; i++) cells_s1[i] = 'green';
+      // Build grid: grid[r*cols + c] = state
+      function mkGrid(showE1, showE2, showLeft){
+        var g = [];
+        for (var r = 0; r < rows; r++){
+          for (var c = 0; c < cols; c++){
+            if (c < n1) g.push(showE1 ? 'eaten1' : 'empty');
+            else if (r < n2) g.push(showE2 ? 'eaten2' : (showLeft ? 'left' : 'empty'));
+            else g.push(showLeft ? 'left' : 'empty');
+          }
+        }
+        return g;
+      }
 
-      const cells_s2 = new Array(parts).fill('empty');
-      for (let i = 0; i < used1; i++) cells_s2[i] = 'red';
-      for (let i = used1; i < used1 + used2; i++) cells_s2[i] = 'orange';
-      for (let i = used1 + used2; i < parts; i++) cells_s2[i] = 'blue';
+      // Level 1: just a bar (1 row) showing vertical split concept
+      var grid_l1 = [];
+      for (var c = 0; c < cols; c++) grid_l1.push('empty');
 
       return {
-        parts: parts, unit_label: unit,
+        type: 'grid', cols: cols, rows: rows, unit_label: unit,
         levels: [
           {
-            title: '🔍 Level 1：判斷題型',
-            text: '先用掉全部的 ' + fracStr(f1) + '，\n'+
+            title: '🔍 Level 1：觀念鎖定',
+            text: '先用掉全部的 ' + fracStr(f1) + '，\n' +
                   '「剩下的」又用掉 ' + fracStr(f2) + '。\n\n' +
-                  '⚠️ 第二次的 ' + fracStr(f2) + ' 是「剩下的」' + fracStr(f2) + '！\n' +
-                  '→ 基準不同，每次都用乘法\n\n' +
-                  '📌 看到「剩下的幾分之幾」→ 先算剩下，再乘',
-            cells: empty_cells,
-            brackets: [{ start:0, count:parts, label:'全部='+totalLabel+(unit?' '+unit:''), color:'white' }]
-          },
-          {
-            title: '📊 Level 2：畫圖切分（' + parts + ' 格）',
-            text: '全部切成 ' + parts + ' 格（' + f1.d + '×' + f2.d + '）\n\n' +
-                  '🟥 第1次用 ' + fracStr(f1) + ' = ' + used1 + '/' + parts + ' → ' + used1 + ' 格紅\n' +
-                  '🟢 剩下 = ' + remain1 + '/' + parts + ' → ' + remain1 + ' 格綠\n\n' +
-                  '🟧 第2次用「剩下的 ' + fracStr(f2) + '」\n' +
-                  '   = ' + remain1 + ' × ' + fracStr(f2) + ' = ' + used2 + ' 格橙\n' +
-                  '🟦 最後剩 ' + finalR + '/' + parts + (gF>1?' = '+finalR/gF+'/'+parts/gF:'') + ' → ' + finalR + ' 格藍',
-            cells: cells_s2.slice(),
-            brackets: [
-              { start:0, count:used1, label:'第1次 '+fracStr(f1), color:'red' },
-              { start:used1, count:used2, label:'第2次(of剩)', color:'orange' },
-              { start:used1+used2, count:finalR, label:'最後剩 '+finalR+'/'+parts, color:'blue' }
+                  '⚠️ 第二次吃的是「剩下的」' + fracStr(f2) + '\n' +
+                  '（不是原本的 ' + fracStr(f2) + '）！\n\n' +
+                  '📌 看到「剩下的幾分之幾」→ 基準變了！\n' +
+                  '→ 要先算剩下是多少，再取其中一部分',
+            grid: grid_l1,
+            gridCols: cols, gridRows: 1,
+            hLineScope: 'none',
+            remainColStart: n1,
+            gridLabels: [
+              { startCol:0, endCol:cols, text:'全部 = '+totalLabel+(unit?' '+unit:''), color:'left' }
             ]
           },
           {
-            title: '✏️ Level 3：算式',
+            title: '📊 Level 2：畫圖（先直切 → 再橫切）',
+            text: '① 畫一個長方形代表全部 = ' + totalLabel + (unit?' '+unit:'') + '\n' +
+                  '② 用直線切成 ' + cols + ' 等份（每份 = 1/' + cols + '）\n' +
+                  '③ 🟥 塗掉 ' + n1 + ' 份 → 第1次用掉 ' + fracStr(f1) + '\n' +
+                  '④ 剩下 ' + remainCols + ' 份 = ' + r1n + '/' + r1d + '\n\n' +
+                  '⬇️ 只在「剩下的 ' + remainCols + ' 份」用橫線再切 ' + rows + ' 等份\n' +
+                  '⑤ 🟧 「剩下的 ' + fracStr(f2) + '」→ 從 ' + (remainCols*rows) + ' 小格取 ' + eaten2Cells + ' 格\n' +
+                  '⑥ 🟦 最後剩下 = ' + leftCells + ' 小格',
+            grid: mkGrid(true, true, true),
+            gridCols: cols, gridRows: rows,
+            hLineScope: 'remaining',
+            remainColStart: n1,
+            gridLabels: [
+              { startCol:0, endCol:n1, text:'第1次 '+fracStr(f1), color:'eaten1' },
+              { startCol:n1, endCol:cols, text:'剩下→橫切'+rows+'份', color:'left' }
+            ]
+          },
+          {
+            title: '🔢 Level 3：讀圖得分數',
+            text: '整個長方形 = ' + cols + ' × ' + rows + ' = ' + totalCells + ' 小格\n' +
+                  '每個小格 = 1/' + totalCells + '\n\n' +
+                  '🟥 第1次用掉 = ' + eaten1Cells + ' 格 = ' + eaten1Cells + '/' + totalCells + (e1g>1?' = '+eaten1Frac:'') + '\n' +
+                  '🟧 第2次用掉 = ' + eaten2Cells + ' 格 = ' + eaten2Cells + '/' + totalCells + (e2g>1?' = '+eaten2Frac:'') + '\n' +
+                  '🟦 剩下 = ' + leftCells + ' 格 = ' + leftCells + '/' + totalCells + (lg>1?' = '+leftFrac:'') + '\n\n' +
+                  '💡 驗算：' + eaten1Cells + ' + ' + eaten2Cells + ' + ' + leftCells + ' = ' + totalCells + ' ✓',
+            grid: mkGrid(true, true, true),
+            gridCols: cols, gridRows: rows,
+            hLineScope: 'all',
+            remainColStart: n1,
+            cellLabels: { eaten1:'1/'+totalCells, eaten2:'1/'+totalCells, left:'1/'+totalCells },
+            gridLabels: [
+              { startCol:0, endCol:n1, text:eaten1Cells+'格('+eaten1Frac+')', color:'eaten1' },
+              { startCol:n1, endCol:cols, text:'吃'+eaten2Cells+'格 剩'+leftCells+'格', color:'left' }
+            ]
+          },
+          {
+            title: '✏️ Level 4：算式收斂 + 合理性檢查',
             text: (function(){
+              var lines = [];
               if (hasTotal) {
                 var step1 = totalVal * r1n / r1d;
                 var step2u = step1 * f2.n / f2.d;
                 var stepF = step1 * r2n / r2d;
-                return '① 第1次剩 = ' + totalVal + ' × ' + r1n + '/' + r1d + ' = ' + step1 + (unit?' '+unit:'') + '\n' +
-                       '② 第2次用 = ' + step1 + ' × ' + fracStr(f2) + ' = ' + step2u + (unit?' '+unit:'') + '\n' +
-                       '③ 最後剩 = ' + step1 + ' − ' + step2u + ' = ' + stepF + (unit?' '+unit:'');
+                lines.push('① 第1次剩 = ' + totalVal + ' × ' + r1n + '/' + r1d + ' = ' + step1 + (unit?' '+unit:''));
+                lines.push('② 第2次用 = ' + step1 + ' × ' + fracStr(f2) + ' = ' + step2u + (unit?' '+unit:''));
+                lines.push('③ 最後剩 = ' + step1 + ' − ' + step2u + ' = ' + stepF + (unit?' '+unit:''));
               } else {
-                var fn = r1n * r2n, fd = r1d * r2d;
-                var g = gcd(fn, fd);
-                return '① 第1次剩 = 1 × ' + r1n + '/' + r1d + ' = ' + r1n + '/' + r1d + '\n' +
-                       '② 最後剩 = ' + r1n + '/' + r1d + ' × ' + r2n + '/' + r2d +
-                       ' = ' + fn + '/' + fd + (g>1?' = '+fn/g+'/'+fd/g:'');
+                lines.push('① 第1次用 = ' + fracStr(f1) + ' = ' + eaten1Cells + '/' + totalCells);
+                lines.push('② 剩下 = 1 − ' + fracStr(f1) + ' = ' + r1n + '/' + r1d);
+                lines.push('③ 第2次用「剩下的 ' + fracStr(f2) + '」');
+                lines.push('   = ' + r1n + '/' + r1d + ' × ' + fracStr(f2) + ' = ' + eaten2Frac);
+                lines.push('④ 總共用掉 = ' + eaten1Frac + ' + ' + eaten2Frac);
+                var sumN = eaten1Cells + eaten2Cells;
+                lines.push('   = ' + eaten1Cells + '/' + totalCells + ' + ' + eaten2Cells + '/' + totalCells + ' = ' + sumN + '/' + totalCells);
+                if (teg>1) lines.push('   = ' + totalEatenFrac);
+                lines.push('⑤ 剩下 = 1 − ' + totalEatenFrac + ' = ' + leftFrac);
               }
+              lines.push('');
+              lines.push('✅ 剩下 < 第1次剩下 → 合理');
+              lines.push('✅ 剩下 ≥ 0 → 合理');
+              lines.push('');
+              lines.push('❌ 常見錯誤：1 − ' + fracStr(f1) + ' − ' + fracStr(f2) + ' ← 錯！');
+              lines.push('   第二次的 ' + fracStr(f2) + ' 不是從全部算的！');
+              lines.push('');
+              lines.push('🏁 把答案填上去吧！');
+              return lines.join('\n');
             })(),
-            cells: cells_s2.slice(),
-            brackets: [
-              { start:used1+used2, count:finalR, label:'答案', color:'blue' }
-            ]
-          },
-          {
-            title: '🎯 Level 4：合理性檢查',
-            text: '✅ 最後剩下 < 第1次剩下 → 合理\n' +
-                  '✅ 剩下 > 0 → 合理\n\n' +
-                  '❌ 常見錯誤：1 − ' + fracStr(f1) + ' − ' + fracStr(f2) + ' ← 錯！\n' +
-                  '   第二次的 ' + fracStr(f2) + ' 不是從全部算的\n\n' +
-                  '🏁 把答案填上去吧！',
-            cells: cells_s2.slice(),
-            brackets: [
-              { start:used1+used2, count:finalR, label:'最終答案', color:'blue' }
+            grid: mkGrid(true, true, true),
+            gridCols: cols, gridRows: rows,
+            hLineScope: 'all',
+            remainColStart: n1,
+            gridLabels: [
+              { startCol:0, endCol:n1, text:'用 '+eaten1Frac, color:'eaten1' },
+              { startCol:n1, endCol:cols, text:'答案 '+leftFrac, color:'left' }
             ]
           }
         ]
@@ -788,10 +844,10 @@
       };
     }
 
-    /* --- fraction_of_fraction: 分數 × 分數 --- */
+    /* --- fraction_of_fraction: 2D 網格模型 (分數×分數 / 池塘注水) --- */
     function buildBarModel_FOF(q){
       const txt = String(q.question || '');
-      // detect "先注滿 f1，再注滿剩下的 f2" pattern (pool-filling)
+      // detect "先注滿 f1，再注滿剩下的 f2" pattern (pool-filling = sequential like RTF)
       const isPool = /先注滿|先裝了/.test(txt);
       // extract all fractions in order
       const fracs = [];
@@ -802,133 +858,183 @@
       const f1 = fracs[0], f2 = fracs[1];
 
       if (isPool) {
-        // Pool pattern: fill f1, then fill f2 of remaining → total filled = f1 + (1−f1)×f2
-        const cd = lcm(f1.d, f2.d * f1.d); // common denominator for precise cells
-        const parts = f1.d * f2.d;
-        const fill1 = f1.n * f2.d;
-        const remaining = parts - fill1;
-        const fill2 = remaining * f2.n / f2.d; // integer
-        const totalFill = fill1 + fill2;
-        const gF = gcd(totalFill, parts);
+        /* Pool pattern ≈ RTF: 先注 f1，再注「剩下的」f2 → 用 2D 網格 */
+        const cols = f1.d, rows = f2.d;
+        const n1 = f1.n, n2 = f2.n;
+        const remainCols = cols - n1;
+        const totalCells = cols * rows;
+        const fill1Cells = n1 * rows;
+        const fill2Cells = n2 * remainCols;
+        const totalFillCells = fill1Cells + fill2Cells;
+        const emptyCells = totalCells - totalFillCells;
+        const gF = gcd(totalFillCells, totalCells);
+        const gE = gcd(emptyCells, totalCells);
+        const f2g = gcd(fill2Cells, totalCells);
+        const totalFillFrac = totalFillCells/gF + '/' + totalCells/gF;
+        const emptyFrac = emptyCells/gE + '/' + totalCells/gE;
 
-        const cells_s1 = new Array(parts).fill('empty');
-        for (let i = 0; i < fill1; i++) cells_s1[i] = 'green';
-
-        const cells_s2 = new Array(parts).fill('empty');
-        for (let i = 0; i < fill1; i++) cells_s2[i] = 'green';
-        for (let i = fill1; i < fill1 + fill2; i++) cells_s2[i] = 'blue';
+        function mkPoolGrid(showF1, showF2){
+          var g = [];
+          for (var r = 0; r < rows; r++){
+            for (var c = 0; c < cols; c++){
+              if (c < n1) g.push(showF1 ? 'green' : 'empty');
+              else if (r < n2) g.push(showF2 ? 'eaten2' : 'empty');
+              else g.push('empty');
+            }
+          }
+          return g;
+        }
+        var grid_p1 = [];
+        for (var c = 0; c < cols; c++) grid_p1.push(c < n1 ? 'green' : 'empty');
 
         return {
-          parts: parts, unit_label: '',
+          type: 'grid', cols: cols, rows: rows, unit_label: '',
           levels: [
             {
-              title: '🔍 Level 1：判斷題型',
+              title: '🔍 Level 1：觀念鎖定',
               text: '先注/裝了全部的 ' + fracStr(f1) + '\n' +
                     '再把「剩下的」注/裝了 ' + fracStr(f2) + '\n\n' +
                     '⚠️ 第二次的 ' + fracStr(f2) + ' 是「剩下的」' + fracStr(f2) + '，不是全部的！\n' +
-                    '→ 剩下 = 1 − ' + fracStr(f1) + ' = ' + (f1.d-f1.n) + '/' + f1.d + '\n' +
-                    '→ 第二次量 = ' + (f1.d-f1.n) + '/' + f1.d + ' × ' + fracStr(f2),
-              cells: cells_s1.slice(),
-              brackets: [
-                { start:0, count:fill1, label:'第1次 '+fracStr(f1), color:'green' },
-                { start:fill1, count:remaining, label:'剩下', color:'white' }
+                    '→ 剩下 = 1 − ' + fracStr(f1) + ' = ' + (f1.d-f1.n) + '/' + f1.d,
+              grid: grid_p1,
+              gridCols: cols, gridRows: 1,
+              hLineScope: 'none', remainColStart: n1,
+              gridLabels: [
+                { startCol:0, endCol:n1, text:'第1次 '+fracStr(f1), color:'green' },
+                { startCol:n1, endCol:cols, text:'剩下', color:'left' }
               ]
             },
             {
-              title: '📊 Level 2：畫圖切分（' + parts + ' 格）',
-              text: '全部 = ' + parts + ' 格（' + f1.d + ' × ' + f2.d + '）\n\n' +
-                    '🟩 第1次注 ' + fracStr(f1) + ' = ' + fill1 + ' 格綠\n' +
-                    '剩下 = ' + remaining + ' 格\n' +
-                    '🟦 第2次注「剩下的 ' + fracStr(f2) + '」= ' + fill2 + ' 格藍\n\n' +
-                    '合計共注了 ' + totalFill + '/' + parts + (gF>1?' = '+totalFill/gF+'/'+parts/gF:''),
-              cells: cells_s2.slice(),
-              brackets: [
-                { start:0, count:fill1, label:'第1次 '+fill1+'格', color:'green' },
-                { start:fill1, count:fill2, label:'第2次 '+fill2+'格', color:'blue' },
-                { start:fill1+fill2, count:parts-totalFill, label:'空', color:'white' }
+              title: '📊 Level 2：畫圖（先直切 → 再橫切）',
+              text: '① 畫長方形代表全部容量\n' +
+                    '② 直線切 ' + cols + ' 等份\n' +
+                    '③ 🟩 注入 ' + fracStr(f1) + ' = ' + n1 + ' 份（綠）\n' +
+                    '④ 剩下 ' + remainCols + ' 份\n\n' +
+                    '⬇️ 在剩下的 ' + remainCols + ' 份用橫線切 ' + rows + ' 等份\n' +
+                    '⑤ 🟧 注入「剩下的 ' + fracStr(f2) + '」= ' + fill2Cells + ' 小格',
+              grid: mkPoolGrid(true, true),
+              gridCols: cols, gridRows: rows,
+              hLineScope: 'remaining', remainColStart: n1,
+              gridLabels: [
+                { startCol:0, endCol:n1, text:'第1次 '+fracStr(f1), color:'green' },
+                { startCol:n1, endCol:cols, text:'剩下→橫切'+rows+'份', color:'eaten2' }
               ]
             },
             {
-              title: '✏️ Level 3：算式',
+              title: '🔢 Level 3：讀圖得分數',
+              text: '全部 = ' + cols + ' × ' + rows + ' = ' + totalCells + ' 小格\n\n' +
+                    '🟩 第1次注 = ' + fill1Cells + ' 格 = ' + fracStr(f1) + '\n' +
+                    '🟧 第2次注 = ' + fill2Cells + ' 格 = ' + fill2Cells + '/' + totalCells + (f2g>1?' = '+fill2Cells/f2g+'/'+totalCells/f2g:'') + '\n' +
+                    '合計注了 = ' + totalFillCells + '/' + totalCells + (gF>1?' = '+totalFillFrac:'') + '\n' +
+                    '剩下空 = ' + emptyCells + '/' + totalCells + (gE>1?' = '+emptyFrac:''),
+              grid: mkPoolGrid(true, true),
+              gridCols: cols, gridRows: rows,
+              hLineScope: 'all', remainColStart: n1,
+              cellLabels: { green:'1/'+totalCells, eaten2:'1/'+totalCells },
+              gridLabels: [
+                { startCol:0, endCol:cols, text:'合計 '+totalFillFrac, color:'green' }
+              ]
+            },
+            {
+              title: '✏️ Level 4：算式收斂',
               text: '① 第1次 = ' + fracStr(f1) + '\n' +
                     '② 剩下 = 1 − ' + fracStr(f1) + ' = ' + (f1.d-f1.n) + '/' + f1.d + '\n' +
-                    '③ 第2次 = ' + (f1.d-f1.n) + '/' + f1.d + ' × ' + fracStr(f2) + ' = ' + fill2 + '/' + parts +
-                    (function(){ var g2=gcd(fill2,parts); return g2>1?' = '+fill2/g2+'/'+parts/g2:''; })() + '\n' +
-                    '④ 合計 = ' + fill1 + '/' + parts + ' + ' + fill2 + '/' + parts + ' = ' + totalFill + '/' + parts +
-                    (gF>1 ? ' = ' + totalFill/gF + '/' + parts/gF : ''),
-              cells: cells_s2.slice(),
-              brackets: [
-                { start:0, count:totalFill, label:'合計 '+(gF>1?totalFill/gF+'/'+parts/gF:totalFill+'/'+parts), color:'green' }
-              ]
-            },
-            {
-              title: '🎯 Level 4：合理性檢查',
-              text: '✅ 合計 ' + (gF>1?totalFill/gF+'/'+parts/gF:totalFill+'/'+parts) + ' < 1（沒溢出）→ 合理\n' +
-                    '✅ 合計 > ' + fracStr(f1) + '（注了兩次一定更多）→ 合理\n\n' +
-                    '🏁 把答案填上去吧！',
-              cells: cells_s2.slice(),
-              brackets: [
-                { start:0, count:totalFill, label:'答案', color:'green' }
+                    '③ 第2次 = ' + (f1.d-f1.n) + '/' + f1.d + ' × ' + fracStr(f2) + ' = ' + fill2Cells + '/' + totalCells +
+                    (f2g>1?' = '+fill2Cells/f2g+'/'+totalCells/f2g:'') + '\n' +
+                    '④ 合計 = ' + totalFillFrac + '\n\n' +
+                    '✅ 合計 < 1（沒溢出）→ 合理\n' +
+                    '✅ 合計 > ' + fracStr(f1) + ' → 合理\n\n🏁 把答案填上去吧！',
+              grid: mkPoolGrid(true, true),
+              gridCols: cols, gridRows: rows,
+              hLineScope: 'all', remainColStart: n1,
+              gridLabels: [
+                { startCol:0, endCol:cols, text:'答案 '+totalFillFrac, color:'green' }
               ]
             }
           ]
         };
       }
 
-      // Simple fraction × fraction: "A 的 f1 用來 X，其中的 f2 種 Y"
-      const parts = f1.d * f2.d;
-      const area1 = f1.n * f2.d; // f1 in parts-grid
-      const area2 = f1.n * f2.n; // f1 × f2 in parts-grid
-      const gA = gcd(area2, parts);
-      // cells: show the f1 portion in green, then highlight f2-of-f1 in blue
-      const cells_s1 = new Array(parts).fill('empty');
-      for (let i = 0; i < area1; i++) cells_s1[i] = 'green';
-      const cells_s2 = new Array(parts).fill('empty');
-      for (let i = 0; i < area2; i++) cells_s2[i] = 'blue';
-      for (let i = area2; i < area1; i++) cells_s2[i] = 'green';
+      /* 一般分數 × 分數 (area model): 直切 d1 份 × 橫切 d2 份 */
+      const cols = f1.d, rows = f2.d;
+      const totalCells = cols * rows;
+      const area1 = f1.n * f2.d; // f1 portion in grid cells
+      const area2 = f1.n * f2.n; // f1 × f2 answer cells
+      const gA = gcd(area2, totalCells);
+
+      function mkFofGrid(showF1, showAnswer){
+        var g = [];
+        for (var r = 0; r < rows; r++){
+          for (var c = 0; c < cols; c++){
+            if (c < f1.n && r < f2.n) g.push(showAnswer ? 'eaten2' : (showF1 ? 'green' : 'empty'));
+            else if (c < f1.n) g.push(showF1 ? 'green' : 'empty');
+            else g.push('empty');
+          }
+        }
+        return g;
+      }
+      var grid_f1 = [];
+      for (var c2 = 0; c2 < cols; c2++) grid_f1.push('empty');
 
       return {
-        parts: parts, unit_label: '',
+        type: 'grid', cols: cols, rows: rows, unit_label: '',
         levels: [
           {
-            title: '🔍 Level 1：判斷題型',
+            title: '🔍 Level 1：觀念鎖定',
             text: '全部的 ' + fracStr(f1) + ' 拿來做某件事，\n' +
                   '其中的 ' + fracStr(f2) + ' 做另一件事。\n\n' +
                   '→「其中的…」= 分數的分數 = 乘法！\n' +
                   '   ' + fracStr(f1) + ' × ' + fracStr(f2) + ' = ？',
-            cells: new Array(parts).fill('empty'),
-            brackets: [{ start:0, count:parts, label:'全部 = 1', color:'white' }]
+            grid: grid_f1,
+            gridCols: cols, gridRows: 1,
+            hLineScope: 'none', remainColStart: 0,
+            gridLabels: [{ startCol:0, endCol:cols, text:'全部 = 1', color:'left' }]
           },
           {
-            title: '📊 Level 2：畫圖切分（' + f1.d + ' × ' + f2.d + ' = ' + parts + ' 格）',
-            text: '先把整體分 ' + f1.d + ' 份，取 ' + fracStr(f1) + ' → ' + area1 + ' 格綠\n' +
-                  '再把綠色的 ' + area1 + ' 格分 ' + f2.d + ' 份，取 ' + fracStr(f2) + ' → ' + area2 + ' 格藍\n\n' +
-                  '🟦 答案 = 藍色 ' + area2 + '/' + parts + (gA>1?' = '+area2/gA+'/'+parts/gA:''),
-            cells: cells_s2.slice(),
-            brackets: [
-              { start:0, count:area2, label:fracStr(f1)+'×'+fracStr(f2)+'='+area2+'/'+parts, color:'blue' },
-              { start:area2, count:area1-area2, label:'其餘 '+fracStr(f1)+'', color:'green' }
+            title: '📊 Level 2：畫圖（直切 ' + cols + ' × 橫切 ' + rows + '）',
+            text: '① 畫長方形代表全部 = 1\n' +
+                  '② 用直線切成 ' + cols + ' 份\n' +
+                  '③ 🟩 取 ' + fracStr(f1) + ' = ' + f1.n + ' 份（綠色欄）\n\n' +
+                  '⬇️ 再用橫線把「全部」切成 ' + rows + ' 列\n' +
+                  '④ 🟧 在綠色欄裡取 ' + fracStr(f2) + ' = ' + f2.n + ' 列\n' +
+                  '→ 橘色區域 = ' + fracStr(f1) + ' × ' + fracStr(f2) + ' = ' + area2 + ' 小格',
+            grid: mkFofGrid(true, true),
+            gridCols: cols, gridRows: rows,
+            hLineScope: 'all', remainColStart: 0,
+            gridLabels: [
+              { startCol:0, endCol:f1.n, text:fracStr(f1)+' ('+f1.n+'欄)', color:'green' },
+              { startCol:f1.n, endCol:cols, text:'其餘', color:'left' }
             ]
           },
           {
-            title: '✏️ Level 3：算式',
+            title: '🔢 Level 3：讀圖得分數',
+            text: '全部 = ' + cols + ' × ' + rows + ' = ' + totalCells + ' 小格\n' +
+                  '每格 = 1/' + totalCells + '\n\n' +
+                  '🟩 ' + fracStr(f1) + ' 的區域 = ' + area1 + ' 格（' + f1.n + '欄 × ' + rows + '列）\n' +
+                  '🟧 其中 ' + fracStr(f2) + ' = ' + area2 + ' 格（' + f1.n + '欄 × ' + f2.n + '列）\n\n' +
+                  '🟧 答案 = ' + area2 + '/' + totalCells + (gA>1?' = '+area2/gA+'/'+totalCells/gA:''),
+            grid: mkFofGrid(true, true),
+            gridCols: cols, gridRows: rows,
+            hLineScope: 'all', remainColStart: 0,
+            cellLabels: { eaten2:'1/'+totalCells, green:'1/'+totalCells },
+            gridLabels: [
+              { startCol:0, endCol:f1.n, text:area2+'格='+(gA>1?area2/gA+'/'+totalCells/gA:area2+'/'+totalCells), color:'eaten2' }
+            ]
+          },
+          {
+            title: '✏️ Level 4：算式收斂',
             text: fracStr(f1) + ' × ' + fracStr(f2) + '\n' +
                   '= (' + f1.n + '×' + f2.n + ') / (' + f1.d + '×' + f2.d + ')\n' +
                   '= ' + (f1.n*f2.n) + '/' + (f1.d*f2.d) +
-                  (gA>1 ? ' = ' + area2/gA + '/' + parts/gA + '（約分÷' + gA + '）' : ''),
-            cells: cells_s2.slice(),
-            brackets: [
-              { start:0, count:area2, label:'答案 '+(gA>1?area2/gA+'/'+parts/gA:area2+'/'+parts), color:'blue' }
-            ]
-          },
-          {
-            title: '🎯 Level 4：合理性檢查',
-            text: '✅ ' + (gA>1?area2/gA+'/'+parts/gA:area2+'/'+parts) + ' < ' + fracStr(f1) + '（取其中一部分一定更小）→ 合理\n' +
-                  '✅ ' + (gA>1?area2/gA+'/'+parts/gA:area2+'/'+parts) + ' < ' + fracStr(f2) + '（同理）→ 合理\n\n' +
+                  (gA>1 ? ' = ' + area2/gA + '/' + totalCells/gA + '（約分÷' + gA + '）' : '') + '\n\n' +
+                  '✅ ' + (gA>1?area2/gA+'/'+totalCells/gA:area2+'/'+totalCells) + ' < ' + fracStr(f1) + ' → 合理\n' +
+                  '✅ ' + (gA>1?area2/gA+'/'+totalCells/gA:area2+'/'+totalCells) + ' < ' + fracStr(f2) + ' → 合理\n\n' +
                   '🏁 把答案填上去吧！',
-            cells: cells_s2.slice(),
-            brackets: [
-              { start:0, count:area2, label:'答案', color:'blue' }
+            grid: mkFofGrid(true, true),
+            gridCols: cols, gridRows: rows,
+            hLineScope: 'all', remainColStart: 0,
+            gridLabels: [
+              { startCol:0, endCol:f1.n, text:'答案 '+(gA>1?area2/gA+'/'+totalCells/gA:area2+'/'+totalCells), color:'eaten2' }
             ]
           }
         ]
@@ -1242,14 +1348,127 @@
       return s;
     }
 
-    /** Render a single level of the bar model as a DOM element */
+    /* ========== 2D Grid SVG Renderer (area model / 先直切再橫切) ========== */
+    function renderGridSVG(nCols, nRows, grid, opts){
+      opts = opts || {};
+      var W = 400, padX = 10, padY = 8;
+      var cellW = W / nCols;
+      var cellH = Math.max(28, Math.min(46, 180 / nRows));
+      var H = cellH * nRows;
+      var lblH = (opts.gridLabels && opts.gridLabels.length) ? 28 : 4;
+      var svgH = padY + H + lblH + 4;
+      var colors = {
+        eaten1:'#f85149', eaten2:'#d29922', left:'#58a6ff',
+        green:'#2ea043', empty:'rgba(255,255,255,0.06)',
+        white:'rgba(255,255,255,0.7)'
+      };
+
+      var s = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '
+            + (W+padX*2) + ' ' + svgH
+            + '" data-testid="visual-svg" style="width:100%;max-width:520px;display:block;margin:6px 0">';
+
+      // --- draw cells ---
+      for (var r = 0; r < nRows; r++){
+        for (var c = 0; c < nCols; c++){
+          var st = (grid && grid[r*nCols+c]) || 'empty';
+          var x = padX + c*cellW;
+          var y = padY + r*cellH;
+          s += '<rect x="'+x+'" y="'+y+'" width="'+cellW+'" height="'+cellH
+             + '" fill="'+(colors[st]||colors.empty)
+             + '" stroke="rgba(255,255,255,0.12)" stroke-width="0.5"/>';
+          // optional cell label
+          if (opts.cellLabels && opts.cellLabels[st] && cellW > 26 && cellH > 18){
+            var cl = opts.cellLabels[st];
+            s += '<text x="'+(x+cellW/2)+'" y="'+(y+cellH/2+4)+'" text-anchor="middle"'
+               + ' fill="rgba(255,255,255,0.85)" font-size="'+(Math.min(11,cellW/4.5))+'"'
+               + ' font-family="system-ui,sans-serif">'+escapeHtml(cl)+'</text>';
+          }
+        }
+      }
+
+      // --- vertical lines (always full height) ---
+      for (var vc = 0; vc <= nCols; vc++){
+        var vx = padX + vc*cellW;
+        var vw = (vc===0||vc===nCols) ? '1.5' : '1';
+        s += '<line x1="'+vx+'" y1="'+padY+'" x2="'+vx+'" y2="'+(padY+H)+'" stroke="rgba(255,255,255,0.35)" stroke-width="'+vw+'"/>';
+      }
+
+      // --- horizontal lines ---
+      var hScope = opts.hLineScope || 'all';
+      var rcs = opts.remainColStart || 0;
+      for (var hr = 0; hr <= nRows; hr++){
+        var hy = padY + hr*cellH;
+        if (hr===0 || hr===nRows){
+          s += '<line x1="'+padX+'" y1="'+hy+'" x2="'+(padX+W)+'" y2="'+hy+'" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>';
+        } else if (hScope === 'all'){
+          s += '<line x1="'+padX+'" y1="'+hy+'" x2="'+(padX+W)+'" y2="'+hy+'" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>';
+        } else if (hScope === 'remaining'){
+          // dashed line only on remaining columns area
+          var hx1 = padX + rcs*cellW;
+          s += '<line x1="'+hx1+'" y1="'+hy+'" x2="'+(padX+W)+'" y2="'+hy+'" stroke="rgba(255,255,255,0.45)" stroke-width="1" stroke-dasharray="4,2"/>';
+        }
+      }
+
+      // --- outer border ---
+      s += '<rect x="'+padX+'" y="'+padY+'" width="'+W+'" height="'+H+'" rx="3" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>';
+
+      // --- divider between eaten & remaining columns (thick line) ---
+      if (rcs > 0 && rcs < nCols){
+        var dx = padX + rcs * cellW;
+        s += '<line x1="'+dx+'" y1="'+(padY-2)+'" x2="'+dx+'" y2="'+(padY+H+2)+'" stroke="rgba(255,255,255,0.7)" stroke-width="2"/>';
+      }
+
+      // --- bracket labels below ---
+      if (opts.gridLabels){
+        var bY = padY + H + 4;
+        for (var li = 0; li < opts.gridLabels.length; li++){
+          var lb = opts.gridLabels[li];
+          var lx1 = padX + lb.startCol*cellW;
+          var lx2 = padX + lb.endCol*cellW;
+          var mx = (lx1+lx2)/2;
+          var bc = colors[lb.color] || colors.white;
+          s += '<line x1="'+(lx1+1)+'" y1="'+bY+'" x2="'+(lx1+1)+'" y2="'+(bY+8)+'" stroke="'+bc+'" stroke-width="1" opacity="0.7"/>';
+          s += '<line x1="'+(lx2-1)+'" y1="'+bY+'" x2="'+(lx2-1)+'" y2="'+(bY+8)+'" stroke="'+bc+'" stroke-width="1" opacity="0.7"/>';
+          s += '<line x1="'+(lx1+1)+'" y1="'+(bY+8)+'" x2="'+(lx2-1)+'" y2="'+(bY+8)+'" stroke="'+bc+'" stroke-width="1" opacity="0.7"/>';
+          s += '<text x="'+mx+'" y="'+(bY+20)+'" text-anchor="middle" fill="'+bc+'" font-size="10" font-family="system-ui,sans-serif">'
+             + escapeHtml(lb.text) + '</text>';
+        }
+      }
+
+      // --- row label on right side (optional, shows row count for remaining area) ---
+      if (nRows > 1 && rcs > 0 && rcs < nCols && hScope !== 'none'){
+        var rLblX = padX + W + 6;
+        for (var ri = 0; ri < nRows; ri++){
+          var ry = padY + ri*cellH + cellH/2 + 3;
+          s += '<text x="'+rLblX+'" y="'+ry+'" fill="rgba(255,255,255,0.5)" font-size="9" font-family="system-ui,sans-serif">'+(ri+1)+'</text>';
+        }
+      }
+
+      s += '</svg>';
+      return s;
+    }
+
+    /** Render a single level of the bar/grid model as a DOM element */
     function renderBarHintLevel(model, levelIdx){
       var level = model.levels[levelIdx];
       if (!level) return null;
       var div = document.createElement('div');
       div.className = 'hint-visual';
+      div.setAttribute('data-testid', 'visual-step');
       var h = '<div class="hv-title">' + escapeHtml(level.title) + '</div>';
-      h += renderBarSVG(model.parts, level.cells, level.brackets || []);
+
+      if (level.grid) {
+        // 2D grid rendering (area model)
+        h += renderGridSVG(
+          level.gridCols || model.cols,
+          level.gridRows || model.rows,
+          level.grid, level
+        );
+      } else {
+        // 1D bar rendering (classic)
+        h += renderBarSVG(model.parts, level.cells, level.brackets || []);
+      }
+
       h += '<div class="hv-text">' + escapeHtml(level.text) + '</div>';
       div.innerHTML = h;
       return div;
@@ -1626,6 +1845,22 @@
         commitAttempt(true, 'correct', els.answer.value);
       } else {
         setBannerBad('再試一次：先圈出「已知 / 未知 / 單位」，判斷題型（乘法/除法/1-分數/兩段）→ 列式 → 計算，最後記得檢查通分/約分是否合理。需要可看完整解題。');
+        // 答錯時自動顯示 Level 1 圖解提示（觀念鎖定）
+        if (state._barModel === null){
+          const mdl = buildFractionBarModel(q);
+          state._barModel = mdl || false;
+        }
+        if (state._barModel && state.hintStepIndex === 0){
+          markHint(1);
+          const el = renderBarHintLevel(state._barModel, 0);
+          if (el){
+            el.style.borderColor = 'rgba(248,81,73,0.5)';
+            el.querySelector('.hv-title').textContent += ' 💡 答錯了，先看看觀念提示';
+            els.hints.appendChild(el);
+          }
+          state.hintStepIndex = 1;
+          state.hintUsed = Math.max(state.hintUsed, 1);
+        }
       }
     });
 
