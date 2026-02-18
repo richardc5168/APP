@@ -219,6 +219,7 @@
       q: null,
       revealed: false,
       hintUsed: 0,
+      hintStepIndex: 0,
       lastPick: null,
       startedAt: null,
       attemptsCount: 0,
@@ -238,6 +239,7 @@
     function startAttempt(){
       state.startedAt = Date.now();
       state.attemptsCount = 0;
+      state.hintStepIndex = 0;
       state.hintShownLevels = new Set();
       state.hintShownCount = 0;
       state.hintStartAt = null;
@@ -439,12 +441,20 @@
     els.btnHint.addEventListener('click', () => {
       const q = state.q;
       if (!q){ setBannerBad('請先按「出新題」出一題。'); return; }
-      const level = Number(els.hintLevel.value || 1);
-      const text = getHintText(q, level);
+      const steps = Array.isArray(q.steps) ? q.steps : [];
+      if (!steps.length){ setBannerMuted('（此題無提示步驟）'); return; }
+      if (state.hintStepIndex >= steps.length){
+        setBannerMuted('已顯示全部提示步驟，可按「看完整解題」看答案。');
+        return;
+      }
+      const text = steps[state.hintStepIndex];
+      const stepNum = state.hintStepIndex + 1;
+      const level = Math.min(3, Math.ceil(stepNum * 3 / steps.length));
       markHint(level);
-      els.hints.appendChild(renderHint(`Level ${level}：${text}`));
+      els.hints.appendChild(renderHint(`步驟 ${stepNum}：${text}`));
+      state.hintStepIndex++;
       state.hintUsed = Math.max(state.hintUsed, level);
-      setBannerMuted('已顯示提示（不含最終答案）。');
+      setBannerMuted(`已顯示步驟 ${stepNum}/${steps.length}（不含最終答案）。`);
     });
 
     els.btnNext.addEventListener('click', () => {

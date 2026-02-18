@@ -191,6 +191,7 @@
     const bank = Array.isArray(window.RATIO_PERCENT_G5_BANK) ? window.RATIO_PERCENT_G5_BANK : [];
     const state = {
       q: null,
+      hintStepIndex: 0,
       lastPick: null,
       startedAt: null,
       attemptsCount: 0,
@@ -210,6 +211,7 @@
     function startAttempt(){
       state.startedAt = Date.now();
       state.attemptsCount = 0;
+      state.hintStepIndex = 0;
       state.hintShownLevels = new Set();
       state.hintShownCount = 0;
       state.hintStartAt = null;
@@ -364,12 +366,20 @@
         setBanner('bad','請先按「出新題」出一題。');
         return;
       }
-      const level = Number(els.hintLevel.value);
-      const idx = Math.max(0, Math.min(2, level-1));
-      const text = (state.q.hints && state.q.hints[idx]) ? state.q.hints[idx] : '（本題沒有提示）';
+      const allSteps = Array.isArray(state.q.steps) && state.q.steps.length ? state.q.steps
+                     : Array.isArray(state.q.hints) ? state.q.hints : [];
+      if (!allSteps.length){ setBanner('muted','（本題沒有提示）'); return; }
+      if (state.hintStepIndex >= allSteps.length){
+        setBanner('muted','已顯示全部提示步驟，可按「看完整解題」看答案。');
+        return;
+      }
+      const text = allSteps[state.hintStepIndex];
+      const stepNum = state.hintStepIndex + 1;
+      const level = Math.min(3, Math.ceil(stepNum * 3 / allSteps.length));
       markHint(level);
-      els.hints.innerHTML = '';
-      els.hints.appendChild(renderHint(text));
+      els.hints.appendChild(renderHint(`步驟 ${stepNum}：${text}`));
+      state.hintStepIndex++;
+      setBanner('muted',`已顯示步驟 ${stepNum}/${allSteps.length}（不含最終答案）。`);
     }
 
     function showSteps(){

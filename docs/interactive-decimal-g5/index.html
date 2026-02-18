@@ -332,7 +332,7 @@
 
     // ---------- bank/state ----------
     const bank = Array.isArray(window.INTERACTIVE_DECIMAL_G5_BANK) ? window.INTERACTIVE_DECIMAL_G5_BANK : [];
-    const state = { q: null, revealed: false, hintUsed: 0 };
+    const state = { q: null, revealed: false, hintUsed: 0, hintStepIndex: 0 };
 
     const ls = {
       get(k, d){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } },
@@ -437,6 +437,7 @@
       state.q = q;
       state.revealed = false;
       state.hintUsed = 0;
+      state.hintStepIndex = 0;
       els.answer.value = '';
       els.studentState.value = '';
       els.hints.innerHTML = '';
@@ -525,11 +526,20 @@
     els.btnHint?.addEventListener('click', () => {
       const q = state.q;
       if (!q) return;
-      const level = Number(els.hintLevel.value || '1');
-      const text = currentHint(level);
-      if (!text) return;
-      els.hints.appendChild(renderHint(text));
+      const allSteps = Array.isArray(q.steps) && q.steps.length ? q.steps
+                     : Array.isArray(q.hints) ? q.hints : [];
+      if (!allSteps.length){ showBanner('muted','（此題無提示步驟）'); return; }
+      if (state.hintStepIndex >= allSteps.length){
+        showBanner('muted','已顯示全部提示步驟，可按「看完整解題」看答案。');
+        return;
+      }
+      const text = allSteps[state.hintStepIndex];
+      const stepNum = state.hintStepIndex + 1;
+      const level = Math.min(3, Math.ceil(stepNum * 3 / allSteps.length));
+      els.hints.appendChild(renderHint(`步驟 ${stepNum}：${text}`));
+      state.hintStepIndex++;
       state.hintUsed = Math.max(state.hintUsed, level);
+      showBanner('muted',`已顯示步驟 ${stepNum}/${allSteps.length}（不含最終答案）。`);
     });
 
     els.btnShowSteps?.addEventListener('click', () => {
