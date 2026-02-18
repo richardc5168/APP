@@ -50,3 +50,32 @@ async def test_hints_next_returns_ratio_reverse_ladder_schema(tmp_path):
 
         for key in ("title", "prompt", "expected_answer", "explanation", "formula"):
             assert key in current
+
+
+@pytest.mark.anyio
+async def test_hints_next_non_ratio_reverse_has_no_structured_ladder(tmp_path):
+    transport = _make_client(tmp_path)
+    async with httpx.AsyncClient(transport=transport, base_url="http://test") as client:
+        r = await client.post("/admin/bootstrap", params={"name": "Pytest"})
+        assert r.status_code == 200
+        api_key = r.json()["api_key"]
+        headers = {"X-API-Key": api_key}
+
+        payload = {
+            "question_data": {
+                "topic": "分數應用題(五年級)",
+                "question": "小明有 3/4 公斤糖果，送給同學 1/4 公斤，還剩多少公斤？",
+            },
+            "student_state": "先做減法",
+            "level": 2,
+        }
+
+        r = await client.post("/v1/hints/next", headers=headers, json=payload)
+        assert r.status_code == 200
+        data = r.json()
+
+        assert isinstance(data.get("hint"), str) and data["hint"]
+        assert isinstance(data.get("level"), int)
+        assert isinstance(data.get("mode"), str)
+        assert "hint_ladder" not in data
+        assert "current_step" not in data
