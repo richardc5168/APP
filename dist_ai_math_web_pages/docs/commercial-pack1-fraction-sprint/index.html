@@ -597,8 +597,11 @@
   function isCurrentThenOutPattern() { return false; }
 
   /* ========== SVG Bar Renderer (ported from fraction-word-g5) ========== */
-  function renderBarSVG(parts, cells, brackets){
-    var W = 400, H = 32, padX = 10, padY = 8;
+  function renderBarSVG(parts, cells, brackets, opts){
+    opts = opts || {};
+    var W = 400, padX = 10, padY = 8;
+    var cellLabels = opts.cellLabels || null;
+    var H = (cellLabels && parts <= 12) ? 48 : 32;
     var cellW = W / parts;
     var bH = (brackets && brackets.length > 0) ? 30 : 4;
     var svgH = padY + H + bH;
@@ -616,6 +619,12 @@
       s += '<rect x="'+x+'" y="'+padY+'" width="'+cellW+'" height="'+H
          + '" fill="'+(colors[c]||colors.empty)
          + '" stroke="rgba(255,255,255,0.18)" stroke-width="0.7"/>';
+      if (cellLabels && cellLabels[i] !== undefined && cellLabels[i] !== '' && cellW > 22){
+        var fs = Math.min(16, Math.max(11, cellW / 4));
+        s += '<text x="'+(x+cellW/2)+'" y="'+(padY+H/2+6)+'" text-anchor="middle"'
+           + ' fill="rgba(255,255,255,0.92)" font-size="'+fs+'" font-weight="bold"'
+           + ' font-family="system-ui,sans-serif">'+escapeHtml(String(cellLabels[i]))+'</text>';
+      }
     }
     s += '<rect x="'+padX+'" y="'+padY+'" width="'+W+'" height="'+H
        + '" rx="3" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>';
@@ -635,6 +644,47 @@
            + escapeHtml(b.label) + '</text>';
       }
     }
+    s += '</svg>';
+    return s;
+  }
+
+  /* ========== Dual-Bar SVG for Compare kind ========== */
+  function renderCompareBarsSVG(cb){
+    var W = 380, padX = 10, padY = 6;
+    var barH = 42, gap = 12, diffH = 22;
+    var svgW = W + padX * 2 + 70;
+    var svgH = padY + barH + gap + barH + diffH + 6;
+    var colors = {
+      orange:'#d29922', blue:'#58a6ff', red:'#f85149',
+      green:'#2ea043', empty:'rgba(255,255,255,0.06)'
+    };
+    var b1 = cb.bar1, b2 = cb.bar2;
+    var cellW1 = W / b1.parts, cellW2 = W / b2.parts;
+    var s = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+svgW+' '+svgH
+          + '" style="width:100%;max-width:540px;display:block;margin:6px 0">';
+    var y1 = padY;
+    for (var i = 0; i < b1.parts; i++){
+      var x = padX + i * cellW1;
+      var fill = (i < b1.filled) ? (colors[b1.color]||colors.orange) : colors.empty;
+      s += '<rect x="'+x+'" y="'+y1+'" width="'+cellW1+'" height="'+barH+'" fill="'+fill+'" stroke="rgba(255,255,255,0.18)" stroke-width="0.7"/>';
+      if (cellW1 > 22) s += '<text x="'+(x+cellW1/2)+'" y="'+(y1+barH/2+5)+'" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="'+(Math.min(15,Math.max(11,cellW1/3.5)))+'" font-weight="bold" font-family="system-ui,sans-serif">'+roundNice(b1.perCell)+'</text>';
+    }
+    s += '<rect x="'+padX+'" y="'+y1+'" width="'+W+'" height="'+barH+'" rx="3" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>';
+    s += '<text x="'+(padX+W+6)+'" y="'+(y1+barH/2-1)+'" fill="'+(colors[b1.color]||colors.orange)+'" font-size="11" font-weight="bold" font-family="system-ui,sans-serif">'+escapeHtml(b1.label)+'</text>';
+    s += '<text x="'+(padX+W+6)+'" y="'+(y1+barH/2+13)+'" fill="'+(colors[b1.color]||colors.orange)+'" font-size="10" font-family="system-ui,sans-serif">= '+roundNice(cb.amt1)+'</text>';
+    var y2 = padY + barH + gap;
+    for (var j = 0; j < b2.parts; j++){
+      var xj = padX + j * cellW2;
+      var fillj = (j < b2.filled) ? (colors[b2.color]||colors.blue) : colors.empty;
+      s += '<rect x="'+xj+'" y="'+y2+'" width="'+cellW2+'" height="'+barH+'" fill="'+fillj+'" stroke="rgba(255,255,255,0.18)" stroke-width="0.7"/>';
+      if (cellW2 > 22) s += '<text x="'+(xj+cellW2/2)+'" y="'+(y2+barH/2+5)+'" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="'+(Math.min(15,Math.max(11,cellW2/3.5)))+'" font-weight="bold" font-family="system-ui,sans-serif">'+roundNice(b2.perCell)+'</text>';
+    }
+    s += '<rect x="'+padX+'" y="'+y2+'" width="'+W+'" height="'+barH+'" rx="3" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>';
+    s += '<text x="'+(padX+W+6)+'" y="'+(y2+barH/2-1)+'" fill="'+(colors[b2.color]||colors.blue)+'" font-size="11" font-weight="bold" font-family="system-ui,sans-serif">'+escapeHtml(b2.label)+'</text>';
+    s += '<text x="'+(padX+W+6)+'" y="'+(y2+barH/2+13)+'" fill="'+(colors[b2.color]||colors.blue)+'" font-size="10" font-family="system-ui,sans-serif">= '+roundNice(cb.amt2)+'</text>';
+    var diffY = y2 + barH + 4;
+    s += '<text x="'+(padX+W/2)+'" y="'+(diffY+14)+'" text-anchor="middle" fill="'+colors.red+'" font-size="12" font-weight="bold" font-family="system-ui,sans-serif">'
+       + '差 = '+roundNice(Math.max(cb.amt1,cb.amt2))+' − '+roundNice(Math.min(cb.amt1,cb.amt2))+' = '+roundNice(cb.diffAmt)+' '+escapeHtml(cb.tu||'')+'</text>';
     s += '</svg>';
     return s;
   }
@@ -743,6 +793,9 @@
     var remN = d - n, remD = d, g0 = gcd(remN, remD);
     var usedAmt = total * n / d;
     var remAmt = total * remN / remD;
+    var perCell = roundNice(total / d);
+    var unknownCL = new Array(d).fill('?');
+    var valueCL = new Array(d).fill(String(perCell));
     var empty_cells = new Array(d).fill('empty');
     var full_cells = [];
     for (var i = 0; i < n; i++) full_cells.push('red');
@@ -758,13 +811,15 @@
                 '🧠 口訣：用掉幾分之幾 → 剩下 = 1 − ' + cpFracStr(f1) + ' = ' + remN + '/' + remD + '\n' +
                 '📌 看到「的」→ 用乘法！',
           cells: empty_cells,
+          cellLabels: unknownCL,
           brackets: [{ start:0, count:d, label:'全部 '+total+' '+tu, color:'white' }] },
         { title: '📊 Level 2：畫圖切分（' + d + ' 等份）',
           text: '想像把 ' + total + ' ' + tu + ' 排成一排，平均分成 ' + d + ' 份：\n' +
-                '每份 = ' + total + ' ÷ ' + d + ' = ' + roundNice(total/d) + ' ' + tu + '\n\n' +
+                '每份 = ' + total + ' ÷ ' + d + ' = ' + perCell + ' ' + tu + '\n\n' +
                 '🟥 紅色 = 用掉的 ' + cpFracStr(f1) + ' = ' + n + ' 份 = ' + roundNice(usedAmt) + ' ' + tu + '\n' +
                 '🟦 藍色 = 剩下的 ' + remN + '/' + remD + (g0>1?' = '+remN/g0+'/'+remD/g0:'') + ' = ' + remN + ' 份 = ' + roundNice(remAmt) + ' ' + tu,
           cells: full_cells.slice(),
+          cellLabels: valueCL,
           brackets: [
             { start:0, count:n, label:'用掉 '+roundNice(usedAmt), color:'red' },
             { start:n, count:remN, label:'剩 '+roundNice(remAmt), color:'blue' }
@@ -774,6 +829,7 @@
                 '① 用掉 = ' + total + ' × ' + cpFracStr(f1) + ' = ' + roundNice(usedAmt) + '\n' +
                 '② 剩下 = ' + total + ' − ' + roundNice(usedAmt) + ' = ' + roundNice(remAmt),
           cells: full_cells.slice(),
+          cellLabels: valueCL,
           brackets: [
             { start:0, count:n, label:'用掉 '+roundNice(usedAmt), color:'red' },
             { start:n, count:remN, label:'剩 '+roundNice(remAmt), color:'blue' }
@@ -784,6 +840,7 @@
                 '✅ 剩下 > 0 → 合理\n\n' +
                 '🏁 答案是 ' + (ansStr||roundNice(remAmt)) + ' ' + tu + '，寫上去吧！',
           cells: full_cells.slice(),
+          cellLabels: valueCL,
           brackets: [
             { start:n, count:remN, label:'答案 '+(ansStr||roundNice(remAmt)), color:'blue' }
           ] }
@@ -798,6 +855,9 @@
     var total = parseInt(ansStr, 10);
     if (!Number.isFinite(total) || total <= 0) return null;
     var knownAmt = total * n / d;
+    var perCell = roundNice(total / d);
+    var l1CL = []; for (var t = 0; t < d; t++) l1CL.push(t < n ? String(perCell) : '?');
+    var fullCL = new Array(d).fill(String(perCell));
     var cells_known = new Array(d).fill('empty');
     for (var i = 0; i < n; i++) cells_known[i] = 'orange';
     var cells_full = new Array(d).fill('empty');
@@ -814,6 +874,7 @@
                 '🧠 口訣：知道部分，求全部 → 除以分數！\n' +
                 '📌 「÷ 分數」= 把分數顛倒過來再乘（× 倒數）',
           cells: cells_known.slice(),
+          cellLabels: l1CL,
           brackets: [
             { start:0, count:n, label:'已知 '+roundNice(knownAmt)+' '+tu, color:'orange' },
             { start:n, count:d-n, label:'？', color:'white' }
@@ -825,6 +886,7 @@
                 '→ 每格 = ' + roundNice(knownAmt) + ' ÷ ' + n + ' = ' + roundNice(knownAmt/n) + '\n' +
                 '→ 全部 ' + d + ' 格 = ' + roundNice(knownAmt/n) + ' × ' + d + ' = ' + total + ' ' + tu,
           cells: cells_full.slice(),
+          cellLabels: fullCL,
           brackets: [
             { start:0, count:n, label:cpFracStr(f1)+' = '+roundNice(knownAmt), color:'orange' },
             { start:0, count:d, label:'原量 = '+total, color:'green' }
@@ -835,6 +897,7 @@
                 '     = ' + roundNice(knownAmt) + ' × ' + d + '/' + n + '\n' +
                 '     = ' + total,
           cells: cells_full.slice(),
+          cellLabels: fullCL,
           brackets: [
             { start:0, count:d, label:'原量 = '+total, color:'green' }
           ] },
@@ -843,6 +906,7 @@
                 '✅ 原量 ' + total + ' > 部分 ' + roundNice(knownAmt) + ' → 合理\n\n' +
                 '🏁 答案是 ' + total + ' ' + tu + '，寫上去吧！',
           cells: cells_full.slice(),
+          cellLabels: fullCL,
           brackets: [
             { start:0, count:d, label:'答案 '+total, color:'green' }
           ] }
@@ -855,6 +919,9 @@
     if (!f1 || !total) return null;
     var d = f1.d, n = f1.n;
     var partAmt = total * n / d;
+    var perCell = roundNice(total / d);
+    var unknownCL = new Array(d).fill('?');
+    var valueCL = new Array(d).fill(String(perCell));
     var cells = new Array(d).fill('empty');
     for (var i = 0; i < n; i++) cells[i] = 'green';
     var who = (ctx && ctx.name) ? ctx.name : '';
@@ -868,12 +935,14 @@
                 '🧠 口訣：「全部 的 幾分之幾」→ 用乘法！\n' +
                 '📌 ' + total + ' × ' + cpFracStr(f1) + ' = ？',
           cells: new Array(d).fill('empty'),
+          cellLabels: unknownCL,
           brackets: [{ start:0, count:d, label:'全部 '+total+' '+tu, color:'white' }] },
         { title: '📊 Level 2：畫圖切分（' + d + ' 等份）',
           text: '想像把 ' + total + ' ' + tu + ' 平均分成 ' + d + ' 份：\n' +
-                '每份 = ' + total + ' ÷ ' + d + ' = ' + roundNice(total/d) + ' ' + tu + '\n\n' +
+                '每份 = ' + total + ' ÷ ' + d + ' = ' + perCell + ' ' + tu + '\n\n' +
                 '🟩 綠色 = 我們要的部分 ' + cpFracStr(f1) + ' = ' + n + ' 份 = ' + roundNice(partAmt) + ' ' + tu,
           cells: cells.slice(),
+          cellLabels: valueCL,
           brackets: [{ start:0, count:n, label:roundNice(partAmt)+' '+tu, color:'green' }] },
         { title: '✏️ Level 3：列式計算',
           text: (function(){
@@ -883,73 +952,67 @@
             return intro + total + ' × ' + cpFracStr(f1) + '\n= ' + (total*n) + ' ÷ ' + d + '\n= ' + roundNice(partAmt);
           })(),
           cells: cells.slice(),
+          cellLabels: valueCL,
           brackets: [{ start:0, count:n, label:'答案 '+roundNice(partAmt), color:'green' }] },
         { title: '🎯 Level 4：驗算＆檢查',
           text: '🔄 驗算：' + roundNice(partAmt) + ' ÷ ' + total + ' = ' + cpFracStr(f1) + '？ ✓ 正確！\n' +
                 '✅ 結果 ' + roundNice(partAmt) + ' < 全部 ' + total + ' → 合理\n\n' +
                 '🏁 答案是 ' + roundNice(partAmt) + ' ' + tu + '，寫上去吧！',
           cells: cells.slice(),
+          cellLabels: valueCL,
           brackets: [{ start:0, count:n, label:'答案 '+roundNice(partAmt), color:'green' }] }
       ]
     };
   }
 
-  /* compare kind: 比較兩個分數的差 */
+  /* compare kind: 比較兩個分數的差（雙棒圖） */
   function buildBarModel_COMPARE(f1, f2, total, ansStr, ctx){
     if (!f1 || !f2 || !total) return null;
-    var cd = lcmOf(f1.d, f2.d);
-    var a1 = Math.round(f1.n * cd / f1.d);
-    var a2 = Math.round(f2.n * cd / f2.d);
-    var diffN = Math.abs(a1 - a2);
-    var amt1 = total * f1.n / f1.d;
-    var amt2 = total * f2.n / f2.d;
+    var d1 = f1.d, n1 = f1.n;
+    var d2 = f2.d, n2 = f2.n;
+    var amt1 = total * n1 / d1;
+    var amt2 = total * n2 / d2;
     var diffAmt = Math.abs(amt1 - amt2);
-    var small = Math.min(a1, a2), big = Math.max(a1, a2);
-    var cells_merge = new Array(cd).fill('empty');
-    for (var k = 0; k < small; k++) cells_merge[k] = 'green';
-    for (var m = small; m < big; m++) cells_merge[m] = 'red';
+    var perCell1 = roundNice(total / d1);
+    var perCell2 = roundNice(total / d2);
     var who = (ctx && ctx.name) ? ctx.name : '';
     var tu = cpThingUnit(ctx);
+    var cbData = {
+      bar1: { parts: d1, filled: n1, perCell: perCell1, color: 'orange', label: '同學' },
+      bar2: { parts: d2, filled: n2, perCell: perCell2, color: 'blue', label: '老師' },
+      amt1: amt1, amt2: amt2, diffAmt: diffAmt, tu: tu
+    };
     return {
-      parts: cd,
+      parts: 1,
       levels: [
         { title: '🔍 Level 1：判斷題型',
           text: '📎 題目說：' + (who?who:'他') + '把 ' + total + ' ' + tu + ' 分成兩部分\n' +
                 '→ 分給同學 ' + cpFracStr(f1) + '、分給老師 ' + cpFracStr(f2) + '\n' +
                 '→ 求「相差多少」\n\n' +
                 '🧠 口訣：比大小 → 先算各自多少，再大減小！',
-          cells: new Array(cd).fill('empty'),
-          brackets: [{ start:0, count:cd, label:'全部 '+total+' '+tu, color:'white' }] },
-        { title: '📊 Level 2：畫圖切分（通分 = ' + cd + ' 格）',
-          text: '兩個分數分母不同，先通分（統一格數）再比：\n' +
-                '統一成 ' + cd + ' 等份\n\n' +
-                '🟧 同學 ' + cpFracStr(f1) + ' = ' + a1 + '/' + cd + ' = ' + roundNice(amt1) + ' ' + tu + '\n' +
-                '🟦 老師 ' + cpFracStr(f2) + ' = ' + a2 + '/' + cd + ' = ' + roundNice(amt2) + ' ' + tu + '\n\n' +
-                '🟩 綠色 = 兩邊都有的部分\n' +
-                '🟥 紅色 = 多出來的差距',
-          cells: cells_merge.slice(),
-          brackets: [
-            { start:0, count:small, label:'共同 '+roundNice(Math.min(amt1,amt2)), color:'green' },
-            { start:small, count:diffN, label:'差 '+roundNice(diffAmt), color:'red' }
-          ] },
+          parts: 1,
+          cells: ['empty'],
+          cellLabels: [String(total)],
+          brackets: [{ start:0, count:1, label:'全部 '+total+' '+tu, color:'white' }] },
+        { title: '📊 Level 2：畫圖比較（各自切分）',
+          text: '把 ' + total + ' ' + tu + ' 分別切成兩種等份：\n\n' +
+                '🟧 同學 ' + cpFracStr(f1) + '：切 ' + d1 + ' 份，每份 = ' + perCell1 + '\n' +
+                '    塗 ' + n1 + ' 份 → 同學 = ' + roundNice(amt1) + ' ' + tu + '\n\n' +
+                '🟦 老師 ' + cpFracStr(f2) + '：切 ' + d2 + ' 份，每份 = ' + perCell2 + '\n' +
+                '    塗 ' + n2 + ' 份 → 老師 = ' + roundNice(amt2) + ' ' + tu,
+          compareBars: cbData },
         { title: '✏️ Level 3：列式計算',
           text: '💡 先算各自多少，再相減：\n\n' +
                 '① 同學 = ' + total + ' × ' + cpFracStr(f1) + ' = ' + roundNice(amt1) + '\n' +
                 '② 老師 = ' + total + ' × ' + cpFracStr(f2) + ' = ' + roundNice(amt2) + '\n' +
                 '③ 差 = ' + roundNice(Math.max(amt1,amt2)) + ' − ' + roundNice(Math.min(amt1,amt2)) + ' = ' + roundNice(diffAmt),
-          cells: cells_merge.slice(),
-          brackets: [
-            { start:small, count:diffN, label:'差 = '+roundNice(diffAmt), color:'red' }
-          ] },
+          compareBars: cbData },
         { title: '🎯 Level 4：驗算＆檢查',
           text: '🔄 驗算：' + roundNice(Math.min(amt1,amt2)) + ' + ' + roundNice(diffAmt) + ' = ' + roundNice(Math.max(amt1,amt2)) + '？ ✓ 正確！\n' +
                 '✅ 差 ' + roundNice(diffAmt) + ' < 全部 ' + total + ' → 合理\n' +
                 '✅ 差 ≥ 0 → 合理\n\n' +
                 '🏁 答案是 ' + (ansStr||roundNice(diffAmt)) + ' ' + tu + '，寫上去吧！',
-          cells: cells_merge.slice(),
-          brackets: [
-            { start:small, count:diffN, label:'答案 '+(ansStr||roundNice(diffAmt)), color:'red' }
-          ] }
+          compareBars: cbData }
       ]
     };
   }
@@ -1018,10 +1081,12 @@
     var div = document.createElement('div');
     div.className = 'hint-visual';
     var h = '<div class="hv-title">' + escapeHtml(level.title) + '</div>';
-    if (level.grid){
+    if (level.compareBars){
+      h += renderCompareBarsSVG(level.compareBars);
+    } else if (level.grid){
       h += renderGridSVG(level.gridCols || model.cols, level.gridRows || model.rows, level.grid, level);
     } else {
-      h += renderBarSVG(model.parts, level.cells, level.brackets || []);
+      h += renderBarSVG(level.parts || model.parts, level.cells, level.brackets || [], { cellLabels: level.cellLabels });
     }
     var textToShow = shortMode ? compressHintText(level.text) : level.text;
     h += '<div class="hv-text">' + escapeHtml(textToShow) + '</div>';
@@ -1040,10 +1105,12 @@
       var lv = model.levels[i];
       html += '<div class="hint-visual">';
       html += '<div class="hv-title">' + escapeHtml(lv.title) + '</div>';
-      if (lv.grid){
+      if (lv.compareBars){
+        html += renderCompareBarsSVG(lv.compareBars);
+      } else if (lv.grid){
         html += renderGridSVG(lv.gridCols || model.cols, lv.gridRows || model.rows, lv.grid, lv);
       } else {
-        html += renderBarSVG(model.parts, lv.cells, lv.brackets || []);
+        html += renderBarSVG(lv.parts || model.parts, lv.cells, lv.brackets || [], { cellLabels: lv.cellLabels });
       }
       var text = short ? compressHintText(lv.text) : lv.text;
       html += '<div class="hv-text">' + escapeHtml(text) + '</div>';
