@@ -109,6 +109,7 @@
         <div class="row" style="gap:8px; align-items:center">
           <span id="pill24h" class="tag pill">24h：—</span>
           <button id="btn24hRetryTop" class="ghost" style="padding:6px 10px; font-size:12px">一鍵重練（24h 錯題）</button>
+          <button id="btn24hRetryTop3" class="ghost" style="padding:6px 10px; font-size:12px">一鍵重練（TOP3）</button>
         </div>
       </div>
       <div id="box24hKpi" style="margin-top:10px"></div>
@@ -301,6 +302,7 @@
     const unitFilter = params.get('unit') || '';
     const daysParam = params.get('days');
     let _latest24hTopTarget = null;
+    let _latest24hTopTargets = [];
 
     function pct(x){
       const v = Number(x);
@@ -893,6 +895,7 @@
     function renderLatest24h(uid, attempts24h){
       const pill = $('pill24h');
       const retryBtn = $('btn24hRetryTop');
+      const retryTop3Btn = $('btn24hRetryTop3');
       const kpiBox = $('box24hKpi');
       const wrongBox = $('box24hWrong');
       const remedyBox = $('box24hRemedy');
@@ -905,6 +908,7 @@
       const wrongN = wrong.length;
       const acc = total ? (correct / total) : 0;
       _latest24hTopTarget = null;
+      _latest24hTopTargets = [];
 
       pill.textContent = `24h：${total} 題｜正確 ${correct}｜錯誤 ${wrongN}`;
 
@@ -912,6 +916,10 @@
         if (retryBtn) {
           retryBtn.disabled = true;
           retryBtn.title = '最近 24 小時沒有作答紀錄';
+        }
+        if (retryTop3Btn) {
+          retryTop3Btn.disabled = true;
+          retryTop3Btn.title = '最近 24 小時沒有作答紀錄';
         }
         kpiBox.innerHTML = '<div class="small">（最近 24 小時沒有作答紀錄）</div>';
         wrongBox.innerHTML = '';
@@ -961,6 +969,10 @@
           retryBtn.disabled = true;
           retryBtn.title = '最近 24 小時沒有錯題';
         }
+        if (retryTop3Btn) {
+          retryTop3Btn.disabled = true;
+          retryTop3Btn.title = '最近 24 小時沒有錯題';
+        }
         wrongBox.innerHTML = '<div class="small">🎉 最近 24 小時沒有錯題，建議維持短回合複習（每次 10 題）。</div>';
         remedyBox.innerHTML = '';
         return;
@@ -973,11 +985,28 @@
         kind: topTarget.kind,
         url: `${topUrl}?kind=${encodeURIComponent(String(topTarget.kind || ''))}&from=report24h`
       } : null;
+      _latest24hTopTargets = topWrong
+        .map(r => {
+          const u = unitPageUrl(r.unit_id);
+          if (!u) return null;
+          return {
+            unit_id: r.unit_id,
+            kind: r.kind,
+            url: `${u}?kind=${encodeURIComponent(String(r.kind || ''))}&from=report24h_top3`
+          };
+        })
+        .filter(Boolean);
       if (retryBtn) {
         retryBtn.disabled = !_latest24hTopTarget;
         retryBtn.title = _latest24hTopTarget
           ? `前往 ${unitName(topTarget.unit_id)} / ${kindNameZh(topTarget.kind)} 重練`
           : '此題型目前無對應練習頁';
+      }
+      if (retryTop3Btn) {
+        retryTop3Btn.disabled = !_latest24hTopTargets.length;
+        retryTop3Btn.title = _latest24hTopTargets.length
+          ? `依序開啟 ${_latest24hTopTargets.length} 個弱點題型練習頁`
+          : '目前沒有可跳轉的 TOP3 目標';
       }
 
       wrongBox.innerHTML = `
@@ -2505,6 +2534,17 @@
         return;
       }
       window.open(_latest24hTopTarget.url, '_blank', 'noopener');
+    });
+    $('btn24hRetryTop3')?.addEventListener('click', () => {
+      if (!_latest24hTopTargets || !_latest24hTopTargets.length){
+        alert('目前沒有可跳轉的 TOP3 重練目標。');
+        return;
+      }
+      _latest24hTopTargets.slice(0, 3).forEach((t, i) => {
+        setTimeout(() => {
+          try { window.open(t.url, '_blank', 'noopener'); } catch (_) {}
+        }, i * 120);
+      });
     });
 
     $('btnPlainRefresh').addEventListener('click', () => {
