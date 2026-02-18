@@ -41,7 +41,16 @@ def _is_ambiguous_wording(qtext: str) -> bool:
         r"剩下的又用掉\s*1(?:\s*/\s*1)?(?=[\s，。；！？])",
         r"剩下的又用了\s*1(?:\s*/\s*1)?(?=[\s，。；！？])",
     ]
-    return any(re.search(p, text) for p in patterns)
+    if any(re.search(p, text) for p in patterns):
+        return True
+
+    for m in re.finditer(r"(?:又剩下|還剩(?:下)?|剩下(?:的)?又(?:看了|用掉|用了)?|剩餘)[^。！？\n]{0,16}?(\d+)\s*/\s*(\d+)", text):
+        num = int(m.group(1))
+        den = int(m.group(2))
+        if den > 0 and num > den:
+            return True
+
+    return False
 
 
 def _template_fraction_of_quantity() -> Dict[str, Any]:
