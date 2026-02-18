@@ -205,7 +205,8 @@ def _template_tank_pour_out() -> Dict[str, Any]:
     num = random.randint(1, den - 1)
     capacity = _choose_total_divisible(den, 40, 80)
     current = Fraction(capacity) * Fraction(num, den)
-    pour = Fraction(random.randint(1, 3), random.choice([2, 3, 4]))
+    pour_den = random.choice([2, 3, 4])
+    pour = Fraction(random.randint(1, pour_den - 1), pour_den)
     poured_amt = current * pour
     remain = current - poured_amt
     q = f"水箱容量 {capacity} 公升，現在有 {_fmt_fraction(Fraction(num, den))}。倒出現有水的 {_fmt_fraction(pour)}，還剩多少公升？"

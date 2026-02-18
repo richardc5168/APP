@@ -115,11 +115,32 @@ def smoke_test_api() -> tuple[bool, str]:
         return False, f"Exception: {type(e).__name__}: {e}"
 
 
+def smoke_test_fraction_word_bank_logic() -> tuple[bool, str]:
+    files = [
+        "docs/fraction-word-g5/bank.js",
+        "dist_ai_math_web_pages/docs/fraction-word-g5/bank.js",
+    ]
+    for fp in files:
+        cmd = [sys.executable, "scripts/check_fraction_word_g5_bank_logic.py", "--file", fp]
+        try:
+            p = subprocess.run(cmd, cwd=str(ROOT), capture_output=True, text=True)
+        except Exception as e:
+            return False, f"bank logic scan exception: {type(e).__name__}: {e}"
+
+        out = (p.stdout or "").strip()
+        err = (p.stderr or "").strip()
+        if p.returncode != 0:
+            details = out or err or f"check failed: {fp}"
+            return False, f"bank logic scan failed: {details}"
+    return True, "OK: fraction-word-g5 bank logic scan passed (docs + dist)"
+
+
 def smoke_test_pytest_contracts() -> tuple[bool, str]:
     tests = [
         "tests/test_hints_next_api_ratio_reverse.py",
         "tests/test_fraction_word_g5_ratio_reverse_ui_smoke.py",
         "tests/test_fraction_word_g5_clarity.py",
+        "tests/test_fraction_word_g5_bank_logic_scan.py",
     ]
     with tempfile.NamedTemporaryFile(prefix="verify_all_pytest_", suffix=".xml", delete=False) as f:
         xml_path = Path(f.name)
@@ -171,13 +192,15 @@ def main() -> int:
 
     ok1, msg1 = docs_dist_identical(root)
     ok2, msg2 = smoke_test_api()
-    ok3, msg3 = smoke_test_pytest_contracts()
+    ok3, msg3 = smoke_test_fraction_word_bank_logic()
+    ok4, msg4 = smoke_test_pytest_contracts()
 
-    print(f"1/3 {msg1}")
-    print(f"2/3 {msg2}")
-    print(f"3/3 {msg3}")
+    print(f"1/4 {msg1}")
+    print(f"2/4 {msg2}")
+    print(f"3/4 {msg3}")
+    print(f"4/4 {msg4}")
 
-    if ok1 and ok2 and ok3:
+    if ok1 and ok2 and ok3 and ok4:
         print("OK: verify_all")
         return 0
 
