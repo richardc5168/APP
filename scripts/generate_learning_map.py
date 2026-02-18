@@ -243,6 +243,21 @@ def _module_display(module_id: str, fallback_title: str) -> str:
 def _kind_display(kind: str) -> str:
     if kind in KIND_ALIAS_ZH:
         return KIND_ALIAS_ZH[kind]
+    explicit = {
+        "base_area_h": "底面積 × 高（體積）",
+        "composite": "組合立體（體積）",
+        "composite3": "三段組合立體（體積）",
+        "cube_cm3": "正方體體積（立方公分）",
+        "cube_find_edge": "由體積反推邊長（正方體）",
+        "rect_cm3": "長方體體積（立方公分）",
+        "rect_find_height": "由體積反推高（長方體）",
+        "cm3_to_m3": "立方公分換成立方公尺",
+        "m3_to_cm3": "立方公尺換成立方公分",
+        "mixed_units": "混合單位換算",
+        "decimal_dims": "小數尺寸體積",
+    }
+    if kind in explicit:
+        return explicit[kind]
     token_map = {
         "add": "加",
         "sub": "減",
@@ -262,6 +277,18 @@ def _kind_display(kind: str) -> str:
         "money": "金額",
         "shift": "位移",
         "equation": "方程",
+        "base": "底",
+        "height": "高",
+        "edge": "邊長",
+        "cube": "正方體",
+        "rect": "長方體",
+        "mixed": "混合",
+        "units": "單位",
+        "find": "求",
+        "to": "換算",
+        "dims": "尺寸",
+        "cm3": "立方公分",
+        "m3": "立方公尺",
     }
     parts = [p for p in str(kind).split("_") if p]
     zh_parts = [token_map.get(p, p) for p in parts]
