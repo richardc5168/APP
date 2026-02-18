@@ -100,6 +100,19 @@
       </div>
     </div>
 
+    <div class="card" style="margin-top:12px">
+      <div class="row" style="justify-content:space-between; align-items:flex-start">
+        <div>
+          <div style="font-weight:900; font-size:16px">最新 24 小時做題分析（獨立）</div>
+          <div class="small" style="margin-top:4px">固定看最近 24 小時，不受上方 7/14/30 天切換影響。</div>
+        </div>
+        <span id="pill24h" class="tag pill">24h：—</span>
+      </div>
+      <div id="box24hKpi" style="margin-top:10px"></div>
+      <div id="box24hWrong" style="margin-top:10px"></div>
+      <div id="box24hRemedy" style="margin-top:10px"></div>
+    </div>
+
     <div class="grid">
       <div class="card">
         <div class="small">總題數</div>
@@ -871,6 +884,126 @@
           </div>
         </div>
       `;
+    }
+
+    function renderLatest24h(uid, attempts24h){
+      const pill = $('pill24h');
+      const kpiBox = $('box24hKpi');
+      const wrongBox = $('box24hWrong');
+      const remedyBox = $('box24hRemedy');
+      if (!pill || !kpiBox || !wrongBox || !remedyBox) return;
+
+      const items = Array.isArray(attempts24h) ? attempts24h : [];
+      const total = items.length;
+      const correct = items.filter(e => e?.is_correct === true).length;
+      const wrong = items.filter(e => e?.is_correct === false);
+      const wrongN = wrong.length;
+      const acc = total ? (correct / total) : 0;
+
+      pill.textContent = `24h：${total} 題｜正確 ${correct}｜錯誤 ${wrongN}`;
+
+      if (!total){
+        kpiBox.innerHTML = '<div class="small">（最近 24 小時沒有作答紀錄）</div>';
+        wrongBox.innerHTML = '';
+        remedyBox.innerHTML = '';
+        return;
+      }
+
+      const byKind = new Map();
+      for (const evt of items){
+        const unitId = String(evt?.unit_id || '');
+        const kind = String(evt?.kind || 'unknown');
+        const key = `${unitId}::${kind}`;
+        const g = byKind.get(key) || { unit_id: unitId, kind, total: 0, correct: 0, wrong: 0, errType: new Map() };
+        g.total += 1;
+        if (evt?.is_correct === true) g.correct += 1;
+        if (evt?.is_correct === false){
+          g.wrong += 1;
+          const t = inferErrorType(evt);
+          g.errType.set(t, (g.errType.get(t) || 0) + 1);
+        }
+        byKind.set(key, g);
+      }
+
+      const rows = Array.from(byKind.values()).sort((a,b) => {
+        if (b.wrong !== a.wrong) return b.wrong - a.wrong;
+        return b.total - a.total;
+      });
+
+      const avgMs = total ? (sumDurationMs(items) / total) : 0;
+      const hintDep = total ? (items.filter(e => {
+        const q = window.AIMathReportAggregate?.classifyQuadrant?.(e);
+        return q === 'B' || q === 'C';
+      }).length / total) : 0;
+
+      kpiBox.innerHTML = `
+        <div class="row" style="gap:8px; flex-wrap:wrap">
+          <span class="tag pill ok">24h 題數 ${total}</span>
+          <span class="tag pill ${acc >= 0.8 ? 'ok' : (acc >= 0.6 ? 'warn' : 'bad')}">正確率 ${pct(acc)}</span>
+          <span class="tag pill warn">平均 ${sec(avgMs)}/題</span>
+          <span class="tag pill warn">提示依賴 ${pct(hintDep)}</span>
+        </div>
+      `;
+
+      const topWrong = rows.filter(r => r.wrong > 0).slice(0, 3);
+      if (!topWrong.length){
+        wrongBox.innerHTML = '<div class="small">🎉 最近 24 小時沒有錯題，建議維持短回合複習（每次 10 題）。</div>';
+        remedyBox.innerHTML = '';
+        return;
+      }
+
+      wrongBox.innerHTML = `
+        <div style="font-weight:700">24 小時錯題重點（TOP ${topWrong.length}）</div>
+        <ol style="margin:8px 0 0 18px; padding:0">
+          ${topWrong.map(r => {
+            const typeRows = Array.from(r.errType.entries()).sort((a,b)=>b[1]-a[1]);
+            const topType = typeRows[0] ? typeRows[0][0] : 'other';
+            const accRate = r.total ? (r.correct / r.total) : 0;
+            return `<li>
+              ${safeStr(unitName(r.unit_id))} / ${safeStr(kindNameZh(r.kind))}
+              <span class="small">｜錯 ${r.wrong}/${r.total}｜正確率 ${pct(accRate)}｜主要錯因：${safeStr(errorTypeZh(topType))}</span>
+            </li>`;
+          }).join('')}
+        </ol>
+      `;
+
+      remedyBox.innerHTML = topWrong.map(r => {
+        const typeRows = Array.from(r.errType.entries()).sort((a,b)=>b[1]-a[1]);
+        const topType = typeRows[0] ? typeRows[0][0] : 'other';
+        const remedies = [
+          errorTypeAdviceZh(topType),
+          ...practiceDirectionZh(r.kind, topType).slice(0, 2)
+        ];
+        const concepts = conceptReminderZh(r.kind).slice(0, 2);
+        const qs = pickPracticeQuestions(uid, r.unit_id, r.kind, items, 5);
+
+        return `
+          <div class="card" style="margin-top:10px">
+            <div class="row" style="justify-content:space-between; align-items:flex-start">
+              <div>
+                <div style="font-weight:800">補救建議：${safeStr(unitName(r.unit_id))} / ${safeStr(kindNameZh(r.kind))}</div>
+                <div class="small mono">${safeStr(r.kind)}</div>
+              </div>
+              <span class="tag bad">24h 補救</span>
+            </div>
+            <div class="small" style="margin-top:8px">主要錯因：${safeStr(errorTypeZh(topType))}</div>
+            <div style="margin-top:8px">
+              <div style="font-weight:700">補救做法</div>
+              <div class="small">- ${remedies.map(safeStr).join('<br>- ')}</div>
+            </div>
+            <div style="margin-top:8px">
+              <div style="font-weight:700">觀念提醒</div>
+              <div class="small">- ${concepts.map(safeStr).join('<br>- ')}</div>
+            </div>
+            <div style="margin-top:8px">
+              <div style="font-weight:700">重新出相似題練習（建議 5 題）</div>
+              <ol style="margin:6px 0 0 18px; padding:0">
+                ${qs.map(q => `<li><span class="mono">${safeStr(String(q?.id || ''))}</span>：${safeStr(qText(q))}</li>`).join('') || '<li class="small">（找不到對應題目）</li>'}
+              </ol>
+            </div>
+          </div>
+        `;
+      }).join('');
     }
 
     function renderOfflineCards(stats){
@@ -2126,6 +2259,11 @@
         const t = Number(a?.ts_end || a?.ts_start || 0);
         return t >= sevenDayMs;
       });
+      const latest24hMs = Date.now() - 24 * 60 * 60 * 1000;
+      const attempts24h = allFiltered.filter(a => {
+        const t = Number(a?.ts_end || a?.ts_start || 0);
+        return t >= latest24hMs;
+      });
       const olderAttempts = allFiltered.filter(a => {
         const t = Number(a?.ts_end || a?.ts_start || 0);
         return t > 0 && t < sevenDayMs;
@@ -2139,6 +2277,7 @@
         const hEl = $('offlineTableHistory');
         if (hEl) hEl.innerHTML = '<div class="small">（七天以前沒有作答紀錄）</div>';
       }
+      renderLatest24h(uid, attempts24h);
 
       // Sellable summary (最近 N 天)
       const totalTimeMs = sumDurationMs(attempts);
