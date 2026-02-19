@@ -33,6 +33,9 @@
     .banner.bad{border-color:rgba(248,81,73,.65); color:#ffd2cf; background:rgba(248,81,73,.08)}
     .q{font-size:18px; padding:12px 14px; border-radius:12px; background:#08102a; border:1px dashed rgba(88,166,255,.4); margin: 10px 0; white-space:pre-wrap}
     .hint{border-left:3px solid rgba(88,166,255,.55); padding:8px 10px; background:rgba(88,166,255,.06); border-radius:10px; margin:8px 0; white-space:pre-wrap}
+    .hint .viz{margin:0 0 6px; text-align:center}
+    .hint .viz svg{max-width:100%;height:auto}
+    .hint .vizLabel{white-space:pre-wrap}
     .sol{border:1px dashed rgba(255,255,255,.18); border-radius:12px; padding:12px; margin-top:10px; white-space:pre-wrap}
     .pill{display:inline-block; padding:3px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.04); color:var(--muted); font-size:12px}
     a{color:var(--accent)}
@@ -399,10 +402,177 @@
       return nearlyEqual(sv, cv, 1e-9);
     }
 
-    function renderHint(text){
+    function lEscHtml(s){
+      return String(s||'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');
+    }
+
+    function lNums(text){
+      const ms = String(text||'').match(/\d+(?:\.\d+)?/g) || [];
+      return ms.map(Number).filter(Number.isFinite);
+    }
+
+    function lFrac(text){
+      const m = String(text||'').match(/(\d+)\s*\/\s*(\d+)/);
+      if (!m) return null;
+      const n = Number(m[1]), d = Number(m[2]);
+      if (!Number.isFinite(n) || !Number.isFinite(d) || d <= 0) return null;
+      return { n, d };
+    }
+
+    function lVizBar(parts, used, lv, usedLabel, remainLabel){
+      const d = Math.max(2, Math.min(16, Number(parts)||2));
+      const u = Math.max(0, Math.min(d, Number(used)||0));
+      const W = 360, H = 34, pad = 8, cw = W/d;
+      let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W + pad*2} 90">`;
+      for (let i=0;i<d;i++){
+        const x = pad + i*cw;
+        s += `<rect x="${x}" y="${pad}" width="${cw}" height="${H}" fill="${i<u?'#d94a3e':'#3b8eea'}" stroke="rgba(255,255,255,.26)"/>`;
+        if (lv >= 2) s += `<text x="${x + cw/2}" y="${pad + 22}" text-anchor="middle" font-size="10" fill="#fff">1/${d}</text>`;
+      }
+      s += `<rect x="${pad}" y="${pad}" width="${W}" height="${H}" fill="none" stroke="rgba(255,255,255,.62)"/>`;
+      s += `<text x="${pad}" y="62" font-size="11" fill="#ffd2cf">🟥 ${lEscHtml(usedLabel || '已用')}</text>`;
+      s += `<text x="${pad+154}" y="62" font-size="11" fill="#b7d8ff">🟦 ${lEscHtml(remainLabel || '剩下')}</text>`;
+      if (lv >= 3) s += `<text x="${pad}" y="80" font-size="11" fill="#e6edf3">先看比例，再決定加減乘除</text>`;
+      return s + `</svg>`;
+    }
+
+    function lVizTime(q, lv){
+      const text = String(q?.question||'');
+      const m1 = text.match(/(\d{1,2}:\d{2})/);
+      const m2 = text.match(/(\d+)\s*分鐘/);
+      const start = m1 ? m1[1] : 'HH:MM';
+      const add = m2 ? Number(m2[1]) : null;
+      const W = 360, pad = 8, y = 24;
+      let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W + pad*2} 86">`;
+      s += `<line x1="${pad}" y1="${y}" x2="${W+pad}" y2="${y}" stroke="rgba(255,255,255,.46)" stroke-width="2"/>`;
+      s += `<circle cx="${pad+24}" cy="${y}" r="5" fill="#3b8eea"/>`;
+      s += `<text x="${pad+24}" y="${y+16}" text-anchor="middle" font-size="11" fill="#b7d8ff">${start}</text>`;
+      s += `<circle cx="${W+pad-24}" cy="${y}" r="5" fill="#2ea043"/>`;
+      s += `<text x="${W+pad-24}" y="${y+16}" text-anchor="middle" font-size="11" fill="#7ee787">?</text>`;
+      s += `<text x="${(W+pad*2)/2}" y="12" text-anchor="middle" font-size="11" fill="#ffd700">+${add != null ? add : '?'} 分鐘</text>`;
+      if (lv >= 2) s += `<text x="${pad}" y="62" font-size="11" fill="#ffd700">分鐘先加，滿 60 就進位 1 小時</text>`;
+      if (lv >= 3) s += `<text x="${pad}" y="78" font-size="11" fill="#e6edf3">最後格式寫成 HH:MM（分鐘補兩位）</text>`;
+      return s + `</svg>`;
+    }
+
+    function lVizUnitConvert(q, lv){
+      const text = String(q?.question||'');
+      const m = text.match(/(\d+(?:\.\d+)?)\s*(公升|公斤|公尺)\s*=\s*多少\s*(毫升|公克|公分)/);
+      if (!m) return '';
+      const v = m[1], from = m[2], to = m[3];
+      const factor = (from === '公尺') ? 100 : 1000;
+      let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 376 90">`;
+      s += `<rect x="8" y="10" width="132" height="30" rx="6" fill="rgba(59,142,234,.24)" stroke="#3b8eea"/>`;
+      s += `<text x="74" y="30" text-anchor="middle" font-size="12" fill="#b7d8ff">${v}${from}</text>`;
+      s += `<line x1="146" y1="25" x2="236" y2="25" stroke="#ffd700" stroke-width="2"/>`;
+      s += `<text x="191" y="18" text-anchor="middle" font-size="11" fill="#ffd700">×${factor}</text>`;
+      s += `<rect x="236" y="10" width="132" height="30" rx="6" fill="rgba(46,160,67,.24)" stroke="#2ea043"/>`;
+      s += `<text x="302" y="30" text-anchor="middle" font-size="12" fill="#7ee787">? ${to}</text>`;
+      if (lv >= 2) s += `<text x="8" y="62" font-size="11" fill="#e6edf3">先寫關係：1${from}= ${factor}${to}</text>`;
+      if (lv >= 3) s += `<text x="8" y="78" font-size="11" fill="#ffd700">大單位轉小單位用乘法</text>`;
+      return s + `</svg>`;
+    }
+
+    function lVizByKind(q, lv){
+      const kind = String(q?.kind || '');
+      const text = String(q?.question || '');
+      const ns = lNums(text);
+
+      if (kind === 'fraction_remaining'){
+        const f = lFrac(text);
+        if (!f) return '';
+        return lVizBar(f.d, f.n, lv, `用掉 ${f.n}/${f.d}`, `剩下 ${f.d-f.n}/${f.d}`);
+      }
+
+      if (kind === 'discount'){
+        const pm = text.match(/(\d+(?:\.\d+)?)\s*%/);
+        const p = pm ? Number(pm[1]) : null;
+        if (p == null) return '';
+        const used = Math.max(0, Math.min(10, Math.round(p/10)));
+        return lVizBar(10, used, lv, `折扣 ${p}%`, `應付 ${100-p}%`);
+      }
+
+      if (kind === 'unit_convert') return lVizUnitConvert(q, lv);
+      if (kind === 'time_add') return lVizTime(q, lv);
+
+      if (kind === 'volume_fill'){
+        if (ns.length < 2) return '';
+        const total = ns[0], now = ns[1];
+        const d = 10;
+        const used = total > 0 ? Math.max(0, Math.min(d, Math.round((now/total)*d))) : 0;
+        return lVizBar(d, used, lv, `目前約 ${now}`, `剩餘到滿水位`);
+      }
+
+      if (kind === 'proportional_split'){
+        const rm = text.match(/=\s*(\d+)\s*[:：]\s*(\d+)(?:\s*[:：]\s*(\d+))?/);
+        if (!rm) return '';
+        const parts = [Number(rm[1]), Number(rm[2]), rm[3] ? Number(rm[3]) : 0].filter(n => n > 0);
+        const sum = parts.reduce((a,b)=>a+b,0);
+        const W = 360, pad = 8, H = 32;
+        let x = pad;
+        let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W + pad*2} 88">`;
+        for (let i=0;i<parts.length;i++){
+          const w = (W * parts[i]) / sum;
+          const color = i===0 ? '#3b8eea' : (i===1 ? '#d4a028' : '#d94a3e');
+          s += `<rect x="${x}" y="${pad}" width="${w}" height="${H}" fill="${color}" stroke="rgba(255,255,255,.26)"/>`;
+          s += `<text x="${x+w/2}" y="${pad+20}" text-anchor="middle" font-size="11" fill="#fff">${parts[i]} 份</text>`;
+          x += w;
+        }
+        if (lv >= 2) s += `<text x="${pad}" y="60" font-size="11" fill="#e6edf3">總份數 = ${sum}，先算每份再乘回去</text>`;
+        if (lv >= 3) s += `<text x="${pad}" y="78" font-size="11" fill="#ffd700">比例不是直接加減，要先分成同單位的「份」</text>`;
+        return s + `</svg>`;
+      }
+
+      if (kind === 'area_tiling'){
+        const W = 360, pad = 8;
+        let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W + pad*2} 98">`;
+        s += `<rect x="${pad}" y="${pad}" width="220" height="56" fill="rgba(59,142,234,.2)" stroke="#3b8eea"/>`;
+        for (let i=1;i<6;i++) s += `<line x1="${pad+i*(220/6)}" y1="${pad}" x2="${pad+i*(220/6)}" y2="${pad+56}" stroke="rgba(255,255,255,.18)"/>`;
+        for (let j=1;j<4;j++) s += `<line x1="${pad}" y1="${pad+j*(56/4)}" x2="${pad+220}" y2="${pad+j*(56/4)}" stroke="rgba(255,255,255,.18)"/>`;
+        s += `<rect x="250" y="22" width="30" height="30" fill="rgba(212,160,40,.28)" stroke="#d4a028"/>`;
+        s += `<text x="286" y="40" font-size="11" fill="#ffd700">1 塊磚</text>`;
+        if (lv >= 2) s += `<text x="${pad}" y="78" font-size="11" fill="#e6edf3">先統一單位，再算：房間面積 ÷ 磚面積</text>`;
+        if (lv >= 3) s += `<text x="${pad}" y="94" font-size="11" fill="#ffd700">塊數通常要無條件進位</text>`;
+        return s + `</svg>`;
+      }
+
+      if (kind === 'shopping_two_step'){
+        let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 376 86">`;
+        s += `<rect x="8" y="10" width="108" height="28" rx="6" fill="rgba(59,142,234,.24)" stroke="#3b8eea"/>`;
+        s += `<text x="62" y="29" text-anchor="middle" font-size="11" fill="#b7d8ff">小計 A</text>`;
+        s += `<text x="124" y="29" font-size="14" fill="#e6edf3">+</text>`;
+        s += `<rect x="140" y="10" width="108" height="28" rx="6" fill="rgba(59,142,234,.24)" stroke="#3b8eea"/>`;
+        s += `<text x="194" y="29" text-anchor="middle" font-size="11" fill="#b7d8ff">小計 B</text>`;
+        s += `<text x="256" y="29" font-size="14" fill="#e6edf3">−</text>`;
+        s += `<rect x="272" y="10" width="96" height="28" rx="6" fill="rgba(212,160,40,.24)" stroke="#d4a028"/>`;
+        s += `<text x="320" y="29" text-anchor="middle" font-size="11" fill="#ffd700">折價/優惠</text>`;
+        if (lv >= 2) s += `<text x="8" y="62" font-size="11" fill="#e6edf3">先算小計，再合計，最後扣優惠</text>`;
+        if (lv >= 3) s += `<text x="8" y="78" font-size="11" fill="#ffd700">扣完後金額要小於未折價合計</text>`;
+        return s + `</svg>`;
+      }
+
+      if (kind === 'buy_many' || kind === 'unit_price' || kind === 'make_change' || kind === 'table_stats' || kind === 'temperature_change' || kind === 'perimeter_fence'){
+        const W = 360, pad = 8;
+        let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W+pad*2} 82">`;
+        s += `<rect x="${pad}" y="${pad}" width="${W}" height="34" rx="6" fill="rgba(59,142,234,.22)" stroke="#3b8eea"/>`;
+        s += `<text x="${pad+12}" y="30" font-size="11" fill="#b7d8ff">${lEscHtml(kind)}</text>`;
+        if (lv >= 2) s += `<text x="${pad}" y="60" font-size="11" fill="#e6edf3">先列式，再帶入數字，最後寫單位</text>`;
+        if (lv >= 3) s += `<text x="${pad}" y="76" font-size="11" fill="#ffd700">做完用大小感檢查是否合理</text>`;
+        return s + `</svg>`;
+      }
+
+      return '';
+    }
+
+    function renderHint(text, q, level){
       const div = document.createElement('div');
       div.className = 'hint';
-      div.textContent = text;
+      const viz = lVizByKind(q, level);
+      if (viz){
+        div.innerHTML = `<div class="viz">${viz}</div><div class="vizLabel">${lEscHtml(text).replaceAll('\n','<br>')}</div>`;
+      } else {
+        div.textContent = text;
+      }
       return div;
     }
 
@@ -645,7 +815,7 @@
       const stepNum = state.hintStepIndex + 1;
       const level = Math.min(3, Math.ceil(stepNum * 3 / allSteps.length));
       markHint(level);
-      els.hints.appendChild(renderHint(`步驟 ${stepNum}：${text}`));
+      els.hints.appendChild(renderHint(`步驟 ${stepNum}：${text}`, q, level));
       state.hintStepIndex++;
       state.hintUsed = Math.max(state.hintUsed, level);
       showBanner('muted',`已顯示步驟 ${stepNum}/${allSteps.length}（不含最終答案）。`);
