@@ -777,14 +777,25 @@
   /* Extract name + item from question for child-friendly context */
   function cpExtractContext(q){
     var t = String(q || '');
-    var nameM = t.match(/(小明|小華|小芸|阿哲|小安)/);
+    var nameM = t.match(/(小明|小華|小芸|阿哲|小安|小倫|小婷|阿翔)/);
     var itemM = t.match(/個(糖果|貼紙|彩色筆|積木|餅乾|蘋果|橘子|鉛筆|彈珠|氣球)/);
+    /* extract comparison roles (e.g. 分給同學, 又送了...給老師) */
+    var roleM = t.match(/(?:分給|送給|給)(\S{1,3}).*?(?:分給|送給|又.*?給)(\S{1,3})/);
+    var roleA = roleM ? roleM[1] : '';
+    var roleB = roleM ? roleM[2] : '';
+    /* extract unit for continuous items */
+    var unitM = t.match(/(公尺|公升|公里|棵|本)/);
     return {
       name: nameM ? nameM[1] : '',
-      item: itemM ? itemM[1] : ''
+      item: itemM ? itemM[1] : '',
+      roleA: roleA, roleB: roleB,
+      unitStr: unitM ? unitM[1] : ''
     };
   }
-  function cpThingUnit(ctx){ return (ctx && ctx.item) ? '個' + ctx.item : '個'; }
+  function cpThingUnit(ctx){
+    if (ctx && ctx.unitStr) return ctx.unitStr;
+    return (ctx && ctx.item) ? '個' + ctx.item : '個';
+  }
 
   /* remain kind: 用掉 f1 → 剩下 1−f1 */
   function buildBarModel_REMAIN(f1, total, ansStr, ctx){
@@ -965,6 +976,90 @@
     };
   }
 
+  /* multi_remain: 同一整體連續扣 f1 + f2 (U9) — bar with 3 segments */
+  function buildBarModel_MULTI_REMAIN(f1, f2, total, ansStr, ctx){
+    if (!f1 || !f2 || !total) return null;
+    var d1 = f1.d, n1 = f1.n;
+    var d2 = f2.d, n2 = f2.n;
+    var L = lcmOf(d1, d2);
+    var parts = L;
+    var fill1 = L * n1 / d1;
+    var fill2 = L * n2 / d2;
+    var fillRem = parts - fill1 - fill2;
+    if (fillRem < 0) return null;
+    var amt1 = total * n1 / d1;
+    var amt2 = total * n2 / d2;
+    var remAmt = total - amt1 - amt2;
+    var perCell = roundNice(total / parts);
+    var who = (ctx && ctx.name) ? ctx.name : '';
+    var tu = cpThingUnit(ctx);
+    var sumF = frac(n1 * d2 + n2 * d1, d1 * d2);
+    var remF = frac(L - fill1 - fill2, L);
+    /* build cell arrays */
+    function mkCells(showA, showB, showR){
+      var c = [];
+      for (var i = 0; i < parts; i++)
+        c.push(i < fill1 ? (showA ? 'red' : 'empty')
+             : i < fill1 + fill2 ? (showB ? 'orange' : 'empty')
+             : (showR ? 'blue' : 'empty'));
+      return c;
+    }
+    var unknownCL = new Array(parts).fill('?');
+    var valueCL = new Array(parts).fill(perCell);
+    return {
+      parts: parts,
+      levels: [
+        { title: '\ud83d\udd0d Level 1\uff1a\u89c0\u5ff5\u9396\u5b9a',
+          text: (who||'\u4ed6') + ' \u6709 ' + total + ' ' + tu + '\n' +
+                '\u5148\u9001\u4e86\u5168\u90e8\u7684 ' + cpFracStr(f1) + '\uff0c\u53c8\u9001\u4e86\u5168\u90e8\u7684 ' + cpFracStr(f2) + '\n\n' +
+                '\ud83e\udde0 \u53e3\u8a23\uff1a\u5169\u6b21\u90fd\u5f9e\u300c\u5168\u90e8\u300d\u6263 \u2192 \u57fa\u6e96\u4e0d\u8b8a \u2192 \u901a\u5206\u5f8c\u52a0\u8d77\u4f86\uff01\n' +
+                '\u26a0\ufe0f \u548c U4 \u4e0d\u540c\uff1a\u4e0d\u662f\u300c\u5269\u4e0b\u7684\u300d\u5e7e\u5206\u4e4b\u5e7e\uff01',
+          cells: new Array(parts).fill('empty'),
+          cellLabels: unknownCL,
+          brackets: [{ start:0, count:parts, label:'\u5168\u90e8 '+total+' '+tu, color:'white' }] },
+        { title: '\ud83d\udcca Level 2\uff1a\u756b\u5716\u5207\u5206\uff08\u901a\u5206 '+parts+' \u7b49\u4efd\uff09',
+          text: '\u628a ' + total + ' ' + tu + ' \u5e73\u5747\u5206\u6210 ' + parts + ' \u7b49\u4efd\n' +
+                '\u6bcf\u4efd = ' + total + ' \u00f7 ' + parts + ' = ' + perCell + ' ' + tu + '\n\n' +
+                '\ud83d\udfe5 \u7b2c1\u6b21\u9001 ' + cpFracStr(f1) + ' = ' + fill1 + ' \u4efd = ' + roundNice(amt1) + ' ' + tu + '\n' +
+                '\ud83d\udfe7 \u7b2c2\u6b21\u9001 ' + cpFracStr(f2) + ' = ' + fill2 + ' \u4efd = ' + roundNice(amt2) + ' ' + tu + '\n' +
+                '\ud83d\udfe6 \u5269\u4e0b = ' + fillRem + ' \u4efd',
+          cells: mkCells(true, true, true),
+          cellLabels: valueCL,
+          brackets: [
+            { start:0, count:fill1, label:cpFracStr(f1)+' = '+roundNice(amt1), color:'red' },
+            { start:fill1, count:fill2, label:cpFracStr(f2)+' = '+roundNice(amt2), color:'orange' },
+            { start:fill1+fill2, count:fillRem, label:'\u5269? '+tu, color:'blue' }
+          ] },
+        { title: '\u270f\ufe0f Level 3\uff1a\u901a\u5206\u52a0\u6cd5 + \u5217\u5f0f',
+          text: '\ud83d\udca1 \u5169\u6b21\u90fd\u5f9e\u5168\u90e8\u6263 \u2192 \u5148\u901a\u5206\u76f8\u52a0\uff1a\n\n' +
+                cpFracStr(f1) + ' + ' + cpFracStr(f2) + ' = ' + sumF.s + '\n' +
+                '\u5269\u4e0b\u6bd4\u4f8b = 1 \u2212 ' + sumF.s + ' = ' + remF.s + '\n\n' +
+                '\u5269\u4e0b = ' + total + ' \u00d7 ' + remF.s,
+          cells: mkCells(true, true, true),
+          cellLabels: valueCL,
+          brackets: [
+            { start:0, count:fill1, label:cpFracStr(f1), color:'red' },
+            { start:fill1, count:fill2, label:cpFracStr(f2), color:'orange' },
+            { start:fill1+fill2, count:fillRem, label:remF.s, color:'blue' }
+          ] },
+        { title: '\ud83c\udfaf Level 4\uff1a\u9a57\u7b97\uff06\u6aa2\u67e5',
+          text: '\u2460 \u7b2c1\u6b21 = ' + total + ' \u00d7 ' + cpFracStr(f1) + ' = ' + roundNice(amt1) + '\n' +
+                '\u2461 \u7b2c2\u6b21 = ' + total + ' \u00d7 ' + cpFracStr(f2) + ' = ' + roundNice(amt2) + '\n' +
+                '\u2462 \u5269\u4e0b = ' + total + ' \u2212 ' + roundNice(amt1) + ' \u2212 ' + roundNice(amt2) + ' = ' + roundNice(remAmt) + '\n\n' +
+                '\ud83d\udd04 \u9a57\u7b97\uff1a' + roundNice(amt1) + ' + ' + roundNice(amt2) + ' + ' + roundNice(remAmt) + ' = ' + total + '\uff1f \u2713\n' +
+                '\u2705 \u5269\u4e0b \u2265 0 \u2192 \u5408\u7406\n\n' +
+                '\ud83c\udfc1 \u7b54\u6848\u662f ' + roundNice(remAmt) + ' ' + tu + '\uff0c\u5beb\u4e0a\u53bb\u5427\uff01',
+          cells: mkCells(true, true, true),
+          cellLabels: valueCL,
+          brackets: [
+            { start:0, count:fill1, label:roundNice(amt1), color:'red' },
+            { start:fill1, count:fill2, label:roundNice(amt2), color:'orange' },
+            { start:fill1+fill2, count:fillRem, label:'\u7b54\u6848 '+roundNice(remAmt), color:'blue' }
+          ] }
+      ]
+    };
+  }
+
   /* two_step remain: 先用 f1, 剩下的又用 f2 → 2D grid (from g5 RTF) */
   function buildBarModel_TWO_STEP(f1, f2, total, ansStr, ctx){
     if (!f1 || !f2 || !total) return null;
@@ -1082,9 +1177,11 @@
     var perCell2 = roundNice(total / d2);
     var who = (ctx && ctx.name) ? ctx.name : '';
     var tu = cpThingUnit(ctx);
+    var labelA = (ctx && ctx.roleA) ? ctx.roleA : 'A';
+    var labelB = (ctx && ctx.roleB) ? ctx.roleB : 'B';
     var cbData = {
-      bar1: { parts: d1, filled: n1, perCell: perCell1, color: 'orange', label: '同學' },
-      bar2: { parts: d2, filled: n2, perCell: perCell2, color: 'blue', label: '老師' },
+      bar1: { parts: d1, filled: n1, perCell: perCell1, color: 'orange', label: labelA },
+      bar2: { parts: d2, filled: n2, perCell: perCell2, color: 'blue', label: labelB },
       amt1: amt1, amt2: amt2, diffAmt: diffAmt, tu: tu
     };
     return {
@@ -1092,7 +1189,7 @@
       levels: [
         { title: '🔍 Level 1：判斷題型',
           text: '📎 題目說：' + (who?who:'他') + '把 ' + total + ' ' + tu + ' 分成兩部分\n' +
-                '→ 分給同學 ' + cpFracStr(f1) + '、分給老師 ' + cpFracStr(f2) + '\n' +
+                '→ ' + labelA + ' ' + cpFracStr(f1) + '、' + labelB + ' ' + cpFracStr(f2) + '\n' +
                 '→ 求「相差多少」\n\n' +
                 '🧠 口訣：比大小 → 先算各自多少，再大減小！',
           parts: 1,
@@ -1101,15 +1198,15 @@
           brackets: [{ start:0, count:1, label:'全部 '+total+' '+tu, color:'white' }] },
         { title: '📊 Level 2：畫圖比較（各自切分）',
           text: '把 ' + total + ' ' + tu + ' 分別切成兩種等份：\n\n' +
-                '🟧 同學 ' + cpFracStr(f1) + '：切 ' + d1 + ' 份，每份 = ' + perCell1 + '\n' +
-                '    塗 ' + n1 + ' 份 → 同學 = ' + roundNice(amt1) + ' ' + tu + '\n\n' +
-                '🟦 老師 ' + cpFracStr(f2) + '：切 ' + d2 + ' 份，每份 = ' + perCell2 + '\n' +
-                '    塗 ' + n2 + ' 份 → 老師 = ' + roundNice(amt2) + ' ' + tu,
+                '🟧 ' + labelA + ' ' + cpFracStr(f1) + '：切 ' + d1 + ' 份，每份 = ' + perCell1 + '\n' +
+                '    塗 ' + n1 + ' 份 → ' + labelA + ' = ' + roundNice(amt1) + ' ' + tu + '\n\n' +
+                '🟦 ' + labelB + ' ' + cpFracStr(f2) + '：切 ' + d2 + ' 份，每份 = ' + perCell2 + '\n' +
+                '    塗 ' + n2 + ' 份 → ' + labelB + ' = ' + roundNice(amt2) + ' ' + tu,
           compareBars: cbData },
         { title: '✏️ Level 3：列式計算',
           text: '💡 先算各自多少，再相減：\n\n' +
-                '① 同學 = ' + total + ' × ' + cpFracStr(f1) + ' = ' + roundNice(amt1) + '\n' +
-                '② 老師 = ' + total + ' × ' + cpFracStr(f2) + ' = ' + roundNice(amt2) + '\n' +
+                '① ' + labelA + ' = ' + total + ' × ' + cpFracStr(f1) + ' = ' + roundNice(amt1) + '\n' +
+                '② ' + labelB + ' = ' + total + ' × ' + cpFracStr(f2) + ' = ' + roundNice(amt2) + '\n' +
                 '③ 差 = ' + roundNice(Math.max(amt1,amt2)) + ' − ' + roundNice(Math.min(amt1,amt2)) + ' = ' + roundNice(diffAmt),
           compareBars: cbData },
         { title: '🎯 Level 4：驗算＆檢查',
@@ -1135,6 +1232,7 @@
     var ansStr = item.answer || '';
     var ctx = cpExtractContext(item.question);
     if (!f1) return null;
+    if (item.kind === 'remain_multi' && f2) return buildBarModel_MULTI_REMAIN(f1, f2, total, ansStr, ctx);
     if (item.kind === 'remain') {
       if (f2 && String(item.question||'').match(/剩下的又/)) return buildBarModel_TWO_STEP(f1, f2, total, ansStr, ctx);
       return buildBarModel_REMAIN(f1, total, ansStr, ctx);
@@ -1253,6 +1351,7 @@
   function kindLabel(kind) {
     return kind === 'original' ? '找原量' :
       kind === 'remain' ? '找剩下' :
+      kind === 'remain_multi' ? '連續扣' :
       kind === 'part_to_total' ? '找部分' :
       kind === 'compare' ? '比較差距' : String(kind || '未知題型');
   }
