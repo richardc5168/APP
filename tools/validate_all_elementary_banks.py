@@ -31,8 +31,13 @@ MODULES: dict[str, tuple[str, str | None]] = {
     "commercial-pack1-fraction-sprint": ("bank.js", "COMMERCIAL_PACK1_FRACTION_SPRINT_BANK"),
 }
 
+SEMANTIC_UNIT_GUARD_MODULES = {
+    "interactive-g5-life-pack2plus-empire",
+}
+
 GARBLED_RE = re.compile(r"\ufffd|\?\?\?|")
 FRAC_OVER_1_RE = re.compile(r"^\s*-?\d+\s*/\s*1\s*$")
+NON_INTEGER_DISCRETE_RE = re.compile(r"(?P<num>-?\d+\s*/\s*\d+|-?\d+\.\d+)\s*個(?P<unit>[\u4e00-\u9fffA-Za-z]+)")
 
 
 def parse_js_array(path: Path) -> list[dict[str, Any]]:
@@ -144,7 +149,38 @@ def hint_leak(ans: str, hints: list[str], strict: bool) -> bool:
     )
 
 
-def validate_one(module: str, q: dict[str, Any], idx: int, strict_hint_leak: bool) -> list[tuple[str, str]]:
+def _is_non_integer_number_token(token: str) -> bool:
+    s = str(token or "").strip()
+    if not s:
+        return False
+    if "/" in s:
+        parts = s.split("/", 1)
+        try:
+            n = int(parts[0].strip())
+            d = int(parts[1].strip())
+        except ValueError:
+            return False
+        if d == 0:
+            return False
+        return n % d != 0
+    try:
+        v = float(s)
+    except ValueError:
+        return False
+    return not v.is_integer()
+
+
+def find_non_integer_discrete_quantity(question: str) -> tuple[str, str] | None:
+    text = str(question or "")
+    for m in NON_INTEGER_DISCRETE_RE.finditer(text):
+        num = (m.group("num") or "").strip()
+        unit = (m.group("unit") or "").strip()
+        if _is_non_integer_number_token(num):
+            return num, unit
+    return None
+
+
+def validate_one(module: str, q: dict[str, Any], idx: int, strict_hint_leak: bool, strict_semantic_unit_all: bool = False) -> list[tuple[str, str]]:
     issues: list[tuple[str, str]] = []
 
     qid = pick_first(q.get("id"), q.get("qid"), default=f"{module}#{idx}")
@@ -153,6 +189,7 @@ def validate_one(module: str, q: dict[str, Any], idx: int, strict_hint_leak: boo
     difficulty = pick_first(q.get("difficulty"), default="")
     topic = pick_first(q.get("topic"), q.get("block"), default="")
     kind = pick_first(q.get("kind"), q.get("subskill"), default="")
+    answer_mode = pick_first(q.get("answer_mode"), default="")
     hints = normalize_hints(q.get("hints"))
     steps = q.get("steps") or q.get("teacherSteps") or []
     explanation = pick_first(q.get("explanation"), q.get("analysis"), default="")
@@ -189,12 +226,25 @@ def validate_one(module: str, q: dict[str, Any], idx: int, strict_hint_leak: boo
     if FRAC_OVER_1_RE.match(answer):
         issues.append(("Q_FRAC_OVER_1", f"{qid}: answer {answer} could be integer"))
 
+    is_fraction_like = (
+        answer_mode.lower() == "fraction"
+        or "frac" in kind.lower()
+        or "分數" in question
+        or "分數" in topic
+    )
+    if is_fraction_like and (strict_semantic_unit_all or module in SEMANTIC_UNIT_GUARD_MODULES):
+        bad_qty = find_non_integer_discrete_quantity(question)
+        if bad_qty:
+            num, unit = bad_qty
+            issues.append(("Q_SEMANTIC_UNIT", f"{qid}: non-integer quantity '{num} 個{unit}' should use continuous unit wording"))
+
     return issues
 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--strict-hint-leak", action="store_true", help="Flag any answer substring in last hint")
+    ap.add_argument("--strict-semantic-unit-all", action="store_true", help="Apply semantic unit guard to all modules (default: scoped modules only)")
     ap.add_argument("--max-print", type=int, default=200, help="max detailed issue lines to print")
     args = ap.parse_args()
 
@@ -221,7 +271,7 @@ def main() -> int:
                 continue
 
             qid = pick_first(q.get("id"), q.get("qid"), default=f"{module}#{i}")
-            issues = validate_one(module, q, i, args.strict_hint_leak)
+            issues = validate_one(module, q, i, args.strict_hint_leak, args.strict_semantic_unit_all)
             if issues:
                 fail_ids.add(qid)
             for code, msg in issues:
