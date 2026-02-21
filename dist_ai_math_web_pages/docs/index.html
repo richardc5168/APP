@@ -36,6 +36,14 @@
     .summary-table tbody tr:last-child td { border-bottom: none; }
     .summary-link { color: #58a6ff; text-decoration: none; font-weight: 600; }
     .summary-link:hover { text-decoration: underline; }
+    .summary-hint { margin: 2px 0 0; font-size: 0.86rem; color: #8b949e; }
+    @media (max-width: 1024px) {
+      .summary-table { min-width: 760px; font-size: 0.93rem; }
+      .summary-table th { padding: 8px 6px; font-size: 0.88rem; }
+      .summary-table td { padding: 8px 6px; line-height: 1.5; }
+      .summary-table th:nth-child(1), .summary-table td:nth-child(1) { min-width: 170px; }
+      .summary-table th:nth-child(3), .summary-table td:nth-child(3) { min-width: 88px; }
+    }
     .tech-stack { margin-top: 40px; border-top: 1px solid var(--border); padding-top: 20px; }
     .tech-item { margin-bottom: 15px; }
     .tech-title { font-weight: bold; color: #fff; text-decoration: none; }
@@ -371,6 +379,7 @@
         <p>
           幫家長與孩子快速選模組：先看「題型範圍」，再看「提示層級」，就能決定先練基本功、綜合題型，或直接練生活應用。
         </p>
+        <p class="summary-hint">iPad 直向可左右滑動表格查看完整欄位。</p>
         <div class="summary-table-wrap">
         <table class="summary-table">
           <thead>
