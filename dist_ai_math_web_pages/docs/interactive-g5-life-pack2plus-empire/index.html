@@ -1204,25 +1204,215 @@
         u9_unit_convert_decimal:'單元提醒：先統一單位，再計算。',
         u10_rate_time_distance:'單元提醒：先寫「每…」單位率，再用 距離=速率×時間。'
       };
-      // --- Unit-specific early returns (avoid generic template mismatch) ---
+      // --- Unit-specific early returns (每單元具體引導到算出答案) ---
+      const stFocus = st ? `你剛剛卡在：${st}\n` : '';
+
+      // u1 平均分配
       if (u === 'u1_avg_fraction'){
-        const focusU1 = st ? `你剛剛卡在：${st} ` : '';
+        const total = qm.total || qa || '總量';
+        const people = qm.people || qb || 'n';
+        const uu = qm.unit || qUnitLabel;
         return [
-          '下一步（平均分配題）：',
-          `步驟一：${focusU1}已知＝${qa || '總量'}、分給${qb || 'n'}人；未知＝每人多少；單位＝${qUnitLabel}。`,
-          `步驟二：「平均分」→ 用 ÷；算式＝${qexpr || (qa || '總量') + ' ÷ ' + (qb || 'n')}。`,
-          `步驟三：算出結果寫成分數（a/b），約成最簡分數，檢查單位仍是「${qUnitLabel}」。`,
-          '答案格式：分數（a/b）。',
-          unitSpecific[u] || '單元提醒：「平均分」＝ ÷，結果寫成最簡分數。'
+          `下一步（平均分配題）：`,
+          `${stFocus}步驟一：題目給了 ${total} ${uu}，要平均分給 ${people} 人。`,
+          `步驟二：「平均分」→ 用 ÷；算式＝ ${total} ÷ ${people}。`,
+          `步驟三：${total} ÷ ${people} ＝ 分子${total}、分母${people}，約成最簡分數。`,
+          `答案格式：分數（a/b）。`,
+          unitSpecific[u]
         ].filter(Boolean).join('\n');
       }
+
+      // u2 分數加減
+      if (u === 'u2_frac_addsub_life'){
+        const a2 = qa || qm.a || '?';
+        const b2 = qb || qm.b || '?';
+        const d1 = Number(qm.d1 || 0);
+        const d2 = Number(qm.d2 || 0);
+        const opSym = qm.op || '+';
+        const same = d1 > 0 && d2 > 0 && d1 === d2;
+        return [
+          `下一步（分數加減題）：`,
+          `${stFocus}步驟一：兩個分數是 ${a2} 和 ${b2}，分母分別是 ${d1||'?'} 和 ${d2||'?'}。`,
+          same
+            ? `步驟二：分母同為 ${d1}，直接算分子 ${opSym}；算式＝ ${a2} ${opSym} ${b2}。`
+            : `步驟二：分母不同 → 先通分（找 ${d1} 和 ${d2} 的最小公倍數），再算分子 ${opSym}。`,
+          `步驟三：算完分子 ${opSym}，分母不變 → 約成最簡分數，帶上單位。`,
+          `答案格式：分數（a/b）。`,
+          unitSpecific[u]
+        ].filter(Boolean).join('\n');
+      }
+
+      // u3 分數×整數
+      if (u === 'u3_frac_times_int'){
+        const frac3 = qm.frac || qa || '分數';
+        const k3 = qm.k || qb || '整數';
+        const uu3 = qm.unit || qUnitLabel;
+        return [
+          `下一步（分數×整數題）：`,
+          `${stFocus}步驟一：每份 ${frac3}，共 ${k3} 份；要算總量。`,
+          `步驟二：算式＝ ${frac3} × ${k3}（分子 × ${k3}，分母不變）。`,
+          `步驟三：算出分子後約成最簡分數，單位＝${uu3}。`,
+          `答案格式：分數（a/b）。`,
+          unitSpecific[u]
+        ].filter(Boolean).join('\n');
+      }
+
+      // u4 金額小數加減
+      if (u === 'u4_money_decimal_addsub'){
+        const scenario = qm.scenario || '找零或合計';
+        const isChange = String(scenario).includes('找零');
+        return [
+          `下一步（金額${scenario}題）：`,
+          `${stFocus}步驟一：把所有金額列出來，小數點對齊。`,
+          isChange
+            ? `步驟二：先算總價（所有商品加起來），再用「付的錢 − 總價 ＝ 找零」。`
+            : `步驟二：把所有金額加起來＝合計總價。`,
+          `步驟三：小數點對齊後從最右位開始算，答案帶「元」。`,
+          unitSpecific[u]
+        ].filter(Boolean).join('\n');
+      }
+
+      // u5 小數乘除（單價）
+      if (u === 'u5_decimal_muldiv_price'){
+        const mode5 = qm.mode || 'mul';
+        const unitCents = qm.unit_cents ? (qm.unit_cents / 100) : '?';
+        const qty5 = qm.qty || '?';
+        if (mode5 === 'mul') return [
+          `下一步（單價×數量題）：`,
+          `${stFocus}步驟一：單價＝ ${unitCents} 元，數量＝ ${qty5}。`,
+          `步驟二：算式＝ ${unitCents} × ${qty5}（先當整數算，再放小數點）。`,
+          `步驟三：數兩邊小數位數總和，從右邊點回去，答案帶「元」。`,
+          unitSpecific[u]
+        ].filter(Boolean).join('\n');
+        if (mode5 === 'div') return [
+          `下一步（總價÷數量題）：`,
+          `${stFocus}步驟一：找出總價和數量。`,
+          `步驟二：算式＝ 總價 ÷ 數量（用直式除法）。`,
+          `步驟三：小數除法對齊後算，答案帶「元」。`,
+          unitSpecific[u]
+        ].filter(Boolean).join('\n');
+        return [
+          `下一步（平均分攤題）：`,
+          `${stFocus}步驟一：找出總金額和人數。`,
+          `步驟二：算式＝ 總金額 ÷ 人數。`,
+          `步驟三：算出每人分攤金額，答案帶「元」。`,
+          unitSpecific[u]
+        ].filter(Boolean).join('\n');
+      }
+
+      // u6 分數↔小數
+      if (u === 'u6_frac_dec_convert'){
+        const type6 = qm.type || '';
+        const from6 = qm.from || '?';
+        if (type6 === 'decimal_to_fraction') return [
+          `下一步（小數→分數題）：`,
+          `${stFocus}步驟一：${from6} 小數點後有幾位？→ 位數決定分母（1位→10，2位→100）。`,
+          `步驟二：去掉小數點的數字當分子，位數對應的 10/100 當分母。`,
+          `步驟三：用最大公因數約成最簡分數。`,
+          unitSpecific[u]
+        ].filter(Boolean).join('\n');
+        return [
+          `下一步（分數→小數題）：`,
+          `${stFocus}步驟一：分數＝ ${from6}，做「分子 ÷ 分母」。`,
+          `步驟二：用直式除法算出小數。`,
+          `步驟三：驗算：把答案乘回分母看是否等於分子。`,
+          unitSpecific[u]
+        ].filter(Boolean).join('\n');
+      }
+
+      // u7 折扣百分率
+      if (u === 'u7_discount_percent'){
+        const priceCents = qm.price_cents ? (qm.price_cents / 100) : '?';
+        const disc7 = qm.disc || '?';
+        const ask7 = qm.ask || 'save';
+        if (ask7 === 'save') return [
+          `下一步（省多少題）：`,
+          `${stFocus}步驟一：原價＝ ${priceCents} 元，折扣＝ ${disc7}。`,
+          `步驟二：先算折後價＝ ${priceCents} × ${disc7}。`,
+          `步驟三：省下＝ 原價 − 折後價，答案帶「元」。`,
+          unitSpecific[u]
+        ].filter(Boolean).join('\n');
+        return [
+          `下一步（折後價題）：`,
+          `${stFocus}步驟一：原價＝ ${priceCents} 元，折扣＝ ${disc7}。`,
+          `步驟二：折後價＝ ${priceCents} × ${disc7}（直接乘）。`,
+          `步驟三：小數乘法算完，答案帶「元」。`,
+          unitSpecific[u]
+        ].filter(Boolean).join('\n');
+      }
+
+      // u8 比例食譜
+      if (u === 'u8_ratio_recipe'){
+        const a8 = qm.a || '?';
+        const b8 = qm.b || '?';
+        const total8 = qm.total || '?';
+        const ask8 = qm.ask || 'a';
+        const totalParts = (Number(a8)||0) + (Number(b8)||0);
+        return [
+          `下一步（比例配方題）：`,
+          `${stFocus}步驟一：比例 ${a8}:${b8}，總量＝ ${total8}。`,
+          `步驟二：總份數＝ ${a8} + ${b8} ＝ ${totalParts || '?'}；每份＝ ${total8} ÷ ${totalParts || '?'}。`,
+          ask8 === 'a'
+            ? `步驟三：求第一項＝ 每份 × ${a8}，算出答案。`
+            : `步驟三：求第二項＝ 每份 × ${b8}，算出答案。`,
+          `驗算：兩項加起來應＝ ${total8}。`,
+          unitSpecific[u]
+        ].filter(Boolean).join('\n');
+      }
+
+      // u9 單位換算
+      if (u === 'u9_unit_convert_decimal'){
+        const from9 = qm.from || '?';
+        const to9 = qm.to || '?';
+        const mul9 = qm.mul || '?';
+        const a9 = qm.a || '?';
+        const dir9 = qm.dir || 'mul';
+        const unitMap = {kg:'公斤',g:'公克',m:'公尺',cm:'公分',km:'公里',L:'公升',mL:'毫升'};
+        const fromLabel = unitMap[from9] || from9;
+        const toLabel = unitMap[to9] || to9;
+        if (dir9 === 'mul') return [
+          `下一步（單位換算題）：`,
+          `${stFocus}步驟一：換算關係 → 1 ${fromLabel} ＝ ${mul9} ${toLabel}。`,
+          `步驟二：大→小，用乘法 → 算式＝ ${a9} × ${mul9}。`,
+          `步驟三：小數點往右移（乘 ${mul9}），算出答案，單位＝${toLabel}。`,
+          unitSpecific[u]
+        ].filter(Boolean).join('\n');
+        return [
+          `下一步（單位換算題）：`,
+          `${stFocus}步驟一：換算關係 → 1 ${toLabel} ＝ ${mul9} ${fromLabel}。`,
+          `步驟二：小→大，用除法 → 算式＝ ${a9} ÷ ${mul9}。`,
+          `步驟三：小數點往左移（÷ ${mul9}），算出答案，單位＝${toLabel}。`,
+          unitSpecific[u]
+        ].filter(Boolean).join('\n');
+      }
+
+      // u10 速率時間距離
+      if (u === 'u10_rate_time_distance'){
+        const rate10 = qm.rate || '?';
+        const mode10 = qm.mode || 'd';
+        if (mode10 === 'd') return [
+          `下一步（求距離題）：`,
+          `${stFocus}步驟一：速率＝ ${rate10}（每分鐘/每小時），從題目找出時間。`,
+          `步驟二：距離＝速率 × 時間 → 把數字代入算。`,
+          `步驟三：注意休息時間不算，算完帶上單位（公尺/公里）。`,
+          unitSpecific[u]
+        ].filter(Boolean).join('\n');
+        return [
+          `下一步（求時間題）：`,
+          `${stFocus}步驟一：速率＝ ${rate10}，從題目找出距離。`,
+          `步驟二：時間＝距離 ÷ 速率 → 把數字代入算。`,
+          `步驟三：算完帶上時間單位（分鐘/小時）。`,
+          unitSpecific[u]
+        ].filter(Boolean).join('\n');
+      }
+
+      // fallback（不該到這，但保底）
       const focus = st ? `你剛剛卡在：${st}` : '先把題目資料寫成已知、未知、單位。';
       return [
         '下一步（條列引導）：',
         `步驟一：${focus} 已知：${qa || '第一個數'}、${qb || '第二個數'}；未知：結果；單位：${qUnitLabel}。`,
         `步驟二：依關鍵詞選運算（${opGuide}）；算式＝${qexpr || '數 ' + opGuide + ' 數'}。`,
         `步驟三：依序算中間結果，最後檢查單位仍是「${qUnitLabel}」。`,
-        '答案格式：分數（a/b）。',
         unitSpecific[u] || '單元提醒：不確定時回到題目，重看「問什麼、給什麼、單位是什麼」。'
       ].join('\n');
     }
