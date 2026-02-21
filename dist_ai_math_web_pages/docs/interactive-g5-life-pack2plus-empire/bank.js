@@ -4,7 +4,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     "kind": "u1_avg_fraction",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
-    "question": "（生活應用｜平均分配｜班級點心）有 1 個披薩，平均分給 4 人，每人得到多少個？（用最簡分數 a/b 表示）",
+    "question": "（生活應用｜平均分配）有 1 公升果汁，平均分給 4 人，每人得到多少公升果汁？（用最簡分數 a/b 表示）",
     "answer": "1/4",
     "answer_mode": "fraction",
     "hints": [
@@ -36,7 +36,8 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     ],
     "meta": {
       "people": 4,
-      "total": "1"
+      "total": "1",
+      "unit": "公升果汁"
     }
   },
   {
@@ -44,7 +45,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     "kind": "u1_avg_fraction",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
-    "question": "（生活應用｜平均分配｜班級點心）有 3/2 個巧克力，平均分給 3 人，每人得到多少個？（用最簡分數 a/b 表示）",
+    "question": "（生活應用｜平均分配）有 3/2 公尺緞帶，平均分給 3 人，每人得到多少公尺緞帶？（用最簡分數 a/b 表示）",
     "answer": "1/2",
     "answer_mode": "fraction",
     "hints": [
@@ -76,7 +77,8 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     ],
     "meta": {
       "people": 3,
-      "total": "3/2"
+      "total": "3/2",
+      "unit": "公尺緞帶"
     }
   },
   {
@@ -84,7 +86,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     "kind": "u1_avg_fraction",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "medium",
-    "question": "（生活應用｜平均分配｜園遊會）有 9/5 個果汁，平均分給 6 人，每人得到多少個？（用最簡分數 a/b 表示）",
+    "question": "（生活應用｜平均分配）有 9/5 公斤米，平均分給 6 人，每人得到多少公斤米？（用最簡分數 a/b 表示）",
     "answer": "3/10",
     "answer_mode": "fraction",
     "hints": [
@@ -116,7 +118,8 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     ],
     "meta": {
       "people": 6,
-      "total": "9/5"
+      "total": "9/5",
+      "unit": "公斤米"
     }
   },
   {
@@ -124,7 +127,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     "kind": "u1_avg_fraction",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
-    "question": "（生活應用｜平均分配｜園遊會）有 1 個緞帶，平均分給 4 人，每人得到多少個？（用最簡分數 a/b 表示）",
+    "question": "（生活應用｜平均分配）有 1 公升牛奶，平均分給 4 人，每人得到多少公升牛奶？（用最簡分數 a/b 表示）",
     "answer": "1/4",
     "answer_mode": "fraction",
     "hints": [
@@ -156,7 +159,8 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     ],
     "meta": {
       "people": 4,
-      "total": "1"
+      "total": "1",
+      "unit": "公升牛奶"
     }
   },
   {
@@ -164,7 +168,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     "kind": "u1_avg_fraction",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
-    "question": "（生活應用｜平均分配｜園遊會）有 2/1 個緞帶，平均分給 3 人，每人得到多少個？（用最簡分數 a/b 表示）",
+    "question": "（生活應用｜平均分配）有 2/1 公尺彩帶，平均分給 3 人，每人得到多少公尺彩帶？（用最簡分數 a/b 表示）",
     "answer": "2/3",
     "answer_mode": "fraction",
     "hints": [
@@ -196,7 +200,8 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     ],
     "meta": {
       "people": 3,
-      "total": "2/1"
+      "total": "2/1",
+      "unit": "公尺彩帶"
     }
   },
   {
@@ -204,7 +209,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     "kind": "u1_avg_fraction",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "medium",
-    "question": "（生活應用｜平均分配｜班級點心）有 1 個緞帶，平均分給 4 人，每人得到多少個？（用最簡分數 a/b 表示）",
+    "question": "（生活應用｜平均分配）有 1 公斤麵粉，平均分給 4 人，每人得到多少公斤麵粉？（用最簡分數 a/b 表示）",
     "answer": "1/4",
     "answer_mode": "fraction",
     "hints": [
@@ -236,7 +241,8 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     ],
     "meta": {
       "people": 4,
-      "total": "1"
+      "total": "1",
+      "unit": "公斤麵粉"
     }
   },
   {
@@ -244,7 +250,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     "kind": "u1_avg_fraction",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
-    "question": "（生活應用｜平均分配｜班級點心）有 1 個蛋糕，平均分給 2 人，每人得到多少個？（用最簡分數 a/b 表示）",
+    "question": "（生活應用｜平均分配）有 1 公升湯品，平均分給 2 人，每人得到多少公升湯品？（用最簡分數 a/b 表示）",
     "answer": "1/2",
     "answer_mode": "fraction",
     "hints": [
@@ -276,7 +282,8 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     ],
     "meta": {
       "people": 2,
-      "total": "1"
+      "total": "1",
+      "unit": "公升湯品"
     }
   },
   {
@@ -284,7 +291,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     "kind": "u1_avg_fraction",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
-    "question": "（生活應用｜平均分配｜班級點心）有 1 個西瓜，平均分給 4 人，每人得到多少個？（用最簡分數 a/b 表示）",
+    "question": "（生活應用｜平均分配）有 1 公尺繩子，平均分給 4 人，每人得到多少公尺繩子？（用最簡分數 a/b 表示）",
     "answer": "1/4",
     "answer_mode": "fraction",
     "hints": [
@@ -316,7 +323,8 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     ],
     "meta": {
       "people": 4,
-      "total": "1"
+      "total": "1",
+      "unit": "公尺繩子"
     }
   },
   {
@@ -324,7 +332,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     "kind": "u1_avg_fraction",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
-    "question": "（生活應用｜平均分配｜社團活動）有 3/2 個果汁，平均分給 5 人，每人得到多少個？（用最簡分數 a/b 表示）",
+    "question": "（生活應用｜平均分配）有 3/2 公升檸檬汁，平均分給 5 人，每人得到多少公升檸檬汁？（用最簡分數 a/b 表示）",
     "answer": "3/10",
     "answer_mode": "fraction",
     "hints": [
@@ -356,7 +364,8 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     ],
     "meta": {
       "people": 5,
-      "total": "3/2"
+      "total": "3/2",
+      "unit": "公升檸檬汁"
     }
   },
   {
@@ -364,7 +373,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     "kind": "u1_avg_fraction",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
-    "question": "（生活應用｜平均分配｜社團活動）有 1 個手作餅乾，平均分給 5 人，每人得到多少個？（用最簡分數 a/b 表示）",
+    "question": "（生活應用｜平均分配）有 1 公斤糖粉，平均分給 5 人，每人得到多少公斤糖粉？（用最簡分數 a/b 表示）",
     "answer": "1/5",
     "answer_mode": "fraction",
     "hints": [
@@ -396,7 +405,8 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     ],
     "meta": {
       "people": 5,
-      "total": "1"
+      "total": "1",
+      "unit": "公斤糖粉"
     }
   },
   {
@@ -404,7 +414,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     "kind": "u1_avg_fraction",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
-    "question": "（生活應用｜平均分配｜班級點心）有 7/5 個蛋糕，平均分給 5 人，每人得到多少個？（用最簡分數 a/b 表示）",
+    "question": "（生活應用｜平均分配）有 7/5 公升果汁，平均分給 5 人，每人得到多少公升果汁？（用最簡分數 a/b 表示）",
     "answer": "7/25",
     "answer_mode": "fraction",
     "hints": [
@@ -436,7 +446,8 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     ],
     "meta": {
       "people": 5,
-      "total": "7/5"
+      "total": "7/5",
+      "unit": "公升果汁"
     }
   },
   {
@@ -444,7 +455,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     "kind": "u1_avg_fraction",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
-    "question": "（生活應用｜平均分配｜社團活動）有 2/1 個果汁，平均分給 7 人，每人得到多少個？（用最簡分數 a/b 表示）",
+    "question": "（生活應用｜平均分配）有 2/1 公尺緞帶，平均分給 7 人，每人得到多少公尺緞帶？（用最簡分數 a/b 表示）",
     "answer": "2/7",
     "answer_mode": "fraction",
     "hints": [
@@ -476,7 +487,8 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     ],
     "meta": {
       "people": 7,
-      "total": "2/1"
+      "total": "2/1",
+      "unit": "公尺緞帶"
     }
   },
   {
@@ -484,7 +496,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     "kind": "u1_avg_fraction",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "medium",
-    "question": "（生活應用｜平均分配｜園遊會）有 2/1 個果汁，平均分給 5 人，每人得到多少個？（用最簡分數 a/b 表示）",
+    "question": "（生活應用｜平均分配）有 2/1 公斤米，平均分給 5 人，每人得到多少公斤米？（用最簡分數 a/b 表示）",
     "answer": "2/5",
     "answer_mode": "fraction",
     "hints": [
@@ -516,7 +528,8 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     ],
     "meta": {
       "people": 5,
-      "total": "2/1"
+      "total": "2/1",
+      "unit": "公斤米"
     }
   },
   {
@@ -524,7 +537,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     "kind": "u1_avg_fraction",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "medium",
-    "question": "（生活應用｜平均分配｜園遊會）有 1 個果汁，平均分給 3 人，每人得到多少個？（用最簡分數 a/b 表示）",
+    "question": "（生活應用｜平均分配）有 1 公升牛奶，平均分給 3 人，每人得到多少公升牛奶？（用最簡分數 a/b 表示）",
     "answer": "1/3",
     "answer_mode": "fraction",
     "hints": [
@@ -556,7 +569,8 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     ],
     "meta": {
       "people": 3,
-      "total": "1"
+      "total": "1",
+      "unit": "公升牛奶"
     }
   },
   {
@@ -564,7 +578,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     "kind": "u1_avg_fraction",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
-    "question": "（生活應用｜平均分配｜家庭分享）有 9/5 個蛋糕，平均分給 7 人，每人得到多少個？（用最簡分數 a/b 表示）",
+    "question": "（生活應用｜平均分配）有 9/5 公尺彩帶，平均分給 7 人，每人得到多少公尺彩帶？（用最簡分數 a/b 表示）",
     "answer": "9/35",
     "answer_mode": "fraction",
     "hints": [
@@ -596,7 +610,8 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     ],
     "meta": {
       "people": 7,
-      "total": "9/5"
+      "total": "9/5",
+      "unit": "公尺彩帶"
     }
   },
   {
@@ -604,7 +619,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     "kind": "u1_avg_fraction",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "medium",
-    "question": "（生活應用｜平均分配｜園遊會）有 1 個果汁，平均分給 3 人，每人得到多少個？（用最簡分數 a/b 表示）",
+    "question": "（生活應用｜平均分配）有 1 公斤麵粉，平均分給 3 人，每人得到多少公斤麵粉？（用最簡分數 a/b 表示）",
     "answer": "1/3",
     "answer_mode": "fraction",
     "hints": [
@@ -636,7 +651,8 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     ],
     "meta": {
       "people": 3,
-      "total": "1"
+      "total": "1",
+      "unit": "公斤麵粉"
     }
   },
   {
@@ -644,7 +660,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     "kind": "u1_avg_fraction",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "medium",
-    "question": "（生活應用｜平均分配｜社團活動）有 6/5 個壽司捲，平均分給 6 人，每人得到多少個？（用最簡分數 a/b 表示）",
+    "question": "（生活應用｜平均分配）有 6/5 公升湯品，平均分給 6 人，每人得到多少公升湯品？（用最簡分數 a/b 表示）",
     "answer": "1/5",
     "answer_mode": "fraction",
     "hints": [
@@ -676,7 +692,8 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     ],
     "meta": {
       "people": 6,
-      "total": "6/5"
+      "total": "6/5",
+      "unit": "公升湯品"
     }
   },
   {
@@ -684,7 +701,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     "kind": "u1_avg_fraction",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "medium",
-    "question": "（生活應用｜平均分配｜社團活動）有 1 個果汁，平均分給 7 人，每人得到多少個？（用最簡分數 a/b 表示）",
+    "question": "（生活應用｜平均分配）有 1 公尺繩子，平均分給 7 人，每人得到多少公尺繩子？（用最簡分數 a/b 表示）",
     "answer": "1/7",
     "answer_mode": "fraction",
     "hints": [
@@ -716,7 +733,8 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     ],
     "meta": {
       "people": 7,
-      "total": "1"
+      "total": "1",
+      "unit": "公尺繩子"
     }
   },
   {
@@ -724,7 +742,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     "kind": "u1_avg_fraction",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "medium",
-    "question": "（生活應用｜平均分配｜社團活動）有 7/4 個壽司捲，平均分給 3 人，每人得到多少個？（用最簡分數 a/b 表示）",
+    "question": "（生活應用｜平均分配）有 7/4 公升檸檬汁，平均分給 3 人，每人得到多少公升檸檬汁？（用最簡分數 a/b 表示）",
     "answer": "7/12",
     "answer_mode": "fraction",
     "hints": [
@@ -756,7 +774,8 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     ],
     "meta": {
       "people": 3,
-      "total": "7/4"
+      "total": "7/4",
+      "unit": "公升檸檬汁"
     }
   },
   {
@@ -764,7 +783,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     "kind": "u1_avg_fraction",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "medium",
-    "question": "（生活應用｜平均分配｜社團活動）有 1 個巧克力，平均分給 5 人，每人得到多少個？（用最簡分數 a/b 表示）",
+    "question": "（生活應用｜平均分配）有 1 公斤糖粉，平均分給 5 人，每人得到多少公斤糖粉？（用最簡分數 a/b 表示）",
     "answer": "1/5",
     "answer_mode": "fraction",
     "hints": [
@@ -796,7 +815,8 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     ],
     "meta": {
       "people": 5,
-      "total": "1"
+      "total": "1",
+      "unit": "公斤糖粉"
     }
   },
   {
@@ -804,7 +824,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     "kind": "u2_frac_addsub_life",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
-    "question": "（生活應用｜分數減法）原本有 5/6 公升檸檬汁，用掉 2/3 公升檸檬汁，還剩多少 公升檸檬汁？（最簡分數）",
+    "question": "（生活應用｜分數減法）原本有 5/6 公升檸檬汁，用掉 2/3 公升檸檬汁，還剩多少公升檸檬汁？（最簡分數）",
     "answer": "1/6",
     "answer_mode": "fraction",
     "hints": [
@@ -850,7 +870,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     "kind": "u2_frac_addsub_life",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "medium",
-    "question": "（生活應用｜分數加法）小明喝了 2/3 杯水，又喝了 2/3 杯水，一共喝了多少 杯水？（最簡分數）",
+    "question": "（生活應用｜分數加法）小明喝了 2/3 杯水，又喝了 2/3 杯水，一共喝了多少杯水？（最簡分數）",
     "answer": "4/3",
     "answer_mode": "fraction",
     "hints": [
@@ -896,7 +916,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     "kind": "u2_frac_addsub_life",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
-    "question": "（生活應用｜分數加法）小明喝了 2/5 升湯，又喝了 1/2 升湯，一共喝了多少 升湯？（最簡分數）",
+    "question": "（生活應用｜分數加法）小明喝了 2/5 升湯，又喝了 1/2 升湯，一共喝了多少升湯？（最簡分數）",
     "answer": "9/10",
     "answer_mode": "fraction",
     "hints": [
@@ -942,7 +962,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     "kind": "u2_frac_addsub_life",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
-    "question": "（生活應用｜分數減法）原本有 3/4 罐檸檬汁，用掉 1/2 罐檸檬汁，還剩多少 罐檸檬汁？（最簡分數）",
+    "question": "（生活應用｜分數減法）原本有 3/4 罐檸檬汁，用掉 1/2 罐檸檬汁，還剩多少罐檸檬汁？（最簡分數）",
     "answer": "1/4",
     "answer_mode": "fraction",
     "hints": [
@@ -988,7 +1008,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     "kind": "u2_frac_addsub_life",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "medium",
-    "question": "（生活應用｜分數減法）原本有 4/5 公升果汁，用掉 1/2 公升果汁，還剩多少 公升果汁？（最簡分數）",
+    "question": "（生活應用｜分數減法）原本有 4/5 公升果汁，用掉 1/2 公升果汁，還剩多少公升果汁？（最簡分數）",
     "answer": "3/10",
     "answer_mode": "fraction",
     "hints": [
@@ -1034,7 +1054,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     "kind": "u2_frac_addsub_life",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
-    "question": "（生活應用｜分數加法）小明喝了 1/2 公升油，又喝了 1/2 公升油，一共喝了多少 公升油？（最簡分數）",
+    "question": "（生活應用｜分數加法）小明用了 1/2 公升油，又用了 1/2 公升油，一共用了多少公升油？（最簡分數）",
     "answer": "1",
     "answer_mode": "fraction",
     "hints": [
@@ -1080,7 +1100,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     "kind": "u2_frac_addsub_life",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "medium",
-    "question": "（生活應用｜分數加法）小明喝了 2/5 瓶酵素飲，又喝了 1/6 瓶酵素飲，一共喝了多少 瓶酵素飲？（最簡分數）",
+    "question": "（生活應用｜分數加法）小明喝了 2/5 瓶酵素飲，又喝了 1/6 瓶酵素飲，一共喝了多少瓶酵素飲？（最簡分數）",
     "answer": "17/30",
     "answer_mode": "fraction",
     "hints": [
@@ -1126,7 +1146,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     "kind": "u2_frac_addsub_life",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "medium",
-    "question": "（生活應用｜分數加法）小明喝了 1/6 杯牛奶，又喝了 3/5 杯牛奶，一共喝了多少 杯牛奶？（最簡分數）",
+    "question": "（生活應用｜分數加法）小明喝了 1/6 杯牛奶，又喝了 3/5 杯牛奶，一共喝了多少杯牛奶？（最簡分數）",
     "answer": "23/30",
     "answer_mode": "fraction",
     "hints": [
@@ -1172,7 +1192,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     "kind": "u2_frac_addsub_life",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
-    "question": "（生活應用｜分數加法）小明喝了 7/8 升果汁，又喝了 1/8 升果汁，一共喝了多少 升果汁？（最簡分數）",
+    "question": "（生活應用｜分數加法）小明喝了 7/8 升果汁，又喝了 1/8 升果汁，一共喝了多少升果汁？（最簡分數）",
     "answer": "1",
     "answer_mode": "fraction",
     "hints": [
@@ -1218,7 +1238,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     "kind": "u2_frac_addsub_life",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "medium",
-    "question": "（生活應用｜分數減法）原本有 4/5 公升果汁，用掉 1/2 公升果汁，還剩多少 公升果汁？（最簡分數）",
+    "question": "（生活應用｜分數減法）原本有 4/5 公升果汁，用掉 1/2 公升果汁，還剩多少公升果汁？（最簡分數）",
     "answer": "3/10",
     "answer_mode": "fraction",
     "hints": [
@@ -1264,7 +1284,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     "kind": "u2_frac_addsub_life",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "medium",
-    "question": "（生活應用｜分數減法）原本有 7/8 瓶油，用掉 1/3 瓶油，還剩多少 瓶油？（最簡分數）",
+    "question": "（生活應用｜分數減法）原本有 7/8 瓶油，用掉 1/3 瓶油，還剩多少瓶油？（最簡分數）",
     "answer": "13/24",
     "answer_mode": "fraction",
     "hints": [
@@ -1310,7 +1330,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     "kind": "u2_frac_addsub_life",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "medium",
-    "question": "（生活應用｜分數減法）原本有 1/2 杯油，用掉 5/12 杯油，還剩多少 杯油？（最簡分數）",
+    "question": "（生活應用｜分數減法）原本有 1/2 杯油，用掉 5/12 杯油，還剩多少杯油？（最簡分數）",
     "answer": "1/12",
     "answer_mode": "fraction",
     "hints": [
@@ -1356,7 +1376,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     "kind": "u2_frac_addsub_life",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
-    "question": "（生活應用｜分數減法）原本有 2/3 公升果汁，用掉 1/2 公升果汁，還剩多少 公升果汁？（最簡分數）",
+    "question": "（生活應用｜分數減法）原本有 2/3 公升果汁，用掉 1/2 公升果汁，還剩多少公升果汁？（最簡分數）",
     "answer": "1/6",
     "answer_mode": "fraction",
     "hints": [
@@ -1402,7 +1422,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     "kind": "u2_frac_addsub_life",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "medium",
-    "question": "（生活應用｜分數加法）小明喝了 3/5 杯油，又喝了 1/5 杯油，一共喝了多少 杯油？（最簡分數）",
+    "question": "（生活應用｜分數加法）小明用了 3/5 杯油，又用了 1/5 杯油，一共用了多少杯油？（最簡分數）",
     "answer": "4/5",
     "answer_mode": "fraction",
     "hints": [
@@ -1448,7 +1468,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     "kind": "u2_frac_addsub_life",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "medium",
-    "question": "（生活應用｜分數減法）原本有 1/2 公升檸檬汁，用掉 1/6 公升檸檬汁，還剩多少 公升檸檬汁？（最簡分數）",
+    "question": "（生活應用｜分數減法）原本有 1/2 公升檸檬汁，用掉 1/6 公升檸檬汁，還剩多少公升檸檬汁？（最簡分數）",
     "answer": "1/3",
     "answer_mode": "fraction",
     "hints": [
@@ -1494,7 +1514,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     "kind": "u2_frac_addsub_life",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
-    "question": "（生活應用｜分數加法）小明喝了 1/2 公升果汁，又喝了 1/2 公升果汁，一共喝了多少 公升果汁？（最簡分數）",
+    "question": "（生活應用｜分數加法）小明喝了 1/2 公升果汁，又喝了 1/2 公升果汁，一共喝了多少公升果汁？（最簡分數）",
     "answer": "1",
     "answer_mode": "fraction",
     "hints": [
@@ -1540,7 +1560,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     "kind": "u2_frac_addsub_life",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
-    "question": "（生活應用｜分數加法）小明喝了 3/5 公升果汁，又喝了 4/5 公升果汁，一共喝了多少 公升果汁？（最簡分數）",
+    "question": "（生活應用｜分數加法）小明喝了 3/5 公升果汁，又喝了 4/5 公升果汁，一共喝了多少公升果汁？（最簡分數）",
     "answer": "7/5",
     "answer_mode": "fraction",
     "hints": [
@@ -1586,7 +1606,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     "kind": "u2_frac_addsub_life",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "easy",
-    "question": "（生活應用｜分數加法）小明喝了 2/5 杯牛奶，又喝了 2/3 杯牛奶，一共喝了多少 杯牛奶？（最簡分數）",
+    "question": "（生活應用｜分數加法）小明喝了 2/5 杯牛奶，又喝了 2/3 杯牛奶，一共喝了多少杯牛奶？（最簡分數）",
     "answer": "16/15",
     "answer_mode": "fraction",
     "hints": [
@@ -1632,7 +1652,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     "kind": "u2_frac_addsub_life",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
-    "question": "（生活應用｜分數減法）原本有 4/5 公升果汁，用掉 2/5 公升果汁，還剩多少 公升果汁？（最簡分數）",
+    "question": "（生活應用｜分數減法）原本有 4/5 公升果汁，用掉 2/5 公升果汁，還剩多少公升果汁？（最簡分數）",
     "answer": "2/5",
     "answer_mode": "fraction",
     "hints": [
@@ -1678,7 +1698,7 @@ window.G5_LIFE_PACK2PLUS_BANK = [
     "kind": "u2_frac_addsub_life",
     "topic": "小五生活應用題｜第二包（加強版）｜帝國",
     "difficulty": "hard",
-    "question": "（生活應用｜分數加法）小明喝了 9/10 罐酵素飲，又喝了 4/5 罐酵素飲，一共喝了多少 罐酵素飲？（最簡分數）",
+    "question": "（生活應用｜分數加法）小明喝了 9/10 罐酵素飲，又喝了 4/5 罐酵素飲，一共喝了多少罐酵素飲？（最簡分數）",
     "answer": "17/10",
     "answer_mode": "fraction",
     "hints": [
