@@ -155,7 +155,7 @@
 <body>
   <header>
     <div class="title">互動小五生活應用題帝國｜第二包（加強版｜更難 + 加題）</div>
-    <div class="sub">把生活應用題做成「帝國征服」：答對才擴張、累積工程點數、解鎖領地。含闖關計分 + 練習提示/詳解/下一步。</div>
+    <div class="sub">把生活應用題做成「帝國征服」：答對才擴張、累積工程點數、解鎖領地。含闖關計分 + 練習提示/詳解/下一步；可離線（file://）或 GitHub Pages 使用。</div>
     <div class="row" style="margin-top:10px">
       <a class="btn" href="../">← 回到 AI MATH WEB</a>
       <span class="pill" id="bankMeta">題庫載入中...</span>
@@ -337,7 +337,6 @@
           <option value="1" selected>Level 1</option>
           <option value="2">Level 2</option>
           <option value="3">Level 3</option>
-          <option value="4">Level 4</option>
         </select>
         <button class="btn" id="btnHint">看提示</button>
         <button class="btn" id="btnHintNext">下一層提示</button>
@@ -496,7 +495,7 @@
 
     // ---------- bank/state ----------
     const bank = Array.isArray(window.G5_LIFE_PACK2PLUS_BANK) ? window.G5_LIFE_PACK2PLUS_BANK : [];
-    const state = { q:null, revealed:false, hintUsed:0, practiceStreak:0, shownHintLevels:{1:false,2:false,3:false,4:false}, recentKinds:[] };
+    const state = { q:null, revealed:false, submitted:false, hintUsed:0, practiceStreak:0, shownHintLevels:{1:false,2:false,3:false}, recentKinds:[] };
 
     const ls = {
       get(k, d){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } },
@@ -688,8 +687,9 @@
     function showQuestion(q){
       state.q = q;
       state.revealed = false;
+      state.submitted = false;
       state.hintUsed = 0;
-      state.shownHintLevels = {1:false,2:false,3:false,4:false};
+      state.shownHintLevels = {1:false,2:false,3:false};
       if (els.answer) els.answer.value = '';
       if (els.studentState) els.studentState.value = '';
       if (els.hints) els.hints.innerHTML = '';
@@ -707,16 +707,84 @@
     function clampHintLevel(raw){
       const n = Number(raw);
       if (!Number.isFinite(n)) return 1;
-      return Math.max(1, Math.min(4, Math.floor(n)));
+      return Math.max(1, Math.min(3, Math.floor(n)));
+    }
+
+    function inferUnitText(question){
+      const q = normalizeText(question);
+      const units = ['元','公分','公尺','公里','公克','公斤','毫升','公升','分鐘','小時','張','本','盒','包','個','份'];
+      for (const u of units){ if (q.includes(u)) return u; }
+      return '（先從題目圈出單位）';
+    }
+
+    function inferOperationByUnit(unitId){
+      const u = String(unitId || '');
+      if (u === 'u1_avg_fraction') return '÷';
+      if (u === 'u2_frac_addsub_life') return '+ / −';
+      if (u === 'u3_frac_times_int') return '×';
+      if (u === 'u4_money_decimal_addsub') return '+ / −';
+      if (u === 'u5_decimal_muldiv_price') return '× 或 ÷';
+      if (u === 'u6_frac_dec_convert') return '換算（等值）';
+      if (u === 'u7_discount_percent') return '× / − / ÷';
+      if (u === 'u8_ratio_recipe') return '÷ 再 ×';
+      if (u === 'u9_unit_convert_decimal') return '先換單位，再 + / − / × / ÷';
+      if (u === 'u10_rate_time_distance') return '× 或 ÷';
+      return '+ / − / × / ÷';
+    }
+
+    function sanitizeHintText(text, q){
+      const src = normalizeText(text || '');
+      if (!src) return '（沒有提示）';
+      const ans = normalizeText(q?.answer || '').trim();
+      if (!ans) return src;
+      return src.split(ans).join('（先自己算）');
+    }
+
+    function buildGuidedHint(q, level){
+      if (!q) return '（沒有提示）';
+      const lv = clampHintLevel(level);
+      const op = inferOperationByUnit(q.kind);
+      const unit = inferUnitText(q.question);
+      const baseHints = Array.isArray(q.hints) ? q.hints : [];
+      const base = sanitizeHintText(baseHints[lv-1] || '', q);
+
+      if (lv === 1){
+        return [
+          '【Level 1｜先懂題意（不算答案）】',
+          '步驟 1：先畫線圈出「已知」數字（有哪些量？）',
+          '步驟 2：把題目要你找的「未知」改寫成一句話（我要找的是____）',
+          `步驟 3：圈出單位：${unit}`,
+          `步驟 4：先決定方向（可能用 ${op}）`,
+          base ? `題目提醒：${base}` : ''
+        ].filter(Boolean).join('\n');
+      }
+
+      if (lv === 2){
+        return [
+          '【Level 2｜列式方向（不爆答案）】',
+          '步驟 1：把「已知→未知」翻成算式骨架（先不急著算）',
+          `步驟 2：先判斷這題主運算是 ${op}`,
+          '步驟 3：算式寫完先做單位檢查：左邊和右邊單位要對上',
+          '步驟 4：最後再按順序計算（先括號、後乘除、再加減）',
+          base ? `題目提醒：${base}` : ''
+        ].filter(Boolean).join('\n');
+      }
+
+      const steps = (Array.isArray(q.steps) ? q.steps.slice(0, 3) : []).map((s,i)=>`參考步驟 ${i+1}：${sanitizeHintText(s, q)}`);
+      return [
+        '【Level 3｜詳細引導（仍不直接給答案）】',
+        '步驟一：把題目資訊整理成「已知 / 未知 / 單位」三欄。',
+        `步驟二：依題意選 ${op}，先把算式完整寫出來。`,
+        '步驟三：逐步計算，每一步都寫中間結果，最後檢查單位與大小是否合理。',
+        ...steps,
+        base ? `題目提醒：${base}` : ''
+      ].filter(Boolean).join('\n');
     }
 
     function currentHint(level){
       const q = state.q;
       if (!q) return null;
-      const idx = clampHintLevel(level) - 1;
-      if (Array.isArray(q.hints) && q.hints[idx]) return q.hints[idx];
-      if (Array.isArray(q.steps) && q.steps.length) return q.steps.slice(0, idx+1).join('\n');
-      return '（沒有提示）';
+      return buildGuidedHint(q, level);
     }
 
     function showHintForLevel(level){
@@ -736,9 +804,14 @@
     function showSolution(){
       const q = state.q;
       if (!q) return;
+      if (!state.submitted){
+        showBanner('warn', '請先按「檢查」提交一次，再看完整解題。這樣能先自己思考，再對照步驟。');
+        return;
+      }
       const div = document.createElement('div');
       div.className = 'sol';
       const lines = [];
+      lines.push('【完整解題（提交後開放）】');
       if (Array.isArray(q.steps) && q.steps.length){
         q.steps.forEach((s,i) => lines.push(`步驟 ${i+1}：${s}`));
       }
@@ -758,18 +831,26 @@
     function nextStepHintByUnit(unitId, studentState){
       const st = normalizeText(studentState);
       const u = String(unitId || '');
-      if (!st) return '下一步：先標出「已知 / 未知 / 單位」，再決定用 + / − / × / ÷ 的方向，寫出算式，最後計算。';
-      if (u === 'u1_avg_fraction') return '下一步：把「平均分成 n 份」寫成「÷n」，再用分數表示每份。';
-      if (u === 'u2_frac_addsub_life') return '下一步：先判斷分母是否相同；不同就通分，再做加減，最後約分。';
-      if (u === 'u3_frac_times_int') return '下一步：分數×整數 = 分子×整數，分母不變；或先算 1 份再乘份數。';
-      if (u === 'u4_money_decimal_addsub') return '下一步：把金額小數點對齊再做加減；最後檢查是不是找零/合計。';
-      if (u === 'u5_decimal_muldiv_price') return '下一步：單價×數量=總價；總價÷數量=平均。先選對方向。';
-      if (u === 'u6_frac_dec_convert') return '下一步：把分數分母變成 10/100/1000（或用常見等值 1/4=0.25），再寫成小數/分數。';
-      if (u === 'u7_discount_percent') return '下一步：打 x 折 = 乘 0.x；先算折後價，再求省下多少/反推原價。';
-      if (u === 'u8_ratio_recipe') return '下一步：用份數法：總份→每份→各自份數×每份。';
-      if (u === 'u9_unit_convert_decimal') return '下一步：先把單位統一（例如 m→cm ×100），再做加減乘除。';
-      if (u === 'u10_rate_time_distance') return '下一步：先找「每…」= 單位率；距離=每…×時間；時間=距離÷每…。';
-      return '下一步：先把題目問的是什麼寫成「未知」，再用「已知 / 未知 / 單位」對齊，寫算式，最後做單位與大小合理性檢查。';
+      const unitSpecific = {
+        u1_avg_fraction:'單元提醒：看到「平均分」先用 ÷，最後結果可用分數表示。',
+        u2_frac_addsub_life:'單元提醒：先看分母是否相同，不同先通分再加減。',
+        u3_frac_times_int:'單元提醒：分數×整數可先把整數當成 n/1，再約分。',
+        u4_money_decimal_addsub:'單元提醒：金額題要先對齊小數點，再檢查是合計還是找零。',
+        u5_decimal_muldiv_price:'單元提醒：單價×數量=總價；總價÷數量=平均，先判斷方向。',
+        u6_frac_dec_convert:'單元提醒：分數↔小數要用等值概念（例如 1/4=0.25）。',
+        u7_discount_percent:'單元提醒：折扣題先把百分率轉成小數比例再算。',
+        u8_ratio_recipe:'單元提醒：比例題用份數法：總份→每份→各份量。',
+        u9_unit_convert_decimal:'單元提醒：先統一單位，再計算。',
+        u10_rate_time_distance:'單元提醒：先寫「每…」單位率，再用 距離=速率×時間。'
+      };
+      const focus = st ? `你剛剛說卡在：${st}` : '先不要急著算，先把題目整理好。';
+      return [
+        '下一步（條列引導）：',
+        `步驟一：${focus} 先標出「已知 / 未知 / 單位」。`,
+        `步驟二：決定運算方向（${inferOperationByUnit(u)}），把算式完整寫出來。`,
+        '步驟三：依序計算並寫中間結果，最後做單位與合理性檢查。',
+        unitSpecific[u] || '單元提醒：不確定時先回到題目，重看「問什麼、給什麼、單位是什麼」。'
+      ].join('\n');
     }
 
     // ---------- empire (10 cities) ----------
@@ -1109,10 +1190,10 @@
 
     els.btnHintNext?.addEventListener('click', () => {
       const cur = clampHintLevel(els.hintLevel.value || '1');
-      for (let lv = cur + 1; lv <= 4; lv++){
+      for (let lv = cur + 1; lv <= 3; lv++){
         if (!state.shownHintLevels[lv]){ showHintForLevel(lv); return; }
       }
-      showBanner('warn', '已經到 Level 4 了；如果還卡住，可以按「看完整解題」對照，或在下方描述你卡住的地方再按「給我下一步」。');
+      showBanner('warn', '已經到 Level 3（最後一層提示）了；先自己算一次，再按「檢查」後看完整解題。');
     });
 
     els.btnShowSteps?.addEventListener('click', () => {
@@ -1123,6 +1204,7 @@
     els.btnCheck?.addEventListener('click', () => {
       const q = state.q;
       if (!q){ showBanner('warn', '請先按「出題」。'); return; }
+      state.submitted = true;
       try {
         const ok = compareByMode(els.answer.value, q.answer, q.answer_mode);
         if (ok){
@@ -1352,7 +1434,7 @@
       if (!q) return;
       g.hintUsedThisQ = true;
       const t = nextStepHintByUnit(q.kind, '');
-      gBanner('warn', `提示方向：${t}\n（先寫算式，再算）`);
+      gBanner('warn', `提示方向（不爆答案）\n${t}`);
     }
 
     els.btnStart?.addEventListener('click', gStart);
