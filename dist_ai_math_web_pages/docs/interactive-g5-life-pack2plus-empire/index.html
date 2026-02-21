@@ -913,12 +913,28 @@
       }
     }
 
-    function nextStepHintByUnit(unitId, studentState){
+    function nextStepHintByUnit(unitId, studentState, q){
       const st = normalizeText(studentState);
       const u = String(unitId || '');
+      const qm = q && typeof q === 'object' ? (q.meta || {}) : {};
+      const qa = normalizeText(qm.a || '');
+      const qb = normalizeText(qm.b || '');
+      const qop = normalizeText(qm.op || inferOperationByUnit(u));
+      const qexpr = (qa && qb) ? `${qa} ${qop} ${qb}` : '';
+      const qText = normalizeText((q && q.question) || '');
+      const unitMatch = qText.match(/一共(?:喝了|用了)?多少([^？]+)\?/);
+      const qUnitLabel = normalizeText(unitMatch ? unitMatch[1] : '') || '原題單位';
+      const opGuide = qop || inferOperationByUnit(u);
       const unitSpecific = {
         u1_avg_fraction:'單元提醒：看到「平均分」先用 ÷，最後結果可用分數表示。',
-        u2_frac_addsub_life:'單元提醒：先看分母是否相同，不同先通分再加減。',
+        u2_frac_addsub_life:(() => {
+          const d1 = Number(qm.d1 || 0);
+          const d2 = Number(qm.d2 || 0);
+          if (d1 > 0 && d2 > 0 && d1 === d2){
+            return `單元提醒：這題分母同為 ${d1}，不用通分；直接做 ${qexpr || '分數加減'}，分母維持 ${d1}。`;
+          }
+          return `單元提醒：先看分母是否相同；不同就先通分，再做 ${qexpr || '分數加減'}。`;
+        })(),
         u3_frac_times_int:'單元提醒：分數×整數可先把整數當成 n/1，再約分。',
         u4_money_decimal_addsub:'單元提醒：金額題要先對齊小數點，再檢查是合計還是找零。',
         u5_decimal_muldiv_price:'單元提醒：單價×數量=總價；總價÷數量=平均，先判斷方向。',
@@ -928,12 +944,13 @@
         u9_unit_convert_decimal:'單元提醒：先統一單位，再計算。',
         u10_rate_time_distance:'單元提醒：先寫「每…」單位率，再用 距離=速率×時間。'
       };
-      const focus = st ? `你剛剛說卡在：${st}` : '先不要急著算，先把題目整理好。';
+      const focus = st ? `你剛剛卡在：${st}` : '先整理題目資訊，不要直接心算。';
       return [
         '下一步（條列引導）：',
-        `步驟一：${focus} 先標出「已知 / 未知 / 單位」。`,
-        `步驟二：決定運算方向（${inferOperationByUnit(u)}），把算式完整寫出來。`,
-        '步驟三：依序計算並寫中間結果，最後做單位與合理性檢查。',
+        `步驟一：${focus} 已知：${qa || '第一個分數'}、${qb || '第二個分數'}；未知：總量；單位：${qUnitLabel}。`,
+        `步驟二：看關鍵詞「又…一共」，用 ${opGuide}；算式直接寫：${qexpr || '分數 ${opGuide} 分數'}。`,
+        `步驟三：依序算中間結果（分母同就直接算分子；分母不同先通分），最後檢查單位仍是「${qUnitLabel}」。`,
+        '答案格式：分數（a/b）。',
         unitSpecific[u] || '單元提醒：不確定時先回到題目，重看「問什麼、給什麼、單位是什麼」。'
       ].join('\n');
     }
@@ -1367,7 +1384,7 @@
     els.btnNext?.addEventListener('click', () => {
       const q = state.q;
       if (!q) return;
-      const t = nextStepHintByUnit(q.kind, els.studentState.value);
+      const t = nextStepHintByUnit(q.kind, els.studentState.value, q);
       if (els.nextHint){
         els.nextHint.textContent = t;
         els.nextHint.style.display = '';
@@ -1611,7 +1628,7 @@
       const q = g.q;
       if (!q) return;
       g.hintUsedThisQ = true;
-      const t = nextStepHintByUnit(q.kind, '');
+      const t = nextStepHintByUnit(q.kind, '', q);
       gBanner('warn', `提示方向（不爆答案）\n${t}`);
     }
 
