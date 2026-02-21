@@ -386,8 +386,16 @@
       const s = normalizeText(text);
       if (!s) throw new Error('請輸入答案');
       const cleaned = s.replace(/,/g,'').trim();
+      // 支援分數輸入 a/b → 自動轉成小數（孩子可能習慣寫分數）
+      const fracMatch = cleaned.match(/^(-?\d+)\/(\d+)$/);
+      if (fracMatch){
+        const n = Number(fracMatch[1]);
+        const d = Number(fracMatch[2]);
+        if (d === 0) throw new Error('分母不能為 0');
+        return n / d;
+      }
       const v = Number(cleaned);
-      if (!Number.isFinite(v)) throw new Error('答案請輸入數字（例如 7.5）');
+      if (!Number.isFinite(v)) throw new Error('答案請輸入數字（例如 7.5）或分數（例如 1/2）');
       return v;
     }
 
