@@ -76,6 +76,10 @@ jobs:
         if: always()
         run: npm run triage:agent
 
+      - name: Build iteration output summary
+        if: always()
+        run: npm run summary:iteration
+
       - name: Create self-heal pull request
         if: steps.selfheal_changes.outputs.has_changes == 'true'
         id: selfheal_pr

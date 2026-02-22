@@ -126,6 +126,10 @@ jobs:
         if: always()
         run: npm run triage:agent
 
+      - name: Build iteration output summary
+        if: always()
+        run: npm run summary:iteration
+
       - name: Create issue on nightly failure
         if: failure()
         uses: actions/github-script@v7
