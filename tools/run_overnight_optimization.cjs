@@ -32,6 +32,23 @@ function ensureDir(relPath) {
   return p;
 }
 
+function stageOptimizationFiles() {
+  const trackedPaths = [
+    'golden/grade5_pack_v1.jsonl',
+    'golden/improvement_baseline.json',
+    'golden/improvement_trend_history.jsonl',
+    'golden/error_memory.jsonl',
+    'docs/improvement/latest.json',
+    'dist_ai_math_web_pages/docs/improvement/latest.json',
+    'artifacts/agent_web_search_report.json',
+    'artifacts/iteration_output_summary.json',
+    'artifacts/web_topic_alignment.json',
+    'artifacts/scorecard.json',
+  ];
+
+  return runCommand('git', ['add', '--', ...trackedPaths]);
+}
+
 async function main() {
   const hours = Number(argValue('--hours', '7'));
   const intervalMin = Number(argValue('--interval-min', '30'));
@@ -124,11 +141,18 @@ async function main() {
     if (pass && autoCommit) {
       const statusRes = runCommand('git', ['status', '--porcelain']);
       if (statusRes.stdout && statusRes.stdout.trim().length > 0) {
-        const addRes = runCommand('git', ['add', '-A']);
-        logs.push({ command: 'git add -A', pass: addRes.pass, status: addRes.status });
+        const addRes = stageOptimizationFiles();
+        logs.push({ command: 'git add -- [optimization files]', pass: addRes.pass, status: addRes.status });
 
         const commitMsg = `chore: overnight iteration ${i} optimized content and reports`;
-        const commitRes = runCommand('git', ['commit', '-m', commitMsg]);
+        let commitRes = runCommand('git', ['commit', '-m', commitMsg]);
+
+        // If pre-commit hooks modified files and failed the commit, add and commit again
+        if (!commitRes.pass) {
+          stageOptimizationFiles();
+          commitRes = runCommand('git', ['commit', '-m', commitMsg]);
+        }
+
         logs.push({ command: `git commit -m "${commitMsg}"`, pass: commitRes.pass, status: commitRes.status });
 
         if (commitRes.pass) {
