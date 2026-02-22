@@ -47,6 +47,16 @@ jobs:
         run: npx playwright install chromium
 
       - name: Baseline verify
+        id: baseline_verify
+        run: npm run verify:all
+        continue-on-error: true
+
+      - name: Self-heal baseline verify failures
+        if: steps.baseline_verify.outcome == 'failure'
+        run: npm run self-heal:verify
+
+      - name: Re-run baseline verify after self-heal
+        if: steps.baseline_verify.outcome == 'failure'
         run: npm run verify:all
 
       - name: Autotune hint JSON
