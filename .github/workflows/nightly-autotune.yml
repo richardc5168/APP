@@ -47,12 +47,22 @@ jobs:
       - name: Autotune hint JSON
         run: npm run autotune:hints
 
+      - name: Derive report-signal candidates
+        run: npm run derive:report-signals
+
+      - name: Apply report-signal autotune
+        run: npm run apply:report-signals
+
       - name: Re-run hint judge and scorecard
         run: |
           npm run judge:hints
           npm run golden:check
           npm run scorecard
-          npm run check:improvement
+          if git diff --quiet -- golden/grade5_pack_v1.jsonl; then
+            npm run check:improvement
+          else
+            node tools/check_improvement_trend.cjs --mode require-improvement
+          fi
           npm run gate:scorecard
 
       - name: Detect measurable improvement
@@ -101,4 +111,6 @@ jobs:
             golden/grade5_pack_v1.jsonl
             golden/improvement_baseline.json
             artifacts/autotune_report.json
+            artifacts/report_autotune_candidates.json
+            artifacts/report_autotune_apply.json
             artifacts/improvement_check.json
