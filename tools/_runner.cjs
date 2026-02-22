@@ -28,11 +28,17 @@ function resolveCommand(command) {
   return command;
 }
 
+function quoteShellArg(arg) {
+  const s = String(arg ?? '');
+  if (/^[A-Za-z0-9_./:-]+$/.test(s)) return s;
+  return `"${s.replace(/"/g, '\\"')}"`;
+}
+
 function runCommand(command, args, options = {}) {
   const execCommand = resolveCommand(command);
   let proc;
   if (process.platform === 'win32') {
-    const cmdString = [execCommand, ...args].join(' ');
+    const cmdString = [execCommand, ...args.map(quoteShellArg)].join(' ');
     proc = spawnSync(cmdString, {
       cwd: process.cwd(),
       encoding: 'utf-8',
