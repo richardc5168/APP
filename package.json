@@ -13,6 +13,8 @@
     "test:visual": "node tools/run_visual_snapshot.cjs",
     "test:diagnosis": "node --test tests_js/diagnoseWrongAnswer.test.mjs",
     "judge:hints": "node tools/judge_hint_quality.cjs golden/grade5_pack_v1.jsonl --out artifacts/hint_judge.json",
+    "autotune:hints": "node tools/autotune_hints_json.cjs",
+    "check:improvement": "node tools/check_improvement_trend.cjs --mode enforce",
     "golden:check": "node tools/run_golden_correctness.cjs",
     "scorecard": "node tools/build_scorecard.cjs --out artifacts/scorecard.json",
     "gate:scorecard": "node tools/check_scorecard_gate.cjs",

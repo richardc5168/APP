@@ -1,0 +1,92 @@
+name: Nightly Hint Autotune PR
+
+on:
+  schedule:
+    - cron: '30 18 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  autotune:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Install Node dependencies
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
+
+      - name: Install Playwright browser
+        run: npx playwright install chromium
+
+      - name: Baseline verify
+        run: npm run verify:all
+
+      - name: Autotune hint JSON
+        run: npm run autotune:hints
+
+      - name: Re-run hint judge and scorecard
+        run: |
+          npm run judge:hints
+          npm run golden:check
+          npm run scorecard
+          npm run check:improvement
+          npm run gate:scorecard
+
+      - name: Guard JSON-only changes
+        shell: bash
+        run: |
+          if git diff --name-only | grep -E -v '^(golden/.*\.(json|jsonl)|artifacts/.*\.json)$'; then
+            echo "Detected non-JSON changes, aborting autotune PR."
+            git diff --name-only
+            exit 1
+          fi
+
+      - name: Upload nightly artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nightly-autotune-artifacts
+          path: |
+            artifacts/
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: chore/nightly-hint-autotune
+          delete-branch: true
+          title: "chore: nightly hint JSON autotune"
+          commit-message: "chore: nightly hint JSON autotune"
+          body: |
+            Automated nightly hint improvement PR.
+
+            - Runs verify and scorecard gates
+            - Applies rule-based hint improvements to JSON/JSONL only
+            - Enforces non-regression via improvement baseline
+          add-paths: |
+            golden/grade5_pack_v1.jsonl
+            golden/improvement_baseline.json
+            artifacts/autotune_report.json
+            artifacts/improvement_check.json
