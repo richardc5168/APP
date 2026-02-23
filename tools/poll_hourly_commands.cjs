@@ -12,11 +12,13 @@ const ALLOWED_NPM_SCRIPTS = new Set([
   'topic:align',
   'summary:iteration',
   'triage:agent',
+  'agent:web-search',
   'memory:update',
   'judge:hints',
   'scorecard',
   'trend:improvement',
-  'gate:scorecard'
+  'gate:scorecard',
+  'optimize:g5g6:web:5h'
 ]);
 
 function argValue(name, fallback) {

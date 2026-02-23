@@ -23,6 +23,7 @@
     "agent:web-search": "node tools/agent_web_search_topics.cjs",
     "commands:poll": "node tools/poll_hourly_commands.cjs --watch --interval-min 30",
     "commands:poll:once": "node tools/poll_hourly_commands.cjs --once",
+    "optimize:g5g6:web:5h": "node tools/run_overnight_optimization.cjs --hours 5 --interval-min 30 --auto-push",
     "external:web:ingest": "python tools/external_web_ingest/collect_external_fraction_notes.py --offline",
     "external:web:build": "python tools/external_web_ingest/build_external_fraction_pack.py --n 40 --seed 60223",
     "external:web:validate": "python tools/external_web_ingest/validate_external_fraction_pack.py --pack data/external_web_fraction_app_v1_pack.json",

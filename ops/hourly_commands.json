@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": "2026-02-23T15:25:00Z",
+  "updated_at": "2026-02-24T00:10:00Z",
   "commands": [
     {
       "id": "2026-02-23-國字測試-驗證全部",
@@ -15,6 +15,13 @@
       "action": "npm_script",
       "value": "verify:all",
       "note": "手動新增：立即輪詢可執行一次 verify:all"
+    },
+    {
+      "id": "2026-02-24-g5g6-web-signal-optimize-5h",
+      "enabled": true,
+      "action": "npm_script",
+      "value": "optimize:g5g6:web:5h",
+      "note": "G5/G6 網路題型訊號抓取與提示/教學/家長報告優化，5 小時以上，通過驗證才提交流程"
     }
   ]
 }
