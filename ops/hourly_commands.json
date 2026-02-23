@@ -1,4 +1,54 @@
-{
+你是本 repo 的工程負責人。請在「不影響既有任何題型、既有出題/解題/提示流程」的前提下，新增一個全新的題型模組，名稱固定為：
+
+題型代號：external_web_fraction_app_v1
+題型顯示名稱（UI）：新的外網題型出題解題（分數應用）
+
+目標：
+1) 自動蒐集外部網路「國小五/六年級 分數應用」優質教學內容（影片/筆記/講義/文章皆可），但要以「可重現、可追溯」方式執行：
+   - 用一個 sources 清單檔列出 URL（先給 10~20 個，允許後續擴充）
+   - 寫一支工具腳本：下載來源頁面/影片描述頁（不做付費牆/登入、遵守 robots/合理頻率），把內容摘要成結構化筆記
+   - 每則筆記必須保留：source_url、title、retrieved_at、grade（5/6）、topic_tags（例如：折扣/平均分配/單位換算/路程時間/剩餘量/比率）、summary（你自己的摘要）、key_steps（解題策略步驟）、common_mistakes（常見錯誤）、example_patterns（可出題的模板描述）
+   - 僅保存「你自己撰寫的摘要」；若需要引用原文，單一來源逐字引用不得超過 25 個字，並標註引用出處
+   - 產出檔案放到：data/external_web_notes/external_web_fraction_app_notes.jsonl
+
+2) 依據現有「國小五年級 分數應用題」題型的框架（出題格式、hint ladder、答案檢查、解題步驟呈現方式），做出新的題型 external_web_fraction_app_v1：
+   - 題目範圍：國小五年級為主（先覆蓋：購物折扣、平均分配、單位換算、路程時間 四類）
+   - 每一類至少提供：題目生成器（可多組參數）、標準答案計算、分步提示（4 階：策略→列式→計算→檢查/反思）、錯誤診斷（至少 5 種常見錯誤）
+   - 題型必須可在 UI 中「單獨選用」，且不改動既有題型行為（不改既有題型輸出、不改既有路由、不改既有 schema）
+   - 若 repo 有 contract/schema 測試，請補齊此新題型的測試（包含：schema、hint ladder、math correctness、golden snapshot 任一種可重現測試）
+
+3) 工程實作要求（務必遵守）：
+   - 新增題型要走「plugin/registry」方式註冊：只新增，不覆蓋、不改既有題型邏輯
+   - 所有新檔案集中在：
+     - src/question_types/external_web_fraction_app_v1/...
+     - tools/external_web_ingest/...
+     - data/external_web_notes/...
+   - 新增一個開關：EXTERNAL_WEB_QUESTION_BANK=1 才會在 UI 顯示此題型（預設關閉）
+   - 產出 README：docs/external_web_fraction_app_v1.md（說明：來源清單怎麼加、如何跑 ingest、如何驗證、如何在 UI 開啟）
+
+4) 交付物（你完成後必須做到）：
+   A. 新增 sources 清單檔（例如 data/external_web_notes/sources.yaml）
+   B. 新增 ingest 腳本：
+      - 一鍵跑：npm run external:web:ingest 或等價指令
+      - 會更新 external_web_fraction_app_notes.jsonl
+   C. 新題型可被出題、可顯示提示、可算出答案、可通過測試
+   D. 不影響既有題型：跑全量測試（或至少你新增的測試 + 既有核心測試）要通過
+
+執行方式：
+- 先在 repo 內搜尋既有「五年級 分數應用」題型的檔案位置與註冊方式（registry/router）
+- 依該題型模式複製最小骨架到 external_web_fraction_app_v1（但要保持獨立、避免耦合）
+- 再實作 ingest → notes → generator 的資料流
+- 最後補齊測試與 UI feature flag
+
+請你先輸出：
+1) 你找到的既有分數應用題型檔案路徑與關鍵介面（registry/schema/hint ladder）
+2) 你將新增的檔案樹（tree）
+3) 你要新增的 npm scripts / 指令
+然後再開始寫程式碼與提交修改。
+
+
+
+{https://github.com/richardc5168/ai-math-web/blob/main/ops/hourly_commands.json#L5
   "version": 1,
   "updated_at": "2026-02-23T00:00:00Z",
   "commands": [
