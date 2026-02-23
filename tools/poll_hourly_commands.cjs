@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { runCommand } = require('./_runner.cjs');
 
-const RAW_URL_DEFAULT = 'https://raw.githubusercontent.com/richardc5168/ai-math-web/main/ops/hourly_commands.json';
+const COMMAND_FILE_DEFAULT = path.join(process.cwd(), 'ops', 'hourly_commands.json');
 const STATE_PATH = path.join(process.cwd(), 'artifacts', 'hourly_command_state.json');
 const RUN_LOG_PATH = path.join(process.cwd(), 'artifacts', 'hourly_command_runs.jsonl');
 
@@ -61,12 +61,11 @@ function normalizeCommands(payload) {
   return payload.commands.filter((c) => c && typeof c.id === 'string');
 }
 
-async function fetchCommands(rawUrl) {
-  const res = await fetch(rawUrl, { redirect: 'follow' });
-  if (!res.ok) {
-    throw new Error(`fetch failed: ${res.status} ${res.statusText}`);
+function readCommandFile(commandFilePath) {
+  if (!fs.existsSync(commandFilePath)) {
+    throw new Error(`command file not found: ${commandFilePath}`);
   }
-  return res.json();
+  return JSON.parse(fs.readFileSync(commandFilePath, 'utf8'));
 }
 
 function executeCommand(cmd) {
@@ -89,12 +88,15 @@ function executeCommand(cmd) {
   };
 }
 
-async function runOnce(rawUrl) {
+async function runOnce(commandFilePath) {
   const now = new Date().toISOString();
   const state = readState();
   const executed = new Set(state.executed_ids || []);
 
-  const payload = await fetchCommands(rawUrl);
+  const pullRes = runCommand('git', ['pull', '--ff-only', 'origin', 'main']);
+  const pullOk = pullRes.pass;
+
+  const payload = readCommandFile(commandFilePath);
   const commands = normalizeCommands(payload);
   const pending = commands.filter((c) => c.enabled && !executed.has(c.id));
 
@@ -122,14 +124,16 @@ async function runOnce(rawUrl) {
 
   const nextState = {
     last_checked_at: now,
-    source_url: rawUrl,
+    command_file: commandFilePath,
+    git_pull_ok: pullOk,
     executed_ids: Array.from(executed)
   };
   writeState(nextState);
 
   console.log(JSON.stringify({
     checked_at: now,
-    source_url: rawUrl,
+    command_file: commandFilePath,
+    git_pull_ok: pullOk,
     total_commands: commands.length,
     pending_executed: pending.length,
     executed_ids_count: nextState.executed_ids.length
@@ -137,18 +141,18 @@ async function runOnce(rawUrl) {
 }
 
 async function main() {
-  const rawUrl = argValue('--raw-url', RAW_URL_DEFAULT);
+  const commandFilePath = argValue('--command-file', COMMAND_FILE_DEFAULT);
   const intervalMin = Number(argValue('--interval-min', '60'));
   const once = hasFlag('--once') || !hasFlag('--watch');
 
   if (once) {
-    await runOnce(rawUrl);
+    await runOnce(commandFilePath);
     return;
   }
 
   while (true) {
     try {
-      await runOnce(rawUrl);
+      await runOnce(commandFilePath);
     } catch (err) {
       appendRunLog({
         id: 'poll-error',
