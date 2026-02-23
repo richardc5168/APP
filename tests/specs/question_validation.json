@@ -74,6 +74,42 @@
           ]
         }
       ]
+    },
+    {
+      "type_key": "external_web_fraction_app_v1",
+      "path": "data/external_web_fraction_app_v1_pack.json",
+      "min_items": 30,
+      "random_seeds": [5, 17, 41],
+      "golden_items": [
+        {
+          "id": "extfrac_0001",
+          "answer": "216",
+          "hints": {
+            "level1": "先把折扣轉成付款率。",
+            "level2": "現價 = 原價 × (1 - 折扣率)。",
+            "level3": "把百分率改成分數後再計算。"
+          },
+          "steps": [
+            "步驟 1：付款率 = 90% = 90/100。",
+            "步驟 2：現價 = 240×90/100。",
+            "步驟 3：計算得 216 元。"
+          ]
+        },
+        {
+          "id": "extfrac_0002",
+          "answer": "24/1",
+          "hints": {
+            "level1": "先把分鐘換成小時。",
+            "level2": "距離=速度×時間。",
+            "level3": "時間換成分數小時再代入。"
+          },
+          "steps": [
+            "步驟 1：30 分鐘 = 30/60 小時。",
+            "步驟 2：距離 = 48×30/60。",
+            "步驟 3：約分後得到 24/1 公里。"
+          ]
+        }
+      ]
     }
   ],
   "api_validation": {

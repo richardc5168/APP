@@ -96,6 +96,19 @@ except Exception:
     g5s_good_concepts = None
 
 
+def _env_enabled(name: str) -> bool:
+    val = str(os.environ.get(name, "")).strip().lower()
+    return val in ("1", "true", "yes", "on")
+
+
+EXTERNAL_WEB_QUESTION_BANK_ENABLED = _env_enabled("EXTERNAL_WEB_QUESTION_BANK")
+
+try:
+    from src.question_types.external_web_fraction_app_v1 import type as external_web_fraction_app_v1
+except Exception:
+    external_web_fraction_app_v1 = None
+
+
 # ======================================================================
 # ENGINE (出題 / 判題 / 自訂題目解題)
 # ======================================================================
@@ -474,6 +487,12 @@ def check(user_answer: str, correct_answer: str) -> Optional[int]:
             payload = json.loads(correct)
             if isinstance(payload, dict):
                 tkey = payload.get("type_key")
+                if (
+                    EXTERNAL_WEB_QUESTION_BANK_ENABLED
+                    and external_web_fraction_app_v1 is not None
+                    and tkey == getattr(external_web_fraction_app_v1, "TYPE_KEY", "")
+                ):
+                    return external_web_fraction_app_v1.check_answer(user, payload)
                 if g5s_web_concepts is not None and tkey == getattr(g5s_web_concepts, "TYPE_KEY", ""):
                     return g5s_web_concepts.check_answer(user, payload)
                 if g5s_good_concepts is not None and tkey == getattr(g5s_good_concepts, "TYPE_KEY", ""):
@@ -2126,6 +2145,11 @@ if g5s_web_concepts is not None:
     GENERATORS["g5s_web_concepts_v1"] = ("20260203 小五下網路精選", g5s_web_concepts.next_question)
 if g5s_good_concepts is not None:
     GENERATORS["g5s_good_concepts_v1"] = ("20260203 小五下數學好的觀念題型", g5s_good_concepts.next_question)
+if EXTERNAL_WEB_QUESTION_BANK_ENABLED and external_web_fraction_app_v1 is not None:
+    GENERATORS["external_web_fraction_app_v1"] = (
+        "新的外網題型出題解題（分數應用）",
+        external_web_fraction_app_v1.next_question,
+    )
 if HAS_SYMPY:
     GENERATORS["9"] = ("一元一次方程", gen_linear_equation)
     GENERATORS["linear"] = GENERATORS["9"]

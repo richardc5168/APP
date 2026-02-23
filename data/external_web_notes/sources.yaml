@@ -1,0 +1,40 @@
+# External web sources for Grade 5/6 fraction application notes (expandable).
+# Keep only open/public pages and respect robots / reasonable request rate.
+
+sources:
+  - url: "https://www.khanacademy.org/math/cc-fifth-grade-math/addition-and-subtraction-of-fractions"
+    grade: "5"
+    topic_tags: ["average_distribution", "fraction_basic", "word_problem"]
+  - url: "https://www.khanacademy.org/math/cc-fifth-grade-math/multiply-fractions"
+    grade: "5"
+    topic_tags: ["average_distribution", "fraction_multiply", "remaining_amount"]
+  - url: "https://www.khanacademy.org/math/cc-fifth-grade-math/divide-fractions"
+    grade: "5"
+    topic_tags: ["average_distribution", "fraction_divide", "ratio"]
+  - url: "https://www.khanacademy.org/math/cc-sixth-grade-math/cc-6th-fractions-decimals"
+    grade: "6"
+    topic_tags: ["unit_conversion", "ratio", "fraction_decimal"]
+  - url: "https://www.mathsisfun.com/fractions.html"
+    grade: "5"
+    topic_tags: ["fraction_basic", "average_distribution"]
+  - url: "https://www.mathsisfun.com/fractions_multiplication.html"
+    grade: "5"
+    topic_tags: ["average_distribution", "fraction_multiply"]
+  - url: "https://www.mathsisfun.com/fractions_division.html"
+    grade: "5"
+    topic_tags: ["average_distribution", "fraction_divide"]
+  - url: "https://www.mathsisfun.com/percent.html"
+    grade: "5"
+    topic_tags: ["shopping_discount", "ratio"]
+  - url: "https://www.mathsisfun.com/speed-distance-time.html"
+    grade: "6"
+    topic_tags: ["distance_time", "unit_conversion"]
+  - url: "https://www.cuemath.com/numbers/fractions/"
+    grade: "5"
+    topic_tags: ["fraction_basic", "word_problem"]
+  - url: "https://www.splashlearn.com/math-vocabulary/fractions/fraction-word-problems"
+    grade: "5"
+    topic_tags: ["average_distribution", "remaining_amount", "word_problem"]
+  - url: "https://www.splashlearn.com/math-vocabulary/percent/discount"
+    grade: "5"
+    topic_tags: ["shopping_discount", "ratio"]

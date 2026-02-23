@@ -55,6 +55,7 @@ openai*.txt
 # Generated datasets / exports (keep source JSON in math_bank/, ignore generated outputs)
 data/*.jsonl
 data/*.json
+!data/external_web_fraction_app_v1_pack.json
 math_bank/*.tagged.json
 math_bank/*.generated.json
 

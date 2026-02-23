@@ -1,0 +1,2827 @@
+{
+  "type_key": "external_web_fraction_app_v1",
+  "version": "v20260223",
+  "seed": 60223,
+  "generated_at": "2026-02-23T12:50:41",
+  "items": [
+    {
+      "id": "extfrac_0001",
+      "type_key": "external_web_fraction_app_v1",
+      "category": "shopping_discount",
+      "topic_tags": [
+        "shopping_discount",
+        "ratio"
+      ],
+      "concept_points": [
+        "折扣率要轉付款率",
+        "現價=原價×付款率"
+      ],
+      "difficulty": "easy",
+      "question": "（購物折扣）一本書原價 240 元，打 10% 折扣後，需付多少元？（填整數）",
+      "answer": "216",
+      "hints": {
+        "level1": "先把折扣轉成付款率。",
+        "level2": "現價 = 原價 × (1 - 折扣率)。",
+        "level3": "把百分率改成分數後再計算。"
+      },
+      "hint_ladder": {
+        "h1_strategy": "策略：先求付款率，再算現價。",
+        "h2_equation": "列式：現價 = 原價 × 付款率。",
+        "h3_compute": "計算：先將百分率轉分數，再完成乘法。",
+        "h4_check_reflect": "檢查：折後價應小於原價。"
+      },
+      "steps": [
+        "步驟 1：付款率 = 90% = 90/100。",
+        "步驟 2：現價 = 240×90/100。",
+        "步驟 3：計算得 216 元。"
+      ],
+      "error_diagnostics": [
+        {
+          "code": "E_UNIT",
+          "message": "單位未統一",
+          "remedy": "先把單位換成同一種再列式。"
+        },
+        {
+          "code": "E_RATE",
+          "message": "比率解讀錯誤",
+          "remedy": "確認是折扣率還是付款率。"
+        },
+        {
+          "code": "E_DEN",
+          "message": "分母用錯",
+          "remedy": "平均分配時分母應是份數或人數。"
+        },
+        {
+          "code": "E_SIMPLIFY",
+          "message": "約分遺漏",
+          "remedy": "最後檢查分子分母是否可同除。"
+        },
+        {
+          "code": "E_CHECK",
+          "message": "未做反向檢查",
+          "remedy": "將答案代回原題確認合理性。"
+        }
+      ],
+      "validator": {
+        "type": "number",
+        "tolerance": 0
+      },
+      "evidence": {
+        "note_id": "extnote_0012",
+        "source_url": "https://www.splashlearn.com/math-vocabulary/percent/discount",
+        "title": "(mock) https://www.splashlearn.com/math-vocabulary/percent/discount",
+        "quoted_fact": "分數題先看整體與部分",
+        "retrieved_at": "2026-02-23T12:49:54"
+      },
+      "generated_at": "2026-02-23T12:50:41"
+    },
+    {
+      "id": "extfrac_0002",
+      "type_key": "external_web_fraction_app_v1",
+      "category": "distance_time",
+      "topic_tags": [
+        "distance_time",
+        "unit_conversion"
+      ],
+      "concept_points": [
+        "先換時間單位",
+        "distance=speed×time"
+      ],
+      "difficulty": "hard",
+      "question": "（路程時間）一台車每小時行 48 公里，行駛 30 分鐘可走多少公里？（最簡分數）",
+      "answer": "24/1",
+      "hints": {
+        "level1": "先把分鐘換成小時。",
+        "level2": "距離=速度×時間。",
+        "level3": "時間換成分數小時再代入。"
+      },
+      "hint_ladder": {
+        "h1_strategy": "策略：先做時間換算，再用路程公式。",
+        "h2_equation": "列式：路程 = 速度 × (分鐘/60)。",
+        "h3_compute": "計算：先約分，再完成乘法。",
+        "h4_check_reflect": "檢查：時間不到 1 小時，距離應小於時速值。"
+      },
+      "steps": [
+        "步驟 1：30 分鐘 = 30/60 小時。",
+        "步驟 2：距離 = 48×30/60。",
+        "步驟 3：約分後得到 24/1 公里。"
+      ],
+      "error_diagnostics": [
+        {
+          "code": "E_UNIT",
+          "message": "單位未統一",
+          "remedy": "先把單位換成同一種再列式。"
+        },
+        {
+          "code": "E_RATE",
+          "message": "比率解讀錯誤",
+          "remedy": "確認是折扣率還是付款率。"
+        },
+        {
+          "code": "E_DEN",
+          "message": "分母用錯",
+          "remedy": "平均分配時分母應是份數或人數。"
+        },
+        {
+          "code": "E_SIMPLIFY",
+          "message": "約分遺漏",
+          "remedy": "最後檢查分子分母是否可同除。"
+        },
+        {
+          "code": "E_CHECK",
+          "message": "未做反向檢查",
+          "remedy": "將答案代回原題確認合理性。"
+        }
+      ],
+      "validator": {
+        "type": "fraction"
+      },
+      "evidence": {
+        "note_id": "extnote_0002",
+        "source_url": "https://www.khanacademy.org/math/cc-fifth-grade-math/multiply-fractions",
+        "title": "(mock) https://www.khanacademy.org/math/cc-fifth-grade-math/multiply-fractions",
+        "quoted_fact": "分數題先看整體與部分",
+        "retrieved_at": "2026-02-23T12:49:54"
+      },
+      "generated_at": "2026-02-23T12:50:41"
+    },
+    {
+      "id": "extfrac_0003",
+      "type_key": "external_web_fraction_app_v1",
+      "category": "distance_time",
+      "topic_tags": [
+        "distance_time",
+        "unit_conversion"
+      ],
+      "concept_points": [
+        "先換時間單位",
+        "distance=speed×time"
+      ],
+      "difficulty": "hard",
+      "question": "（路程時間）一台車每小時行 54 公里，行駛 30 分鐘可走多少公里？（最簡分數）",
+      "answer": "27/1",
+      "hints": {
+        "level1": "先把分鐘換成小時。",
+        "level2": "距離=速度×時間。",
+        "level3": "時間換成分數小時再代入。"
+      },
+      "hint_ladder": {
+        "h1_strategy": "策略：先做時間換算，再用路程公式。",
+        "h2_equation": "列式：路程 = 速度 × (分鐘/60)。",
+        "h3_compute": "計算：先約分，再完成乘法。",
+        "h4_check_reflect": "檢查：時間不到 1 小時，距離應小於時速值。"
+      },
+      "steps": [
+        "步驟 1：30 分鐘 = 30/60 小時。",
+        "步驟 2：距離 = 54×30/60。",
+        "步驟 3：約分後得到 27/1 公里。"
+      ],
+      "error_diagnostics": [
+        {
+          "code": "E_UNIT",
+          "message": "單位未統一",
+          "remedy": "先把單位換成同一種再列式。"
+        },
+        {
+          "code": "E_RATE",
+          "message": "比率解讀錯誤",
+          "remedy": "確認是折扣率還是付款率。"
+        },
+        {
+          "code": "E_DEN",
+          "message": "分母用錯",
+          "remedy": "平均分配時分母應是份數或人數。"
+        },
+        {
+          "code": "E_SIMPLIFY",
+          "message": "約分遺漏",
+          "remedy": "最後檢查分子分母是否可同除。"
+        },
+        {
+          "code": "E_CHECK",
+          "message": "未做反向檢查",
+          "remedy": "將答案代回原題確認合理性。"
+        }
+      ],
+      "validator": {
+        "type": "fraction"
+      },
+      "evidence": {
+        "note_id": "extnote_0001",
+        "source_url": "https://www.khanacademy.org/math/cc-fifth-grade-math/addition-and-subtraction-of-fractions",
+        "title": "(mock) https://www.khanacademy.org/math/cc-fifth-grade-math/addition-and-subtraction-of-fractions",
+        "quoted_fact": "分數題先看整體與部分",
+        "retrieved_at": "2026-02-23T12:49:54"
+      },
+      "generated_at": "2026-02-23T12:50:41"
+    },
+    {
+      "id": "extfrac_0004",
+      "type_key": "external_web_fraction_app_v1",
+      "category": "unit_conversion",
+      "topic_tags": [
+        "unit_conversion",
+        "fraction"
+      ],
+      "concept_points": [
+        "先換單位再運算",
+        "分率乘總量"
+      ],
+      "difficulty": "easy",
+      "question": "（單位換算）3.2 公升牛奶取出 1/5，取出的量是多少毫升？（整數）",
+      "answer": "640",
+      "hints": {
+        "level1": "先把公升換成毫升。",
+        "level2": "總毫升×分率就是取出量。",
+        "level3": "先換單位再做分數乘法。"
+      },
+      "hint_ladder": {
+        "h1_strategy": "策略：先統一到毫升再運算。",
+        "h2_equation": "列式：取出量 = (總公升×1000)×分率。",
+        "h3_compute": "計算：先換單位，再乘分率。",
+        "h4_check_reflect": "檢查：取出量不可超過總量。"
+      },
+      "steps": [
+        "步驟 1：3.2 公升 = 3200 毫升。",
+        "步驟 2：取出量 = 3200×1/5。",
+        "步驟 3：計算得 640 毫升。"
+      ],
+      "error_diagnostics": [
+        {
+          "code": "E_UNIT",
+          "message": "單位未統一",
+          "remedy": "先把單位換成同一種再列式。"
+        },
+        {
+          "code": "E_RATE",
+          "message": "比率解讀錯誤",
+          "remedy": "確認是折扣率還是付款率。"
+        },
+        {
+          "code": "E_DEN",
+          "message": "分母用錯",
+          "remedy": "平均分配時分母應是份數或人數。"
+        },
+        {
+          "code": "E_SIMPLIFY",
+          "message": "約分遺漏",
+          "remedy": "最後檢查分子分母是否可同除。"
+        },
+        {
+          "code": "E_CHECK",
+          "message": "未做反向檢查",
+          "remedy": "將答案代回原題確認合理性。"
+        }
+      ],
+      "validator": {
+        "type": "number",
+        "tolerance": 0
+      },
+      "evidence": {
+        "note_id": "extnote_0011",
+        "source_url": "https://www.splashlearn.com/math-vocabulary/fractions/fraction-word-problems",
+        "title": "(mock) https://www.splashlearn.com/math-vocabulary/fractions/fraction-word-problems",
+        "quoted_fact": "分數題先看整體與部分",
+        "retrieved_at": "2026-02-23T12:49:54"
+      },
+      "generated_at": "2026-02-23T12:50:41"
+    },
+    {
+      "id": "extfrac_0005",
+      "type_key": "external_web_fraction_app_v1",
+      "category": "unit_conversion",
+      "topic_tags": [
+        "unit_conversion",
+        "fraction"
+      ],
+      "concept_points": [
+        "先換單位再運算",
+        "分率乘總量"
+      ],
+      "difficulty": "easy",
+      "question": "（單位換算）3.2 公升牛奶取出 1/8，取出的量是多少毫升？（整數）",
+      "answer": "400",
+      "hints": {
+        "level1": "先把公升換成毫升。",
+        "level2": "總毫升×分率就是取出量。",
+        "level3": "先換單位再做分數乘法。"
+      },
+      "hint_ladder": {
+        "h1_strategy": "策略：先統一到毫升再運算。",
+        "h2_equation": "列式：取出量 = (總公升×1000)×分率。",
+        "h3_compute": "計算：先換單位，再乘分率。",
+        "h4_check_reflect": "檢查：取出量不可超過總量。"
+      },
+      "steps": [
+        "步驟 1：3.2 公升 = 3200 毫升。",
+        "步驟 2：取出量 = 3200×1/8。",
+        "步驟 3：計算得 400 毫升。"
+      ],
+      "error_diagnostics": [
+        {
+          "code": "E_UNIT",
+          "message": "單位未統一",
+          "remedy": "先把單位換成同一種再列式。"
+        },
+        {
+          "code": "E_RATE",
+          "message": "比率解讀錯誤",
+          "remedy": "確認是折扣率還是付款率。"
+        },
+        {
+          "code": "E_DEN",
+          "message": "分母用錯",
+          "remedy": "平均分配時分母應是份數或人數。"
+        },
+        {
+          "code": "E_SIMPLIFY",
+          "message": "約分遺漏",
+          "remedy": "最後檢查分子分母是否可同除。"
+        },
+        {
+          "code": "E_CHECK",
+          "message": "未做反向檢查",
+          "remedy": "將答案代回原題確認合理性。"
+        }
+      ],
+      "validator": {
+        "type": "number",
+        "tolerance": 0
+      },
+      "evidence": {
+        "note_id": "extnote_0005",
+        "source_url": "https://www.mathsisfun.com/fractions.html",
+        "title": "(mock) https://www.mathsisfun.com/fractions.html",
+        "quoted_fact": "分數題先看整體與部分",
+        "retrieved_at": "2026-02-23T12:49:54"
+      },
+      "generated_at": "2026-02-23T12:50:41"
+    },
+    {
+      "id": "extfrac_0006",
+      "type_key": "external_web_fraction_app_v1",
+      "category": "distance_time",
+      "topic_tags": [
+        "distance_time",
+        "unit_conversion"
+      ],
+      "concept_points": [
+        "先換時間單位",
+        "distance=speed×time"
+      ],
+      "difficulty": "hard",
+      "question": "（路程時間）一台車每小時行 72 公里，行駛 50 分鐘可走多少公里？（最簡分數）",
+      "answer": "60/1",
+      "hints": {
+        "level1": "先把分鐘換成小時。",
+        "level2": "距離=速度×時間。",
+        "level3": "時間換成分數小時再代入。"
+      },
+      "hint_ladder": {
+        "h1_strategy": "策略：先做時間換算，再用路程公式。",
+        "h2_equation": "列式：路程 = 速度 × (分鐘/60)。",
+        "h3_compute": "計算：先約分，再完成乘法。",
+        "h4_check_reflect": "檢查：時間不到 1 小時，距離應小於時速值。"
+      },
+      "steps": [
+        "步驟 1：50 分鐘 = 50/60 小時。",
+        "步驟 2：距離 = 72×50/60。",
+        "步驟 3：約分後得到 60/1 公里。"
+      ],
+      "error_diagnostics": [
+        {
+          "code": "E_UNIT",
+          "message": "單位未統一",
+          "remedy": "先把單位換成同一種再列式。"
+        },
+        {
+          "code": "E_RATE",
+          "message": "比率解讀錯誤",
+          "remedy": "確認是折扣率還是付款率。"
+        },
+        {
+          "code": "E_DEN",
+          "message": "分母用錯",
+          "remedy": "平均分配時分母應是份數或人數。"
+        },
+        {
+          "code": "E_SIMPLIFY",
+          "message": "約分遺漏",
+          "remedy": "最後檢查分子分母是否可同除。"
+        },
+        {
+          "code": "E_CHECK",
+          "message": "未做反向檢查",
+          "remedy": "將答案代回原題確認合理性。"
+        }
+      ],
+      "validator": {
+        "type": "fraction"
+      },
+      "evidence": {
+        "note_id": "extnote_0009",
+        "source_url": "https://www.mathsisfun.com/speed-distance-time.html",
+        "title": "(mock) https://www.mathsisfun.com/speed-distance-time.html",
+        "quoted_fact": "分數題先看整體與部分",
+        "retrieved_at": "2026-02-23T12:49:54"
+      },
+      "generated_at": "2026-02-23T12:50:41"
+    },
+    {
+      "id": "extfrac_0007",
+      "type_key": "external_web_fraction_app_v1",
+      "category": "shopping_discount",
+      "topic_tags": [
+        "shopping_discount",
+        "ratio"
+      ],
+      "concept_points": [
+        "折扣率要轉付款率",
+        "現價=原價×付款率"
+      ],
+      "difficulty": "easy",
+      "question": "（購物折扣）一本書原價 360 元，打 10% 折扣後，需付多少元？（填整數）",
+      "answer": "324",
+      "hints": {
+        "level1": "先把折扣轉成付款率。",
+        "level2": "現價 = 原價 × (1 - 折扣率)。",
+        "level3": "把百分率改成分數後再計算。"
+      },
+      "hint_ladder": {
+        "h1_strategy": "策略：先求付款率，再算現價。",
+        "h2_equation": "列式：現價 = 原價 × 付款率。",
+        "h3_compute": "計算：先將百分率轉分數，再完成乘法。",
+        "h4_check_reflect": "檢查：折後價應小於原價。"
+      },
+      "steps": [
+        "步驟 1：付款率 = 90% = 90/100。",
+        "步驟 2：現價 = 360×90/100。",
+        "步驟 3：計算得 324 元。"
+      ],
+      "error_diagnostics": [
+        {
+          "code": "E_UNIT",
+          "message": "單位未統一",
+          "remedy": "先把單位換成同一種再列式。"
+        },
+        {
+          "code": "E_RATE",
+          "message": "比率解讀錯誤",
+          "remedy": "確認是折扣率還是付款率。"
+        },
+        {
+          "code": "E_DEN",
+          "message": "分母用錯",
+          "remedy": "平均分配時分母應是份數或人數。"
+        },
+        {
+          "code": "E_SIMPLIFY",
+          "message": "約分遺漏",
+          "remedy": "最後檢查分子分母是否可同除。"
+        },
+        {
+          "code": "E_CHECK",
+          "message": "未做反向檢查",
+          "remedy": "將答案代回原題確認合理性。"
+        }
+      ],
+      "validator": {
+        "type": "number",
+        "tolerance": 0
+      },
+      "evidence": {
+        "note_id": "extnote_0001",
+        "source_url": "https://www.khanacademy.org/math/cc-fifth-grade-math/addition-and-subtraction-of-fractions",
+        "title": "(mock) https://www.khanacademy.org/math/cc-fifth-grade-math/addition-and-subtraction-of-fractions",
+        "quoted_fact": "分數題先看整體與部分",
+        "retrieved_at": "2026-02-23T12:49:54"
+      },
+      "generated_at": "2026-02-23T12:50:41"
+    },
+    {
+      "id": "extfrac_0008",
+      "type_key": "external_web_fraction_app_v1",
+      "category": "shopping_discount",
+      "topic_tags": [
+        "shopping_discount",
+        "ratio"
+      ],
+      "concept_points": [
+        "折扣率要轉付款率",
+        "現價=原價×付款率"
+      ],
+      "difficulty": "easy",
+      "question": "（購物折扣）一本書原價 480 元，打 25% 折扣後，需付多少元？（填整數）",
+      "answer": "360",
+      "hints": {
+        "level1": "先把折扣轉成付款率。",
+        "level2": "現價 = 原價 × (1 - 折扣率)。",
+        "level3": "把百分率改成分數後再計算。"
+      },
+      "hint_ladder": {
+        "h1_strategy": "策略：先求付款率，再算現價。",
+        "h2_equation": "列式：現價 = 原價 × 付款率。",
+        "h3_compute": "計算：先將百分率轉分數，再完成乘法。",
+        "h4_check_reflect": "檢查：折後價應小於原價。"
+      },
+      "steps": [
+        "步驟 1：付款率 = 75% = 75/100。",
+        "步驟 2：現價 = 480×75/100。",
+        "步驟 3：計算得 360 元。"
+      ],
+      "error_diagnostics": [
+        {
+          "code": "E_UNIT",
+          "message": "單位未統一",
+          "remedy": "先把單位換成同一種再列式。"
+        },
+        {
+          "code": "E_RATE",
+          "message": "比率解讀錯誤",
+          "remedy": "確認是折扣率還是付款率。"
+        },
+        {
+          "code": "E_DEN",
+          "message": "分母用錯",
+          "remedy": "平均分配時分母應是份數或人數。"
+        },
+        {
+          "code": "E_SIMPLIFY",
+          "message": "約分遺漏",
+          "remedy": "最後檢查分子分母是否可同除。"
+        },
+        {
+          "code": "E_CHECK",
+          "message": "未做反向檢查",
+          "remedy": "將答案代回原題確認合理性。"
+        }
+      ],
+      "validator": {
+        "type": "number",
+        "tolerance": 0
+      },
+      "evidence": {
+        "note_id": "extnote_0003",
+        "source_url": "https://www.khanacademy.org/math/cc-fifth-grade-math/divide-fractions",
+        "title": "(mock) https://www.khanacademy.org/math/cc-fifth-grade-math/divide-fractions",
+        "quoted_fact": "分數題先看整體與部分",
+        "retrieved_at": "2026-02-23T12:49:54"
+      },
+      "generated_at": "2026-02-23T12:50:41"
+    },
+    {
+      "id": "extfrac_0009",
+      "type_key": "external_web_fraction_app_v1",
+      "category": "unit_conversion",
+      "topic_tags": [
+        "unit_conversion",
+        "fraction"
+      ],
+      "concept_points": [
+        "先換單位再運算",
+        "分率乘總量"
+      ],
+      "difficulty": "easy",
+      "question": "（單位換算）2.5 公升牛奶取出 2/8，取出的量是多少毫升？（整數）",
+      "answer": "625",
+      "hints": {
+        "level1": "先把公升換成毫升。",
+        "level2": "總毫升×分率就是取出量。",
+        "level3": "先換單位再做分數乘法。"
+      },
+      "hint_ladder": {
+        "h1_strategy": "策略：先統一到毫升再運算。",
+        "h2_equation": "列式：取出量 = (總公升×1000)×分率。",
+        "h3_compute": "計算：先換單位，再乘分率。",
+        "h4_check_reflect": "檢查：取出量不可超過總量。"
+      },
+      "steps": [
+        "步驟 1：2.5 公升 = 2500 毫升。",
+        "步驟 2：取出量 = 2500×2/8。",
+        "步驟 3：計算得 625 毫升。"
+      ],
+      "error_diagnostics": [
+        {
+          "code": "E_UNIT",
+          "message": "單位未統一",
+          "remedy": "先把單位換成同一種再列式。"
+        },
+        {
+          "code": "E_RATE",
+          "message": "比率解讀錯誤",
+          "remedy": "確認是折扣率還是付款率。"
+        },
+        {
+          "code": "E_DEN",
+          "message": "分母用錯",
+          "remedy": "平均分配時分母應是份數或人數。"
+        },
+        {
+          "code": "E_SIMPLIFY",
+          "message": "約分遺漏",
+          "remedy": "最後檢查分子分母是否可同除。"
+        },
+        {
+          "code": "E_CHECK",
+          "message": "未做反向檢查",
+          "remedy": "將答案代回原題確認合理性。"
+        }
+      ],
+      "validator": {
+        "type": "number",
+        "tolerance": 0
+      },
+      "evidence": {
+        "note_id": "extnote_0007",
+        "source_url": "https://www.mathsisfun.com/fractions_division.html",
+        "title": "(mock) https://www.mathsisfun.com/fractions_division.html",
+        "quoted_fact": "分數題先看整體與部分",
+        "retrieved_at": "2026-02-23T12:49:54"
+      },
+      "generated_at": "2026-02-23T12:50:41"
+    },
+    {
+      "id": "extfrac_0010",
+      "type_key": "external_web_fraction_app_v1",
+      "category": "average_distribution",
+      "topic_tags": [
+        "average_distribution",
+        "remaining_amount"
+      ],
+      "concept_points": [
+        "先算剩下量",
+        "平均分配用除法"
+      ],
+      "difficulty": "medium",
+      "question": "（平均分配）一桶果汁共 36 公升，先用掉 3/4，剩下平均分給 6 人，每人可得多少公升？（最簡分數）",
+      "answer": "9/2",
+      "hints": {
+        "level1": "先算剩下量，再除以人數。",
+        "level2": "剩下量 = 全部×(1-已用分率)。",
+        "level3": "把剩下量除以人數並約分。"
+      },
+      "hint_ladder": {
+        "h1_strategy": "策略：兩段式，先求剩下再平均。",
+        "h2_equation": "列式：每人量 = [總量×(1-已用分率)]÷人數。",
+        "h3_compute": "計算：先做分數減法，再做除法與約分。",
+        "h4_check_reflect": "檢查：每人份量×人數應回到剩下量。"
+      },
+      "steps": [
+        "步驟 1：剩下量 = 36×(1/4) = 36/4。",
+        "步驟 2：每人 = (36/4)÷6。",
+        "步驟 3：約分後得到 9/2。"
+      ],
+      "error_diagnostics": [
+        {
+          "code": "E_UNIT",
+          "message": "單位未統一",
+          "remedy": "先把單位換成同一種再列式。"
+        },
+        {
+          "code": "E_RATE",
+          "message": "比率解讀錯誤",
+          "remedy": "確認是折扣率還是付款率。"
+        },
+        {
+          "code": "E_DEN",
+          "message": "分母用錯",
+          "remedy": "平均分配時分母應是份數或人數。"
+        },
+        {
+          "code": "E_SIMPLIFY",
+          "message": "約分遺漏",
+          "remedy": "最後檢查分子分母是否可同除。"
+        },
+        {
+          "code": "E_CHECK",
+          "message": "未做反向檢查",
+          "remedy": "將答案代回原題確認合理性。"
+        }
+      ],
+      "validator": {
+        "type": "fraction"
+      },
+      "evidence": {
+        "note_id": "extnote_0011",
+        "source_url": "https://www.splashlearn.com/math-vocabulary/fractions/fraction-word-problems",
+        "title": "(mock) https://www.splashlearn.com/math-vocabulary/fractions/fraction-word-problems",
+        "quoted_fact": "分數題先看整體與部分",
+        "retrieved_at": "2026-02-23T12:49:54"
+      },
+      "generated_at": "2026-02-23T12:50:41"
+    },
+    {
+      "id": "extfrac_0011",
+      "type_key": "external_web_fraction_app_v1",
+      "category": "distance_time",
+      "topic_tags": [
+        "distance_time",
+        "unit_conversion"
+      ],
+      "concept_points": [
+        "先換時間單位",
+        "distance=speed×time"
+      ],
+      "difficulty": "hard",
+      "question": "（路程時間）一台車每小時行 60 公里，行駛 30 分鐘可走多少公里？（最簡分數）",
+      "answer": "30/1",
+      "hints": {
+        "level1": "先把分鐘換成小時。",
+        "level2": "距離=速度×時間。",
+        "level3": "時間換成分數小時再代入。"
+      },
+      "hint_ladder": {
+        "h1_strategy": "策略：先做時間換算，再用路程公式。",
+        "h2_equation": "列式：路程 = 速度 × (分鐘/60)。",
+        "h3_compute": "計算：先約分，再完成乘法。",
+        "h4_check_reflect": "檢查：時間不到 1 小時，距離應小於時速值。"
+      },
+      "steps": [
+        "步驟 1：30 分鐘 = 30/60 小時。",
+        "步驟 2：距離 = 60×30/60。",
+        "步驟 3：約分後得到 30/1 公里。"
+      ],
+      "error_diagnostics": [
+        {
+          "code": "E_UNIT",
+          "message": "單位未統一",
+          "remedy": "先把單位換成同一種再列式。"
+        },
+        {
+          "code": "E_RATE",
+          "message": "比率解讀錯誤",
+          "remedy": "確認是折扣率還是付款率。"
+        },
+        {
+          "code": "E_DEN",
+          "message": "分母用錯",
+          "remedy": "平均分配時分母應是份數或人數。"
+        },
+        {
+          "code": "E_SIMPLIFY",
+          "message": "約分遺漏",
+          "remedy": "最後檢查分子分母是否可同除。"
+        },
+        {
+          "code": "E_CHECK",
+          "message": "未做反向檢查",
+          "remedy": "將答案代回原題確認合理性。"
+        }
+      ],
+      "validator": {
+        "type": "fraction"
+      },
+      "evidence": {
+        "note_id": "extnote_0010",
+        "source_url": "https://www.cuemath.com/numbers/fractions/",
+        "title": "(mock) https://www.cuemath.com/numbers/fractions/",
+        "quoted_fact": "分數題先看整體與部分",
+        "retrieved_at": "2026-02-23T12:49:54"
+      },
+      "generated_at": "2026-02-23T12:50:41"
+    },
+    {
+      "id": "extfrac_0012",
+      "type_key": "external_web_fraction_app_v1",
+      "category": "unit_conversion",
+      "topic_tags": [
+        "unit_conversion",
+        "fraction"
+      ],
+      "concept_points": [
+        "先換單位再運算",
+        "分率乘總量"
+      ],
+      "difficulty": "easy",
+      "question": "（單位換算）3.2 公升牛奶取出 3/5，取出的量是多少毫升？（整數）",
+      "answer": "1920",
+      "hints": {
+        "level1": "先把公升換成毫升。",
+        "level2": "總毫升×分率就是取出量。",
+        "level3": "先換單位再做分數乘法。"
+      },
+      "hint_ladder": {
+        "h1_strategy": "策略：先統一到毫升再運算。",
+        "h2_equation": "列式：取出量 = (總公升×1000)×分率。",
+        "h3_compute": "計算：先換單位，再乘分率。",
+        "h4_check_reflect": "檢查：取出量不可超過總量。"
+      },
+      "steps": [
+        "步驟 1：3.2 公升 = 3200 毫升。",
+        "步驟 2：取出量 = 3200×3/5。",
+        "步驟 3：計算得 1920 毫升。"
+      ],
+      "error_diagnostics": [
+        {
+          "code": "E_UNIT",
+          "message": "單位未統一",
+          "remedy": "先把單位換成同一種再列式。"
+        },
+        {
+          "code": "E_RATE",
+          "message": "比率解讀錯誤",
+          "remedy": "確認是折扣率還是付款率。"
+        },
+        {
+          "code": "E_DEN",
+          "message": "分母用錯",
+          "remedy": "平均分配時分母應是份數或人數。"
+        },
+        {
+          "code": "E_SIMPLIFY",
+          "message": "約分遺漏",
+          "remedy": "最後檢查分子分母是否可同除。"
+        },
+        {
+          "code": "E_CHECK",
+          "message": "未做反向檢查",
+          "remedy": "將答案代回原題確認合理性。"
+        }
+      ],
+      "validator": {
+        "type": "number",
+        "tolerance": 0
+      },
+      "evidence": {
+        "note_id": "extnote_0011",
+        "source_url": "https://www.splashlearn.com/math-vocabulary/fractions/fraction-word-problems",
+        "title": "(mock) https://www.splashlearn.com/math-vocabulary/fractions/fraction-word-problems",
+        "quoted_fact": "分數題先看整體與部分",
+        "retrieved_at": "2026-02-23T12:49:54"
+      },
+      "generated_at": "2026-02-23T12:50:41"
+    },
+    {
+      "id": "extfrac_0013",
+      "type_key": "external_web_fraction_app_v1",
+      "category": "distance_time",
+      "topic_tags": [
+        "distance_time",
+        "unit_conversion"
+      ],
+      "concept_points": [
+        "先換時間單位",
+        "distance=speed×time"
+      ],
+      "difficulty": "hard",
+      "question": "（路程時間）一台車每小時行 60 公里，行駛 20 分鐘可走多少公里？（最簡分數）",
+      "answer": "20/1",
+      "hints": {
+        "level1": "先把分鐘換成小時。",
+        "level2": "距離=速度×時間。",
+        "level3": "時間換成分數小時再代入。"
+      },
+      "hint_ladder": {
+        "h1_strategy": "策略：先做時間換算，再用路程公式。",
+        "h2_equation": "列式：路程 = 速度 × (分鐘/60)。",
+        "h3_compute": "計算：先約分，再完成乘法。",
+        "h4_check_reflect": "檢查：時間不到 1 小時，距離應小於時速值。"
+      },
+      "steps": [
+        "步驟 1：20 分鐘 = 20/60 小時。",
+        "步驟 2：距離 = 60×20/60。",
+        "步驟 3：約分後得到 20/1 公里。"
+      ],
+      "error_diagnostics": [
+        {
+          "code": "E_UNIT",
+          "message": "單位未統一",
+          "remedy": "先把單位換成同一種再列式。"
+        },
+        {
+          "code": "E_RATE",
+          "message": "比率解讀錯誤",
+          "remedy": "確認是折扣率還是付款率。"
+        },
+        {
+          "code": "E_DEN",
+          "message": "分母用錯",
+          "remedy": "平均分配時分母應是份數或人數。"
+        },
+        {
+          "code": "E_SIMPLIFY",
+          "message": "約分遺漏",
+          "remedy": "最後檢查分子分母是否可同除。"
+        },
+        {
+          "code": "E_CHECK",
+          "message": "未做反向檢查",
+          "remedy": "將答案代回原題確認合理性。"
+        }
+      ],
+      "validator": {
+        "type": "fraction"
+      },
+      "evidence": {
+        "note_id": "extnote_0010",
+        "source_url": "https://www.cuemath.com/numbers/fractions/",
+        "title": "(mock) https://www.cuemath.com/numbers/fractions/",
+        "quoted_fact": "分數題先看整體與部分",
+        "retrieved_at": "2026-02-23T12:49:54"
+      },
+      "generated_at": "2026-02-23T12:50:41"
+    },
+    {
+      "id": "extfrac_0014",
+      "type_key": "external_web_fraction_app_v1",
+      "category": "unit_conversion",
+      "topic_tags": [
+        "unit_conversion",
+        "fraction"
+      ],
+      "concept_points": [
+        "先換單位再運算",
+        "分率乘總量"
+      ],
+      "difficulty": "easy",
+      "question": "（單位換算）1.5 公升牛奶取出 2/4，取出的量是多少毫升？（整數）",
+      "answer": "750",
+      "hints": {
+        "level1": "先把公升換成毫升。",
+        "level2": "總毫升×分率就是取出量。",
+        "level3": "先換單位再做分數乘法。"
+      },
+      "hint_ladder": {
+        "h1_strategy": "策略：先統一到毫升再運算。",
+        "h2_equation": "列式：取出量 = (總公升×1000)×分率。",
+        "h3_compute": "計算：先換單位，再乘分率。",
+        "h4_check_reflect": "檢查：取出量不可超過總量。"
+      },
+      "steps": [
+        "步驟 1：1.5 公升 = 1500 毫升。",
+        "步驟 2：取出量 = 1500×2/4。",
+        "步驟 3：計算得 750 毫升。"
+      ],
+      "error_diagnostics": [
+        {
+          "code": "E_UNIT",
+          "message": "單位未統一",
+          "remedy": "先把單位換成同一種再列式。"
+        },
+        {
+          "code": "E_RATE",
+          "message": "比率解讀錯誤",
+          "remedy": "確認是折扣率還是付款率。"
+        },
+        {
+          "code": "E_DEN",
+          "message": "分母用錯",
+          "remedy": "平均分配時分母應是份數或人數。"
+        },
+        {
+          "code": "E_SIMPLIFY",
+          "message": "約分遺漏",
+          "remedy": "最後檢查分子分母是否可同除。"
+        },
+        {
+          "code": "E_CHECK",
+          "message": "未做反向檢查",
+          "remedy": "將答案代回原題確認合理性。"
+        }
+      ],
+      "validator": {
+        "type": "number",
+        "tolerance": 0
+      },
+      "evidence": {
+        "note_id": "extnote_0002",
+        "source_url": "https://www.khanacademy.org/math/cc-fifth-grade-math/multiply-fractions",
+        "title": "(mock) https://www.khanacademy.org/math/cc-fifth-grade-math/multiply-fractions",
+        "quoted_fact": "分數題先看整體與部分",
+        "retrieved_at": "2026-02-23T12:49:54"
+      },
+      "generated_at": "2026-02-23T12:50:41"
+    },
+    {
+      "id": "extfrac_0015",
+      "type_key": "external_web_fraction_app_v1",
+      "category": "distance_time",
+      "topic_tags": [
+        "distance_time",
+        "unit_conversion"
+      ],
+      "concept_points": [
+        "先換時間單位",
+        "distance=speed×time"
+      ],
+      "difficulty": "hard",
+      "question": "（路程時間）一台車每小時行 48 公里，行駛 20 分鐘可走多少公里？（最簡分數）",
+      "answer": "16/1",
+      "hints": {
+        "level1": "先把分鐘換成小時。",
+        "level2": "距離=速度×時間。",
+        "level3": "時間換成分數小時再代入。"
+      },
+      "hint_ladder": {
+        "h1_strategy": "策略：先做時間換算，再用路程公式。",
+        "h2_equation": "列式：路程 = 速度 × (分鐘/60)。",
+        "h3_compute": "計算：先約分，再完成乘法。",
+        "h4_check_reflect": "檢查：時間不到 1 小時，距離應小於時速值。"
+      },
+      "steps": [
+        "步驟 1：20 分鐘 = 20/60 小時。",
+        "步驟 2：距離 = 48×20/60。",
+        "步驟 3：約分後得到 16/1 公里。"
+      ],
+      "error_diagnostics": [
+        {
+          "code": "E_UNIT",
+          "message": "單位未統一",
+          "remedy": "先把單位換成同一種再列式。"
+        },
+        {
+          "code": "E_RATE",
+          "message": "比率解讀錯誤",
+          "remedy": "確認是折扣率還是付款率。"
+        },
+        {
+          "code": "E_DEN",
+          "message": "分母用錯",
+          "remedy": "平均分配時分母應是份數或人數。"
+        },
+        {
+          "code": "E_SIMPLIFY",
+          "message": "約分遺漏",
+          "remedy": "最後檢查分子分母是否可同除。"
+        },
+        {
+          "code": "E_CHECK",
+          "message": "未做反向檢查",
+          "remedy": "將答案代回原題確認合理性。"
+        }
+      ],
+      "validator": {
+        "type": "fraction"
+      },
+      "evidence": {
+        "note_id": "extnote_0006",
+        "source_url": "https://www.mathsisfun.com/fractions_multiplication.html",
+        "title": "(mock) https://www.mathsisfun.com/fractions_multiplication.html",
+        "quoted_fact": "分數題先看整體與部分",
+        "retrieved_at": "2026-02-23T12:49:54"
+      },
+      "generated_at": "2026-02-23T12:50:41"
+    },
+    {
+      "id": "extfrac_0016",
+      "type_key": "external_web_fraction_app_v1",
+      "category": "distance_time",
+      "topic_tags": [
+        "distance_time",
+        "unit_conversion"
+      ],
+      "concept_points": [
+        "先換時間單位",
+        "distance=speed×time"
+      ],
+      "difficulty": "hard",
+      "question": "（路程時間）一台車每小時行 60 公里，行駛 50 分鐘可走多少公里？（最簡分數）",
+      "answer": "50/1",
+      "hints": {
+        "level1": "先把分鐘換成小時。",
+        "level2": "距離=速度×時間。",
+        "level3": "時間換成分數小時再代入。"
+      },
+      "hint_ladder": {
+        "h1_strategy": "策略：先做時間換算，再用路程公式。",
+        "h2_equation": "列式：路程 = 速度 × (分鐘/60)。",
+        "h3_compute": "計算：先約分，再完成乘法。",
+        "h4_check_reflect": "檢查：時間不到 1 小時，距離應小於時速值。"
+      },
+      "steps": [
+        "步驟 1：50 分鐘 = 50/60 小時。",
+        "步驟 2：距離 = 60×50/60。",
+        "步驟 3：約分後得到 50/1 公里。"
+      ],
+      "error_diagnostics": [
+        {
+          "code": "E_UNIT",
+          "message": "單位未統一",
+          "remedy": "先把單位換成同一種再列式。"
+        },
+        {
+          "code": "E_RATE",
+          "message": "比率解讀錯誤",
+          "remedy": "確認是折扣率還是付款率。"
+        },
+        {
+          "code": "E_DEN",
+          "message": "分母用錯",
+          "remedy": "平均分配時分母應是份數或人數。"
+        },
+        {
+          "code": "E_SIMPLIFY",
+          "message": "約分遺漏",
+          "remedy": "最後檢查分子分母是否可同除。"
+        },
+        {
+          "code": "E_CHECK",
+          "message": "未做反向檢查",
+          "remedy": "將答案代回原題確認合理性。"
+        }
+      ],
+      "validator": {
+        "type": "fraction"
+      },
+      "evidence": {
+        "note_id": "extnote_0008",
+        "source_url": "https://www.mathsisfun.com/percent.html",
+        "title": "(mock) https://www.mathsisfun.com/percent.html",
+        "quoted_fact": "分數題先看整體與部分",
+        "retrieved_at": "2026-02-23T12:49:54"
+      },
+      "generated_at": "2026-02-23T12:50:41"
+    },
+    {
+      "id": "extfrac_0017",
+      "type_key": "external_web_fraction_app_v1",
+      "category": "unit_conversion",
+      "topic_tags": [
+        "unit_conversion",
+        "fraction"
+      ],
+      "concept_points": [
+        "先換單位再運算",
+        "分率乘總量"
+      ],
+      "difficulty": "easy",
+      "question": "（單位換算）2.5 公升牛奶取出 2/4，取出的量是多少毫升？（整數）",
+      "answer": "1250",
+      "hints": {
+        "level1": "先把公升換成毫升。",
+        "level2": "總毫升×分率就是取出量。",
+        "level3": "先換單位再做分數乘法。"
+      },
+      "hint_ladder": {
+        "h1_strategy": "策略：先統一到毫升再運算。",
+        "h2_equation": "列式：取出量 = (總公升×1000)×分率。",
+        "h3_compute": "計算：先換單位，再乘分率。",
+        "h4_check_reflect": "檢查：取出量不可超過總量。"
+      },
+      "steps": [
+        "步驟 1：2.5 公升 = 2500 毫升。",
+        "步驟 2：取出量 = 2500×2/4。",
+        "步驟 3：計算得 1250 毫升。"
+      ],
+      "error_diagnostics": [
+        {
+          "code": "E_UNIT",
+          "message": "單位未統一",
+          "remedy": "先把單位換成同一種再列式。"
+        },
+        {
+          "code": "E_RATE",
+          "message": "比率解讀錯誤",
+          "remedy": "確認是折扣率還是付款率。"
+        },
+        {
+          "code": "E_DEN",
+          "message": "分母用錯",
+          "remedy": "平均分配時分母應是份數或人數。"
+        },
+        {
+          "code": "E_SIMPLIFY",
+          "message": "約分遺漏",
+          "remedy": "最後檢查分子分母是否可同除。"
+        },
+        {
+          "code": "E_CHECK",
+          "message": "未做反向檢查",
+          "remedy": "將答案代回原題確認合理性。"
+        }
+      ],
+      "validator": {
+        "type": "number",
+        "tolerance": 0
+      },
+      "evidence": {
+        "note_id": "extnote_0001",
+        "source_url": "https://www.khanacademy.org/math/cc-fifth-grade-math/addition-and-subtraction-of-fractions",
+        "title": "(mock) https://www.khanacademy.org/math/cc-fifth-grade-math/addition-and-subtraction-of-fractions",
+        "quoted_fact": "分數題先看整體與部分",
+        "retrieved_at": "2026-02-23T12:49:54"
+      },
+      "generated_at": "2026-02-23T12:50:41"
+    },
+    {
+      "id": "extfrac_0018",
+      "type_key": "external_web_fraction_app_v1",
+      "category": "unit_conversion",
+      "topic_tags": [
+        "unit_conversion",
+        "fraction"
+      ],
+      "concept_points": [
+        "先換單位再運算",
+        "分率乘總量"
+      ],
+      "difficulty": "easy",
+      "question": "（單位換算）1 公升牛奶取出 1/8，取出的量是多少毫升？（整數）",
+      "answer": "125",
+      "hints": {
+        "level1": "先把公升換成毫升。",
+        "level2": "總毫升×分率就是取出量。",
+        "level3": "先換單位再做分數乘法。"
+      },
+      "hint_ladder": {
+        "h1_strategy": "策略：先統一到毫升再運算。",
+        "h2_equation": "列式：取出量 = (總公升×1000)×分率。",
+        "h3_compute": "計算：先換單位，再乘分率。",
+        "h4_check_reflect": "檢查：取出量不可超過總量。"
+      },
+      "steps": [
+        "步驟 1：1 公升 = 1000 毫升。",
+        "步驟 2：取出量 = 1000×1/8。",
+        "步驟 3：計算得 125 毫升。"
+      ],
+      "error_diagnostics": [
+        {
+          "code": "E_UNIT",
+          "message": "單位未統一",
+          "remedy": "先把單位換成同一種再列式。"
+        },
+        {
+          "code": "E_RATE",
+          "message": "比率解讀錯誤",
+          "remedy": "確認是折扣率還是付款率。"
+        },
+        {
+          "code": "E_DEN",
+          "message": "分母用錯",
+          "remedy": "平均分配時分母應是份數或人數。"
+        },
+        {
+          "code": "E_SIMPLIFY",
+          "message": "約分遺漏",
+          "remedy": "最後檢查分子分母是否可同除。"
+        },
+        {
+          "code": "E_CHECK",
+          "message": "未做反向檢查",
+          "remedy": "將答案代回原題確認合理性。"
+        }
+      ],
+      "validator": {
+        "type": "number",
+        "tolerance": 0
+      },
+      "evidence": {
+        "note_id": "extnote_0010",
+        "source_url": "https://www.cuemath.com/numbers/fractions/",
+        "title": "(mock) https://www.cuemath.com/numbers/fractions/",
+        "quoted_fact": "分數題先看整體與部分",
+        "retrieved_at": "2026-02-23T12:49:54"
+      },
+      "generated_at": "2026-02-23T12:50:41"
+    },
+    {
+      "id": "extfrac_0019",
+      "type_key": "external_web_fraction_app_v1",
+      "category": "unit_conversion",
+      "topic_tags": [
+        "unit_conversion",
+        "fraction"
+      ],
+      "concept_points": [
+        "先換單位再運算",
+        "分率乘總量"
+      ],
+      "difficulty": "easy",
+      "question": "（單位換算）2.5 公升牛奶取出 3/8，取出的量是多少毫升？（整數）",
+      "answer": "937",
+      "hints": {
+        "level1": "先把公升換成毫升。",
+        "level2": "總毫升×分率就是取出量。",
+        "level3": "先換單位再做分數乘法。"
+      },
+      "hint_ladder": {
+        "h1_strategy": "策略：先統一到毫升再運算。",
+        "h2_equation": "列式：取出量 = (總公升×1000)×分率。",
+        "h3_compute": "計算：先換單位，再乘分率。",
+        "h4_check_reflect": "檢查：取出量不可超過總量。"
+      },
+      "steps": [
+        "步驟 1：2.5 公升 = 2500 毫升。",
+        "步驟 2：取出量 = 2500×3/8。",
+        "步驟 3：計算得 937 毫升。"
+      ],
+      "error_diagnostics": [
+        {
+          "code": "E_UNIT",
+          "message": "單位未統一",
+          "remedy": "先把單位換成同一種再列式。"
+        },
+        {
+          "code": "E_RATE",
+          "message": "比率解讀錯誤",
+          "remedy": "確認是折扣率還是付款率。"
+        },
+        {
+          "code": "E_DEN",
+          "message": "分母用錯",
+          "remedy": "平均分配時分母應是份數或人數。"
+        },
+        {
+          "code": "E_SIMPLIFY",
+          "message": "約分遺漏",
+          "remedy": "最後檢查分子分母是否可同除。"
+        },
+        {
+          "code": "E_CHECK",
+          "message": "未做反向檢查",
+          "remedy": "將答案代回原題確認合理性。"
+        }
+      ],
+      "validator": {
+        "type": "number",
+        "tolerance": 0
+      },
+      "evidence": {
+        "note_id": "extnote_0009",
+        "source_url": "https://www.mathsisfun.com/speed-distance-time.html",
+        "title": "(mock) https://www.mathsisfun.com/speed-distance-time.html",
+        "quoted_fact": "分數題先看整體與部分",
+        "retrieved_at": "2026-02-23T12:49:54"
+      },
+      "generated_at": "2026-02-23T12:50:41"
+    },
+    {
+      "id": "extfrac_0020",
+      "type_key": "external_web_fraction_app_v1",
+      "category": "average_distribution",
+      "topic_tags": [
+        "average_distribution",
+        "remaining_amount"
+      ],
+      "concept_points": [
+        "先算剩下量",
+        "平均分配用除法"
+      ],
+      "difficulty": "medium",
+      "question": "（平均分配）一桶果汁共 30 公升，先用掉 1/5，剩下平均分給 4 人，每人可得多少公升？（最簡分數）",
+      "answer": "3/2",
+      "hints": {
+        "level1": "先算剩下量，再除以人數。",
+        "level2": "剩下量 = 全部×(1-已用分率)。",
+        "level3": "把剩下量除以人數並約分。"
+      },
+      "hint_ladder": {
+        "h1_strategy": "策略：兩段式，先求剩下再平均。",
+        "h2_equation": "列式：每人量 = [總量×(1-已用分率)]÷人數。",
+        "h3_compute": "計算：先做分數減法，再做除法與約分。",
+        "h4_check_reflect": "檢查：每人份量×人數應回到剩下量。"
+      },
+      "steps": [
+        "步驟 1：剩下量 = 30×(4/5) = 120/5。",
+        "步驟 2：每人 = (120/5)÷4。",
+        "步驟 3：約分後得到 3/2。"
+      ],
+      "error_diagnostics": [
+        {
+          "code": "E_UNIT",
+          "message": "單位未統一",
+          "remedy": "先把單位換成同一種再列式。"
+        },
+        {
+          "code": "E_RATE",
+          "message": "比率解讀錯誤",
+          "remedy": "確認是折扣率還是付款率。"
+        },
+        {
+          "code": "E_DEN",
+          "message": "分母用錯",
+          "remedy": "平均分配時分母應是份數或人數。"
+        },
+        {
+          "code": "E_SIMPLIFY",
+          "message": "約分遺漏",
+          "remedy": "最後檢查分子分母是否可同除。"
+        },
+        {
+          "code": "E_CHECK",
+          "message": "未做反向檢查",
+          "remedy": "將答案代回原題確認合理性。"
+        }
+      ],
+      "validator": {
+        "type": "fraction"
+      },
+      "evidence": {
+        "note_id": "extnote_0001",
+        "source_url": "https://www.khanacademy.org/math/cc-fifth-grade-math/addition-and-subtraction-of-fractions",
+        "title": "(mock) https://www.khanacademy.org/math/cc-fifth-grade-math/addition-and-subtraction-of-fractions",
+        "quoted_fact": "分數題先看整體與部分",
+        "retrieved_at": "2026-02-23T12:49:54"
+      },
+      "generated_at": "2026-02-23T12:50:41"
+    },
+    {
+      "id": "extfrac_0021",
+      "type_key": "external_web_fraction_app_v1",
+      "category": "shopping_discount",
+      "topic_tags": [
+        "shopping_discount",
+        "ratio"
+      ],
+      "concept_points": [
+        "折扣率要轉付款率",
+        "現價=原價×付款率"
+      ],
+      "difficulty": "easy",
+      "question": "（購物折扣）一本書原價 180 元，打 25% 折扣後，需付多少元？（填整數）",
+      "answer": "135",
+      "hints": {
+        "level1": "先把折扣轉成付款率。",
+        "level2": "現價 = 原價 × (1 - 折扣率)。",
+        "level3": "把百分率改成分數後再計算。"
+      },
+      "hint_ladder": {
+        "h1_strategy": "策略：先求付款率，再算現價。",
+        "h2_equation": "列式：現價 = 原價 × 付款率。",
+        "h3_compute": "計算：先將百分率轉分數，再完成乘法。",
+        "h4_check_reflect": "檢查：折後價應小於原價。"
+      },
+      "steps": [
+        "步驟 1：付款率 = 75% = 75/100。",
+        "步驟 2：現價 = 180×75/100。",
+        "步驟 3：計算得 135 元。"
+      ],
+      "error_diagnostics": [
+        {
+          "code": "E_UNIT",
+          "message": "單位未統一",
+          "remedy": "先把單位換成同一種再列式。"
+        },
+        {
+          "code": "E_RATE",
+          "message": "比率解讀錯誤",
+          "remedy": "確認是折扣率還是付款率。"
+        },
+        {
+          "code": "E_DEN",
+          "message": "分母用錯",
+          "remedy": "平均分配時分母應是份數或人數。"
+        },
+        {
+          "code": "E_SIMPLIFY",
+          "message": "約分遺漏",
+          "remedy": "最後檢查分子分母是否可同除。"
+        },
+        {
+          "code": "E_CHECK",
+          "message": "未做反向檢查",
+          "remedy": "將答案代回原題確認合理性。"
+        }
+      ],
+      "validator": {
+        "type": "number",
+        "tolerance": 0
+      },
+      "evidence": {
+        "note_id": "extnote_0001",
+        "source_url": "https://www.khanacademy.org/math/cc-fifth-grade-math/addition-and-subtraction-of-fractions",
+        "title": "(mock) https://www.khanacademy.org/math/cc-fifth-grade-math/addition-and-subtraction-of-fractions",
+        "quoted_fact": "分數題先看整體與部分",
+        "retrieved_at": "2026-02-23T12:49:54"
+      },
+      "generated_at": "2026-02-23T12:50:41"
+    },
+    {
+      "id": "extfrac_0022",
+      "type_key": "external_web_fraction_app_v1",
+      "category": "unit_conversion",
+      "topic_tags": [
+        "unit_conversion",
+        "fraction"
+      ],
+      "concept_points": [
+        "先換單位再運算",
+        "分率乘總量"
+      ],
+      "difficulty": "easy",
+      "question": "（單位換算）4 公升牛奶取出 1/4，取出的量是多少毫升？（整數）",
+      "answer": "1000",
+      "hints": {
+        "level1": "先把公升換成毫升。",
+        "level2": "總毫升×分率就是取出量。",
+        "level3": "先換單位再做分數乘法。"
+      },
+      "hint_ladder": {
+        "h1_strategy": "策略：先統一到毫升再運算。",
+        "h2_equation": "列式：取出量 = (總公升×1000)×分率。",
+        "h3_compute": "計算：先換單位，再乘分率。",
+        "h4_check_reflect": "檢查：取出量不可超過總量。"
+      },
+      "steps": [
+        "步驟 1：4 公升 = 4000 毫升。",
+        "步驟 2：取出量 = 4000×1/4。",
+        "步驟 3：計算得 1000 毫升。"
+      ],
+      "error_diagnostics": [
+        {
+          "code": "E_UNIT",
+          "message": "單位未統一",
+          "remedy": "先把單位換成同一種再列式。"
+        },
+        {
+          "code": "E_RATE",
+          "message": "比率解讀錯誤",
+          "remedy": "確認是折扣率還是付款率。"
+        },
+        {
+          "code": "E_DEN",
+          "message": "分母用錯",
+          "remedy": "平均分配時分母應是份數或人數。"
+        },
+        {
+          "code": "E_SIMPLIFY",
+          "message": "約分遺漏",
+          "remedy": "最後檢查分子分母是否可同除。"
+        },
+        {
+          "code": "E_CHECK",
+          "message": "未做反向檢查",
+          "remedy": "將答案代回原題確認合理性。"
+        }
+      ],
+      "validator": {
+        "type": "number",
+        "tolerance": 0
+      },
+      "evidence": {
+        "note_id": "extnote_0006",
+        "source_url": "https://www.mathsisfun.com/fractions_multiplication.html",
+        "title": "(mock) https://www.mathsisfun.com/fractions_multiplication.html",
+        "quoted_fact": "分數題先看整體與部分",
+        "retrieved_at": "2026-02-23T12:49:54"
+      },
+      "generated_at": "2026-02-23T12:50:41"
+    },
+    {
+      "id": "extfrac_0023",
+      "type_key": "external_web_fraction_app_v1",
+      "category": "distance_time",
+      "topic_tags": [
+        "distance_time",
+        "unit_conversion"
+      ],
+      "concept_points": [
+        "先換時間單位",
+        "distance=speed×time"
+      ],
+      "difficulty": "hard",
+      "question": "（路程時間）一台車每小時行 48 公里，行駛 50 分鐘可走多少公里？（最簡分數）",
+      "answer": "40/1",
+      "hints": {
+        "level1": "先把分鐘換成小時。",
+        "level2": "距離=速度×時間。",
+        "level3": "時間換成分數小時再代入。"
+      },
+      "hint_ladder": {
+        "h1_strategy": "策略：先做時間換算，再用路程公式。",
+        "h2_equation": "列式：路程 = 速度 × (分鐘/60)。",
+        "h3_compute": "計算：先約分，再完成乘法。",
+        "h4_check_reflect": "檢查：時間不到 1 小時，距離應小於時速值。"
+      },
+      "steps": [
+        "步驟 1：50 分鐘 = 50/60 小時。",
+        "步驟 2：距離 = 48×50/60。",
+        "步驟 3：約分後得到 40/1 公里。"
+      ],
+      "error_diagnostics": [
+        {
+          "code": "E_UNIT",
+          "message": "單位未統一",
+          "remedy": "先把單位換成同一種再列式。"
+        },
+        {
+          "code": "E_RATE",
+          "message": "比率解讀錯誤",
+          "remedy": "確認是折扣率還是付款率。"
+        },
+        {
+          "code": "E_DEN",
+          "message": "分母用錯",
+          "remedy": "平均分配時分母應是份數或人數。"
+        },
+        {
+          "code": "E_SIMPLIFY",
+          "message": "約分遺漏",
+          "remedy": "最後檢查分子分母是否可同除。"
+        },
+        {
+          "code": "E_CHECK",
+          "message": "未做反向檢查",
+          "remedy": "將答案代回原題確認合理性。"
+        }
+      ],
+      "validator": {
+        "type": "fraction"
+      },
+      "evidence": {
+        "note_id": "extnote_0011",
+        "source_url": "https://www.splashlearn.com/math-vocabulary/fractions/fraction-word-problems",
+        "title": "(mock) https://www.splashlearn.com/math-vocabulary/fractions/fraction-word-problems",
+        "quoted_fact": "分數題先看整體與部分",
+        "retrieved_at": "2026-02-23T12:49:54"
+      },
+      "generated_at": "2026-02-23T12:50:41"
+    },
+    {
+      "id": "extfrac_0024",
+      "type_key": "external_web_fraction_app_v1",
+      "category": "average_distribution",
+      "topic_tags": [
+        "average_distribution",
+        "remaining_amount"
+      ],
+      "concept_points": [
+        "先算剩下量",
+        "平均分配用除法"
+      ],
+      "difficulty": "medium",
+      "question": "（平均分配）一桶果汁共 18 公升，先用掉 3/5，剩下平均分給 6 人，每人可得多少公升？（最簡分數）",
+      "answer": "5/3",
+      "hints": {
+        "level1": "先算剩下量，再除以人數。",
+        "level2": "剩下量 = 全部×(1-已用分率)。",
+        "level3": "把剩下量除以人數並約分。"
+      },
+      "hint_ladder": {
+        "h1_strategy": "策略：兩段式，先求剩下再平均。",
+        "h2_equation": "列式：每人量 = [總量×(1-已用分率)]÷人數。",
+        "h3_compute": "計算：先做分數減法，再做除法與約分。",
+        "h4_check_reflect": "檢查：每人份量×人數應回到剩下量。"
+      },
+      "steps": [
+        "步驟 1：剩下量 = 18×(2/5) = 36/5。",
+        "步驟 2：每人 = (36/5)÷6。",
+        "步驟 3：約分後得到 5/3。"
+      ],
+      "error_diagnostics": [
+        {
+          "code": "E_UNIT",
+          "message": "單位未統一",
+          "remedy": "先把單位換成同一種再列式。"
+        },
+        {
+          "code": "E_RATE",
+          "message": "比率解讀錯誤",
+          "remedy": "確認是折扣率還是付款率。"
+        },
+        {
+          "code": "E_DEN",
+          "message": "分母用錯",
+          "remedy": "平均分配時分母應是份數或人數。"
+        },
+        {
+          "code": "E_SIMPLIFY",
+          "message": "約分遺漏",
+          "remedy": "最後檢查分子分母是否可同除。"
+        },
+        {
+          "code": "E_CHECK",
+          "message": "未做反向檢查",
+          "remedy": "將答案代回原題確認合理性。"
+        }
+      ],
+      "validator": {
+        "type": "fraction"
+      },
+      "evidence": {
+        "note_id": "extnote_0007",
+        "source_url": "https://www.mathsisfun.com/fractions_division.html",
+        "title": "(mock) https://www.mathsisfun.com/fractions_division.html",
+        "quoted_fact": "分數題先看整體與部分",
+        "retrieved_at": "2026-02-23T12:49:54"
+      },
+      "generated_at": "2026-02-23T12:50:41"
+    },
+    {
+      "id": "extfrac_0025",
+      "type_key": "external_web_fraction_app_v1",
+      "category": "average_distribution",
+      "topic_tags": [
+        "average_distribution",
+        "remaining_amount"
+      ],
+      "concept_points": [
+        "先算剩下量",
+        "平均分配用除法"
+      ],
+      "difficulty": "medium",
+      "question": "（平均分配）一桶果汁共 36 公升，先用掉 2/5，剩下平均分給 4 人，每人可得多少公升？（最簡分數）",
+      "answer": "7/2",
+      "hints": {
+        "level1": "先算剩下量，再除以人數。",
+        "level2": "剩下量 = 全部×(1-已用分率)。",
+        "level3": "把剩下量除以人數並約分。"
+      },
+      "hint_ladder": {
+        "h1_strategy": "策略：兩段式，先求剩下再平均。",
+        "h2_equation": "列式：每人量 = [總量×(1-已用分率)]÷人數。",
+        "h3_compute": "計算：先做分數減法，再做除法與約分。",
+        "h4_check_reflect": "檢查：每人份量×人數應回到剩下量。"
+      },
+      "steps": [
+        "步驟 1：剩下量 = 36×(3/5) = 108/5。",
+        "步驟 2：每人 = (108/5)÷4。",
+        "步驟 3：約分後得到 7/2。"
+      ],
+      "error_diagnostics": [
+        {
+          "code": "E_UNIT",
+          "message": "單位未統一",
+          "remedy": "先把單位換成同一種再列式。"
+        },
+        {
+          "code": "E_RATE",
+          "message": "比率解讀錯誤",
+          "remedy": "確認是折扣率還是付款率。"
+        },
+        {
+          "code": "E_DEN",
+          "message": "分母用錯",
+          "remedy": "平均分配時分母應是份數或人數。"
+        },
+        {
+          "code": "E_SIMPLIFY",
+          "message": "約分遺漏",
+          "remedy": "最後檢查分子分母是否可同除。"
+        },
+        {
+          "code": "E_CHECK",
+          "message": "未做反向檢查",
+          "remedy": "將答案代回原題確認合理性。"
+        }
+      ],
+      "validator": {
+        "type": "fraction"
+      },
+      "evidence": {
+        "note_id": "extnote_0011",
+        "source_url": "https://www.splashlearn.com/math-vocabulary/fractions/fraction-word-problems",
+        "title": "(mock) https://www.splashlearn.com/math-vocabulary/fractions/fraction-word-problems",
+        "quoted_fact": "分數題先看整體與部分",
+        "retrieved_at": "2026-02-23T12:49:54"
+      },
+      "generated_at": "2026-02-23T12:50:41"
+    },
+    {
+      "id": "extfrac_0026",
+      "type_key": "external_web_fraction_app_v1",
+      "category": "unit_conversion",
+      "topic_tags": [
+        "unit_conversion",
+        "fraction"
+      ],
+      "concept_points": [
+        "先換單位再運算",
+        "分率乘總量"
+      ],
+      "difficulty": "easy",
+      "question": "（單位換算）1 公升牛奶取出 1/4，取出的量是多少毫升？（整數）",
+      "answer": "250",
+      "hints": {
+        "level1": "先把公升換成毫升。",
+        "level2": "總毫升×分率就是取出量。",
+        "level3": "先換單位再做分數乘法。"
+      },
+      "hint_ladder": {
+        "h1_strategy": "策略：先統一到毫升再運算。",
+        "h2_equation": "列式：取出量 = (總公升×1000)×分率。",
+        "h3_compute": "計算：先換單位，再乘分率。",
+        "h4_check_reflect": "檢查：取出量不可超過總量。"
+      },
+      "steps": [
+        "步驟 1：1 公升 = 1000 毫升。",
+        "步驟 2：取出量 = 1000×1/4。",
+        "步驟 3：計算得 250 毫升。"
+      ],
+      "error_diagnostics": [
+        {
+          "code": "E_UNIT",
+          "message": "單位未統一",
+          "remedy": "先把單位換成同一種再列式。"
+        },
+        {
+          "code": "E_RATE",
+          "message": "比率解讀錯誤",
+          "remedy": "確認是折扣率還是付款率。"
+        },
+        {
+          "code": "E_DEN",
+          "message": "分母用錯",
+          "remedy": "平均分配時分母應是份數或人數。"
+        },
+        {
+          "code": "E_SIMPLIFY",
+          "message": "約分遺漏",
+          "remedy": "最後檢查分子分母是否可同除。"
+        },
+        {
+          "code": "E_CHECK",
+          "message": "未做反向檢查",
+          "remedy": "將答案代回原題確認合理性。"
+        }
+      ],
+      "validator": {
+        "type": "number",
+        "tolerance": 0
+      },
+      "evidence": {
+        "note_id": "extnote_0012",
+        "source_url": "https://www.splashlearn.com/math-vocabulary/percent/discount",
+        "title": "(mock) https://www.splashlearn.com/math-vocabulary/percent/discount",
+        "quoted_fact": "分數題先看整體與部分",
+        "retrieved_at": "2026-02-23T12:49:54"
+      },
+      "generated_at": "2026-02-23T12:50:41"
+    },
+    {
+      "id": "extfrac_0027",
+      "type_key": "external_web_fraction_app_v1",
+      "category": "average_distribution",
+      "topic_tags": [
+        "average_distribution",
+        "remaining_amount"
+      ],
+      "concept_points": [
+        "先算剩下量",
+        "平均分配用除法"
+      ],
+      "difficulty": "medium",
+      "question": "（平均分配）一桶果汁共 30 公升，先用掉 4/3，剩下平均分給 3 人，每人可得多少公升？（最簡分數）",
+      "answer": "40/3",
+      "hints": {
+        "level1": "先算剩下量，再除以人數。",
+        "level2": "剩下量 = 全部×(1-已用分率)。",
+        "level3": "把剩下量除以人數並約分。"
+      },
+      "hint_ladder": {
+        "h1_strategy": "策略：兩段式，先求剩下再平均。",
+        "h2_equation": "列式：每人量 = [總量×(1-已用分率)]÷人數。",
+        "h3_compute": "計算：先做分數減法，再做除法與約分。",
+        "h4_check_reflect": "檢查：每人份量×人數應回到剩下量。"
+      },
+      "steps": [
+        "步驟 1：剩下量 = 30×(-1/3) = -30/3。",
+        "步驟 2：每人 = (-30/3)÷3。",
+        "步驟 3：約分後得到 40/3。"
+      ],
+      "error_diagnostics": [
+        {
+          "code": "E_UNIT",
+          "message": "單位未統一",
+          "remedy": "先把單位換成同一種再列式。"
+        },
+        {
+          "code": "E_RATE",
+          "message": "比率解讀錯誤",
+          "remedy": "確認是折扣率還是付款率。"
+        },
+        {
+          "code": "E_DEN",
+          "message": "分母用錯",
+          "remedy": "平均分配時分母應是份數或人數。"
+        },
+        {
+          "code": "E_SIMPLIFY",
+          "message": "約分遺漏",
+          "remedy": "最後檢查分子分母是否可同除。"
+        },
+        {
+          "code": "E_CHECK",
+          "message": "未做反向檢查",
+          "remedy": "將答案代回原題確認合理性。"
+        }
+      ],
+      "validator": {
+        "type": "fraction"
+      },
+      "evidence": {
+        "note_id": "extnote_0011",
+        "source_url": "https://www.splashlearn.com/math-vocabulary/fractions/fraction-word-problems",
+        "title": "(mock) https://www.splashlearn.com/math-vocabulary/fractions/fraction-word-problems",
+        "quoted_fact": "分數題先看整體與部分",
+        "retrieved_at": "2026-02-23T12:49:54"
+      },
+      "generated_at": "2026-02-23T12:50:41"
+    },
+    {
+      "id": "extfrac_0028",
+      "type_key": "external_web_fraction_app_v1",
+      "category": "shopping_discount",
+      "topic_tags": [
+        "shopping_discount",
+        "ratio"
+      ],
+      "concept_points": [
+        "折扣率要轉付款率",
+        "現價=原價×付款率"
+      ],
+      "difficulty": "easy",
+      "question": "（購物折扣）一本書原價 240 元，打 25% 折扣後，需付多少元？（填整數）",
+      "answer": "180",
+      "hints": {
+        "level1": "先把折扣轉成付款率。",
+        "level2": "現價 = 原價 × (1 - 折扣率)。",
+        "level3": "把百分率改成分數後再計算。"
+      },
+      "hint_ladder": {
+        "h1_strategy": "策略：先求付款率，再算現價。",
+        "h2_equation": "列式：現價 = 原價 × 付款率。",
+        "h3_compute": "計算：先將百分率轉分數，再完成乘法。",
+        "h4_check_reflect": "檢查：折後價應小於原價。"
+      },
+      "steps": [
+        "步驟 1：付款率 = 75% = 75/100。",
+        "步驟 2：現價 = 240×75/100。",
+        "步驟 3：計算得 180 元。"
+      ],
+      "error_diagnostics": [
+        {
+          "code": "E_UNIT",
+          "message": "單位未統一",
+          "remedy": "先把單位換成同一種再列式。"
+        },
+        {
+          "code": "E_RATE",
+          "message": "比率解讀錯誤",
+          "remedy": "確認是折扣率還是付款率。"
+        },
+        {
+          "code": "E_DEN",
+          "message": "分母用錯",
+          "remedy": "平均分配時分母應是份數或人數。"
+        },
+        {
+          "code": "E_SIMPLIFY",
+          "message": "約分遺漏",
+          "remedy": "最後檢查分子分母是否可同除。"
+        },
+        {
+          "code": "E_CHECK",
+          "message": "未做反向檢查",
+          "remedy": "將答案代回原題確認合理性。"
+        }
+      ],
+      "validator": {
+        "type": "number",
+        "tolerance": 0
+      },
+      "evidence": {
+        "note_id": "extnote_0006",
+        "source_url": "https://www.mathsisfun.com/fractions_multiplication.html",
+        "title": "(mock) https://www.mathsisfun.com/fractions_multiplication.html",
+        "quoted_fact": "分數題先看整體與部分",
+        "retrieved_at": "2026-02-23T12:49:54"
+      },
+      "generated_at": "2026-02-23T12:50:41"
+    },
+    {
+      "id": "extfrac_0029",
+      "type_key": "external_web_fraction_app_v1",
+      "category": "unit_conversion",
+      "topic_tags": [
+        "unit_conversion",
+        "fraction"
+      ],
+      "concept_points": [
+        "先換單位再運算",
+        "分率乘總量"
+      ],
+      "difficulty": "easy",
+      "question": "（單位換算）2 公升牛奶取出 1/4，取出的量是多少毫升？（整數）",
+      "answer": "500",
+      "hints": {
+        "level1": "先把公升換成毫升。",
+        "level2": "總毫升×分率就是取出量。",
+        "level3": "先換單位再做分數乘法。"
+      },
+      "hint_ladder": {
+        "h1_strategy": "策略：先統一到毫升再運算。",
+        "h2_equation": "列式：取出量 = (總公升×1000)×分率。",
+        "h3_compute": "計算：先換單位，再乘分率。",
+        "h4_check_reflect": "檢查：取出量不可超過總量。"
+      },
+      "steps": [
+        "步驟 1：2 公升 = 2000 毫升。",
+        "步驟 2：取出量 = 2000×1/4。",
+        "步驟 3：計算得 500 毫升。"
+      ],
+      "error_diagnostics": [
+        {
+          "code": "E_UNIT",
+          "message": "單位未統一",
+          "remedy": "先把單位換成同一種再列式。"
+        },
+        {
+          "code": "E_RATE",
+          "message": "比率解讀錯誤",
+          "remedy": "確認是折扣率還是付款率。"
+        },
+        {
+          "code": "E_DEN",
+          "message": "分母用錯",
+          "remedy": "平均分配時分母應是份數或人數。"
+        },
+        {
+          "code": "E_SIMPLIFY",
+          "message": "約分遺漏",
+          "remedy": "最後檢查分子分母是否可同除。"
+        },
+        {
+          "code": "E_CHECK",
+          "message": "未做反向檢查",
+          "remedy": "將答案代回原題確認合理性。"
+        }
+      ],
+      "validator": {
+        "type": "number",
+        "tolerance": 0
+      },
+      "evidence": {
+        "note_id": "extnote_0008",
+        "source_url": "https://www.mathsisfun.com/percent.html",
+        "title": "(mock) https://www.mathsisfun.com/percent.html",
+        "quoted_fact": "分數題先看整體與部分",
+        "retrieved_at": "2026-02-23T12:49:54"
+      },
+      "generated_at": "2026-02-23T12:50:41"
+    },
+    {
+      "id": "extfrac_0030",
+      "type_key": "external_web_fraction_app_v1",
+      "category": "unit_conversion",
+      "topic_tags": [
+        "unit_conversion",
+        "fraction"
+      ],
+      "concept_points": [
+        "先換單位再運算",
+        "分率乘總量"
+      ],
+      "difficulty": "easy",
+      "question": "（單位換算）4 公升牛奶取出 2/5，取出的量是多少毫升？（整數）",
+      "answer": "1600",
+      "hints": {
+        "level1": "先把公升換成毫升。",
+        "level2": "總毫升×分率就是取出量。",
+        "level3": "先換單位再做分數乘法。"
+      },
+      "hint_ladder": {
+        "h1_strategy": "策略：先統一到毫升再運算。",
+        "h2_equation": "列式：取出量 = (總公升×1000)×分率。",
+        "h3_compute": "計算：先換單位，再乘分率。",
+        "h4_check_reflect": "檢查：取出量不可超過總量。"
+      },
+      "steps": [
+        "步驟 1：4 公升 = 4000 毫升。",
+        "步驟 2：取出量 = 4000×2/5。",
+        "步驟 3：計算得 1600 毫升。"
+      ],
+      "error_diagnostics": [
+        {
+          "code": "E_UNIT",
+          "message": "單位未統一",
+          "remedy": "先把單位換成同一種再列式。"
+        },
+        {
+          "code": "E_RATE",
+          "message": "比率解讀錯誤",
+          "remedy": "確認是折扣率還是付款率。"
+        },
+        {
+          "code": "E_DEN",
+          "message": "分母用錯",
+          "remedy": "平均分配時分母應是份數或人數。"
+        },
+        {
+          "code": "E_SIMPLIFY",
+          "message": "約分遺漏",
+          "remedy": "最後檢查分子分母是否可同除。"
+        },
+        {
+          "code": "E_CHECK",
+          "message": "未做反向檢查",
+          "remedy": "將答案代回原題確認合理性。"
+        }
+      ],
+      "validator": {
+        "type": "number",
+        "tolerance": 0
+      },
+      "evidence": {
+        "note_id": "extnote_0010",
+        "source_url": "https://www.cuemath.com/numbers/fractions/",
+        "title": "(mock) https://www.cuemath.com/numbers/fractions/",
+        "quoted_fact": "分數題先看整體與部分",
+        "retrieved_at": "2026-02-23T12:49:54"
+      },
+      "generated_at": "2026-02-23T12:50:41"
+    },
+    {
+      "id": "extfrac_0031",
+      "type_key": "external_web_fraction_app_v1",
+      "category": "shopping_discount",
+      "topic_tags": [
+        "shopping_discount",
+        "ratio"
+      ],
+      "concept_points": [
+        "折扣率要轉付款率",
+        "現價=原價×付款率"
+      ],
+      "difficulty": "easy",
+      "question": "（購物折扣）一本書原價 600 元，打 30% 折扣後，需付多少元？（填整數）",
+      "answer": "420",
+      "hints": {
+        "level1": "先把折扣轉成付款率。",
+        "level2": "現價 = 原價 × (1 - 折扣率)。",
+        "level3": "把百分率改成分數後再計算。"
+      },
+      "hint_ladder": {
+        "h1_strategy": "策略：先求付款率，再算現價。",
+        "h2_equation": "列式：現價 = 原價 × 付款率。",
+        "h3_compute": "計算：先將百分率轉分數，再完成乘法。",
+        "h4_check_reflect": "檢查：折後價應小於原價。"
+      },
+      "steps": [
+        "步驟 1：付款率 = 70% = 70/100。",
+        "步驟 2：現價 = 600×70/100。",
+        "步驟 3：計算得 420 元。"
+      ],
+      "error_diagnostics": [
+        {
+          "code": "E_UNIT",
+          "message": "單位未統一",
+          "remedy": "先把單位換成同一種再列式。"
+        },
+        {
+          "code": "E_RATE",
+          "message": "比率解讀錯誤",
+          "remedy": "確認是折扣率還是付款率。"
+        },
+        {
+          "code": "E_DEN",
+          "message": "分母用錯",
+          "remedy": "平均分配時分母應是份數或人數。"
+        },
+        {
+          "code": "E_SIMPLIFY",
+          "message": "約分遺漏",
+          "remedy": "最後檢查分子分母是否可同除。"
+        },
+        {
+          "code": "E_CHECK",
+          "message": "未做反向檢查",
+          "remedy": "將答案代回原題確認合理性。"
+        }
+      ],
+      "validator": {
+        "type": "number",
+        "tolerance": 0
+      },
+      "evidence": {
+        "note_id": "extnote_0007",
+        "source_url": "https://www.mathsisfun.com/fractions_division.html",
+        "title": "(mock) https://www.mathsisfun.com/fractions_division.html",
+        "quoted_fact": "分數題先看整體與部分",
+        "retrieved_at": "2026-02-23T12:49:54"
+      },
+      "generated_at": "2026-02-23T12:50:41"
+    },
+    {
+      "id": "extfrac_0032",
+      "type_key": "external_web_fraction_app_v1",
+      "category": "average_distribution",
+      "topic_tags": [
+        "average_distribution",
+        "remaining_amount"
+      ],
+      "concept_points": [
+        "先算剩下量",
+        "平均分配用除法"
+      ],
+      "difficulty": "medium",
+      "question": "（平均分配）一桶果汁共 24 公升，先用掉 4/6，剩下平均分給 6 人，每人可得多少公升？（最簡分數）",
+      "answer": "8/3",
+      "hints": {
+        "level1": "先算剩下量，再除以人數。",
+        "level2": "剩下量 = 全部×(1-已用分率)。",
+        "level3": "把剩下量除以人數並約分。"
+      },
+      "hint_ladder": {
+        "h1_strategy": "策略：兩段式，先求剩下再平均。",
+        "h2_equation": "列式：每人量 = [總量×(1-已用分率)]÷人數。",
+        "h3_compute": "計算：先做分數減法，再做除法與約分。",
+        "h4_check_reflect": "檢查：每人份量×人數應回到剩下量。"
+      },
+      "steps": [
+        "步驟 1：剩下量 = 24×(2/6) = 48/6。",
+        "步驟 2：每人 = (48/6)÷6。",
+        "步驟 3：約分後得到 8/3。"
+      ],
+      "error_diagnostics": [
+        {
+          "code": "E_UNIT",
+          "message": "單位未統一",
+          "remedy": "先把單位換成同一種再列式。"
+        },
+        {
+          "code": "E_RATE",
+          "message": "比率解讀錯誤",
+          "remedy": "確認是折扣率還是付款率。"
+        },
+        {
+          "code": "E_DEN",
+          "message": "分母用錯",
+          "remedy": "平均分配時分母應是份數或人數。"
+        },
+        {
+          "code": "E_SIMPLIFY",
+          "message": "約分遺漏",
+          "remedy": "最後檢查分子分母是否可同除。"
+        },
+        {
+          "code": "E_CHECK",
+          "message": "未做反向檢查",
+          "remedy": "將答案代回原題確認合理性。"
+        }
+      ],
+      "validator": {
+        "type": "fraction"
+      },
+      "evidence": {
+        "note_id": "extnote_0008",
+        "source_url": "https://www.mathsisfun.com/percent.html",
+        "title": "(mock) https://www.mathsisfun.com/percent.html",
+        "quoted_fact": "分數題先看整體與部分",
+        "retrieved_at": "2026-02-23T12:49:54"
+      },
+      "generated_at": "2026-02-23T12:50:41"
+    },
+    {
+      "id": "extfrac_0033",
+      "type_key": "external_web_fraction_app_v1",
+      "category": "unit_conversion",
+      "topic_tags": [
+        "unit_conversion",
+        "fraction"
+      ],
+      "concept_points": [
+        "先換單位再運算",
+        "分率乘總量"
+      ],
+      "difficulty": "easy",
+      "question": "（單位換算）2.5 公升牛奶取出 1/8，取出的量是多少毫升？（整數）",
+      "answer": "312",
+      "hints": {
+        "level1": "先把公升換成毫升。",
+        "level2": "總毫升×分率就是取出量。",
+        "level3": "先換單位再做分數乘法。"
+      },
+      "hint_ladder": {
+        "h1_strategy": "策略：先統一到毫升再運算。",
+        "h2_equation": "列式：取出量 = (總公升×1000)×分率。",
+        "h3_compute": "計算：先換單位，再乘分率。",
+        "h4_check_reflect": "檢查：取出量不可超過總量。"
+      },
+      "steps": [
+        "步驟 1：2.5 公升 = 2500 毫升。",
+        "步驟 2：取出量 = 2500×1/8。",
+        "步驟 3：計算得 312 毫升。"
+      ],
+      "error_diagnostics": [
+        {
+          "code": "E_UNIT",
+          "message": "單位未統一",
+          "remedy": "先把單位換成同一種再列式。"
+        },
+        {
+          "code": "E_RATE",
+          "message": "比率解讀錯誤",
+          "remedy": "確認是折扣率還是付款率。"
+        },
+        {
+          "code": "E_DEN",
+          "message": "分母用錯",
+          "remedy": "平均分配時分母應是份數或人數。"
+        },
+        {
+          "code": "E_SIMPLIFY",
+          "message": "約分遺漏",
+          "remedy": "最後檢查分子分母是否可同除。"
+        },
+        {
+          "code": "E_CHECK",
+          "message": "未做反向檢查",
+          "remedy": "將答案代回原題確認合理性。"
+        }
+      ],
+      "validator": {
+        "type": "number",
+        "tolerance": 0
+      },
+      "evidence": {
+        "note_id": "extnote_0001",
+        "source_url": "https://www.khanacademy.org/math/cc-fifth-grade-math/addition-and-subtraction-of-fractions",
+        "title": "(mock) https://www.khanacademy.org/math/cc-fifth-grade-math/addition-and-subtraction-of-fractions",
+        "quoted_fact": "分數題先看整體與部分",
+        "retrieved_at": "2026-02-23T12:49:54"
+      },
+      "generated_at": "2026-02-23T12:50:41"
+    },
+    {
+      "id": "extfrac_0034",
+      "type_key": "external_web_fraction_app_v1",
+      "category": "average_distribution",
+      "topic_tags": [
+        "average_distribution",
+        "remaining_amount"
+      ],
+      "concept_points": [
+        "先算剩下量",
+        "平均分配用除法"
+      ],
+      "difficulty": "medium",
+      "question": "（平均分配）一桶果汁共 18 公升，先用掉 4/5，剩下平均分給 4 人，每人可得多少公升？（最簡分數）",
+      "answer": "7/2",
+      "hints": {
+        "level1": "先算剩下量，再除以人數。",
+        "level2": "剩下量 = 全部×(1-已用分率)。",
+        "level3": "把剩下量除以人數並約分。"
+      },
+      "hint_ladder": {
+        "h1_strategy": "策略：兩段式，先求剩下再平均。",
+        "h2_equation": "列式：每人量 = [總量×(1-已用分率)]÷人數。",
+        "h3_compute": "計算：先做分數減法，再做除法與約分。",
+        "h4_check_reflect": "檢查：每人份量×人數應回到剩下量。"
+      },
+      "steps": [
+        "步驟 1：剩下量 = 18×(1/5) = 18/5。",
+        "步驟 2：每人 = (18/5)÷4。",
+        "步驟 3：約分後得到 7/2。"
+      ],
+      "error_diagnostics": [
+        {
+          "code": "E_UNIT",
+          "message": "單位未統一",
+          "remedy": "先把單位換成同一種再列式。"
+        },
+        {
+          "code": "E_RATE",
+          "message": "比率解讀錯誤",
+          "remedy": "確認是折扣率還是付款率。"
+        },
+        {
+          "code": "E_DEN",
+          "message": "分母用錯",
+          "remedy": "平均分配時分母應是份數或人數。"
+        },
+        {
+          "code": "E_SIMPLIFY",
+          "message": "約分遺漏",
+          "remedy": "最後檢查分子分母是否可同除。"
+        },
+        {
+          "code": "E_CHECK",
+          "message": "未做反向檢查",
+          "remedy": "將答案代回原題確認合理性。"
+        }
+      ],
+      "validator": {
+        "type": "fraction"
+      },
+      "evidence": {
+        "note_id": "extnote_0011",
+        "source_url": "https://www.splashlearn.com/math-vocabulary/fractions/fraction-word-problems",
+        "title": "(mock) https://www.splashlearn.com/math-vocabulary/fractions/fraction-word-problems",
+        "quoted_fact": "分數題先看整體與部分",
+        "retrieved_at": "2026-02-23T12:49:54"
+      },
+      "generated_at": "2026-02-23T12:50:41"
+    },
+    {
+      "id": "extfrac_0035",
+      "type_key": "external_web_fraction_app_v1",
+      "category": "distance_time",
+      "topic_tags": [
+        "distance_time",
+        "unit_conversion"
+      ],
+      "concept_points": [
+        "先換時間單位",
+        "distance=speed×time"
+      ],
+      "difficulty": "hard",
+      "question": "（路程時間）一台車每小時行 54 公里，行駛 45 分鐘可走多少公里？（最簡分數）",
+      "answer": "81/2",
+      "hints": {
+        "level1": "先把分鐘換成小時。",
+        "level2": "距離=速度×時間。",
+        "level3": "時間換成分數小時再代入。"
+      },
+      "hint_ladder": {
+        "h1_strategy": "策略：先做時間換算，再用路程公式。",
+        "h2_equation": "列式：路程 = 速度 × (分鐘/60)。",
+        "h3_compute": "計算：先約分，再完成乘法。",
+        "h4_check_reflect": "檢查：時間不到 1 小時，距離應小於時速值。"
+      },
+      "steps": [
+        "步驟 1：45 分鐘 = 45/60 小時。",
+        "步驟 2：距離 = 54×45/60。",
+        "步驟 3：約分後得到 81/2 公里。"
+      ],
+      "error_diagnostics": [
+        {
+          "code": "E_UNIT",
+          "message": "單位未統一",
+          "remedy": "先把單位換成同一種再列式。"
+        },
+        {
+          "code": "E_RATE",
+          "message": "比率解讀錯誤",
+          "remedy": "確認是折扣率還是付款率。"
+        },
+        {
+          "code": "E_DEN",
+          "message": "分母用錯",
+          "remedy": "平均分配時分母應是份數或人數。"
+        },
+        {
+          "code": "E_SIMPLIFY",
+          "message": "約分遺漏",
+          "remedy": "最後檢查分子分母是否可同除。"
+        },
+        {
+          "code": "E_CHECK",
+          "message": "未做反向檢查",
+          "remedy": "將答案代回原題確認合理性。"
+        }
+      ],
+      "validator": {
+        "type": "fraction"
+      },
+      "evidence": {
+        "note_id": "extnote_0001",
+        "source_url": "https://www.khanacademy.org/math/cc-fifth-grade-math/addition-and-subtraction-of-fractions",
+        "title": "(mock) https://www.khanacademy.org/math/cc-fifth-grade-math/addition-and-subtraction-of-fractions",
+        "quoted_fact": "分數題先看整體與部分",
+        "retrieved_at": "2026-02-23T12:49:54"
+      },
+      "generated_at": "2026-02-23T12:50:41"
+    },
+    {
+      "id": "extfrac_0036",
+      "type_key": "external_web_fraction_app_v1",
+      "category": "distance_time",
+      "topic_tags": [
+        "distance_time",
+        "unit_conversion"
+      ],
+      "concept_points": [
+        "先換時間單位",
+        "distance=speed×time"
+      ],
+      "difficulty": "hard",
+      "question": "（路程時間）一台車每小時行 72 公里，行駛 45 分鐘可走多少公里？（最簡分數）",
+      "answer": "54/1",
+      "hints": {
+        "level1": "先把分鐘換成小時。",
+        "level2": "距離=速度×時間。",
+        "level3": "時間換成分數小時再代入。"
+      },
+      "hint_ladder": {
+        "h1_strategy": "策略：先做時間換算，再用路程公式。",
+        "h2_equation": "列式：路程 = 速度 × (分鐘/60)。",
+        "h3_compute": "計算：先約分，再完成乘法。",
+        "h4_check_reflect": "檢查：時間不到 1 小時，距離應小於時速值。"
+      },
+      "steps": [
+        "步驟 1：45 分鐘 = 45/60 小時。",
+        "步驟 2：距離 = 72×45/60。",
+        "步驟 3：約分後得到 54/1 公里。"
+      ],
+      "error_diagnostics": [
+        {
+          "code": "E_UNIT",
+          "message": "單位未統一",
+          "remedy": "先把單位換成同一種再列式。"
+        },
+        {
+          "code": "E_RATE",
+          "message": "比率解讀錯誤",
+          "remedy": "確認是折扣率還是付款率。"
+        },
+        {
+          "code": "E_DEN",
+          "message": "分母用錯",
+          "remedy": "平均分配時分母應是份數或人數。"
+        },
+        {
+          "code": "E_SIMPLIFY",
+          "message": "約分遺漏",
+          "remedy": "最後檢查分子分母是否可同除。"
+        },
+        {
+          "code": "E_CHECK",
+          "message": "未做反向檢查",
+          "remedy": "將答案代回原題確認合理性。"
+        }
+      ],
+      "validator": {
+        "type": "fraction"
+      },
+      "evidence": {
+        "note_id": "extnote_0012",
+        "source_url": "https://www.splashlearn.com/math-vocabulary/percent/discount",
+        "title": "(mock) https://www.splashlearn.com/math-vocabulary/percent/discount",
+        "quoted_fact": "分數題先看整體與部分",
+        "retrieved_at": "2026-02-23T12:49:54"
+      },
+      "generated_at": "2026-02-23T12:50:41"
+    },
+    {
+      "id": "extfrac_0037",
+      "type_key": "external_web_fraction_app_v1",
+      "category": "average_distribution",
+      "topic_tags": [
+        "average_distribution",
+        "remaining_amount"
+      ],
+      "concept_points": [
+        "先算剩下量",
+        "平均分配用除法"
+      ],
+      "difficulty": "medium",
+      "question": "（平均分配）一桶果汁共 36 公升，先用掉 2/3，剩下平均分給 2 人，每人可得多少公升？（最簡分數）",
+      "answer": "12/1",
+      "hints": {
+        "level1": "先算剩下量，再除以人數。",
+        "level2": "剩下量 = 全部×(1-已用分率)。",
+        "level3": "把剩下量除以人數並約分。"
+      },
+      "hint_ladder": {
+        "h1_strategy": "策略：兩段式，先求剩下再平均。",
+        "h2_equation": "列式：每人量 = [總量×(1-已用分率)]÷人數。",
+        "h3_compute": "計算：先做分數減法，再做除法與約分。",
+        "h4_check_reflect": "檢查：每人份量×人數應回到剩下量。"
+      },
+      "steps": [
+        "步驟 1：剩下量 = 36×(1/3) = 36/3。",
+        "步驟 2：每人 = (36/3)÷2。",
+        "步驟 3：約分後得到 12/1。"
+      ],
+      "error_diagnostics": [
+        {
+          "code": "E_UNIT",
+          "message": "單位未統一",
+          "remedy": "先把單位換成同一種再列式。"
+        },
+        {
+          "code": "E_RATE",
+          "message": "比率解讀錯誤",
+          "remedy": "確認是折扣率還是付款率。"
+        },
+        {
+          "code": "E_DEN",
+          "message": "分母用錯",
+          "remedy": "平均分配時分母應是份數或人數。"
+        },
+        {
+          "code": "E_SIMPLIFY",
+          "message": "約分遺漏",
+          "remedy": "最後檢查分子分母是否可同除。"
+        },
+        {
+          "code": "E_CHECK",
+          "message": "未做反向檢查",
+          "remedy": "將答案代回原題確認合理性。"
+        }
+      ],
+      "validator": {
+        "type": "fraction"
+      },
+      "evidence": {
+        "note_id": "extnote_0004",
+        "source_url": "https://www.khanacademy.org/math/cc-sixth-grade-math/cc-6th-fractions-decimals",
+        "title": "(mock) https://www.khanacademy.org/math/cc-sixth-grade-math/cc-6th-fractions-decimals",
+        "quoted_fact": "分數題先看整體與部分",
+        "retrieved_at": "2026-02-23T12:49:54"
+      },
+      "generated_at": "2026-02-23T12:50:41"
+    },
+    {
+      "id": "extfrac_0038",
+      "type_key": "external_web_fraction_app_v1",
+      "category": "average_distribution",
+      "topic_tags": [
+        "average_distribution",
+        "remaining_amount"
+      ],
+      "concept_points": [
+        "先算剩下量",
+        "平均分配用除法"
+      ],
+      "difficulty": "medium",
+      "question": "（平均分配）一桶果汁共 24 公升，先用掉 1/6，剩下平均分給 6 人，每人可得多少公升？（最簡分數）",
+      "answer": "2/3",
+      "hints": {
+        "level1": "先算剩下量，再除以人數。",
+        "level2": "剩下量 = 全部×(1-已用分率)。",
+        "level3": "把剩下量除以人數並約分。"
+      },
+      "hint_ladder": {
+        "h1_strategy": "策略：兩段式，先求剩下再平均。",
+        "h2_equation": "列式：每人量 = [總量×(1-已用分率)]÷人數。",
+        "h3_compute": "計算：先做分數減法，再做除法與約分。",
+        "h4_check_reflect": "檢查：每人份量×人數應回到剩下量。"
+      },
+      "steps": [
+        "步驟 1：剩下量 = 24×(5/6) = 120/6。",
+        "步驟 2：每人 = (120/6)÷6。",
+        "步驟 3：約分後得到 2/3。"
+      ],
+      "error_diagnostics": [
+        {
+          "code": "E_UNIT",
+          "message": "單位未統一",
+          "remedy": "先把單位換成同一種再列式。"
+        },
+        {
+          "code": "E_RATE",
+          "message": "比率解讀錯誤",
+          "remedy": "確認是折扣率還是付款率。"
+        },
+        {
+          "code": "E_DEN",
+          "message": "分母用錯",
+          "remedy": "平均分配時分母應是份數或人數。"
+        },
+        {
+          "code": "E_SIMPLIFY",
+          "message": "約分遺漏",
+          "remedy": "最後檢查分子分母是否可同除。"
+        },
+        {
+          "code": "E_CHECK",
+          "message": "未做反向檢查",
+          "remedy": "將答案代回原題確認合理性。"
+        }
+      ],
+      "validator": {
+        "type": "fraction"
+      },
+      "evidence": {
+        "note_id": "extnote_0005",
+        "source_url": "https://www.mathsisfun.com/fractions.html",
+        "title": "(mock) https://www.mathsisfun.com/fractions.html",
+        "quoted_fact": "分數題先看整體與部分",
+        "retrieved_at": "2026-02-23T12:49:54"
+      },
+      "generated_at": "2026-02-23T12:50:41"
+    },
+    {
+      "id": "extfrac_0039",
+      "type_key": "external_web_fraction_app_v1",
+      "category": "average_distribution",
+      "topic_tags": [
+        "average_distribution",
+        "remaining_amount"
+      ],
+      "concept_points": [
+        "先算剩下量",
+        "平均分配用除法"
+      ],
+      "difficulty": "medium",
+      "question": "（平均分配）一桶果汁共 30 公升，先用掉 2/6，剩下平均分給 6 人，每人可得多少公升？（最簡分數）",
+      "answer": "5/3",
+      "hints": {
+        "level1": "先算剩下量，再除以人數。",
+        "level2": "剩下量 = 全部×(1-已用分率)。",
+        "level3": "把剩下量除以人數並約分。"
+      },
+      "hint_ladder": {
+        "h1_strategy": "策略：兩段式，先求剩下再平均。",
+        "h2_equation": "列式：每人量 = [總量×(1-已用分率)]÷人數。",
+        "h3_compute": "計算：先做分數減法，再做除法與約分。",
+        "h4_check_reflect": "檢查：每人份量×人數應回到剩下量。"
+      },
+      "steps": [
+        "步驟 1：剩下量 = 30×(4/6) = 120/6。",
+        "步驟 2：每人 = (120/6)÷6。",
+        "步驟 3：約分後得到 5/3。"
+      ],
+      "error_diagnostics": [
+        {
+          "code": "E_UNIT",
+          "message": "單位未統一",
+          "remedy": "先把單位換成同一種再列式。"
+        },
+        {
+          "code": "E_RATE",
+          "message": "比率解讀錯誤",
+          "remedy": "確認是折扣率還是付款率。"
+        },
+        {
+          "code": "E_DEN",
+          "message": "分母用錯",
+          "remedy": "平均分配時分母應是份數或人數。"
+        },
+        {
+          "code": "E_SIMPLIFY",
+          "message": "約分遺漏",
+          "remedy": "最後檢查分子分母是否可同除。"
+        },
+        {
+          "code": "E_CHECK",
+          "message": "未做反向檢查",
+          "remedy": "將答案代回原題確認合理性。"
+        }
+      ],
+      "validator": {
+        "type": "fraction"
+      },
+      "evidence": {
+        "note_id": "extnote_0002",
+        "source_url": "https://www.khanacademy.org/math/cc-fifth-grade-math/multiply-fractions",
+        "title": "(mock) https://www.khanacademy.org/math/cc-fifth-grade-math/multiply-fractions",
+        "quoted_fact": "分數題先看整體與部分",
+        "retrieved_at": "2026-02-23T12:49:54"
+      },
+      "generated_at": "2026-02-23T12:50:41"
+    },
+    {
+      "id": "extfrac_0040",
+      "type_key": "external_web_fraction_app_v1",
+      "category": "average_distribution",
+      "topic_tags": [
+        "average_distribution",
+        "remaining_amount"
+      ],
+      "concept_points": [
+        "先算剩下量",
+        "平均分配用除法"
+      ],
+      "difficulty": "medium",
+      "question": "（平均分配）一桶果汁共 36 公升，先用掉 3/3，剩下平均分給 2 人，每人可得多少公升？（最簡分數）",
+      "answer": "18/1",
+      "hints": {
+        "level1": "先算剩下量，再除以人數。",
+        "level2": "剩下量 = 全部×(1-已用分率)。",
+        "level3": "把剩下量除以人數並約分。"
+      },
+      "hint_ladder": {
+        "h1_strategy": "策略：兩段式，先求剩下再平均。",
+        "h2_equation": "列式：每人量 = [總量×(1-已用分率)]÷人數。",
+        "h3_compute": "計算：先做分數減法，再做除法與約分。",
+        "h4_check_reflect": "檢查：每人份量×人數應回到剩下量。"
+      },
+      "steps": [
+        "步驟 1：剩下量 = 36×(0/3) = 0/3。",
+        "步驟 2：每人 = (0/3)÷2。",
+        "步驟 3：約分後得到 18/1。"
+      ],
+      "error_diagnostics": [
+        {
+          "code": "E_UNIT",
+          "message": "單位未統一",
+          "remedy": "先把單位換成同一種再列式。"
+        },
+        {
+          "code": "E_RATE",
+          "message": "比率解讀錯誤",
+          "remedy": "確認是折扣率還是付款率。"
+        },
+        {
+          "code": "E_DEN",
+          "message": "分母用錯",
+          "remedy": "平均分配時分母應是份數或人數。"
+        },
+        {
+          "code": "E_SIMPLIFY",
+          "message": "約分遺漏",
+          "remedy": "最後檢查分子分母是否可同除。"
+        },
+        {
+          "code": "E_CHECK",
+          "message": "未做反向檢查",
+          "remedy": "將答案代回原題確認合理性。"
+        }
+      ],
+      "validator": {
+        "type": "fraction"
+      },
+      "evidence": {
+        "note_id": "extnote_0005",
+        "source_url": "https://www.mathsisfun.com/fractions.html",
+        "title": "(mock) https://www.mathsisfun.com/fractions.html",
+        "quoted_fact": "分數題先看整體與部分",
+        "retrieved_at": "2026-02-23T12:49:54"
+      },
+      "generated_at": "2026-02-23T12:50:41"
+    }
+  ]
+}
