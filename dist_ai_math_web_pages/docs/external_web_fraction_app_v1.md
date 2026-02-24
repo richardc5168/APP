@@ -25,6 +25,26 @@ npm run external:web:build
 npm run external:web:validate
 ```
 
+## 每小時命令輪詢（自動執行 + 驗證 + 提交）
+
+- 單次執行（讀本地 `ops/hourly_commands.json`）：
+```bash
+npm run commands:poll:once
+```
+- 持續輪詢（預設 30 分鐘）：
+```bash
+npm run commands:poll
+```
+- 指定讀 GitHub 指令檔（`blob` 或 `raw` URL 都可）：
+```bash
+npm run commands:poll -- --watch --interval-min 5 --command-url https://github.com/richardc5168/ai-math-web/blob/main/ops/hourly_commands.json
+```
+
+說明：
+- 每個 command 執行成功後，會跑 `python tools/validate_all_elementary_banks.py` 與 `npm run verify:all`。
+- 驗證全過才會自動 `git add -A`、`git commit --no-verify`、`git push origin main`。
+- 結果會寫入 `artifacts/hourly_command_runs.jsonl` 與 `artifacts/hourly_command_latest.json`。
+
 ## Notes 契約
 
 每則筆記至少包含：

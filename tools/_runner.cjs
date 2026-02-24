@@ -23,36 +23,19 @@ function pythonCmd() {
 
 function resolveCommand(command) {
   if (process.platform !== 'win32') return command;
-  if (command === 'npm') return 'npm';
-  if (command === 'npx') return 'npx';
+  if (command === 'npm') return 'npm.cmd';
+  if (command === 'npx') return 'npx.cmd';
   return command;
-}
-
-function quoteShellArg(arg) {
-  const s = String(arg ?? '');
-  if (/^[A-Za-z0-9_./:-]+$/.test(s)) return s;
-  return `"${s.replace(/"/g, '\\"')}"`;
 }
 
 function runCommand(command, args, options = {}) {
   const execCommand = resolveCommand(command);
-  let proc;
-  if (process.platform === 'win32') {
-    const cmdString = [execCommand, ...args.map(quoteShellArg)].join(' ');
-    proc = spawnSync(cmdString, {
-      cwd: process.cwd(),
-      encoding: 'utf-8',
-      shell: true,
-      ...options,
-    });
-  } else {
-    proc = spawnSync(execCommand, args, {
-      cwd: process.cwd(),
-      encoding: 'utf-8',
-      shell: false,
-      ...options,
-    });
-  }
+  const proc = spawnSync(execCommand, args, {
+    cwd: process.cwd(),
+    encoding: 'utf-8',
+    shell: false,
+    ...options,
+  });
   return {
     command: [command, ...args].join(' '),
     status: proc.status ?? 1,
