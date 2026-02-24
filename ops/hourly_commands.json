@@ -6,7 +6,7 @@
       "id": "2026-02-24-idle-web-fraction-decimal-ingest-only",
       "enabled": false,
       "action": "npm_script",
-      "value": "idle:web:fraction-decimal:ingest",
+      "value": "fraction-decimal:web:ingest",
       "note": "僅在 idle/stuck 時抓取並整理外網小五小六分數小數應用題摘要，不修改題型程式碼"
     },
     {
@@ -43,29 +43,27 @@
       "action": "npm_script",
       "value": "idle:web:fraction-decimal:expand",
       "note": "當前任務完成/無任務/卡住時，自動搜尋外網小五小六分數與小數應用題資源，參考既有分數應用題框架新增『分數小數活用題型』，需含清晰提示，且不得破壞原有題型機制；通過驗證才提交"
+    },
+    {
+      "id": "2026-02-24-job-verify-all-001",
+      "enabled": true,
+      "action": "npm_script",
+      "value": "verify:all",
+      "note": "先做全量驗證"
+    },
+    {
+      "id": "2026-02-24-job-idle-expand-001",
+      "enabled": true,
+      "action": "npm_script",
+      "value": "idle:web:fraction-decimal:expand",
+      "note": "空閒/卡住時執行外網分數小數題型擴充"
+    },
+    {
+      "id": "2026-02-24-job-optimize-5h-001",
+      "enabled": false,
+      "action": "npm_script",
+      "value": "optimize:g5g6:web:5h",
+      "note": "需要時再開啟 5 小時優化"
     }
   ]
 }
-[
-  {
-    "id": "2026-02-24-job-verify-all-001",
-    "enabled": true,
-    "action": "npm_script",
-    "value": "verify:all",
-    "note": "先做全量驗證"
-  },
-  {
-    "id": "2026-02-24-job-idle-expand-001",
-    "enabled": true,
-    "action": "npm_script",
-    "value": "idle:web:fraction-decimal:expand",
-    "note": "空閒/卡住時執行外網分數小數題型擴充"
-  },
-  {
-    "id": "2026-02-24-job-optimize-5h-001",
-    "enabled": false,
-    "action": "npm_script",
-    "value": "optimize:g5g6:web:5h",
-    "note": "需要時再開啟 5 小時優化"
-  }
-]

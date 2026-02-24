@@ -21,7 +21,8 @@ const ALLOWED_NPM_SCRIPTS = new Set([
   'gate:scorecard',
   'optimize:g5g6:web:5h',
   'overnight:optimize',
-  'idle:web:fraction-decimal:expand'
+  'idle:web:fraction-decimal:expand',
+  'fraction-decimal:web:ingest'
 ]);
 
 function argValue(name, fallback) {
