@@ -1,0 +1,9 @@
+# 每行一個要巡覽的頁面 URL
+# 建議先登入後，在網站上套好篩選條件（如：5年級 / 數學 / 下學期 / 第一次段考 / 有答案卷），
+# 再把「結果頁 URL」貼到這裡（每頁一行）。
+#
+# 若網站未把篩選條件寫入 URL，先保留首頁，bulk_download 會從頁面上抓下載連結。
+https://www.tcool.cc/
+
+# 你也可以加入 tcool 的分類頁/分頁網址（若有）：
+# https://www.tcool.cc/?grade=5&subject=%E6%95%B8%E5%AD%B8&semester=2&period=1&has_answer=1

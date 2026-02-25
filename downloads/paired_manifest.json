@@ -1,0 +1,74 @@
+[
+  {
+    "exam_id": "17774",
+    "question_file": null,
+    "answer_file": null,
+    "question_url": "https://tcool.cc/d/q/1002924660a4b981de91.pdf",
+    "answer_url": "https://tcool.cc/d/a/1002924660a4b981e251.pdf",
+    "source_pages": [
+      "https://www.tcool.cc/"
+    ],
+    "downloaded_at": "2026-02-25T06:42:36.982Z",
+    "status": "browse_only_pair"
+  },
+  {
+    "exam_id": "17827",
+    "question_file": null,
+    "answer_file": null,
+    "question_url": "https://tcool.cc/d/q/100298966189de58cd0f.pdf",
+    "answer_url": "https://tcool.cc/d/a/100298966189de58cf14.pdf",
+    "source_pages": [
+      "https://www.tcool.cc/"
+    ],
+    "downloaded_at": "2026-02-25T06:43:02.588Z",
+    "status": "browse_only_pair"
+  },
+  {
+    "exam_id": "17897",
+    "question_file": null,
+    "answer_file": null,
+    "question_url": "https://tcool.cc/d/q/10029986624bd60a5269.pdf",
+    "answer_url": "https://tcool.cc/d/a/10029986624bd60a574d.pdf",
+    "source_pages": [
+      "https://www.tcool.cc/"
+    ],
+    "downloaded_at": "2026-02-25T06:43:26.543Z",
+    "status": "browse_only_pair"
+  },
+  {
+    "exam_id": "17908",
+    "question_file": null,
+    "answer_file": null,
+    "question_url": "https://tcool.cc/d/q/10029586625f4a445298.pdf",
+    "answer_url": "https://tcool.cc/d/a/10029586625f4a44557b.pdf",
+    "source_pages": [
+      "https://www.tcool.cc/"
+    ],
+    "downloaded_at": "2026-02-25T06:43:49.604Z",
+    "status": "browse_only_pair"
+  },
+  {
+    "exam_id": "17938",
+    "question_file": null,
+    "answer_file": null,
+    "question_url": "https://tcool.cc/d/q/10029326628b94ba0429.pdf",
+    "answer_url": "https://tcool.cc/d/a/10029326628b94ba0644.pdf",
+    "source_pages": [
+      "https://www.tcool.cc/"
+    ],
+    "downloaded_at": "2026-02-25T06:44:07.991Z",
+    "status": "browse_only_pair"
+  },
+  {
+    "exam_id": "20000809",
+    "question_file": null,
+    "answer_file": null,
+    "question_url": "https://tcool.cc/d/q/20000809b52126aa4354.pdf",
+    "answer_url": "https://tcool.cc/d/a/20000809a52126aa4354.pdf",
+    "source_pages": [
+      "https://www.tcool.cc/"
+    ],
+    "downloaded_at": "2026-02-25T06:42:11.203Z",
+    "status": "browse_only_pair"
+  }
+]

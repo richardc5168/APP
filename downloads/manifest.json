@@ -1,0 +1,134 @@
+[
+  {
+    "filename": "20000809b52126aa4354.pdf",
+    "source_page": "https://www.tcool.cc/",
+    "file_url": "https://tcool.cc/d/q/20000809b52126aa4354.pdf",
+    "exam_id": "20000809",
+    "paper_type": "question",
+    "downloaded_at": "2026-02-25T06:42:01.125Z",
+    "status": "failed",
+    "attempts": 3,
+    "failed_reason": "HTTP 403"
+  },
+  {
+    "filename": "20000809a52126aa4354.pdf",
+    "source_page": "https://www.tcool.cc/",
+    "file_url": "https://tcool.cc/d/a/20000809a52126aa4354.pdf",
+    "exam_id": "20000809",
+    "paper_type": "answer",
+    "downloaded_at": "2026-02-25T06:42:11.203Z",
+    "status": "failed",
+    "attempts": 3,
+    "failed_reason": "HTTP 403"
+  },
+  {
+    "filename": "1002924660a4b981de91.pdf",
+    "source_page": "https://www.tcool.cc/",
+    "file_url": "https://tcool.cc/d/q/1002924660a4b981de91.pdf",
+    "exam_id": "17774",
+    "paper_type": "question",
+    "downloaded_at": "2026-02-25T06:42:21.929Z",
+    "status": "failed",
+    "attempts": 3,
+    "failed_reason": "HTTP 403"
+  },
+  {
+    "filename": "1002924660a4b981e251.pdf",
+    "source_page": "https://www.tcool.cc/",
+    "file_url": "https://tcool.cc/d/a/1002924660a4b981e251.pdf",
+    "exam_id": "17774",
+    "paper_type": "answer",
+    "downloaded_at": "2026-02-25T06:42:36.982Z",
+    "status": "failed",
+    "attempts": 3,
+    "failed_reason": "HTTP 403"
+  },
+  {
+    "filename": "100298966189de58cd0f.pdf",
+    "source_page": "https://www.tcool.cc/",
+    "file_url": "https://tcool.cc/d/q/100298966189de58cd0f.pdf",
+    "exam_id": "17827",
+    "paper_type": "question",
+    "downloaded_at": "2026-02-25T06:42:50.017Z",
+    "status": "failed",
+    "attempts": 3,
+    "failed_reason": "HTTP 403"
+  },
+  {
+    "filename": "100298966189de58cf14.pdf",
+    "source_page": "https://www.tcool.cc/",
+    "file_url": "https://tcool.cc/d/a/100298966189de58cf14.pdf",
+    "exam_id": "17827",
+    "paper_type": "answer",
+    "downloaded_at": "2026-02-25T06:43:02.588Z",
+    "status": "failed",
+    "attempts": 3,
+    "failed_reason": "HTTP 403"
+  },
+  {
+    "filename": "10029986624bd60a5269.pdf",
+    "source_page": "https://www.tcool.cc/",
+    "file_url": "https://tcool.cc/d/q/10029986624bd60a5269.pdf",
+    "exam_id": "17897",
+    "paper_type": "question",
+    "downloaded_at": "2026-02-25T06:43:15.893Z",
+    "status": "failed",
+    "attempts": 3,
+    "failed_reason": "HTTP 403"
+  },
+  {
+    "filename": "10029986624bd60a574d.pdf",
+    "source_page": "https://www.tcool.cc/",
+    "file_url": "https://tcool.cc/d/a/10029986624bd60a574d.pdf",
+    "exam_id": "17897",
+    "paper_type": "answer",
+    "downloaded_at": "2026-02-25T06:43:26.543Z",
+    "status": "failed",
+    "attempts": 3,
+    "failed_reason": "HTTP 403"
+  },
+  {
+    "filename": "10029586625f4a445298.pdf",
+    "source_page": "https://www.tcool.cc/",
+    "file_url": "https://tcool.cc/d/q/10029586625f4a445298.pdf",
+    "exam_id": "17908",
+    "paper_type": "question",
+    "downloaded_at": "2026-02-25T06:43:39.665Z",
+    "status": "failed",
+    "attempts": 3,
+    "failed_reason": "HTTP 403"
+  },
+  {
+    "filename": "10029586625f4a44557b.pdf",
+    "source_page": "https://www.tcool.cc/",
+    "file_url": "https://tcool.cc/d/a/10029586625f4a44557b.pdf",
+    "exam_id": "17908",
+    "paper_type": "answer",
+    "downloaded_at": "2026-02-25T06:43:49.604Z",
+    "status": "failed",
+    "attempts": 3,
+    "failed_reason": "HTTP 403"
+  },
+  {
+    "filename": "10029326628b94ba0429.pdf",
+    "source_page": "https://www.tcool.cc/",
+    "file_url": "https://tcool.cc/d/q/10029326628b94ba0429.pdf",
+    "exam_id": "17938",
+    "paper_type": "question",
+    "downloaded_at": "2026-02-25T06:43:59.420Z",
+    "status": "failed",
+    "attempts": 3,
+    "failed_reason": "HTTP 403"
+  },
+  {
+    "filename": "10029326628b94ba0644.pdf",
+    "source_page": "https://www.tcool.cc/",
+    "file_url": "https://tcool.cc/d/a/10029326628b94ba0644.pdf",
+    "exam_id": "17938",
+    "paper_type": "answer",
+    "downloaded_at": "2026-02-25T06:44:07.991Z",
+    "status": "failed",
+    "attempts": 3,
+    "failed_reason": "HTTP 403"
+  }
+]

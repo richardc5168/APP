@@ -42,6 +42,9 @@
     "scorecard": "node tools/build_scorecard.cjs --out artifacts/scorecard.json",
     "gate:scorecard": "node tools/check_scorecard_gate.cjs",
     "verify:all": "node tools/run_verify_all.cjs"
+    ,"login:once": "node tools/tcool_downloader/login_once.js"
+    ,"bulk:download": "node tools/tcool_downloader/bulk_download.js"
+    ,"organize:teaching": "python tools/tcool_downloader/organize_teaching_focus.py"
   },
   "devDependencies": {
     "@playwright/test": "^1.54.2",

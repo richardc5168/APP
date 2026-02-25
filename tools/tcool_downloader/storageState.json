@@ -1,0 +1,108 @@
+{
+  "cookies": [
+    {
+      "name": "FCCDCF",
+      "value": "%5Bnull%2Cnull%2Cnull%2Cnull%2Cnull%2Cnull%2C%5B%5B32%2C%22%5B%5C%22d6b871d4-087e-416f-9355-8c9a20b02f0c%5C%22%2C%5B1771997808%2C742000000%5D%5D%22%5D%5D%5D",
+      "domain": ".tcool.cc",
+      "path": "/",
+      "expires": 1805693808,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "IDE",
+      "value": "AHWqTUmO2SmnqBeNwMbYqA5iuPha-VzhCkmTaOwnEanCZZ9Iko2Rh-ecqt2cwHsFJvU",
+      "domain": ".doubleclick.net",
+      "path": "/",
+      "expires": 1806557808.873261,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "__gads",
+      "value": "ID=8091dab714fa5dea:T=1771997808:RT=1771997808:S=ALNI_MaSS-ICNZvIR0xURVcAkD6P-Ju6tg",
+      "domain": ".tcool.cc",
+      "path": "/",
+      "expires": 1805693808,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "__gpi",
+      "value": "UID=0000133edd8ff292:T=1771997808:RT=1771997808:S=ALNI_MbOZ-QZi5m3S3hDrMdW1AEyCeMZ_Q",
+      "domain": ".tcool.cc",
+      "path": "/",
+      "expires": 1805693808,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "__eoi",
+      "value": "ID=bec8a70f43f2f205:T=1771997808:RT=1771997808:S=AA-AfjaD6qOaIxrG7z9cs6Vp3s_Q",
+      "domain": ".tcool.cc",
+      "path": "/",
+      "expires": 1787549808,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_ga",
+      "value": "GA1.1.944497641.1771997809",
+      "domain": ".tcool.cc",
+      "path": "/",
+      "expires": 1806557809.180813,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "FCNEC",
+      "value": "%5B%5B%22AKsRol85Cxjay7SEPZssh3YJ-34-Qom01w2gS1WKoM0acQMCN5w4EW4HFk-4M8hsou5U_MzSUndEnjs0OxW_pU2tI9X0K8SZJt5plJ6Vnko_le5G5iddZ7vrP280MqKmXqkggd_O7dOLhCzIHfOtwcSNdzk1OevNIQ%3D%3D%22%5D%5D",
+      "domain": ".tcool.cc",
+      "path": "/",
+      "expires": 1803533809,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_ga_6551G70ETR",
+      "value": "GS2.1.s1771997809$o1$g0$t1771997812$j57$l0$h0",
+      "domain": ".tcool.cc",
+      "path": "/",
+      "expires": 1806557812.292649,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "https://www.tcool.cc",
+      "localStorage": [
+        {
+          "name": "google_adsense_settings",
+          "value": "{\"ca-pub-5228572827293085\":[\"ca-pub-5228572827293085\",[[1]]]}"
+        },
+        {
+          "name": "google_ama_config",
+          "value": "[[[[null,0,null,[],null,null,\"H1\"],1,[\"10px\",\"10px\",1],[4],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV#filter-form-container\"],4,[\"10px\",\"10px\",1],[2],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV.appslink\"],1,[\"10px\",\"2px\",1],[2],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV#outer-container\"],2,[\"10px\",\"10px\",1],[4],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV#introPage\"],1,[\"10px\",\"10px\",1],[4],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV#introPage\"],4,[\"10px\",\"10px\",1],[2],null,[],[],1,[],[]],[[null,2,null,[],null,null,\"DIV#outer-container>DIV.container\"],1,[\"10px\",\"10px\",1],[2],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV#upload-form-container\"],4,[\"10px\",\"10px\",1],[2],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV#outer-container>DIV.container\"],1,[\"10px\",\"10px\",1],[2],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"DIV#outer-container>DIV.container\"],4,[\"10px\",\"10px\",1],[2],null,[],[],1,[],[]],[[null,0,null,[],null,null,\"BODY\"],2,[\"10px\",\"10px\",1],[4],null,[],[],1,[],[]]],[],[1772084208614],\"20260222_093513\",[],[[]],[],[null,[[1,\"1vp\",[[4,\"2vp\",\"2vp\"],[6,\"3vp\",\"3vp\"]],8,\"1vp\",0.30000001,[\"0.2vp\",\"0vp\",2]],[2,\"300px\",[[4,\"600px\",\"600px\"],[6,\"900px\",\"900px\"]],8,\"300px\",0.30000001,[\"60px\",\"0px\",2]]]],null,null,null,null,null,null,[null,null,null,null,null,null,null,null,null,null,null,0],null,null,[1,null,null,[]],null,[402226287],null,null,[1771863001849],null,null,null,null,null,null,null,null,null,[[\"切換工具列展開狀態\",\"切換顯示隱私權和法律設定\",\"關閉顯示隱私權和法律設定\"]]]"
+        }
+      ]
+    },
+    {
+      "origin": "https://www.google.com",
+      "localStorage": [
+        {
+          "name": "rc::h",
+          "value": "1771997809107"
+        }
+      ]
+    }
+  ]
+}

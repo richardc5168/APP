@@ -1,0 +1,2232 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>全國題庫整理-小五下數學（離線練習）</title>
+  <style>
+    :root{
+      --bg:#0b1020; --panel:#0f1733; --card:#121c3d;
+      --text:#e6edf3; --muted:#9aa4b2; --line:#243055;
+      --accent:#58a6ff; --ok:#2ea043; --bad:#f85149;
+    }
+    body{margin:0; font-family:Segoe UI,Helvetica,Arial; background:var(--bg); color:var(--text)}
+    header{padding:18px 16px; border-bottom:1px solid var(--line); background:linear-gradient(180deg, rgba(88,166,255,.12), rgba(0,0,0,0));}
+    header .title{font-size:18px; font-weight:700}
+    header .sub{color:var(--muted); font-size:13px; margin-top:6px; line-height:1.5}
+    main{max-width:1100px; margin:0 auto; padding:16px}
+    .grid{display:grid; grid-template-columns:1.2fr .8fr; gap:12px}
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr} }
+    .card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px}
+    .row{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+    label{color:var(--muted); font-size:13px}
+    select,input,textarea{background:rgba(0,0,0,.22); border:1px solid rgba(255,255,255,.12); color:var(--text); border-radius:10px; padding:10px 10px}
+    input{min-width:260px}
+    textarea{min-width:260px; min-height:70px; resize:vertical}
+    .btn{display:inline-block; padding:10px 12px; border-radius:10px; border:1px solid rgba(88,166,255,.45); background:rgba(88,166,255,.12); color:var(--text); text-decoration:none; cursor:pointer}
+    .btn.primary{background:rgba(88,166,255,.22); border-color:rgba(88,166,255,.65)}
+    .btn.toggle-on{background:rgba(46,160,67,.16); border-color:rgba(46,160,67,.65)}
+    .btn.good{border-color:rgba(46,160,67,.65); background:rgba(46,160,67,.14)}
+    .btn.bad{border-color:rgba(248,81,73,.65); background:rgba(248,81,73,.08)}
+    .banner{border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:10px 12px; margin-top:10px}
+    .banner.muted{color:var(--muted)}
+    .banner.ok{border-color:rgba(46,160,67,.65); color:#b7f5c9; background:rgba(46,160,67,.10)}
+    .banner.bad{border-color:rgba(248,81,73,.65); color:#ffd2cf; background:rgba(248,81,73,.08)}
+    .q{font-size:18px; padding:12px 14px; border-radius:12px; background:#08102a; border:1px dashed rgba(88,166,255,.4); margin: 10px 0; line-height:1.7}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace}
+    .hint{border-left:3px solid rgba(88,166,255,.55); padding:8px 10px; background:rgba(88,166,255,.06); border-radius:10px; margin:8px 0; white-space:pre-wrap}
+    .hint-ladder-card{border:1px solid rgba(88,166,255,.28); border-radius:10px; background:rgba(88,166,255,.05); padding:10px; margin:8px 0}
+    .hint-ladder-card .hl-title{font-weight:700; color:#9cc6ff; margin-bottom:4px}
+    .hint-ladder-card .hl-prompt{font-size:14px; line-height:1.7}
+    .hint-ladder-card .hl-formula{font-size:13px; color:#d2e7ff; margin-top:4px}
+    .hint-ladder-card .hl-exp{font-size:13px; color:#ffd2cf; margin-top:4px}
+    .hint-ladder-card .hl-exp.ok{color:#b7f5c9}
+    .hint-ladder-card .hl-explain{font-size:12px; color:var(--muted); margin-top:4px}
+    .hint-visual{border-left:3px solid #f0c040; padding:10px 12px; background:rgba(240,192,64,.08); border-radius:10px; margin:8px 0}
+    .hint-visual .hv-title{font-weight:700; margin-bottom:6px; color:#f0c040; font-size:15px}
+    .hint-visual .hv-text{white-space:pre-wrap; line-height:1.7; font-size:14px}
+    .hint-visual .bar-row{display:flex; align-items:center; gap:6px; margin:6px 0}
+    .hint-visual .bar-label{min-width:90px; font-size:13px; color:var(--muted); text-align:right}
+    .hint-visual .bar-track{display:flex; height:28px; border-radius:6px; overflow:hidden; border:1px solid rgba(255,255,255,.15); flex:1; max-width:420px}
+    .hint-visual .bar-used{background:#f85149; display:flex; align-items:center; justify-content:center; font-size:11px; color:#fff; font-weight:600}
+    .hint-visual .bar-remain{background:#2ea043; display:flex; align-items:center; justify-content:center; font-size:11px; color:#fff; font-weight:600}
+    .hint-visual .bar-used2{background:#d29922; display:flex; align-items:center; justify-content:center; font-size:11px; color:#fff; font-weight:600}
+    .hint-visual .bar-final{background:#58a6ff; display:flex; align-items:center; justify-content:center; font-size:11px; color:#fff; font-weight:600}
+    .hint-visual .bar-empty{background:rgba(255,255,255,.06)}
+    .hint-visual .hv-key{display:inline-block; padding:2px 8px; border-radius:4px; font-size:12px; margin:2px 4px}
+    .hint-visual .hv-warn{color:#ffd2cf; background:rgba(248,81,73,.12); border:1px solid rgba(248,81,73,.3); border-radius:8px; padding:8px 10px; margin:8px 0; font-size:13px}
+    .hint-visual .hv-ok{color:#b7f5c9; background:rgba(46,160,67,.10); border:1px solid rgba(46,160,67,.3); border-radius:8px; padding:8px 10px; margin:8px 0; font-size:13px}
+    .sol{border:1px dashed rgba(255,255,255,.18); border-radius:12px; padding:12px; margin-top:10px; white-space:pre-wrap}
+    a{color:var(--accent)}
+    .small{font-size:12px}
+    .pill{display:inline-block; padding:3px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.10); background:rgba(255,255,255,.04); color:var(--muted); font-size:12px}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="title">全國小五數學題庫題目（離線練習 + 分層提示）</div>
+    <div class="sub">整合來源卷題目與解答連結，並提供可直接作答題目；提示採分層引導，不直接爆答案。</div>
+    <div class="row" style="margin-top:10px">
+      <a class="btn" href="../">← 回到 AI MATH WEB</a>
+      <span class="pill" id="bankMeta">題庫載入中...</span>
+    </div>
+  </header>
+
+  <main>
+    <div class="grid">
+      <section class="card">
+        <h2 style="margin:0 0 10px 0">練習</h2>
+
+        <div class="row">
+          <label>題型</label>
+          <select id="kind">
+            <option value="all" selected>全部</option>
+            <option value="national_bank_source">全國來源卷（人工核對）</option>
+            <option value="fraction_of_quantity">某量的幾分之幾（乘法）</option>
+            <option value="remaining_after_fraction">用掉後剩下（1-分數）</option>
+            <option value="fraction_of_fraction">分數的分數（乘法）</option>
+            <option value="reverse_fraction">反推原量（除法）</option>
+            <option value="remain_then_fraction">先剩下再取一部分（兩段）</option>
+            <option value="average_division">平均分配（除法）</option>
+            <option value="generic_fraction_word">其他</option>
+          </select>
+
+          <button class="btn primary" id="btnNew">出新題</button>
+          <button class="btn" id="btnReset">清空</button>
+        </div>
+
+        <div class="q" id="qText">（按「出新題」開始）</div>
+        <div id="sourceLinks" class="small" style="margin:6px 0 10px 0; color:var(--muted);"></div>
+
+        <div class="row">
+          <label>你的答案</label>
+          <input id="answer" placeholder="例如：3/4 或 2 1/3 或 12" />
+          <button class="btn good" id="btnCheck">送出/檢查</button>
+        </div>
+
+        <div class="row">
+          <label>提示層級</label>
+          <select id="hintLevel">
+            <option value="1" selected>Level 1（判斷題型）</option>
+            <option value="2">Level 2（畫圖切分）</option>
+            <option value="3">Level 3（算式通分）</option>
+            <option value="4">Level 4（合理性檢查）</option>
+          </select>
+          <button class="btn" id="btnHint">看提示</button>
+          <button class="btn" id="btnShortHint">簡短提示：關</button>
+          <button class="btn" id="btnShowSteps">看完整解題</button>
+        </div>
+
+        <div id="banner" class="banner muted">提示：來源卷題目可先作答再開解答核對；互動題可直接檢查答案並看分層提示。</div>
+        <div id="hints"></div>
+        <div id="solution"></div>
+
+        <details style="margin-top:12px;">
+          <summary>依孩子目前想法，給「下一步」</summary>
+          <div class="small" style="margin-top:8px; color:var(--muted); line-height:1.6">
+            你可以輸入孩子目前的想法（例如："我想用 1-3/5"、"我先算剩下"、"我想除以 6"）。
+            這頁會用純規則給一個「下一步」，不直接爆出最後答案。
+          </div>
+          <div class="row" style="margin-top:10px">
+            <label>孩子想法</label>
+            <textarea id="studentState" placeholder="例如：我覺得要用 1-2/5，因為問剩下"></textarea>
+            <button class="btn primary" id="btnNext">給我下一步</button>
+          </div>
+          <div id="nextHint" class="hint" style="display:none"></div>
+        </details>
+      </section>
+
+      <aside class="card">
+        <h2 style="margin:0 0 10px 0">常用解題流程</h2>
+        <div class="small" style="color:var(--muted); line-height:1.7">
+          <div><b>1) 圈重點</b>：總量、分數、單位、問什麼。</div>
+          <div><b>2) 判斷題型</b>：</div>
+          <div style="margin-left:10px">- 來源卷題目（人工核對）→ 先列式再開解答核對步驟</div>
+          <div style="margin-left:10px">- 某量的幾分之幾 → 乘法（總量 × 分數）</div>
+          <div style="margin-left:10px">- 用掉後剩下 → 先 1 - 用掉比例，再乘總量</div>
+          <div style="margin-left:10px">- 分數的分數（其中的…） → 乘法（分數 × 分數）</div>
+          <div><b>3) 約分</b>：乘之前或乘之後都可以，選你覺得好算的。</div>
+          <div><b>4) 檢查</b>：答案合理嗎？單位對嗎？</div>
+          <hr style="border:0; border-top:1px solid var(--line); margin:10px 0;">
+          <div class="small">這份題庫由後端題庫離線生成（見 bank.js），但本頁可完全離線運作。</div>
+        </div>
+      </aside>
+
+      <aside class="card">
+        <h2 style="margin:0 0 10px 0">作答報告</h2>
+        <div id="unitReport" class="small"></div>
+      </aside>
+    </div>
+  </main>
+
+  <script src="./bank.js"></script>
+  <script src="../shared/coach_event_log.js"></script>
+  <script src="../shared/attempt_telemetry.js"></script>
+  <script src="../shared/report/aggregate.js"></script>
+  <script src="../shared/report/unit_report_widget.js"></script>
+  <script>
+    // --------- helpers ---------
+    function normalizeText(s){
+      return String(s||'')
+        .replace(/−/g,'-')
+        .replaceAll('，', ',')
+        .replaceAll('、', ',')
+        .replaceAll('／', '/')
+        .replaceAll('＝', '=')
+        .trim();
+    }
+
+    function gcd(a,b){ a=Math.abs(a); b=Math.abs(b); while(b){ const t=a%b; a=b; b=t; } return a||1; }
+    function frac(n,d){
+      if (!Number.isFinite(n) || !Number.isFinite(d) || d===0) throw new Error('分數無效');
+      if (d<0){ n=-n; d=-d; }
+      const g = gcd(n,d);
+      return {n:n/g, d:d/g};
+    }
+
+    function parseStudentRational(text){
+      const s = normalizeText(text);
+      if (!s) throw new Error('請輸入答案');
+
+      // mixed: a b/c
+      let m = s.match(/^\s*(-?\d+)\s+(\d+)\s*\/\s*(\d+)\s*$/);
+      if (m){
+        const whole = parseInt(m[1],10);
+        const num = parseInt(m[2],10);
+        const den = parseInt(m[3],10);
+        if (!Number.isFinite(whole) || !Number.isFinite(num) || !Number.isFinite(den) || den===0) throw new Error('格式錯誤');
+        if (num<0 || den<0) throw new Error('帶分數的分子分母請用正數');
+        const sign = whole<0 ? -1 : 1;
+        const absWhole = Math.abs(whole);
+        return frac(sign*(absWhole*den + num), den);
+      }
+
+      // a/b
+      m = s.match(/^\s*(-?\d+)\s*\/\s*(\d+)\s*$/);
+      if (m){
+        const n = parseInt(m[1],10);
+        const d = parseInt(m[2],10);
+        if (!Number.isFinite(n) || !Number.isFinite(d) || d===0) throw new Error('格式錯誤');
+        return frac(n,d);
+      }
+
+      // integer
+      m = s.match(/^\s*(-?\d+)\s*$/);
+      if (m){
+        const n = parseInt(m[1],10);
+        if (!Number.isFinite(n)) throw new Error('格式錯誤');
+        return frac(n,1);
+      }
+
+      throw new Error('答案格式支援：2 1/3、7/3、2');
+    }
+
+    function fracEq(a,b){ return a.n===b.n && a.d===b.d; }
+
+    function normalizeAnswerToken(v){
+      return String(v || '')
+        .replace(/−/g,'-')
+        .replaceAll('，', ',')
+        .replaceAll('、', ',')
+        .replaceAll('；', ';')
+        .replaceAll('。', '.')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .toLowerCase();
+    }
+
+    function splitAnswerTokens(v){
+      const raw = String(v || '')
+        .replaceAll('，', ',')
+        .replaceAll('、', ',')
+        .replaceAll('；', ';');
+      return raw
+        .split(/[;,]/)
+        .map(s => s.trim())
+        .filter(Boolean);
+    }
+
+    function parseNumberToken(v){
+      const s = normalizeAnswerToken(v);
+      if (!/^[-+]?\d+(?:\.\d+)?$/.test(s)) return null;
+      const n = Number(s);
+      return Number.isFinite(n) ? n : null;
+    }
+
+    function tokenEquivalent(studentToken, correctToken){
+      const s = normalizeAnswerToken(studentToken);
+      const c = normalizeAnswerToken(correctToken);
+      if (!s || !c) return false;
+      if (s === c) return true;
+
+      try {
+        const sf = parseStudentRational(s);
+        const cf = parseStudentRational(c);
+        if (fracEq(sf, cf)) return true;
+      } catch {}
+
+      const sn = parseNumberToken(s);
+      const cn = parseNumberToken(c);
+      if (sn !== null && cn !== null && Math.abs(sn - cn) < 1e-9) return true;
+
+      return false;
+    }
+
+    function answerEquivalent(studentRaw, correctRaw){
+      const sTokens = splitAnswerTokens(studentRaw);
+      const cTokens = splitAnswerTokens(correctRaw);
+
+      if (cTokens.length > 1){
+        if (sTokens.length !== cTokens.length) return false;
+        for (let i = 0; i < cTokens.length; i++){
+          if (!tokenEquivalent(sTokens[i], cTokens[i])) return false;
+        }
+        return true;
+      }
+
+      return tokenEquivalent(studentRaw, correctRaw);
+    }
+
+    function renderHint(text){
+      const div = document.createElement('div');
+      div.className = 'hint';
+      div.textContent = text;
+      return div;
+    }
+
+    function compressHintText(text){
+      const raw = String(text || '').trim();
+      if (!raw) return '（此層提示無內容）';
+      const lines = raw
+        .split(/\n+/)
+        .map(s => s.trim())
+        .filter(Boolean);
+      if (!lines.length) return raw;
+      const selected = [];
+      for (let i = 0; i < lines.length; i++){
+        const line = lines[i];
+        if (/^(✅|❌|🏁|📌)/.test(line)) continue;
+        selected.push(line);
+        if (selected.length >= 2) break;
+      }
+      if (!selected.length){
+        selected.push(lines[0]);
+      }
+      return selected.join('\n');
+    }
+
+    /* ========== remain_then_fraction 視覺化提示 ========== */
+    function parseFrac(s){
+      // parse "1/2", "3/5", "1" etc from question text
+      const m = String(s).match(/^(\d+)\/(\d+)$/);
+      if (m) return { n: parseInt(m[1],10), d: parseInt(m[2],10) };
+      const n = parseInt(s,10);
+      if (Number.isFinite(n)) return { n: n, d: 1 };
+      return null;
+    }
+
+    function extractRemainThenFractionParams(q){
+      // Extract total, frac1, frac2 from question text
+      // Pattern: "...有 N 頁/公尺/...，先看了/用掉 a/b，剩下的又看了/用掉 c/d..."
+      const txt = String(q.question || '');
+      let total = null;
+      const mTotal = txt.match(/(\d+)\s*[頁公條盒瓶杯塊顆張]/);
+      if (mTotal) total = parseInt(mTotal[1],10);
+
+      // find two fractions in order
+      const fracs = [];
+      const re = /(\d+)\/(\d+)/g;
+      let match;
+      while ((match = re.exec(txt)) !== null){
+        fracs.push({ n: parseInt(match[1],10), d: parseInt(match[2],10) });
+      }
+      // also check for "用掉 1" (whole number 1 = all)
+      if (fracs.length < 2){
+        const m1 = txt.match(/又[看用吃喝]了\s*(\d+)\s*[，。？]/);
+        if (m1) fracs.push({ n: parseInt(m1[1],10), d: 1 });
+      }
+      return {
+        total: total,                    // null if 純分數題
+        frac1: fracs[0] || {n:1,d:2},
+        frac2: fracs[1] || {n:1,d:2},
+      };
+    }
+
+    function fracStr(f){ return f.d === 1 ? String(f.n) : `${f.n}/${f.d}`; }
+
+
+    /* ========== Fraction Bar Model – Structured Visual Hints ========== */
+    function lcm(a,b){ return a*b/gcd(a,b); }
+
+    function escapeHtml(s){
+      return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+
+    /**
+     * buildFractionBarModel(q) → { parts, unit_label, levels: [{title,text,cells,brackets}] }
+     * Returns null if no visual model available for this kind.
+     */
+    function buildFractionBarModel(q){
+      const kind = String(q.kind);
+      var result = null;
+      if (kind === 'remaining_after_fraction'){
+        const p = extractRAFParams(q);
+        if (p.sub === 'B') result = buildBarModel_RAF_B(q, p);
+        else if (p.sub === 'C') result = buildBarModel_RAF_C(q, p);
+        else if (p.sub === 'A2') result = buildBarModel_RAF_A(q, p, true);
+        else result = buildBarModel_RAF_A(q, p, false);
+      }
+      else if (kind === 'remain_then_fraction') result = buildBarModel_RTF(q);
+      else if (kind === 'average_division') result = buildBarModel_AVG(q);
+      else if (kind === 'fraction_of_quantity') result = buildBarModel_FOQ(q);
+      else if (kind === 'fraction_of_fraction') result = buildBarModel_FOF(q);
+      else if (kind === 'reverse_fraction') result = buildBarModel_REV(q);
+      else if (kind === 'generic_fraction_word') result = buildBarModel_GEN(q);
+
+      // Fallback: if kind-specific builder returned null, try generic extraction
+      if (!result) result = buildBarModel_FALLBACK(q);
+      return result;
+    }
+
+    /* --- Fallback: extract any fractions from question text → simple bar model --- */
+    function buildBarModel_FALLBACK(q){
+      const txt = String(q.question || '');
+      const fracs = [];
+      const re = /(\d+)\/(\d+)/g;
+      let m;
+      while ((m = re.exec(txt)) !== null) fracs.push({ n:parseInt(m[1],10), d:parseInt(m[2],10) });
+      if (!fracs.length) return null;
+      const unitM = txt.match(/[人棵顆頁公條盒瓶杯塊張元小份][尺升斤克里時]?/);
+      const unit = unitM ? unitM[0] : '';
+
+      // Two-fraction division pattern: "f1 的量 = f2 (unit)" → answer = f2 ÷ f1
+      if (fracs.length >= 2){
+        const f1 = fracs[0], f2 = fracs[1];
+        const parts = lcm(f1.d, f2.d);
+        const c1 = f1.n * (parts / f1.d);
+        const c2 = f2.n * (parts / f2.d);
+        const cells = new Array(parts).fill('empty');
+        for (var i = 0; i < Math.min(c1,parts); i++) cells[i] = 'green';
+        for (var i2 = 0; i2 < Math.min(c2,parts); i2++) cells[i2] = cells[i2] === 'green' ? 'blue' : 'orange';
+        return {
+          parts: parts, unit_label: unit,
+          levels: [
+            { title: '\ud83d\udd0d Level 1\uff1a\u5224\u65b7\u984c\u578b',
+              text: '\u984c\u76ee\u6709\u5169\u500b\u5206\u6578\uff1a' + fracStr(f1) + ' \u548c ' + fracStr(f2) + '\n' +
+                    '\u2192 \u60f3\u60f3\u770b\u662f\u4e58\u6cd5\u9084\u662f\u9664\u6cd5\uff1f',
+              cells: new Array(parts).fill('empty'),
+              brackets: [{ start:0, count:parts, label:'\u5168\u90e8', color:'white' }]
+            },
+            { title: '\ud83d\udcca Level 2\uff1a\u756b\u5716\u5207\u5206\uff08' + parts + ' \u7b49\u4efd\uff09',
+              text: '\u628a\u5168\u90e8\u5207\u6210 ' + parts + ' \u683c\uff08LCM=' + parts + '\uff09\n' +
+                    '\ud83d\udfe9 ' + fracStr(f1) + ' = ' + c1 + '/' + parts + '\n' +
+                    '\ud83d\udfe7 ' + fracStr(f2) + ' = ' + c2 + '/' + parts,
+              cells: cells.slice(),
+              brackets: [
+                { start:0, count:c1, label:fracStr(f1), color:'green' },
+                { start:0, count:c2, label:fracStr(f2), color:'orange' }
+              ]
+            },
+            { title: '\u270f\ufe0f Level 3\uff1a\u7b97\u5f0f',
+              text: '\u5148\u901a\u5206\uff0c\u518d\u5217\u5f0f\u8a08\u7b97\n' +
+                    fracStr(f1) + ' = ' + c1 + '/' + parts + '\n' +
+                    fracStr(f2) + ' = ' + c2 + '/' + parts + '\n' +
+                    '\u4f9d\u984c\u610f\u5206\u6790\u8a08\u7b97',
+              cells: cells.slice(),
+              brackets: [{ start:0, count:parts, label:'\u901a\u5206\u5f8c\u8a08\u7b97', color:'blue' }]
+            },
+            { title: '\ud83c\udfaf Level 4\uff1a\u5408\u7406\u6027\u6aa2\u67e5',
+              text: '\u2705 \u7b54\u6848\u5408\u7406\u55ce\uff1f\u55ae\u4f4d\u5c0d\u55ce\uff1f\n\n\ud83c\udfc1 \u628a\u7b54\u6848\u586b\u4e0a\u53bb\u5427\uff01',
+              cells: cells.slice(),
+              brackets: [{ start:0, count:parts, label:'\u7b54\u6848', color:'blue' }]
+            }
+          ]
+        };
+      }
+
+      // Single-fraction fallback
+      const f = fracs[0];
+      const parts = f.d;
+      const cells = new Array(parts).fill('empty');
+      for (var j = 0; j < f.n; j++) cells[j] = 'green';
+      return {
+        parts: parts, unit_label: unit,
+        levels: [
+          { title: '\ud83d\udd0d Level 1\uff1a\u5224\u65b7\u984c\u578b',
+            text: '\u984c\u76ee\u6709\u5206\u6578 ' + fracStr(f) + '\n\u60f3\u60f3\u770b\u8ddf\u54ea\u500b\u91cf\u6709\u95dc\uff1f',
+            cells: new Array(parts).fill('empty'),
+            brackets: [{ start:0, count:parts, label:'\u5168\u90e8', color:'white' }]
+          },
+          { title: '\ud83d\udcca Level 2\uff1a\u756b\u5716\u5207\u5206\uff08' + parts + ' \u7b49\u4efd\uff09',
+            text: '\u5207\u6210 ' + parts + ' \u7b49\u4efd\n\ud83d\udfe9 ' + fracStr(f) + ' = ' + f.n + ' \u683c',
+            cells: cells.slice(),
+            brackets: [{ start:0, count:f.n, label:fracStr(f), color:'green' }]
+          },
+          { title: '\u270f\ufe0f Level 3\uff1a\u7b97\u5f0f',
+            text: '\u4f9d\u984c\u610f\u5217\u5f0f\u8a08\u7b97',
+            cells: cells.slice(),
+            brackets: [{ start:0, count:f.n, label:fracStr(f), color:'green' }]
+          },
+          { title: '\ud83c\udfaf Level 4\uff1a\u5408\u7406\u6027\u6aa2\u67e5',
+            text: '\u2705 \u7b54\u6848\u5408\u7406\u55ce\uff1f\u55ae\u4f4d\u5c0d\u55ce\uff1f\n\n\ud83c\udfc1 \u628a\u7b54\u6848\u586b\u4e0a\u53bb\u5427\uff01',
+            cells: cells.slice(),
+            brackets: [{ start:0, count:f.n, label:'\u7b54\u6848', color:'green' }]
+          }
+        ]
+      };
+    }
+
+    /* --- RAF Pattern B: 兩次都從原整體 (蛋糕) → 通分加法 --- */
+    function buildBarModel_RAF_B(q, p){
+      const f1 = p.frac1, f2 = p.frac2 || {n:1,d:2};
+      const cd = lcm(f1.d, f2.d);
+      const c1 = f1.n * (cd / f1.d);
+      const c2 = f2.n * (cd / f2.d);
+      const remain = cd - c1 - c2;
+      const g0 = gcd(Math.abs(remain), cd);
+      const txt = String(q.question || '');
+      const unitM = txt.match(/[塊顆條盒瓶杯張公][尺升斤克里]?/);
+      const unit = unitM ? unitM[0] : '';
+
+      const empty_cells = new Array(cd).fill('empty');
+      const full_cells = [];
+      for (let i = 0; i < c1; i++) full_cells.push('red');
+      for (let i = 0; i < c2; i++) full_cells.push('orange');
+      for (let i = 0; i < Math.max(0, remain); i++) full_cells.push('blue');
+
+      return {
+        parts: cd, unit_label: unit,
+        levels: [
+          {
+            title: '🔍 Level 1：判斷題型',
+            text: '題目：先吃了 ' + fracStr(f1) + '、又吃了 ' + fracStr(f2) + '。\n' +
+                  '兩次都是從「同一個整體」來算\n' +
+                  '→ 用「通分 → 加法合併 → 1 減掉」！\n\n' +
+                  '📌 判斷口訣：\n' +
+                  '• 「又吃了(整' + (unit||'塊') + '的)…」→ 同一整體 → 加法\n' +
+                  '• 「又吃了(剩下的)…」→ 基準變了 → 乘法',
+            cells: empty_cells,
+            brackets: [{ start:0, count:cd, label:'全部 = 1', color:'white' }]
+          },
+          {
+            title: '📊 Level 2：畫圖切分（LCM = ' + cd + '）',
+            text: '把整個切成 ' + cd + ' 等份\n' +
+                  '（' + f1.d + ' 和 ' + f2.d + ' 的最小公倍數 = ' + cd + '）\n\n' +
+                  '🟥 第1次吃 ' + fracStr(f1) + ' = ' + c1 + '/' + cd + ' → ' + c1 + ' 格紅\n' +
+                  '🟧 第2次吃 ' + fracStr(f2) + ' = ' + c2 + '/' + cd + ' → ' + c2 + ' 格橙\n' +
+                  '🟦 剩下 ' + remain + '/' + cd + (g0>1?' = '+remain/g0+'/'+cd/g0:'') + ' → ' + remain + ' 格藍',
+            cells: full_cells.slice(),
+            brackets: [
+              { start:0, count:c1, label:fracStr(f1)+'='+c1+'/'+cd, color:'red' },
+              { start:c1, count:c2, label:fracStr(f2)+'='+c2+'/'+cd, color:'orange' },
+              { start:c1+c2, count:Math.max(0,remain), label:'剩 '+remain+'/'+cd, color:'blue' }
+            ]
+          },
+          {
+            title: '✏️ Level 3：算式（通分相加）',
+            text: '① 通分：' + fracStr(f1) + ' = ' + c1 + '/' + cd + '，' + fracStr(f2) + ' = ' + c2 + '/' + cd + '\n' +
+                  '② 共吃掉 = ' + c1 + '/' + cd + ' + ' + c2 + '/' + cd + ' = ' + (c1+c2) + '/' + cd + '\n' +
+                  '③ 剩下 = 1 − ' + (c1+c2) + '/' + cd + ' = ' + cd + '/' + cd + ' − ' + (c1+c2) + '/' + cd + ' = ' + remain + '/' + cd +
+                  (g0>1 ? ' = ' + remain/g0 + '/' + cd/g0 + '（約分）' : ''),
+            cells: full_cells.slice(),
+            brackets: [
+              { start:0, count:c1+c2, label:'共吃 '+(c1+c2)+'/'+cd, color:'red' },
+              { start:c1+c2, count:Math.max(0,remain), label:'剩 '+remain+'/'+cd+(g0>1?'='+remain/g0+'/'+cd/g0:''), color:'blue' }
+            ]
+          },
+          {
+            title: '🎯 Level 4：合理性檢查',
+            text: (function(){
+              var lines = [];
+              var usedVal = (c1+c2)/cd;
+              if (usedVal > 0.5) lines.push('✅ 吃掉超過一半，剩下不到一半 → 合理');
+              else lines.push('✅ 吃掉不到一半，剩下超過一半 → 合理');
+              if (remain >= 0) lines.push('✅ 剩下 ≥ 0 → 合理');
+              lines.push('✅ ' + remain + '/' + cd + (g0>1?' = '+remain/g0+'/'+cd/g0:'') + ' 已是最簡分數');
+              lines.push('\n🏁 把答案填上去吧！');
+              return lines.join('\n');
+            })(),
+            cells: full_cells.slice(),
+            brackets: [
+              { start:c1+c2, count:Math.max(0,remain), label:'答案 '+remain+'/'+cd+(g0>1?'='+remain/g0+'/'+cd/g0:''), color:'blue' }
+            ]
+          }
+        ]
+      };
+    }
+
+    /* --- RAF Pattern A1/A2: 單次分數，整數或帶分數總量 --- */
+    function buildBarModel_RAF_A(q, p, isMixed){
+      const f1 = p.frac1;
+      const rn = f1.d - f1.n, rd = f1.d;
+      const g0 = gcd(rn, rd);
+      const parts = f1.d;
+      const txt = String(q.question || '');
+      const unitM = txt.match(/[頁公條盒瓶杯塊顆張][尺升斤克里]?/);
+      const unit = unitM ? unitM[0] : '';
+      const totalStr = isMixed && p.totalFrac ? p.totalFrac.n+'/'+p.totalFrac.d : String(p.total||'');
+
+      const empty_cells = new Array(parts).fill('empty');
+      const full_cells = [];
+      for (let i = 0; i < f1.n; i++) full_cells.push('red');
+      for (let i = f1.n; i < parts; i++) full_cells.push('blue');
+
+      return {
+        parts: parts, unit_label: unit,
+        levels: [
+          {
+            title: '🔍 Level 1：判斷題型',
+            text: '全部 = ' + totalStr + (unit?' '+unit:'') + '\n' +
+                  '用了 ' + fracStr(f1) + ' → 是「全部的 ' + fracStr(f1) + '」\n' +
+                  '看到「的」就用「乘」！\n' +
+                  '→ 用掉 = ' + totalStr + ' × ' + fracStr(f1) + '\n' +
+                  '→ 剩下 = ' + totalStr + ' × ' + rn + '/' + rd,
+            cells: empty_cells,
+            brackets: [{ start:0, count:parts, label:'全部='+totalStr+(unit?' '+unit:''), color:'white' }]
+          },
+          {
+            title: '📊 Level 2：畫圖切分（' + parts + ' 等份）',
+            text: '把全部切成 ' + parts + ' 等份\n\n' +
+                  '🟥 用掉 ' + fracStr(f1) + ' = ' + f1.n + ' 格紅\n' +
+                  '🟦 剩下 ' + rn + '/' + rd + (g0>1?' = '+rn/g0+'/'+rd/g0:'') + ' = ' + rn + ' 格藍',
+            cells: full_cells.slice(),
+            brackets: [
+              { start:0, count:f1.n, label:'用 '+fracStr(f1), color:'red' },
+              { start:f1.n, count:rn, label:'剩 '+rn+'/'+rd, color:'blue' }
+            ]
+          },
+          {
+            title: '✏️ Level 3：算式',
+            text: (function(){
+              if (isMixed && p.totalFrac) {
+                var tf = p.totalFrac;
+                var remN = tf.n * rn, remD = tf.d * rd;
+                var gr = gcd(remN, remD);
+                return '① 全部 = ' + tf.n + '/' + tf.d + '\n' +
+                       '② 剩下 = ' + tf.n + '/' + tf.d + ' × ' + rn + '/' + rd +
+                       ' = ' + remN + '/' + remD + (gr>1?' = '+remN/gr+'/'+remD/gr:'');
+              } else {
+                var usedAmt = p.total * f1.n / f1.d;
+                var remAmt = p.total * rn / rd;
+                return '① 全部 = ' + p.total + (unit?' '+unit:'') + '\n' +
+                       '② 用掉 = ' + p.total + ' × ' + fracStr(f1) + ' = ' + usedAmt + (unit?' '+unit:'') + '\n' +
+                       '③ 剩下 = ' + p.total + ' − ' + usedAmt + ' = ' + remAmt + (unit?' '+unit:'');
+              }
+            })(),
+            cells: full_cells.slice(),
+            brackets: [
+              { start:0, count:f1.n, label:'用掉', color:'red' },
+              { start:f1.n, count:rn, label:'剩下', color:'blue' }
+            ]
+          },
+          {
+            title: '🎯 Level 4：合理性檢查',
+            text: (function(){
+              var lines = [];
+              if (f1.n < f1.d/2) lines.push('✅ 用不到一半，剩下超過一半 → 合理');
+              else lines.push('✅ 用超過一半，剩下不到一半 → 合理');
+              lines.push('✅ 剩下 > 0 → 合理');
+              lines.push('\n🏁 把答案填上去吧！');
+              return lines.join('\n');
+            })(),
+            cells: full_cells.slice(),
+            brackets: [
+              { start:f1.n, count:rn, label:'答案', color:'blue' }
+            ]
+          }
+        ]
+      };
+    }
+
+    /* --- RAF Pattern C: 水箱兩段 --- */
+    function buildBarModel_RAF_C(q, p){
+      const total = p.total || 0;
+      const f1 = p.frac1;
+      const f2 = p.frac2 || {n:1,d:2};
+      const txt = String(q.question || '');
+      const unitM = txt.match(/公[升斤]/);
+      const unit = unitM ? unitM[0] : '公升';
+
+      const currentAmt = total * f1.n / f1.d;
+      const pourOut = currentAmt * f2.n / f2.d;
+      const remain = currentAmt - pourOut;
+
+      // Fine grid: f1.d × f2.d to ensure integer cells
+      const fp = f1.d * f2.d;
+      const fWater = f1.n * f2.d;
+      const fEmpty = fp - fWater;
+      const fPour = f1.n * f2.n;     // fWater × f2.n/f2.d = integer
+      const fRemain = fWater - fPour;
+
+      const cells_s1 = new Array(fp).fill('empty');
+      for (let i = 0; i < fWater; i++) cells_s1[i] = 'green';
+
+      const cells_s2 = new Array(fp).fill('empty');
+      for (let i = 0; i < fRemain; i++) cells_s2[i] = 'blue';
+      for (let i = fRemain; i < fWater; i++) cells_s2[i] = 'red';
+
+      return {
+        parts: fp, unit_label: unit,
+        levels: [
+          {
+            title: '🔍 Level 1：判斷題型',
+            text: '水箱容量 = ' + total + ' ' + unit + '\n' +
+                  '現有 ' + fracStr(f1) + ' 的水 → 水量 = ' + total + ' × ' + fracStr(f1) + ' = ' + currentAmt + ' ' + unit + '\n\n' +
+                  '再倒出「現有水的 ' + fracStr(f2) + '」\n' +
+                  '⚠️ 基準是「現有水」不是「容量」→ 兩次都用乘法！',
+            cells: cells_s1.slice(),
+            brackets: [
+              { start:0, count:fWater, label:'水 '+currentAmt+' '+unit, color:'green' },
+              { start:fWater, count:fEmpty, label:'空', color:'white' }
+            ]
+          },
+          {
+            title: '📊 Level 2：畫圖切分',
+            text: '🟩 水 = ' + fWater + '/' + fp + ' 格\n' +
+                  '倒出水的 ' + fracStr(f2) + ' = ' + fPour + ' 格 → 🟥 紅\n' +
+                  '🟦 剩下 = ' + fRemain + ' 格藍',
+            cells: cells_s2.slice(),
+            brackets: [
+              { start:0, count:fRemain, label:'剩 '+remain+' '+unit, color:'blue' },
+              { start:fRemain, count:fPour, label:'倒出', color:'red' }
+            ]
+          },
+          {
+            title: '✏️ Level 3：算式',
+            text: '① 水量 = ' + total + ' × ' + fracStr(f1) + ' = ' + currentAmt + ' ' + unit + '\n' +
+                  '② 倒出 = ' + currentAmt + ' × ' + fracStr(f2) + ' = ' + pourOut + ' ' + unit + '\n' +
+                  '③ 剩下 = ' + currentAmt + ' − ' + pourOut + ' = ' + remain + ' ' + unit,
+            cells: cells_s2.slice(),
+            brackets: [
+              { start:0, count:fRemain, label:'答案 '+remain+' '+unit, color:'blue' }
+            ]
+          },
+          {
+            title: '🎯 Level 4：合理性檢查',
+            text: '✅ 剩 ' + remain + ' < 水量 ' + currentAmt + ' → 合理\n' +
+                  '✅ 剩下 > 0 → 合理\n\n' +
+                  '🏁 把答案填上去吧！',
+            cells: cells_s2.slice(),
+            brackets: [
+              { start:0, count:fRemain, label:remain+' '+unit, color:'blue' }
+            ]
+          }
+        ]
+      };
+    }
+
+    /* --- remain_then_fraction: 2D 網格模型 (先直切再橫切) --- */
+    function buildBarModel_RTF(q){
+      const p = extractRemainThenFractionParams(q);
+      const f1 = p.frac1, f2 = p.frac2;
+      const totalVal = p.total;
+      const hasTotal = totalVal != null && totalVal > 0;
+      const txt = String(q.question || '');
+      const unitM = txt.match(/[頁公條盒瓶杯塊顆張][尺升斤克里]?/);
+      const unit = unitM ? unitM[0] : '';
+      const totalLabel = hasTotal ? String(totalVal) : '1';
+
+      // Grid dimensions: cols = first denominator (vertical), rows = second denominator (horizontal)
+      const cols = f1.d;
+      const rows = f2.d;
+      const n1 = f1.n;  // first eaten columns
+      const n2 = f2.n;  // second eaten rows (of remaining cols)
+      const remainCols = cols - n1;
+      const totalCells = cols * rows;
+
+      // Cell counts
+      const eaten1Cells = n1 * rows;           // first eaten (whole columns)
+      const eaten2Cells = n2 * remainCols;     // second eaten (n2 rows × remaining cols)
+      const leftCells = totalCells - eaten1Cells - eaten2Cells;
+
+      // Simplified fraction strings
+      const e1g = gcd(eaten1Cells, totalCells);
+      const e2g = gcd(eaten2Cells, totalCells);
+      const lg = gcd(leftCells, totalCells);
+      const eaten1Frac = eaten1Cells/e1g + '/' + totalCells/e1g;
+      const eaten2Frac = eaten2Cells/e2g + '/' + totalCells/e2g;
+      const leftFrac = leftCells/lg + '/' + totalCells/lg;
+      const totalEaten = eaten1Cells + eaten2Cells;
+      const teg = gcd(totalEaten, totalCells);
+      const totalEatenFrac = totalEaten/teg + '/' + totalCells/teg;
+
+      const r1n = f1.d - f1.n, r1d = f1.d;
+      const r2n = f2.d - f2.n, r2d = f2.d;
+
+      // Build grid: grid[r*cols + c] = state
+      function mkGrid(showE1, showE2, showLeft){
+        var g = [];
+        for (var r = 0; r < rows; r++){
+          for (var c = 0; c < cols; c++){
+            if (c < n1) g.push(showE1 ? 'eaten1' : 'empty');
+            else if (r < n2) g.push(showE2 ? 'eaten2' : (showLeft ? 'left' : 'empty'));
+            else g.push(showLeft ? 'left' : 'empty');
+          }
+        }
+        return g;
+      }
+
+      // Level 1: just a bar (1 row) showing vertical split concept
+      var grid_l1 = [];
+      for (var c = 0; c < cols; c++) grid_l1.push('empty');
+
+      return {
+        type: 'grid', cols: cols, rows: rows, unit_label: unit,
+        levels: [
+          {
+            title: '🔍 Level 1：觀念鎖定',
+            text: '先用掉全部的 ' + fracStr(f1) + '，\n' +
+                  '「剩下的」又用掉 ' + fracStr(f2) + '。\n\n' +
+                  '⚠️ 第二次吃的是「剩下的」' + fracStr(f2) + '\n' +
+                  '（不是原本的 ' + fracStr(f2) + '）！\n\n' +
+                  '📌 看到「剩下的幾分之幾」→ 基準變了！\n' +
+                  '→ 要先算剩下是多少，再取其中一部分',
+            grid: grid_l1,
+            gridCols: cols, gridRows: 1,
+            hLineScope: 'none',
+            remainColStart: n1,
+            gridLabels: [
+              { startCol:0, endCol:cols, text:'全部 = '+totalLabel+(unit?' '+unit:''), color:'left' }
+            ]
+          },
+          {
+            title: '📊 Level 2：畫圖（先直切 → 再橫切）',
+            text: '① 畫一個長方形代表全部 = ' + totalLabel + (unit?' '+unit:'') + '\n' +
+                  '② 用直線切成 ' + cols + ' 等份（每份 = 1/' + cols + '）\n' +
+                  '③ 🟥 塗掉 ' + n1 + ' 份 → 第1次用掉 ' + fracStr(f1) + '\n' +
+                  '④ 剩下 ' + remainCols + ' 份 = ' + r1n + '/' + r1d + '\n\n' +
+                  '⬇️ 只在「剩下的 ' + remainCols + ' 份」用橫線再切 ' + rows + ' 等份\n' +
+                  '⑤ 🟧 「剩下的 ' + fracStr(f2) + '」→ 從 ' + (remainCols*rows) + ' 小格取 ' + eaten2Cells + ' 格\n' +
+                  '⑥ 🟦 最後剩下 = ' + leftCells + ' 小格',
+            grid: mkGrid(true, true, true),
+            gridCols: cols, gridRows: rows,
+            hLineScope: 'remaining',
+            remainColStart: n1,
+            gridLabels: [
+              { startCol:0, endCol:n1, text:'第1次 '+fracStr(f1), color:'eaten1' },
+              { startCol:n1, endCol:cols, text:'剩下→橫切'+rows+'份', color:'left' }
+            ]
+          },
+          {
+            title: '🔢 Level 3：讀圖得分數',
+            text: '整個長方形 = ' + cols + ' × ' + rows + ' = ' + totalCells + ' 小格\n' +
+                  '每個小格 = 1/' + totalCells + '\n\n' +
+                  '🟥 第1次用掉 = ' + eaten1Cells + ' 格 = ' + eaten1Cells + '/' + totalCells + (e1g>1?' = '+eaten1Frac:'') + '\n' +
+                  '🟧 第2次用掉 = ' + eaten2Cells + ' 格 = ' + eaten2Cells + '/' + totalCells + (e2g>1?' = '+eaten2Frac:'') + '\n' +
+                  '🟦 剩下 = ' + leftCells + ' 格 = ' + leftCells + '/' + totalCells + (lg>1?' = '+leftFrac:'') + '\n\n' +
+                  '💡 驗算：' + eaten1Cells + ' + ' + eaten2Cells + ' + ' + leftCells + ' = ' + totalCells + ' ✓',
+            grid: mkGrid(true, true, true),
+            gridCols: cols, gridRows: rows,
+            hLineScope: 'all',
+            remainColStart: n1,
+            cellLabels: { eaten1:'1/'+totalCells, eaten2:'1/'+totalCells, left:'1/'+totalCells },
+            gridLabels: [
+              { startCol:0, endCol:n1, text:eaten1Cells+'格('+eaten1Frac+')', color:'eaten1' },
+              { startCol:n1, endCol:cols, text:'吃'+eaten2Cells+'格 剩'+leftCells+'格', color:'left' }
+            ]
+          },
+          {
+            title: '✏️ Level 4：算式收斂 + 合理性檢查',
+            text: (function(){
+              var lines = [];
+              if (hasTotal) {
+                var step1 = totalVal * r1n / r1d;
+                var step2u = step1 * f2.n / f2.d;
+                var stepF = step1 * r2n / r2d;
+                lines.push('① 第1次剩 = ' + totalVal + ' × ' + r1n + '/' + r1d + ' = ' + step1 + (unit?' '+unit:''));
+                lines.push('② 第2次用 = ' + step1 + ' × ' + fracStr(f2) + ' = ' + step2u + (unit?' '+unit:''));
+                lines.push('③ 最後剩 = ' + step1 + ' − ' + step2u + ' = ' + stepF + (unit?' '+unit:''));
+              } else {
+                lines.push('① 第1次用 = ' + fracStr(f1) + ' = ' + eaten1Cells + '/' + totalCells);
+                lines.push('② 剩下 = 1 − ' + fracStr(f1) + ' = ' + r1n + '/' + r1d);
+                lines.push('③ 第2次用「剩下的 ' + fracStr(f2) + '」');
+                lines.push('   = ' + r1n + '/' + r1d + ' × ' + fracStr(f2) + ' = ' + eaten2Frac);
+                lines.push('④ 總共用掉 = ' + eaten1Frac + ' + ' + eaten2Frac);
+                var sumN = eaten1Cells + eaten2Cells;
+                lines.push('   = ' + eaten1Cells + '/' + totalCells + ' + ' + eaten2Cells + '/' + totalCells + ' = ' + sumN + '/' + totalCells);
+                if (teg>1) lines.push('   = ' + totalEatenFrac);
+                lines.push('⑤ 剩下 = 1 − ' + totalEatenFrac + ' = ' + leftFrac);
+              }
+              lines.push('');
+              lines.push('✅ 剩下 < 第1次剩下 → 合理');
+              lines.push('✅ 剩下 ≥ 0 → 合理');
+              lines.push('');
+              lines.push('❌ 常見錯誤：1 − ' + fracStr(f1) + ' − ' + fracStr(f2) + ' ← 錯！');
+              lines.push('   第二次的 ' + fracStr(f2) + ' 不是從全部算的！');
+              lines.push('');
+              lines.push('🏁 把答案填上去吧！');
+              return lines.join('\n');
+            })(),
+            grid: mkGrid(true, true, true),
+            gridCols: cols, gridRows: rows,
+            hLineScope: 'all',
+            remainColStart: n1,
+            gridLabels: [
+              { startCol:0, endCol:n1, text:'用 '+eaten1Frac, color:'eaten1' },
+              { startCol:n1, endCol:cols, text:'答案 '+leftFrac, color:'left' }
+            ]
+          }
+        ]
+      };
+    }
+
+    /* --- average_division: 平均分配 (分數 ÷ 整數) --- */
+    function buildBarModel_AVG(q){
+      const txt = String(q.question || '');
+      const fracM = txt.match(/(\d+)\/(\d+)/);
+      if (!fracM) return null;
+      const tN = parseInt(fracM[1],10), tD = parseInt(fracM[2],10);
+      const portionM = txt.match(/(\d+)\s*[杯人份個組隊袋]/);
+      if (!portionM) return null;
+      const n = parseInt(portionM[1],10);
+      const unitM = txt.match(/[頁公條盒瓶杯塊顆張][尺升斤克里]?/);
+      const unit = unitM ? unitM[0] : '';
+
+      const ansN = tN, ansD = tD * n;
+      const g = gcd(ansN, ansD);
+      const parts = tD;
+
+      const cells = new Array(parts).fill('empty');
+      for (let i = 0; i < tN; i++) cells[i] = 'green';
+
+      return {
+        parts: parts, unit_label: unit,
+        levels: [
+          {
+            title: '🔍 Level 1：判斷題型',
+            text: '看到「平均分成 ' + n + ' 份」→ 用除法！\n' +
+                  '全部 = ' + tN + '/' + tD + (unit?' '+unit:'') + '\n' +
+                  '每份 = ' + tN + '/' + tD + ' ÷ ' + n + '\n\n' +
+                  '📌 分數 ÷ 整數 = 分母乘以那個整數',
+            cells: cells.slice(),
+            brackets: [{ start:0, count:tN, label:tN+'/'+tD+(unit?' '+unit:''), color:'green' }]
+          },
+          {
+            title: '📊 Level 2：畫圖切分',
+            text: '全部 ' + tN + '/' + tD + '（' + parts + ' 格中塗 ' + tN + ' 格綠色）\n' +
+                  '再把塗色的 ' + tN + ' 格平均分成 ' + n + ' 份\n' +
+                  '→ 每份佔多少格？',
+            cells: cells.slice(),
+            brackets: [
+              { start:0, count:tN, label:tN+'/'+tD+' ÷ '+n, color:'green' }
+            ]
+          },
+          {
+            title: '✏️ Level 3：算式',
+            text: tN + '/' + tD + ' ÷ ' + n + '\n' +
+                  '= ' + tN + ' / (' + tD + ' × ' + n + ')\n' +
+                  '= ' + ansN + '/' + ansD +
+                  (g>1 ? ' = ' + ansN/g + '/' + ansD/g + '（約分）' : ''),
+            cells: cells.slice(),
+            brackets: [
+              { start:0, count:tN, label:'每份='+(g>1?String(ansN/g)+'/'+String(ansD/g):String(ansN)+'/'+String(ansD)), color:'green' }
+            ]
+          },
+          {
+            title: '🎯 Level 4：合理性檢查',
+            text: '✅ 每份 ' + (g>1?String(ansN/g)+'/'+String(ansD/g):String(ansN)+'/'+String(ansD)) +
+                  ' < 全部 ' + tN + '/' + tD + ' → 合理\n' +
+                  '✅ 驗算：' + (g>1?String(ansN/g)+'/'+String(ansD/g):String(ansN)+'/'+String(ansD)) +
+                  ' × ' + n + ' = ' + tN + '/' + tD + ' ✓\n\n' +
+                  '🏁 把答案填上去吧！',
+            cells: cells.slice(),
+            brackets: [
+              { start:0, count:tN, label:'答案', color:'green' }
+            ]
+          }
+        ]
+      };
+    }
+
+    /* --- fraction_of_quantity: 某量的幾分之幾 (乘法) --- */
+    function buildBarModel_FOQ(q){
+      const txt = String(q.question || '');
+      // extract integer total
+      const mTotal = txt.match(/(\d+)\s*[人棵顆頁公條盒瓶杯塊張元][尺升斤克里]?/);
+      if (!mTotal) return null;
+      const total = parseInt(mTotal[1],10);
+      if (!total || total <= 0) return null;
+      // extract fraction
+      const fracM = txt.match(/(\d+)\/(\d+)/);
+      if (!fracM) return null;
+      const fN = parseInt(fracM[1],10), fD = parseInt(fracM[2],10);
+      const unitM = txt.match(/[人棵顆頁公條盒瓶杯塊張元][尺升斤克里]?/);
+      const unit = unitM ? unitM[0] : '';
+      // detect if asking for remainder ("剩" or "其餘" or "還可以")
+      const askRemain = /剩|其餘|還[可能]以/.test(txt);
+      const partAmt  = total * fN / fD;
+      const remainAmt = total - partAmt;
+      const ansAmt = askRemain ? remainAmt : partAmt;
+      const parts = fD;
+      // build cells
+      const cells_full = new Array(parts).fill('empty');
+      if (askRemain) {
+        for (let i = 0; i < fN; i++) cells_full[i] = 'red';
+        for (let i = fN; i < parts; i++) cells_full[i] = 'blue';
+      } else {
+        for (let i = 0; i < fN; i++) cells_full[i] = 'green';
+      }
+      const rN = fD - fN, rD = fD, gR = gcd(rN, rD);
+      return {
+        parts: parts, unit_label: unit,
+        levels: [
+          {
+            title: '🔍 Level 1：判斷題型',
+            text: '全部 = ' + total + (unit?' '+unit:'') + '\n' +
+                  (askRemain
+                    ? '已經用掉/占了 ' + fN + '/' + fD + '\n→ 問「剩下」= 全部 × (1 − ' + fN + '/' + fD + ') = 全部 × ' + rN + '/' + rD + '\n'
+                    : '要算全部的 ' + fN + '/' + fD + '\n→ 用乘法：' + total + ' × ' + fN + '/' + fD + '\n') +
+                  '\n📌 看到「的幾分之幾」就想到「乘法」！',
+            cells: new Array(parts).fill('empty'),
+            brackets: [{ start:0, count:parts, label:'全部='+total+(unit?' '+unit:''), color:'white' }]
+          },
+          {
+            title: '📊 Level 2：畫圖切分（' + parts + ' 等份）',
+            text: '把 ' + total + (unit?' '+unit:'') + ' 切成 ' + parts + ' 等份\n' +
+                  '每份 = ' + total + ' ÷ ' + parts + ' = ' + (total/parts) + (unit?' '+unit:'') + '\n\n' +
+                  (askRemain
+                    ? '🟥 用掉 ' + fN + '/' + fD + ' = ' + fN + ' 格（紅）\n🟦 剩下 ' + rN + '/' + rD + ' = ' + rN + ' 格（藍）'
+                    : '🟩 要的部分 ' + fN + '/' + fD + ' = ' + fN + ' 格（綠）'),
+            cells: cells_full.slice(),
+            brackets: askRemain
+              ? [
+                  { start:0, count:fN, label:'用掉 '+partAmt+(unit?' '+unit:''), color:'red' },
+                  { start:fN, count:rN, label:'剩 '+remainAmt+(unit?' '+unit:''), color:'blue' }
+                ]
+              : [{ start:0, count:fN, label:partAmt+(unit?' '+unit:''), color:'green' }]
+          },
+          {
+            title: '✏️ Level 3：算式',
+            text: askRemain
+              ? '① 用掉 = ' + total + ' × ' + fN + '/' + fD + ' = ' + partAmt + (unit?' '+unit:'') + '\n' +
+                '② 剩下 = ' + total + ' − ' + partAmt + ' = ' + remainAmt + (unit?' '+unit:'') +
+                '\n\n或：' + total + ' × ' + rN + '/' + rD + ' = ' + remainAmt + (unit?' '+unit:'')
+              : total + ' × ' + fN + '/' + fD +
+                (function(){
+                  var g = gcd(total, fD);
+                  if (g > 1) return '\n= (' + total + ' ÷ ' + g + ') × ' + fN + ' / (' + fD + ' ÷ ' + g + ')\n= ' + (total/g) + ' × ' + fN + ' / ' + (fD/g) + ' = ' + partAmt;
+                  return ' = ' + (total*fN) + ' / ' + fD + ' = ' + partAmt;
+                })() + (unit?' '+unit:''),
+            cells: cells_full.slice(),
+            brackets: askRemain
+              ? [{ start:fN, count:rN, label:'答案 '+remainAmt+(unit?' '+unit:''), color:'blue' }]
+              : [{ start:0, count:fN, label:'答案 '+partAmt+(unit?' '+unit:''), color:'green' }]
+          },
+          {
+            title: '🎯 Level 4：合理性檢查',
+            text: (askRemain
+              ? '✅ 剩下 ' + remainAmt + ' < 全部 ' + total + ' → 合理\n✅ 剩下 > 0 → 合理'
+              : '✅ 結果 ' + partAmt + ' < 全部 ' + total + ' → 合理') +
+              '\n✅ 答案單位：' + (unit||'(無)') + ' ✓\n\n🏁 把答案填上去吧！',
+            cells: cells_full.slice(),
+            brackets: askRemain
+              ? [{ start:fN, count:rN, label:'答案', color:'blue' }]
+              : [{ start:0, count:fN, label:'答案', color:'green' }]
+          }
+        ]
+      };
+    }
+
+    /* --- fraction_of_fraction: 2D 網格模型 (分數×分數 / 池塘注水) --- */
+    function buildBarModel_FOF(q){
+      const txt = String(q.question || '');
+      // detect "先注滿 f1，再注滿剩下的 f2" pattern (pool-filling = sequential like RTF)
+      const isPool = /先注滿|先裝了/.test(txt);
+      // extract all fractions in order
+      const fracs = [];
+      const re = /(\d+)\/(\d+)/g;
+      let m;
+      while ((m = re.exec(txt)) !== null) fracs.push({ n:parseInt(m[1],10), d:parseInt(m[2],10) });
+      // Handle standalone "1" as a fraction (e.g. "其中的 1" or "的 1 用")
+      if (fracs.length < 2) {
+        if (/其中的\s*1(?!\/|\d)|的\s*1\s*[用來拿做種佔]/.test(txt) && fracs.length === 1) {
+          // figure out position: if 其中 appears after the a/b → second is 1
+          const fracPos = txt.indexOf(fracs[0].n + '/' + fracs[0].d);
+          const wholePos = txt.search(/其中的\s*1|的\s*1\s*[用來拿做種佔]/);
+          if (wholePos > fracPos) fracs.push({n:1, d:1});
+          else fracs.unshift({n:1, d:1});
+        }
+        if (fracs.length < 2) return null;
+      }
+      const f1 = fracs[0], f2 = fracs[1];
+
+      if (isPool) {
+        /* Pool pattern ≈ RTF: 先注 f1，再注「剩下的」f2 → 用 2D 網格 */
+        const cols = f1.d, rows = f2.d;
+        const n1 = f1.n, n2 = f2.n;
+        const remainCols = cols - n1;
+        const totalCells = cols * rows;
+        const fill1Cells = n1 * rows;
+        const fill2Cells = n2 * remainCols;
+        const totalFillCells = fill1Cells + fill2Cells;
+        const emptyCells = totalCells - totalFillCells;
+        const gF = gcd(totalFillCells, totalCells);
+        const gE = gcd(emptyCells, totalCells);
+        const f2g = gcd(fill2Cells, totalCells);
+        const totalFillFrac = totalFillCells/gF + '/' + totalCells/gF;
+        const emptyFrac = emptyCells/gE + '/' + totalCells/gE;
+
+        function mkPoolGrid(showF1, showF2){
+          var g = [];
+          for (var r = 0; r < rows; r++){
+            for (var c = 0; c < cols; c++){
+              if (c < n1) g.push(showF1 ? 'green' : 'empty');
+              else if (r < n2) g.push(showF2 ? 'eaten2' : 'empty');
+              else g.push('empty');
+            }
+          }
+          return g;
+        }
+        var grid_p1 = [];
+        for (var c = 0; c < cols; c++) grid_p1.push(c < n1 ? 'green' : 'empty');
+
+        return {
+          type: 'grid', cols: cols, rows: rows, unit_label: '',
+          levels: [
+            {
+              title: '🔍 Level 1：觀念鎖定',
+              text: '先注/裝了全部的 ' + fracStr(f1) + '\n' +
+                    '再把「剩下的」注/裝了 ' + fracStr(f2) + '\n\n' +
+                    '⚠️ 第二次的 ' + fracStr(f2) + ' 是「剩下的」' + fracStr(f2) + '，不是全部的！\n' +
+                    '→ 剩下 = 1 − ' + fracStr(f1) + ' = ' + (f1.d-f1.n) + '/' + f1.d,
+              grid: grid_p1,
+              gridCols: cols, gridRows: 1,
+              hLineScope: 'none', remainColStart: n1,
+              gridLabels: [
+                { startCol:0, endCol:n1, text:'第1次 '+fracStr(f1), color:'green' },
+                { startCol:n1, endCol:cols, text:'剩下', color:'left' }
+              ]
+            },
+            {
+              title: '📊 Level 2：畫圖（先直切 → 再橫切）',
+              text: '① 畫長方形代表全部容量\n' +
+                    '② 直線切 ' + cols + ' 等份\n' +
+                    '③ 🟩 注入 ' + fracStr(f1) + ' = ' + n1 + ' 份（綠）\n' +
+                    '④ 剩下 ' + remainCols + ' 份\n\n' +
+                    '⬇️ 在剩下的 ' + remainCols + ' 份用橫線切 ' + rows + ' 等份\n' +
+                    '⑤ 🟧 注入「剩下的 ' + fracStr(f2) + '」= ' + fill2Cells + ' 小格',
+              grid: mkPoolGrid(true, true),
+              gridCols: cols, gridRows: rows,
+              hLineScope: 'remaining', remainColStart: n1,
+              gridLabels: [
+                { startCol:0, endCol:n1, text:'第1次 '+fracStr(f1), color:'green' },
+                { startCol:n1, endCol:cols, text:'剩下→橫切'+rows+'份', color:'eaten2' }
+              ]
+            },
+            {
+              title: '🔢 Level 3：讀圖得分數',
+              text: '全部 = ' + cols + ' × ' + rows + ' = ' + totalCells + ' 小格\n\n' +
+                    '🟩 第1次注 = ' + fill1Cells + ' 格 = ' + fracStr(f1) + '\n' +
+                    '🟧 第2次注 = ' + fill2Cells + ' 格 = ' + fill2Cells + '/' + totalCells + (f2g>1?' = '+fill2Cells/f2g+'/'+totalCells/f2g:'') + '\n' +
+                    '合計注了 = ' + totalFillCells + '/' + totalCells + (gF>1?' = '+totalFillFrac:'') + '\n' +
+                    '剩下空 = ' + emptyCells + '/' + totalCells + (gE>1?' = '+emptyFrac:''),
+              grid: mkPoolGrid(true, true),
+              gridCols: cols, gridRows: rows,
+              hLineScope: 'all', remainColStart: n1,
+              cellLabels: { green:'1/'+totalCells, eaten2:'1/'+totalCells },
+              gridLabels: [
+                { startCol:0, endCol:cols, text:'合計 '+totalFillFrac, color:'green' }
+              ]
+            },
+            {
+              title: '✏️ Level 4：算式收斂',
+              text: '① 第1次 = ' + fracStr(f1) + '\n' +
+                    '② 剩下 = 1 − ' + fracStr(f1) + ' = ' + (f1.d-f1.n) + '/' + f1.d + '\n' +
+                    '③ 第2次 = ' + (f1.d-f1.n) + '/' + f1.d + ' × ' + fracStr(f2) + ' = ' + fill2Cells + '/' + totalCells +
+                    (f2g>1?' = '+fill2Cells/f2g+'/'+totalCells/f2g:'') + '\n' +
+                    '④ 合計 = ' + totalFillFrac + '\n\n' +
+                    '✅ 合計 < 1（沒溢出）→ 合理\n' +
+                    '✅ 合計 > ' + fracStr(f1) + ' → 合理\n\n🏁 把答案填上去吧！',
+              grid: mkPoolGrid(true, true),
+              gridCols: cols, gridRows: rows,
+              hLineScope: 'all', remainColStart: n1,
+              gridLabels: [
+                { startCol:0, endCol:cols, text:'答案 '+totalFillFrac, color:'green' }
+              ]
+            }
+          ]
+        };
+      }
+
+      /* 一般分數 × 分數 (area model): 直切 d1 份 × 橫切 d2 份 */
+      const cols = f1.d, rows = f2.d;
+      const totalCells = cols * rows;
+      const area1 = f1.n * f2.d; // f1 portion in grid cells
+      const area2 = f1.n * f2.n; // f1 × f2 answer cells
+      const gA = gcd(area2, totalCells);
+
+      function mkFofGrid(showF1, showAnswer){
+        var g = [];
+        for (var r = 0; r < rows; r++){
+          for (var c = 0; c < cols; c++){
+            if (c < f1.n && r < f2.n) g.push(showAnswer ? 'eaten2' : (showF1 ? 'green' : 'empty'));
+            else if (c < f1.n) g.push(showF1 ? 'green' : 'empty');
+            else g.push('empty');
+          }
+        }
+        return g;
+      }
+      var grid_f1 = [];
+      for (var c2 = 0; c2 < cols; c2++) grid_f1.push('empty');
+
+      return {
+        type: 'grid', cols: cols, rows: rows, unit_label: '',
+        levels: [
+          {
+            title: '🔍 Level 1：觀念鎖定',
+            text: '全部的 ' + fracStr(f1) + ' 拿來做某件事，\n' +
+                  '其中的 ' + fracStr(f2) + ' 做另一件事。\n\n' +
+                  '→「其中的…」= 分數的分數 = 乘法！\n' +
+                  '   ' + fracStr(f1) + ' × ' + fracStr(f2) + ' = ？',
+            grid: grid_f1,
+            gridCols: cols, gridRows: 1,
+            hLineScope: 'none', remainColStart: 0,
+            gridLabels: [{ startCol:0, endCol:cols, text:'全部 = 1', color:'left' }]
+          },
+          {
+            title: '📊 Level 2：畫圖（直切 ' + cols + ' × 橫切 ' + rows + '）',
+            text: '① 畫長方形代表全部 = 1\n' +
+                  '② 用直線切成 ' + cols + ' 份\n' +
+                  '③ 🟩 取 ' + fracStr(f1) + ' = ' + f1.n + ' 份（綠色欄）\n\n' +
+                  '⬇️ 再用橫線把「全部」切成 ' + rows + ' 列\n' +
+                  '④ 🟧 在綠色欄裡取 ' + fracStr(f2) + ' = ' + f2.n + ' 列\n' +
+                  '→ 橘色區域 = ' + fracStr(f1) + ' × ' + fracStr(f2) + ' = ' + area2 + ' 小格',
+            grid: mkFofGrid(true, true),
+            gridCols: cols, gridRows: rows,
+            hLineScope: 'all', remainColStart: 0,
+            gridLabels: [
+              { startCol:0, endCol:f1.n, text:fracStr(f1)+' ('+f1.n+'欄)', color:'green' },
+              { startCol:f1.n, endCol:cols, text:'其餘', color:'left' }
+            ]
+          },
+          {
+            title: '🔢 Level 3：讀圖得分數',
+            text: '全部 = ' + cols + ' × ' + rows + ' = ' + totalCells + ' 小格\n' +
+                  '每格 = 1/' + totalCells + '\n\n' +
+                  '🟩 ' + fracStr(f1) + ' 的區域 = ' + area1 + ' 格（' + f1.n + '欄 × ' + rows + '列）\n' +
+                  '🟧 其中 ' + fracStr(f2) + ' = ' + area2 + ' 格（' + f1.n + '欄 × ' + f2.n + '列）\n\n' +
+                  '🟧 答案 = ' + area2 + '/' + totalCells + (gA>1?' = '+area2/gA+'/'+totalCells/gA:''),
+            grid: mkFofGrid(true, true),
+            gridCols: cols, gridRows: rows,
+            hLineScope: 'all', remainColStart: 0,
+            cellLabels: { eaten2:'1/'+totalCells, green:'1/'+totalCells },
+            gridLabels: [
+              { startCol:0, endCol:f1.n, text:area2+'格='+(gA>1?area2/gA+'/'+totalCells/gA:area2+'/'+totalCells), color:'eaten2' }
+            ]
+          },
+          {
+            title: '✏️ Level 4：算式收斂',
+            text: fracStr(f1) + ' × ' + fracStr(f2) + '\n' +
+                  '= (' + f1.n + '×' + f2.n + ') / (' + f1.d + '×' + f2.d + ')\n' +
+                  '= ' + (f1.n*f2.n) + '/' + (f1.d*f2.d) +
+                  (gA>1 ? ' = ' + area2/gA + '/' + totalCells/gA + '（約分÷' + gA + '）' : '') + '\n\n' +
+                  '✅ ' + (gA>1?area2/gA+'/'+totalCells/gA:area2+'/'+totalCells) + ' < ' + fracStr(f1) + ' → 合理\n' +
+                  '✅ ' + (gA>1?area2/gA+'/'+totalCells/gA:area2+'/'+totalCells) + ' < ' + fracStr(f2) + ' → 合理\n\n' +
+                  '🏁 把答案填上去吧！',
+            grid: mkFofGrid(true, true),
+            gridCols: cols, gridRows: rows,
+            hLineScope: 'all', remainColStart: 0,
+            gridLabels: [
+              { startCol:0, endCol:f1.n, text:'答案 '+(gA>1?area2/gA+'/'+totalCells/gA:area2+'/'+totalCells), color:'eaten2' }
+            ]
+          }
+        ]
+      };
+    }
+
+    /* --- reverse_fraction: 反推原量 (除法) --- */
+    function buildBarModel_REV(q){
+      const txt = String(q.question || '');
+      // extract fraction
+      const fracM = txt.match(/(\d+)\/(\d+)/);
+      if (!fracM) return null;
+      const fN = parseInt(fracM[1],10), fD = parseInt(fracM[2],10);
+      // extract the known remaining amount (number before/after 剩/還/折後/售價)
+      const unitM = txt.match(/[人棵顆頁公條盒瓶杯塊張元][尺升斤克里]?/);
+      const unit = unitM ? unitM[0] : '';
+      // find the known quantity — look for a number near 剩/還/折後/售價
+      let known = null;
+      const mKnown = txt.match(/剩\s*(\d+)|還剩\s*(\d+)|折後[售價]*\s*(\d+)|售價\s*(\d+)|還有\s*(\d+)/);
+      if (mKnown) known = parseInt((mKnown[1]||mKnown[2]||mKnown[3]||mKnown[4]||mKnown[5]),10);
+      // fallback: look for second number in text
+      if (known === null) {
+        const nums = [];
+        const rn = /(\d+)/g; let mn;
+        while ((mn = rn.exec(txt)) !== null) nums.push(parseInt(mn[1],10));
+        // skip fractions' numerator/denominator
+        const skip = new Set([fN, fD]);
+        for (const n of nums) { if (!skip.has(n) && n > 0) { known = n; break; } }
+      }
+      if (known === null || known <= 0) return null;
+
+      // "走了 f，剩 known" → remain ratio = 1 − f = (fD−fN)/fD → original = known ÷ ((fD−fN)/fD)
+      // "打折 f，售價 known" → remain ratio = 1 − f → original = known ÷ (1−f)
+      const remN = fD - fN, remD = fD; // remain ratio
+      const gRem = gcd(remN, remD);
+      const origVal = known * fD / (fD - fN);
+      const parts = fD;
+
+      const cells_full = new Array(parts).fill('empty');
+      for (let i = 0; i < fN; i++) cells_full[i] = 'red';
+      for (let i = fN; i < parts; i++) cells_full[i] = 'blue';
+
+      const cells_known = new Array(parts).fill('empty');
+      for (let i = fN; i < parts; i++) cells_known[i] = 'blue';
+
+      return {
+        parts: parts, unit_label: unit,
+        levels: [
+          {
+            title: '🔍 Level 1：判斷題型',
+            text: '已知「剩下 / 折後」= ' + known + (unit?' '+unit:'') + '\n' +
+                  '用掉 / 打折了 ' + fN + '/' + fD + '\n' +
+                  '→ 剩下比例 = 1 − ' + fN + '/' + fD + ' = ' + remN + '/' + remD + '\n\n' +
+                  '📌 反推原量 → 用除法！\n' +
+                  '原量 = 已知 ÷ 已知比例',
+            cells: cells_known.slice(),
+            brackets: [
+              { start:fN, count:remN, label:'已知 '+known+(unit?' '+unit:''), color:'blue' },
+              { start:0, count:fN, label:'？', color:'white' }
+            ]
+          },
+          {
+            title: '📊 Level 2：畫圖切分（' + parts + ' 等份）',
+            text: '全部 = ' + parts + ' 格\n' +
+                  '🟥 用掉/折掉 ' + fN + '/' + fD + ' = ' + fN + ' 格（未知）\n' +
+                  '🟦 剩下 ' + remN + '/' + remD + ' = ' + remN + ' 格 = ' + known + (unit?' '+unit:'') + '\n\n' +
+                  '每格 = ' + known + ' ÷ ' + remN + ' = ' + (known/remN) + (unit?' '+unit:'') + '\n' +
+                  '全部 = ' + (known/remN) + ' × ' + parts + ' = ' + origVal + (unit?' '+unit:''),
+            cells: cells_full.slice(),
+            brackets: [
+              { start:0, count:fN, label:'用掉', color:'red' },
+              { start:fN, count:remN, label:known+(unit?' '+unit:''), color:'blue' }
+            ]
+          },
+          {
+            title: '✏️ Level 3：算式',
+            text: '剩下比例 = 1 − ' + fN + '/' + fD + ' = ' + remN + '/' + remD + (gRem>1?' = '+remN/gRem+'/'+remD/gRem:'') + '\n\n' +
+                  '原量 = ' + known + ' ÷ ' + remN + '/' + remD + '\n' +
+                  '     = ' + known + ' × ' + remD + '/' + remN + '\n' +
+                  '     = ' + (known * remD) + '/' + remN + '\n' +
+                  '     = ' + origVal + (unit?' '+unit:''),
+            cells: cells_full.slice(),
+            brackets: [
+              { start:0, count:parts, label:'原量 = '+origVal+(unit?' '+unit:''), color:'green' }
+            ]
+          },
+          {
+            title: '🎯 Level 4：合理性檢查',
+            text: '✅ 原量 ' + origVal + ' > 剩下 ' + known + ' → 合理\n' +
+                  '✅ 驗算：' + origVal + ' × ' + remN + '/' + remD + ' = ' + known + ' ✓\n\n' +
+                  '🏁 把答案填上去吧！',
+            cells: cells_full.slice(),
+            brackets: [
+              { start:0, count:parts, label:'答案 '+origVal+(unit?' '+unit:''), color:'green' }
+            ]
+          }
+        ]
+      };
+    }
+
+    /* --- generic_fraction_word: 其他分數應用題 (catch-all) --- */
+    function buildBarModel_GEN(q){
+      const txt = String(q.question || '');
+      // Try to detect complement pattern: "其中 f 是 X，其餘是 Y" / "已裝了 f，還可以裝多少"
+      const fracAll = [];
+      const reF = /(\d+)\/(\d+)/g; let mf;
+      while ((mf = reF.exec(txt)) !== null) fracAll.push({ n:parseInt(mf[1],10), d:parseInt(mf[2],10), pos:mf.index });
+      if (!fracAll.length) return null;
+
+      // extract integer total
+      const mTotal = txt.match(/(\d+)\s*[人棵顆頁公條盒瓶杯塊張元份][尺升斤克里]?/);
+      const total = mTotal ? parseInt(mTotal[1],10) : 0;
+      const unitM = txt.match(/[人棵顆頁公條盒瓶杯塊張份][尺升斤克里]?/);
+      const unit = unitM ? unitM[0] : '';
+      const f1 = fracAll[0];
+
+      // Sub-pattern A: complement with integer total ("有N, 其中f是X, 其餘/剩下是Y")
+      if (total > 0 && fracAll.length === 1 && /其餘|其他|剩[下餘]|還[可能]以/.test(txt)) {
+        const partAmt = total * f1.n / f1.d;
+        const remainAmt = total - partAmt;
+        const rN = f1.d - f1.n, rD = f1.d;
+        const parts = f1.d;
+        const cells = new Array(parts).fill('empty');
+        for (let i = 0; i < f1.n; i++) cells[i] = 'green';
+        for (let i = f1.n; i < parts; i++) cells[i] = 'blue';
+        return {
+          parts: parts, unit_label: unit,
+          levels: [
+            {
+              title: '🔍 Level 1：判斷題型',
+              text: '全部 = ' + total + (unit?' '+unit:'') + '\n' +
+                    '其中 ' + fracStr(f1) + ' 是某一類\n' +
+                    '→ 其餘 = 1 − ' + fracStr(f1) + ' = ' + rN + '/' + rD + '\n\n' +
+                    '📌 先算比例，再乘總量！',
+              cells: new Array(parts).fill('empty'),
+              brackets: [{ start:0, count:parts, label:'全部='+total+(unit?' '+unit:''), color:'white' }]
+            },
+            {
+              title: '📊 Level 2：畫圖切分（' + parts + ' 等份）',
+              text: '🟩 已知部分 ' + fracStr(f1) + ' = ' + f1.n + ' 格 = ' + partAmt + (unit?' '+unit:'') + '\n' +
+                    '🟦 其餘 ' + rN + '/' + rD + ' = ' + rN + ' 格 = ' + remainAmt + (unit?' '+unit:''),
+              cells: cells.slice(),
+              brackets: [
+                { start:0, count:f1.n, label:partAmt+(unit?' '+unit:''), color:'green' },
+                { start:f1.n, count:rN, label:remainAmt+(unit?' '+unit:''), color:'blue' }
+              ]
+            },
+            {
+              title: '✏️ Level 3：算式',
+              text: '其餘比例 = 1 − ' + fracStr(f1) + ' = ' + rN + '/' + rD + '\n' +
+                    '其餘數量 = ' + total + ' × ' + rN + '/' + rD + ' = ' + remainAmt + (unit?' '+unit:''),
+              cells: cells.slice(),
+              brackets: [
+                { start:f1.n, count:rN, label:'答案 '+remainAmt+(unit?' '+unit:''), color:'blue' }
+              ]
+            },
+            {
+              title: '🎯 Level 4：合理性檢查',
+              text: '✅ ' + remainAmt + ' < ' + total + ' → 合理\n' +
+                    '✅ ' + partAmt + ' + ' + remainAmt + ' = ' + total + ' ✓\n\n' +
+                    '🏁 把答案填上去吧！',
+              cells: cells.slice(),
+              brackets: [
+                { start:f1.n, count:rN, label:'答案', color:'blue' }
+              ]
+            }
+          ]
+        };
+      }
+
+      // Sub-pattern B: fraction × fraction scaling ("做 f1 份蛋糕，每份要 f2 杯")
+      if (fracAll.length >= 2) {
+        const f2 = fracAll[1];
+        const prodN = f1.n * f2.n, prodD = f1.d * f2.d;
+        const gP = gcd(prodN, prodD);
+        const parts = f1.d * f2.d;
+        const area = f1.n * f2.n;
+        const cells = new Array(parts).fill('empty');
+        for (let i = 0; i < area; i++) cells[i] = 'blue';
+        return {
+          parts: parts, unit_label: unit,
+          levels: [
+            {
+              title: '🔍 Level 1：判斷題型',
+              text: '有兩個分數 ' + fracStr(f1) + ' 和 ' + fracStr(f2) + '\n' +
+                    '要算 ' + fracStr(f1) + ' × ' + fracStr(f2) + '\n\n' +
+                    '📌 分數 × 分數：分子乘分子、分母乘分母',
+              cells: new Array(parts).fill('empty'),
+              brackets: [{ start:0, count:parts, label:'全部', color:'white' }]
+            },
+            {
+              title: '📊 Level 2：畫圖切分（' + f1.d + ' × ' + f2.d + ' = ' + parts + ' 格）',
+              text: '切成 ' + parts + ' 小格\n' +
+                    '🟦 ' + fracStr(f1) + ' × ' + fracStr(f2) + ' = ' + area + ' 格藍',
+              cells: cells.slice(),
+              brackets: [
+                { start:0, count:area, label:area+'/'+parts, color:'blue' }
+              ]
+            },
+            {
+              title: '✏️ Level 3：算式',
+              text: fracStr(f1) + ' × ' + fracStr(f2) + '\n' +
+                    '= ' + prodN + '/' + prodD +
+                    (gP>1 ? ' = ' + prodN/gP + '/' + prodD/gP + '（約分）' : ''),
+              cells: cells.slice(),
+              brackets: [
+                { start:0, count:area, label:'答案 '+(gP>1?prodN/gP+'/'+prodD/gP:prodN+'/'+prodD), color:'blue' }
+              ]
+            },
+            {
+              title: '🎯 Level 4：合理性檢查',
+              text: '✅ 兩個真分數相乘，結果一定 < 兩個分數 → 合理\n\n🏁 把答案填上去吧！',
+              cells: cells.slice(),
+              brackets: [
+                { start:0, count:area, label:'答案', color:'blue' }
+              ]
+            }
+          ]
+        };
+      }
+
+      // Sub-pattern C: single fraction with a total (simple multiplication)
+      if (total > 0 && fracAll.length === 1) {
+        const result = total * f1.n / f1.d;
+        const parts = f1.d;
+        const cells = new Array(parts).fill('empty');
+        for (let i = 0; i < f1.n; i++) cells[i] = 'green';
+        return {
+          parts: parts, unit_label: unit,
+          levels: [
+            {
+              title: '🔍 Level 1：判斷題型',
+              text: '全部 = ' + total + (unit?' '+unit:'') + '\n' +
+                    '要算 ' + total + ' × ' + fracStr(f1) + '\n\n' +
+                    '📌 看到「的幾分之幾」→ 乘法',
+              cells: new Array(parts).fill('empty'),
+              brackets: [{ start:0, count:parts, label:'全部='+total+(unit?' '+unit:''), color:'white' }]
+            },
+            {
+              title: '📊 Level 2：畫圖切分（' + parts + ' 等份）',
+              text: '🟩 ' + fracStr(f1) + ' = ' + f1.n + ' 格綠 = ' + result + (unit?' '+unit:''),
+              cells: cells.slice(),
+              brackets: [{ start:0, count:f1.n, label:result+(unit?' '+unit:''), color:'green' }]
+            },
+            {
+              title: '✏️ Level 3：算式',
+              text: total + ' × ' + fracStr(f1) + ' = ' + result + (unit?' '+unit:''),
+              cells: cells.slice(),
+              brackets: [{ start:0, count:f1.n, label:'答案 '+result+(unit?' '+unit:''), color:'green' }]
+            },
+            {
+              title: '🎯 Level 4：合理性檢查',
+              text: '✅ ' + result + ' < ' + total + ' → 合理\n\n🏁 把答案填上去吧！',
+              cells: cells.slice(),
+              brackets: [{ start:0, count:f1.n, label:'答案', color:'green' }]
+            }
+          ]
+        };
+      }
+
+      return null; // no pattern matched
+    }
+
+    /* ========== SVG Bar Renderer ========== */
+    function renderBarSVG(parts, cells, brackets){
+      var W = 400, H = 32, padX = 10, padY = 8;
+      var cellW = W / parts;
+      var bH = (brackets && brackets.length > 0) ? 30 : 4;
+      var svgH = padY + H + bH;
+      var colors = {
+        red:'#f85149', orange:'#d29922', blue:'#58a6ff',
+        green:'#2ea043', white:'rgba(255,255,255,0.7)',
+        empty:'rgba(255,255,255,0.06)'
+      };
+
+      var s = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '
+            + (W+padX*2) + ' ' + svgH
+            + '" style="width:100%;max-width:500px;display:block;margin:6px 0">';
+
+      // cells
+      for (var i = 0; i < parts; i++){
+        var x = padX + i * cellW;
+        var c = cells[i] || 'empty';
+        s += '<rect x="'+x+'" y="'+padY+'" width="'+cellW+'" height="'+H
+           + '" fill="'+(colors[c]||colors.empty)
+           + '" stroke="rgba(255,255,255,0.18)" stroke-width="0.7"/>';
+      }
+      // outer border
+      s += '<rect x="'+padX+'" y="'+padY+'" width="'+W+'" height="'+H
+         + '" rx="3" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>';
+
+      // brackets below bar
+      if (brackets && brackets.length){
+        var bY = padY + H + 3;
+        for (var j = 0; j < brackets.length; j++){
+          var b = brackets[j];
+          if (!b || b.count <= 0) continue;
+          var x1 = padX + b.start * cellW;
+          var x2 = padX + (b.start + b.count) * cellW;
+          var mx = (x1 + x2) / 2;
+          var bc = colors[b.color] || colors.white;
+          s += '<line x1="'+(x1+1)+'" y1="'+bY+'" x2="'+(x1+1)+'" y2="'+(bY+8)+'" stroke="'+bc+'" stroke-width="1" opacity="0.7"/>';
+          s += '<line x1="'+(x2-1)+'" y1="'+bY+'" x2="'+(x2-1)+'" y2="'+(bY+8)+'" stroke="'+bc+'" stroke-width="1" opacity="0.7"/>';
+          s += '<line x1="'+(x1+1)+'" y1="'+(bY+8)+'" x2="'+(x2-1)+'" y2="'+(bY+8)+'" stroke="'+bc+'" stroke-width="1" opacity="0.7"/>';
+          s += '<text x="'+mx+'" y="'+(bY+20)+'" text-anchor="middle" fill="'+bc+'" font-size="10" font-family="system-ui,sans-serif">'
+             + escapeHtml(b.label) + '</text>';
+        }
+      }
+
+      s += '</svg>';
+      return s;
+    }
+
+    /* ========== 2D Grid SVG Renderer (area model / 先直切再橫切) ========== */
+    function renderGridSVG(nCols, nRows, grid, opts){
+      opts = opts || {};
+      var W = 400, padX = 10, padY = 8;
+      var cellW = W / nCols;
+      var cellH = Math.max(28, Math.min(46, 180 / nRows));
+      var H = cellH * nRows;
+      var lblH = (opts.gridLabels && opts.gridLabels.length) ? 28 : 4;
+      var svgH = padY + H + lblH + 4;
+      var colors = {
+        eaten1:'#f85149', eaten2:'#d29922', left:'#58a6ff',
+        green:'#2ea043', empty:'rgba(255,255,255,0.06)',
+        white:'rgba(255,255,255,0.7)'
+      };
+
+      var s = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '
+            + (W+padX*2) + ' ' + svgH
+            + '" data-testid="visual-svg" style="width:100%;max-width:520px;display:block;margin:6px 0">';
+
+      // --- draw cells ---
+      for (var r = 0; r < nRows; r++){
+        for (var c = 0; c < nCols; c++){
+          var st = (grid && grid[r*nCols+c]) || 'empty';
+          var x = padX + c*cellW;
+          var y = padY + r*cellH;
+          s += '<rect x="'+x+'" y="'+y+'" width="'+cellW+'" height="'+cellH
+             + '" fill="'+(colors[st]||colors.empty)
+             + '" stroke="rgba(255,255,255,0.12)" stroke-width="0.5"/>';
+          // optional cell label
+          if (opts.cellLabels && opts.cellLabels[st] && cellW > 26 && cellH > 18){
+            var cl = opts.cellLabels[st];
+            s += '<text x="'+(x+cellW/2)+'" y="'+(y+cellH/2+4)+'" text-anchor="middle"'
+               + ' fill="rgba(255,255,255,0.85)" font-size="'+(Math.min(11,cellW/4.5))+'"'
+               + ' font-family="system-ui,sans-serif">'+escapeHtml(cl)+'</text>';
+          }
+        }
+      }
+
+      // --- vertical lines (always full height) ---
+      for (var vc = 0; vc <= nCols; vc++){
+        var vx = padX + vc*cellW;
+        var vw = (vc===0||vc===nCols) ? '1.5' : '1';
+        s += '<line x1="'+vx+'" y1="'+padY+'" x2="'+vx+'" y2="'+(padY+H)+'" stroke="rgba(255,255,255,0.35)" stroke-width="'+vw+'"/>';
+      }
+
+      // --- horizontal lines ---
+      var hScope = opts.hLineScope || 'all';
+      var rcs = opts.remainColStart || 0;
+      for (var hr = 0; hr <= nRows; hr++){
+        var hy = padY + hr*cellH;
+        if (hr===0 || hr===nRows){
+          s += '<line x1="'+padX+'" y1="'+hy+'" x2="'+(padX+W)+'" y2="'+hy+'" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>';
+        } else if (hScope === 'all'){
+          s += '<line x1="'+padX+'" y1="'+hy+'" x2="'+(padX+W)+'" y2="'+hy+'" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>';
+        } else if (hScope === 'remaining'){
+          // dashed line only on remaining columns area
+          var hx1 = padX + rcs*cellW;
+          s += '<line x1="'+hx1+'" y1="'+hy+'" x2="'+(padX+W)+'" y2="'+hy+'" stroke="rgba(255,255,255,0.45)" stroke-width="1" stroke-dasharray="4,2"/>';
+        }
+      }
+
+      // --- outer border ---
+      s += '<rect x="'+padX+'" y="'+padY+'" width="'+W+'" height="'+H+'" rx="3" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>';
+
+      // --- divider between eaten & remaining columns (thick line) ---
+      if (rcs > 0 && rcs < nCols){
+        var dx = padX + rcs * cellW;
+        s += '<line x1="'+dx+'" y1="'+(padY-2)+'" x2="'+dx+'" y2="'+(padY+H+2)+'" stroke="rgba(255,255,255,0.7)" stroke-width="2"/>';
+      }
+
+      // --- bracket labels below ---
+      if (opts.gridLabels){
+        var bY = padY + H + 4;
+        for (var li = 0; li < opts.gridLabels.length; li++){
+          var lb = opts.gridLabels[li];
+          var lx1 = padX + lb.startCol*cellW;
+          var lx2 = padX + lb.endCol*cellW;
+          var mx = (lx1+lx2)/2;
+          var bc = colors[lb.color] || colors.white;
+          s += '<line x1="'+(lx1+1)+'" y1="'+bY+'" x2="'+(lx1+1)+'" y2="'+(bY+8)+'" stroke="'+bc+'" stroke-width="1" opacity="0.7"/>';
+          s += '<line x1="'+(lx2-1)+'" y1="'+bY+'" x2="'+(lx2-1)+'" y2="'+(bY+8)+'" stroke="'+bc+'" stroke-width="1" opacity="0.7"/>';
+          s += '<line x1="'+(lx1+1)+'" y1="'+(bY+8)+'" x2="'+(lx2-1)+'" y2="'+(bY+8)+'" stroke="'+bc+'" stroke-width="1" opacity="0.7"/>';
+          s += '<text x="'+mx+'" y="'+(bY+20)+'" text-anchor="middle" fill="'+bc+'" font-size="10" font-family="system-ui,sans-serif">'
+             + escapeHtml(lb.text) + '</text>';
+        }
+      }
+
+      // --- row label on right side (optional, shows row count for remaining area) ---
+      if (nRows > 1 && rcs > 0 && rcs < nCols && hScope !== 'none'){
+        var rLblX = padX + W + 6;
+        for (var ri = 0; ri < nRows; ri++){
+          var ry = padY + ri*cellH + cellH/2 + 3;
+          s += '<text x="'+rLblX+'" y="'+ry+'" fill="rgba(255,255,255,0.5)" font-size="9" font-family="system-ui,sans-serif">'+(ri+1)+'</text>';
+        }
+      }
+
+      s += '</svg>';
+      return s;
+    }
+
+    /** Render a single level of the bar/grid model as a DOM element */
+    function renderBarHintLevel(model, levelIdx, opts){
+      var level = model.levels[levelIdx];
+      if (!level) return null;
+      var shortMode = !!(opts && opts.shortMode);
+      var div = document.createElement('div');
+      div.className = 'hint-visual';
+      div.setAttribute('data-testid', 'visual-step');
+      var h = '<div class="hv-title">' + escapeHtml(level.title) + '</div>';
+
+      if (level.grid) {
+        // 2D grid rendering (area model)
+        h += renderGridSVG(
+          level.gridCols || model.cols,
+          level.gridRows || model.rows,
+          level.grid, level
+        );
+      } else {
+        // 1D bar rendering (classic)
+        h += renderBarSVG(model.parts, level.cells, level.brackets || []);
+      }
+
+      var textToShow = shortMode ? compressHintText(level.text) : level.text;
+      h += '<div class="hv-text">' + escapeHtml(textToShow) + '</div>';
+      div.innerHTML = h;
+      return div;
+    }
+
+
+    /* ========== remaining_after_fraction 視覺化提示 ========== */
+    function detectRAFSubtype(q){
+      const txt = String(q.question || '');
+      if (txt.includes('水箱')) return 'C';             // 水箱兩段
+      if (txt.match(/又[吃用喝看]了/)) return 'B';       // 兩次都從原整體
+      if (txt.match(/\d+\s+\d+\/\d+\s*公/)) return 'A2'; // 帶分數總量
+      return 'A1';                                       // 整數總量單次
+    }
+
+    function extractRAFParams(q){
+      const txt = String(q.question || '');
+      const sub = detectRAFSubtype(q);
+      let total = null;
+      let totalFrac = null; // for A2 mixed number
+
+      // extract integer total
+      const mInt = txt.match(/(\d+)\s*[頁公條盒瓶杯塊顆張]/);
+      if (mInt) total = parseInt(mInt[1],10);
+
+      // A2: mixed number total like "3 1/8 公升"
+      const mMixed = txt.match(/(\d+)\s+(\d+)\/(\d+)\s*公/);
+      if (mMixed){
+        const w = parseInt(mMixed[1],10);
+        const mn = parseInt(mMixed[2],10);
+        const md = parseInt(mMixed[3],10);
+        totalFrac = { n: w*md + mn, d: md }; // improper fraction
+        total = null; // override integer total
+      }
+
+      // extract fractions in order
+      const fracs = [];
+      const re = /(\d+)\/(\d+)/g;
+      let match;
+      while ((match = re.exec(txt)) !== null){
+        fracs.push({ n: parseInt(match[1],10), d: parseInt(match[2],10) });
+      }
+      // skip the mixed-number fraction for A2 (it's the total, not an operation)
+      if (mMixed && fracs.length >= 1){
+        const mixF = `${mMixed[2]}/${mMixed[3]}`;
+        const idx = fracs.findIndex(f => `${f.n}/${f.d}` === mixF);
+        if (idx >= 0) fracs.splice(idx, 1);
+      }
+
+      return {
+        sub,
+        total,
+        totalFrac,
+        frac1: fracs[0] || {n:1,d:2},
+        frac2: fracs[1] || null,
+      };
+    }
+
+
+
+    // --------- state ---------
+    const bank = Array.isArray(window.FRACTION_WORD_G5_BANK) ? window.FRACTION_WORD_G5_BANK : [];
+    const state = {
+      q: null,
+      revealed: false,
+      hintUsed: 0,
+      shortHintMode: false,
+      hintStepIndex: 0,
+      lastPick: null,
+      startedAt: null,
+      attemptsCount: 0,
+      hintShownLevels: new Set(),
+      hintShownCount: 0,
+      hintStartAt: null,
+      shownSolution: false,
+      attemptLogged: false,
+    };
+
+    const UNIT_ID = 'national-bank-g5';
+
+    function getUid(){
+      return window.AIMathCoachLog?.getOrCreateUserId?.() || 'guest';
+    }
+
+    function startAttempt(){
+      state.startedAt = Date.now();
+      state.attemptsCount = 0;
+      state.hintStepIndex = 0;
+      state._barModel = null;
+      state.hintShownLevels = new Set();
+      state.hintShownCount = 0;
+      state.hintStartAt = null;
+      state.shownSolution = false;
+      state.attemptLogged = false;
+    }
+
+    function markHint(level){
+      if (!state.hintStartAt) state.hintStartAt = Date.now();
+      state.hintShownLevels.add(Number(level) || 0);
+      state.hintShownCount += 1;
+    }
+
+    function markSolution(){
+      state.shownSolution = true;
+      if (!state.hintStartAt) state.hintStartAt = Date.now();
+    }
+
+    function commitAttempt(isCorrect, reason, studentAnswer){
+      if (!state.q || state.attemptLogged) return;
+      const tsEnd = Date.now();
+      const shown = Array.from(state.hintShownLevels).filter(n => n > 0).sort((a,b)=>a-b);
+      const totalHintMs = state.hintStartAt ? Math.max(0, tsEnd - state.hintStartAt) : 0;
+      const evt = {
+        unit_id: UNIT_ID,
+        kind: String(state.q.kind || 'unknown'),
+        question_id: String(state.q.id || state.q.question || ''),
+        ts_start: Number(state.startedAt || tsEnd),
+        ts_end: Number(tsEnd),
+        is_correct: !!isCorrect,
+        attempts_count: Math.max(1, Number(state.attemptsCount || 1)),
+        hint: {
+          shown_levels: shown,
+          shown_count: Math.max(0, Number(state.hintShownCount || 0)),
+          total_hint_ms: totalHintMs,
+        },
+        steps: {
+          shown_solution: !!state.shownSolution,
+        },
+        student_answer: String(studentAnswer || ''),
+        correct_answer: state.q.answer != null ? String(state.q.answer) : null,
+        extra: {
+          question: state.q.question || '',
+          difficulty: state.q.difficulty || '',
+          reason: String(reason || ''),
+        },
+      };
+      window.AIMathAttemptTelemetry?.appendAttempt?.(getUid(), evt, { maxAttempts: 5000 });
+      state.attemptLogged = true;
+    }
+
+    // DOM
+    const els = {
+      bankMeta: document.getElementById('bankMeta'),
+      kind: document.getElementById('kind'),
+      btnNew: document.getElementById('btnNew'),
+      btnReset: document.getElementById('btnReset'),
+      qText: document.getElementById('qText'),
+      sourceLinks: document.getElementById('sourceLinks'),
+      answer: document.getElementById('answer'),
+      btnCheck: document.getElementById('btnCheck'),
+      banner: document.getElementById('banner'),
+      hints: document.getElementById('hints'),
+      solution: document.getElementById('solution'),
+      hintLevel: document.getElementById('hintLevel'),
+      btnHint: document.getElementById('btnHint'),
+      btnShortHint: document.getElementById('btnShortHint'),
+      btnShowSteps: document.getElementById('btnShowSteps'),
+      studentState: document.getElementById('studentState'),
+      btnNext: document.getElementById('btnNext'),
+      nextHint: document.getElementById('nextHint'),
+    };
+
+    function updateShortHintButton(){
+      if (!els.btnShortHint) return;
+      const on = !!state.shortHintMode;
+      els.btnShortHint.textContent = on ? '簡短提示：開' : '簡短提示：關';
+      els.btnShortHint.classList.toggle('toggle-on', on);
+    }
+
+    function updateBankMeta(){
+      if (!bank.length){
+        els.bankMeta.textContent = '題庫未載入（請確認 bank.js）';
+        return;
+      }
+      const kinds = new Set(bank.map(x => x.kind || 'unknown'));
+      els.bankMeta.textContent = `離線題庫：${bank.length} 題｜題型標籤：${kinds.size} 種`;
+    }
+
+    function isAmbiguousQuestionText(text){
+      const q = String(text || '');
+      if (/剩下的又(?:看了|用掉|用了)\s*1(?:\s*\/\s*1)?(?=[\s，。；！？])/.test(q)) return true;
+
+      const actionRe = /(?:先|又|再)?(?:用掉|用了|看了|吃了|倒出|花掉|走了|注滿了|占)[^。！？\n]{0,12}?(\d+)\s*\/\s*(\d+)/g;
+      let am;
+      while ((am = actionRe.exec(q)) !== null){
+        const num = Number(am[1]);
+        const den = Number(am[2]);
+        if (!Number.isFinite(num) || !Number.isFinite(den) || den <= 0) return true;
+        if (num <= 0 || num >= den) return true;
+      }
+
+      const re = /(?:又剩下|還剩(?:下)?|剩下(?:的)?又(?:看了|用掉|用了)?|剩餘)[^。！？\n]{0,16}?(\d+)\s*\/\s*(\d+)/g;
+      let m;
+      while ((m = re.exec(q)) !== null){
+        const num = Number(m[1]);
+        const den = Number(m[2]);
+        if (Number.isFinite(num) && Number.isFinite(den) && den > 0 && num > den) return true;
+      }
+      return false;
+    }
+
+    function pickQuestion(){
+      const k = String(els.kind.value || 'all');
+      const basePool = (k === 'all') ? bank : bank.filter(x => String(x.kind) === k);
+      const pool = basePool.filter(x => !isAmbiguousQuestionText(x?.question));
+      if (!pool.length) return null;
+      if (pool.length === 1) return pool[0];
+
+      const last = state.lastPick || {};
+      const lastKind = last.kind;
+      const lastText = last.text;
+
+      let candidates = pool;
+      if (lastKind){
+        const alt = pool.filter(q => String(q.kind) !== lastKind);
+        if (alt.length) candidates = alt;
+      }
+      if (lastText){
+        const alt2 = candidates.filter(q => String(q.question || '') !== lastText);
+        if (alt2.length) candidates = alt2;
+      }
+
+      return candidates[Math.floor(Math.random() * candidates.length)];
+    }
+
+    function showQuestion(q){
+      state.q = q;
+      state.revealed = false;
+      state.hintUsed = 0;
+      state.lastPick = q ? { kind: String(q.kind || ''), text: String(q.question || '') } : state.lastPick;
+      startAttempt();
+      els.answer.value = '';
+      els.studentState.value = '';
+      els.hints.innerHTML = '';
+      els.solution.innerHTML = '';
+      els.nextHint.style.display = 'none';
+      if (els.sourceLinks) els.sourceLinks.innerHTML = '';
+
+      if (!q){
+        els.qText.textContent = '（題庫是空的）';
+        return;
+      }
+      els.qText.textContent = q.question || '';
+      els.banner.className = 'banner muted';
+      els.banner.textContent = `題目已載入（${q.id || '-'} / ${q.kind || 'other'}）。建議：先圈總量/分數/單位，再列式。`;
+
+      const qUrl = String(q.source_question_url || '');
+      const aUrl = String(q.source_answer_url || '');
+      if (els.sourceLinks && (qUrl || aUrl)){
+        const parts = [];
+        if (qUrl) parts.push(`題目卷：<a href="${qUrl}" target="_blank" rel="noopener">開啟題目</a>`);
+        if (aUrl) parts.push(`答案卷：<a href="${aUrl}" target="_blank" rel="noopener">開啟解答</a>`);
+        els.sourceLinks.innerHTML = `📎 來源連結｜${parts.join('｜')}`;
+      }
+    }
+
+    function getHintText(q, level){
+      const steps = Array.isArray(q.steps) ? q.steps : [];
+      const idx = Math.max(0, Math.min(2, Number(level||1)-1));
+      return steps[idx] || '（此題無提示）';
+    }
+
+    function getNextStepHint(q, studentState, level){
+      // Pure offline heuristic; does not reveal final numeric answer.
+      const s = normalizeText(studentState).toLowerCase();
+      const kind = String(q.kind || 'generic_fraction_word');
+      const steps = Array.isArray(q.steps) ? q.steps : [];
+
+      // If student already mentions a key operation, nudge the next concept.
+      if (s.includes('1-') || s.includes('1 -') || s.includes('剩下比例')){
+        if (kind === 'remaining_after_fraction') return '很好：先求剩下比例後，下一步是「總量 × 剩下比例」，最後約分並寫單位。';
+      }
+      if (s.includes('除') || s.includes('÷') || s.includes('分成') || s.includes('平均')){
+        if (kind === 'average_division') return '方向對：把「總量」當成分數，下一步直接做「總量 ÷ 份數」，把結果約分到最簡。';
+        if (kind === 'reverse_fraction') return '若你是要反推原量：先確認「剩下比例」，再做「剩下量 ÷ 剩下比例」。';
+      }
+      if (s.includes('乘') || s.includes('×') || s.includes('x')){
+        if (kind === 'fraction_of_fraction') return '對：這是分數的分數。下一步是把兩個分數相乘，能約分先約分。';
+        if (kind === 'fraction_of_quantity') return '對：總量 × 分數。下一步是先約分（總量 和 分母），再做乘法。';
+      }
+      if (s.includes('先算') && s.includes('剩')){
+        if (kind === 'remain_then_fraction') return '對：先算第一次剩下的量/比例，再把「剩下」當成第二次的基準去乘分數。';
+      }
+
+      // Otherwise, return the selected level hint (1~3) as "next step".
+      const idx = Math.max(0, Math.min(2, Number(level||1)-1));
+      return steps[idx] || '先圈出總量、分數與單位，再試著把文字翻成算式。';
+    }
+
+    function parseRatioReverseParams(q){
+      const txt = String(q?.question || '');
+      const pats = [
+        /(?:走了全程的|做了全程的)\s*(\d+)\s*\/\s*(\d+)(?:\s*時|\s*路程)?[^。；]*?用(?:了)?\s*(\d+)\s*\/\s*(\d+)\s*(小時|分鐘)/,
+        /完成了\s*(\d+)\s*\/\s*(\d+)\s*路程[^。；]*?用(?:了)?\s*(\d+)\s*\/\s*(\d+)\s*(小時|分鐘)/,
+      ];
+      let m = null;
+      for (const p of pats){
+        m = txt.match(p);
+        if (m) break;
+      }
+      if (!m) return null;
+      const a = parseInt(m[1], 10), b = parseInt(m[2], 10), c = parseInt(m[3], 10), d = parseInt(m[4], 10);
+      const unit = String(m[5] || '小時');
+      if (!a || !b || !c || !d) return null;
+      return { a, b, c, d, unit };
+    }
+
+    function buildRatioReverseHintLadderForUI(q){
+      const p = parseRatioReverseParams(q);
+      if (!p) return null;
+      const { a, b, c, d, unit } = p;
+      const total = frac(c * b, d * a);
+      const verifyN = total.n * a;
+      const verifyD = total.d * b;
+      const verify = frac(verifyN, verifyD);
+      const mixedWhole = Math.floor(Math.abs(total.n) / total.d);
+      const mixedRem = Math.abs(total.n) % total.d;
+      const mixed = mixedRem ? `${total.n < 0 ? '-' : ''}${mixedWhole} 又 ${mixedRem}/${total.d}` : `${total.n / total.d}`;
+
+      return [
+        {
+          title: 'Step 1｜抓未知數',
+          prompt: '先說：全程時間是 T，題目在問 T。',
+          expected_answer: 'T',
+          explanation: '不知道全程幾小時，就先用 T 代表。',
+          formula: '全程時間 = T',
+        },
+        {
+          title: 'Step 2｜翻譯成算式',
+          prompt: `『全程的 ${a}/${b}』就是 T×${a}/${b}，要用乘法。`,
+          expected_answer: '乘法',
+          explanation: '某個量的幾分之幾，就是乘法。',
+          formula: `T × ${a}/${b}`,
+        },
+        {
+          title: 'Step 3｜列式',
+          prompt: `把已知時間 ${c}/${d}${unit} 放右邊。`,
+          expected_answer: `T×${a}/${b}=${c}/${d}`,
+          explanation: '已走部分對應到題目給的時間。',
+          formula: `T × ${a}/${b} = ${c}/${d}`,
+        },
+        {
+          title: 'Step 4｜倒回去算',
+          prompt: `T 乘 ${a}/${b} 才會變 ${c}/${d}，要倒回去就做 ÷${a}/${b}。`,
+          expected_answer: `T=(${c}/${d})÷(${a}/${b})`,
+          explanation: '除以分數，等於乘它的倒數。',
+          formula: `T = (${c}/${d}) ÷ (${a}/${b})`,
+        },
+        {
+          title: 'Step 5｜找倒數',
+          prompt: `${a}/${b} 的倒數是什麼？`,
+          expected_answer: `${b}/${a}`,
+          explanation: '分子分母交換。',
+          formula: `${a}/${b} 的倒數 = ${b}/${a}`,
+        },
+        {
+          title: 'Step 6｜計算',
+          prompt: `T = ${c}/${d} × ${b}/${a}。`,
+          expected_answer: `${total.n}/${total.d}`,
+          explanation: `結果：${total.n}/${total.d}${unit}，也可寫成 ${mixed}${unit}。`,
+          formula: `T = ${c}/${d} × ${b}/${a} = ${total.n}/${total.d} = ${mixed}`,
+        },
+        {
+          title: 'Step 7｜驗算（必做）',
+          prompt: `把 T 代回：${total.n}/${total.d} × ${a}/${b} 是否等於 ${c}/${d}？`,
+          expected_answer: `${verify.n}/${verify.d} = ${c}/${d}`,
+          explanation: '左右一樣，代表你倒回去算對了。',
+          formula: `驗算：${total.n}/${total.d} × ${a}/${b} = ${verify.n}/${verify.d} = ${c}/${d}`,
+        },
+      ];
+    }
+
+    function renderHintLadderCards(ladder){
+      const wrap = document.createElement('div');
+      for (let i = 0; i < ladder.length; i++){
+        const st = ladder[i] || {};
+        const card = document.createElement('div');
+        card.className = 'hint-ladder-card';
+        card.innerHTML = `
+          <div class="hl-title">${escapeHtml(st.title || `Step ${i+1}`)}</div>
+          <div class="hl-prompt">${escapeHtml(st.prompt || '')}</div>
+          ${st.formula ? `<div class="hl-formula">算式：${escapeHtml(st.formula)}</div>` : ''}
+          ${st.expected_answer ? `<div class="hl-exp">可填空答案：${escapeHtml(st.expected_answer)}</div>` : ''}
+          ${st.explanation ? `<div class="hl-explain">說明：${escapeHtml(st.explanation)}</div>` : ''}
+        `;
+        wrap.appendChild(card);
+      }
+      return wrap;
+    }
+
+    function showFullSolution(q){
+      markSolution();
+      const steps = Array.isArray(q.steps) ? q.steps : [];
+      const lines = steps.map((s,i)=> `步驟 ${i+1}：${s}`);
+      const sol = document.createElement('div');
+      sol.className = 'sol';
+      const ans = q.answer;
+      sol.textContent = `${lines.join('\n')}\n\n答案：${ans}`;
+      els.solution.innerHTML = '';
+      els.solution.appendChild(sol);
+    }
+
+    function setBannerOk(msg){ els.banner.className='banner ok'; els.banner.textContent=msg; }
+    function setBannerBad(msg){ els.banner.className='banner bad'; els.banner.textContent=msg; }
+    function setBannerMuted(msg){ els.banner.className='banner muted'; els.banner.textContent=msg; }
+
+    // --------- events ---------
+    els.btnNew.addEventListener('click', () => {
+      if (!bank.length){
+        setBannerBad('題庫未載入：請確認 bank.js 是否存在且可讀取。');
+        return;
+      }
+      if (state.q && !state.revealed && !state.attemptLogged){
+        commitAttempt(false, 'skip', els.answer.value);
+      }
+      showQuestion(pickQuestion());
+    });
+
+    els.btnReset.addEventListener('click', () => {
+      state.q = null;
+      state.revealed = false;
+      state.hintUsed = 0;
+      els.qText.textContent = '（按「出新題」開始）';
+      els.answer.value = '';
+      els.studentState.value = '';
+      els.hints.innerHTML = '';
+      els.solution.innerHTML = '';
+      els.nextHint.style.display = 'none';
+      setBannerMuted('已清空。');
+    });
+
+    els.btnHint.addEventListener('click', () => {
+      const q = state.q;
+      if (!q){ setBannerBad('請先按「出新題」出一題。'); return; }
+
+      // Try structured bar model hints
+      if (state._barModel === null){
+        const model = buildFractionBarModel(q);
+        state._barModel = model || false;
+      }
+
+      if (state._barModel){
+        const model = state._barModel;
+        const levels = model.levels;
+        if (state.hintStepIndex >= levels.length){
+          setBannerMuted('已顯示全部圖解提示（共 ' + levels.length + ' 層），可按「看完整解題」看答案。');
+          return;
+        }
+        const stepNum = state.hintStepIndex + 1;
+        markHint(stepNum);
+        const el = renderBarHintLevel(model, state.hintStepIndex, { shortMode: state.shortHintMode });
+        els.hints.appendChild(el);
+        state.hintStepIndex++;
+        state.hintUsed = Math.max(state.hintUsed, stepNum);
+        setBannerMuted(`已顯示圖解 Level ${stepNum}/${levels.length}${state.shortHintMode ? '（簡短模式）' : ''}（不含最終答案）。`);
+        return;
+      }
+
+      // Fallback: text-only progressive stepping
+      const steps = Array.isArray(q.steps) ? q.steps : [];
+      if (!steps.length){ setBannerMuted('（此題無提示步驟）'); return; }
+      if (state.hintStepIndex >= steps.length){
+        setBannerMuted('已顯示全部提示步驟，可按「看完整解題」看答案。');
+        return;
+      }
+      const text = state.shortHintMode
+        ? compressHintText(steps[state.hintStepIndex])
+        : steps[state.hintStepIndex];
+      const stepNum = state.hintStepIndex + 1;
+      const level = Math.min(4, Math.ceil(stepNum * 4 / steps.length));
+      markHint(level);
+      els.hints.appendChild(renderHint(`步驟 ${stepNum}：${text}`));
+      state.hintStepIndex++;
+      state.hintUsed = Math.max(state.hintUsed, level);
+      setBannerMuted(`已顯示步驟 ${stepNum}/${steps.length}${state.shortHintMode ? '（簡短模式）' : ''}（不含最終答案）。`);
+    });
+
+    els.btnShortHint.addEventListener('click', () => {
+      state.shortHintMode = !state.shortHintMode;
+      updateShortHintButton();
+      setBannerMuted(state.shortHintMode
+        ? '已開啟簡短提示：每次只顯示重點。'
+        : '已關閉簡短提示：恢復完整提示。');
+    });
+
+    els.btnNext.addEventListener('click', () => {
+      const q = state.q;
+      if (!q){ setBannerBad('請先按「出新題」出一題。'); return; }
+      const level = Number(els.hintLevel.value || 1);
+      const ladder = buildRatioReverseHintLadderForUI(q);
+      const h = getNextStepHint(q, els.studentState.value, level);
+      els.nextHint.style.display = 'block';
+      els.nextHint.innerHTML = '';
+      const top = document.createElement('div');
+      top.textContent = `下一步建議：${h}`;
+      els.nextHint.appendChild(top);
+      if (ladder){
+        const hintLine = document.createElement('div');
+        hintLine.className = 'small';
+        hintLine.style.marginTop = '6px';
+        hintLine.textContent = '偵測到「比例反推」題型：以下是孩子可跟著做的 7 步提示（含驗算）。';
+        els.nextHint.appendChild(hintLine);
+        els.nextHint.appendChild(renderHintLadderCards(ladder));
+      }
+      setBannerMuted('已根據孩子想法給下一步。');
+    });
+
+    els.btnShowSteps.addEventListener('click', () => {
+      const q = state.q;
+      if (!q){ setBannerBad('請先按「出新題」出一題。'); return; }
+      showFullSolution(q);
+      setBannerMuted('已顯示完整解題（含答案）。');
+    });
+
+    els.btnCheck.addEventListener('click', () => {
+      const q = state.q;
+      if (!q){ setBannerBad('請先按「出新題」出一題。'); return; }
+
+      state.attemptsCount = Math.max(0, Number(state.attemptsCount || 0)) + 1;
+
+      const studentRaw = String(els.answer.value || '').trim();
+      if (!studentRaw){
+        setBannerBad('請先輸入答案後再送出。');
+        return;
+      }
+
+      if (q.manual_check){
+        setBannerOk('此題為來源卷對照題：請完成作答後點「開啟解答」人工核對。');
+        if (!state.revealed) showFullSolution(q);
+        state.revealed = true;
+        commitAttempt(true, 'manual_check', studentRaw);
+        return;
+      }
+
+      if (answerEquivalent(studentRaw, String(q.answer || ''))){
+        setBannerOk('答對了 ✅ 做得好！按「出新題」再來一題，或看完整解題確認步驟。');
+        if (!state.revealed) showFullSolution(q);
+        state.revealed = true;
+        commitAttempt(true, 'correct', studentRaw);
+      } else {
+        setBannerBad('再試一次：先圈出「已知 / 未知 / 單位」，判斷題型（乘法/除法/1-分數/兩段）→ 列式 → 計算，最後記得檢查通分/約分是否合理。需要可看完整解題。');
+        // 答錯時自動顯示 Level 1 圖解提示（觀念鎖定）
+        if (state._barModel === null){
+          const mdl = buildFractionBarModel(q);
+          state._barModel = mdl || false;
+        }
+        if (state._barModel && state.hintStepIndex === 0){
+          markHint(1);
+          const el = renderBarHintLevel(state._barModel, 0, { shortMode: state.shortHintMode });
+          if (el){
+            el.style.borderColor = 'rgba(248,81,73,0.5)';
+            el.querySelector('.hv-title').textContent += ' 💡 答錯了，先看看觀念提示';
+            els.hints.appendChild(el);
+          }
+          state.hintStepIndex = 1;
+          state.hintUsed = Math.max(state.hintUsed, 1);
+        }
+      }
+    });
+
+    updateBankMeta();
+    updateShortHintButton();
+    window.AIMathUnitReportWidget?.render(document.getElementById('unitReport'), UNIT_ID, { days: 7 });
+  </script>
+</body>
+</html>
