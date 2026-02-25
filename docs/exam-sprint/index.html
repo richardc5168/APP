@@ -286,8 +286,57 @@
     return { n, d, s:`${n}/${d}` };
   }
 
-  function extractVisualModel(question){
-    const q = String(question || '');
+  function parseFracTokenAny(t){
+    const m = String(t || '').match(/^\s*(-?\d+)\s*\/\s*(-?\d+)\s*$/);
+    if (!m) return null;
+    const n = Number(m[1]);
+    const d = Number(m[2]);
+    if (!Number.isFinite(n) || !Number.isFinite(d) || d === 0) return null;
+    return { n, d, s:`${n}/${d}` };
+  }
+
+  function lcmInt(a,b){
+    const x = Math.abs(Number(a) || 0);
+    const y = Math.abs(Number(b) || 0);
+    if (!x || !y) return 0;
+    return Math.abs(x * y) / gcdInt(x, y);
+  }
+
+  function extractFracAddSubModel(qObj){
+    const q = qObj || {};
+    if (String(q.kind || '') !== 'u2_frac_addsub_life') return null;
+
+    const meta = q.meta || {};
+    const op = String(meta.op || '').trim() === '-' ? '-' : '+';
+    let f1 = parseFracTokenAny(meta.a || '');
+    let f2 = parseFracTokenAny(meta.b || '');
+
+    if (!f1 || !f2){
+      const frs = (String(q.question || '').match(/\d+\s*\/\s*\d+/g) || []).map(parseFracTokenAny).filter(Boolean);
+      if (frs.length >= 2){
+        f1 = f1 || frs[0];
+        f2 = f2 || frs[1];
+      }
+    }
+    if (!f1 || !f2) return null;
+    if (f1.d < 0){ f1.n = -f1.n; f1.d = -f1.d; }
+    if (f2.d < 0){ f2.n = -f2.n; f2.d = -f2.d; }
+    if (f1.d <= 0 || f2.d <= 0 || f1.n < 0 || f2.n < 0) return null;
+
+    const commonD = lcmInt(f1.d, f2.d);
+    if (!commonD || commonD > 120) return null;
+    const n1 = f1.n * (commonD / f1.d);
+    const n2 = f2.n * (commonD / f2.d);
+    if (!Number.isFinite(n1) || !Number.isFinite(n2)) return null;
+
+    return { type:'frac_addsub_life', f1, f2, op, commonD, n1, n2 };
+  }
+
+  function extractVisualModel(qObj){
+    const addSubModel = extractFracAddSubModel(qObj);
+    if (addSubModel) return addSubModel;
+
+    const q = String((qObj && qObj.question) || qObj || '');
     const intM = q.match(/(\d+)/);
     const total = intM ? Number(intM[1]) : null;
     if (!Number.isFinite(total) || total <= 0) return null;
@@ -359,15 +408,53 @@
     return s + `</svg>`;
   }
 
+  function renderFracAddSubLifeSvg(model, level){
+    const cols = model.commonD;
+    const W = 420;
+    const pad = 10;
+    const rowH = 30;
+    const rowGap = 12;
+    const top = 8;
+    const cellW = W / cols;
+    const y1 = top;
+    const y2 = top + rowH + rowGap;
+    const textY = y2 + rowH + 18;
+    const footY = textY + 16;
+
+    let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W + pad*2} ${footY + 14}">`;
+    for (let i=0;i<cols;i++){
+      const x = pad + i*cellW;
+      const c1 = i < model.n1 ? '#2ea043' : '#1f2b4f';
+      const c2 = i < model.n2 ? (model.op === '+' ? '#d4a028' : '#d94a3e') : '#1f2b4f';
+      s += `<rect x="${x}" y="${y1}" width="${cellW}" height="${rowH}" fill="${c1}" stroke="rgba(255,255,255,.25)"/>`;
+      s += `<rect x="${x}" y="${y2}" width="${cellW}" height="${rowH}" fill="${c2}" stroke="rgba(255,255,255,.25)"/>`;
+      if (level >= 2){
+        s += `<text x="${x + cellW/2}" y="${y1 + 19}" text-anchor="middle" font-size="10" fill="#fff">1/${cols}</text>`;
+      }
+    }
+    s += `<rect x="${pad}" y="${y1}" width="${W}" height="${rowH}" fill="none" stroke="rgba(255,255,255,.65)"/>`;
+    s += `<rect x="${pad}" y="${y2}" width="${W}" height="${rowH}" fill="none" stroke="rgba(255,255,255,.65)"/>`;
+    s += `<text x="${pad}" y="${textY}" font-size="12" fill="#b7f5c9">第一個分數：${model.f1.s} → ${model.n1}/${cols}</text>`;
+    const opLabel = model.op === '+' ? '第二個分數（加）' : '第二個分數（減）';
+    const opColor = model.op === '+' ? '#ffe7b3' : '#ffd2cf';
+    s += `<text x="${pad + 212}" y="${textY}" font-size="12" fill="${opColor}">${opLabel}：${model.f2.s} → ${model.n2}/${cols}</text>`;
+    if (level >= 3){
+      s += `<text x="${pad}" y="${footY}" font-size="12" fill="#e6edf3">先把兩個分數通分到 ${cols}，再做分子 ${model.op === '+' ? '相加' : '相減'}（不在提示直接給最終答案）。</text>`;
+    }
+    s += `</svg>`;
+    return s;
+  }
+
   function renderHintWithVisual(q, level, text){
     const div = document.createElement('div');
     div.className = 'hint';
-    const model = extractVisualModel(q?.question || '');
+    const model = extractVisualModel(q);
     let viz = '';
     if (model?.type === 'remain') viz = renderRemainSvg(model, level);
     if (model?.type === 'two_step') viz = renderTwoStepSvg(model, level);
+    if (model?.type === 'frac_addsub_life') viz = renderFracAddSubLifeSvg(model, level);
     if (viz){
-      div.innerHTML = `<div class="viz">${viz}</div><div>${escapeHtml(text).replaceAll('\n','<br>')}</div>`;
+      div.innerHTML = `<div class="viz">${viz}</div><div class="vizLabel">圖示引導（不含最終答案）</div><div>${escapeHtml(text).replaceAll('\n','<br>')}</div>`;
       return div;
     }
     div.textContent = text;
