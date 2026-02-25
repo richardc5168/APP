@@ -91,6 +91,11 @@
           <select id="kind">
             <option value="all" selected>全部</option>
             <option value="national_bank_source">全國來源卷（人工核對）</option>
+            <option value="area_difference">面積差（公頃↔平方公尺）</option>
+            <option value="division_application">應用除法（夠不夠）</option>
+            <option value="decimal_multiplication">小數乘法（距離累積）</option>
+            <option value="volume_calculation">體積計算（立體圖形）</option>
+            <option value="large_numbers_comparison">大數比較（單位換算）</option>
             <option value="fraction_of_quantity">某量的幾分之幾（乘法）</option>
             <option value="remaining_after_fraction">用掉後剩下（1-分數）</option>
             <option value="fraction_of_fraction">分數的分數（乘法）</option>
@@ -153,6 +158,11 @@
           <div><b>1) 圈重點</b>：總量、分數、單位、問什麼。</div>
           <div><b>2) 判斷題型</b>：</div>
           <div style="margin-left:10px">- 來源卷題目（人工核對）→ 先列式再開解答核對步驟</div>
+          <div style="margin-left:10px">- 面積差（公頃↔平方公尺）→ 先統一單位再相減</div>
+          <div style="margin-left:10px">- 應用除法（夠不夠）→ 先算可買幾套或應付總額</div>
+          <div style="margin-left:10px">- 小數乘法（距離累積）→ 一次距離 × 次數</div>
+          <div style="margin-left:10px">- 體積計算（立體圖形）→ 拆成幾個長方體再相加</div>
+          <div style="margin-left:10px">- 大數比較（單位換算）→ 先全部轉同單位再排序</div>
           <div style="margin-left:10px">- 某量的幾分之幾 → 乘法（總量 × 分數）</div>
           <div style="margin-left:10px">- 用掉後剩下 → 先 1 - 用掉比例，再乘總量</div>
           <div style="margin-left:10px">- 分數的分數（其中的…） → 乘法（分數 × 分數）</div>
@@ -185,6 +195,30 @@
         .replaceAll('／', '/')
         .replaceAll('＝', '=')
         .trim();
+    }
+
+    const KIND_LABELS = {
+      national_bank_source: '全國來源卷（人工核對）',
+      area_difference: '面積差（公頃↔平方公尺）',
+      division_application: '應用除法（夠不夠）',
+      decimal_multiplication: '小數乘法（距離累積）',
+      volume_calculation: '體積計算（立體圖形）',
+      large_numbers_comparison: '大數比較（單位換算）',
+      fraction_of_quantity: '某量的幾分之幾（乘法）',
+      remaining_after_fraction: '用掉後剩下（1-分數）',
+      fraction_of_fraction: '分數的分數（乘法）',
+      reverse_fraction: '反推原量（除法）',
+      remain_then_fraction: '先剩下再取一部分（兩段）',
+      average_division: '平均分配（除法）',
+      generic_fraction_word: '其他',
+    };
+
+    function getKindLabel(kind){
+      return KIND_LABELS[String(kind || '')] || KIND_LABELS.generic_fraction_word;
+    }
+
+    function isKnownKind(kind){
+      return Object.prototype.hasOwnProperty.call(KIND_LABELS, String(kind || ''));
     }
 
     function gcd(a,b){ a=Math.abs(a); b=Math.abs(b); while(b){ const t=a%b; a=b; b=t; } return a||1; }
@@ -1886,10 +1920,20 @@
       return true;
     }
 
+    function isQuestionMatchSelectedKind(q, selectedKind){
+      const selected = String(selectedKind || 'all');
+      if (selected === 'all') return true;
+      const qKind = String(q?.kind || '');
+      if (selected === 'generic_fraction_word'){
+        return qKind === 'generic_fraction_word' || !isKnownKind(qKind);
+      }
+      return qKind === selected;
+    }
+
     function pickQuestion(options = {}){
       const preferDirect = options.preferDirect !== false;
       const k = String(els.kind.value || 'all');
-      const basePool = (k === 'all') ? bank : bank.filter(x => String(x.kind) === k);
+      const basePool = bank.filter(x => isQuestionMatchSelectedKind(x, k));
       let pool = basePool.filter(x => !isAmbiguousQuestionText(x?.question) && !!normalizeText(x?.question || ''));
       if (preferDirect){
         const directPool = pool.filter(isDirectAnswerableQuestion);
@@ -2079,8 +2123,10 @@
         els.qVisual.innerHTML = renderQuestionVisual(visualModel);
         els.qVisual.style.display = 'block';
       }
+      const kindCode = String(q.kind || 'generic_fraction_word');
+      const kindLabel = getKindLabel(kindCode);
       els.banner.className = 'banner muted';
-      els.banner.textContent = `題目已載入（${q.id || '-'} / ${q.kind || 'other'}）。建議：先圈總量/分數/單位，再列式。`;
+      els.banner.textContent = `題目已載入（${q.id || '-'} / ${kindLabel}）。建議：先圈總量/分數/單位，再列式。`;
 
       const qUrl = String(q.source_question_url || '');
       const aUrl = String(q.source_answer_url || '');
@@ -2101,7 +2147,8 @@
     function getNextStepHint(q, studentState, level){
       // Pure offline heuristic; does not reveal final numeric answer.
       const s = normalizeText(studentState).toLowerCase();
-      const kind = String(q.kind || 'generic_fraction_word');
+      const kindRaw = String(q.kind || 'generic_fraction_word');
+      const kind = isKnownKind(kindRaw) ? kindRaw : 'generic_fraction_word';
       const steps = Array.isArray(q.steps) ? q.steps : [];
 
       // If student already mentions a key operation, nudge the next concept.

@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "test": "npm run test:unit",
     "lint": "node tools/run_lint_check.cjs",
     "test:unit": "node tools/run_unit_check.cjs",
     "test:contract": "node tools/validate_questions.cjs",
@@ -41,7 +42,8 @@
     "golden:check": "node tools/run_golden_correctness.cjs",
     "scorecard": "node tools/build_scorecard.cjs --out artifacts/scorecard.json",
     "gate:scorecard": "node tools/check_scorecard_gate.cjs",
-    "verify:all": "node tools/run_verify_all.cjs"
+    "verify:all": "node tools/run_verify_all.cjs",
+    "verify:kind-coverage": "node tools/verify-kind-coverage.js"
     ,"login:once": "node tools/tcool_downloader/login_once.js"
     ,"bulk:download": "node tools/tcool_downloader/bulk_download.js"
     ,"organize:teaching": "python tools/tcool_downloader/organize_teaching_focus.py"
