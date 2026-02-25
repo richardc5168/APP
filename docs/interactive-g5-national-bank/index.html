@@ -33,6 +33,11 @@
     .banner.ok{border-color:rgba(46,160,67,.65); color:#b7f5c9; background:rgba(46,160,67,.10)}
     .banner.bad{border-color:rgba(248,81,73,.65); color:#ffd2cf; background:rgba(248,81,73,.08)}
     .q{font-size:18px; padding:12px 14px; border-radius:12px; background:#08102a; border:1px dashed rgba(88,166,255,.4); margin: 10px 0; line-height:1.7}
+    .q-table-wrap{margin:8px 0 10px 0; padding:10px; border:1px solid rgba(88,166,255,.28); border-radius:10px; background:rgba(88,166,255,.06)}
+    .q-table-title{font-size:13px; color:#9cc6ff; margin-bottom:8px}
+    .q-table{width:100%; border-collapse:collapse; font-size:14px}
+    .q-table th,.q-table td{border:1px solid rgba(255,255,255,.14); padding:6px 8px; text-align:left}
+    .q-table th{background:rgba(255,255,255,.06); color:#d2e7ff}
     .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace}
     .hint{border-left:3px solid rgba(88,166,255,.55); padding:8px 10px; background:rgba(88,166,255,.06); border-radius:10px; margin:8px 0; white-space:pre-wrap}
     .hint-ladder-card{border:1px solid rgba(88,166,255,.28); border-radius:10px; background:rgba(88,166,255,.05); padding:10px; margin:8px 0}
@@ -96,6 +101,7 @@
         </div>
 
         <div class="q" id="qText">（按「出新題」開始）</div>
+        <div id="qTable" class="q-table-wrap" style="display:none"></div>
         <div id="sourceLinks" class="small" style="margin:6px 0 10px 0; color:var(--muted);"></div>
 
         <div class="row">
@@ -1811,6 +1817,7 @@
       btnNew: document.getElementById('btnNew'),
       btnReset: document.getElementById('btnReset'),
       qText: document.getElementById('qText'),
+      qTable: document.getElementById('qTable'),
       sourceLinks: document.getElementById('sourceLinks'),
       answer: document.getElementById('answer'),
       btnCheck: document.getElementById('btnCheck'),
@@ -1902,6 +1909,47 @@
       return candidates[Math.floor(Math.random() * candidates.length)];
     }
 
+    function buildQuestionTableModel(q){
+      const txt = String(q?.question || '');
+      if (!txt) return null;
+
+      const rows = [];
+      function pushIfFound(label, re){
+        const m = txt.match(re);
+        if (!m) return;
+        const v = String(m[1] || '').trim();
+        if (!v) return;
+        rows.push([label, `${v} km`]);
+      }
+
+      pushIfFound('半程馬拉松', /半程馬拉松(?:距離)?(?:為|是)?\s*([0-9]+(?:\.[0-9]+)?)\s*km/i);
+      pushIfFound('全程馬拉松', /全程馬拉松(?:距離)?(?:為|是)?\s*([0-9]+(?:\.[0-9]+)?)\s*km/i);
+      pushIfFound('迷你馬拉松', /迷你馬拉松(?:距離)?(?:為|是)?\s*([0-9]+(?:\.[0-9]+)?)\s*km/i);
+
+      if (!rows.length) return null;
+      return {
+        title: '賽事資訊（由題目文字擷取）',
+        headers: ['組別', '距離'],
+        rows,
+      };
+    }
+
+    function renderQuestionTable(model){
+      if (!model || !Array.isArray(model.rows) || !model.rows.length) return '';
+      const headers = Array.isArray(model.headers) && model.headers.length ? model.headers : ['欄位1', '欄位2'];
+      const headHtml = `<tr>${headers.map(h => `<th>${escapeHtml(h)}</th>`).join('')}</tr>`;
+      const rowHtml = model.rows
+        .map((r) => `<tr>${(Array.isArray(r) ? r : [r]).map(c => `<td>${escapeHtml(c)}</td>`).join('')}</tr>`)
+        .join('');
+      return `
+        <div class="q-table-title">${escapeHtml(model.title || '題目表格資訊')}</div>
+        <table class="q-table">
+          <thead>${headHtml}</thead>
+          <tbody>${rowHtml}</tbody>
+        </table>
+      `;
+    }
+
     function showQuestion(q){
       state.q = q;
       state.revealed = false;
@@ -1914,12 +1962,21 @@
       els.solution.innerHTML = '';
       els.nextHint.style.display = 'none';
       if (els.sourceLinks) els.sourceLinks.innerHTML = '';
+      if (els.qTable){
+        els.qTable.style.display = 'none';
+        els.qTable.innerHTML = '';
+      }
 
       if (!q){
         els.qText.textContent = '（題庫是空的）';
         return;
       }
       els.qText.textContent = q.question || '';
+      const tableModel = buildQuestionTableModel(q);
+      if (els.qTable && tableModel){
+        els.qTable.innerHTML = renderQuestionTable(tableModel);
+        els.qTable.style.display = 'block';
+      }
       els.banner.className = 'banner muted';
       els.banner.textContent = `題目已載入（${q.id || '-'} / ${q.kind || 'other'}）。建議：先圈總量/分數/單位，再列式。`;
 
@@ -2112,6 +2169,10 @@
       els.hints.innerHTML = '';
       els.solution.innerHTML = '';
       els.nextHint.style.display = 'none';
+      if (els.qTable){
+        els.qTable.style.display = 'none';
+        els.qTable.innerHTML = '';
+      }
       setBannerMuted('已清空。');
     });
 
