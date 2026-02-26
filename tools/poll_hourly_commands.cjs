@@ -30,7 +30,8 @@ const ALLOWED_NPM_SCRIPTS = new Set([
   'external:web:build',
   'external:web:validate',
   'test:external:fraction',
-  'verify:kind-coverage'
+  'verify:kind-coverage',
+  'status:mail'
 ]);
 
 function argValue(name, fallback) {
