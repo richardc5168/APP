@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": "2026-02-26T14:30:00Z",
+  "updated_at": "2026-02-26T15:30:00Z",
   "commands": [
     {
       "id": "2026-02-26-summary-30m",
@@ -100,7 +100,7 @@
     },
     {
       "id": "2026-02-26-optimize-g5g6-5h",
-      "enabled": false,
+      "enabled": true,
       "action": "npm_script",
       "value": "optimize:g5g6:web:5h",
       "cooldown_minutes": 720,
@@ -108,7 +108,7 @@
     },
     {
       "id": "2026-02-26-overnight-7h",
-      "enabled": false,
+      "enabled": true,
       "action": "npm_script",
       "value": "overnight:optimize",
       "cooldown_minutes": 1440,

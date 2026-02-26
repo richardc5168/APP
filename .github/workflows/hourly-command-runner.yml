@@ -58,6 +58,23 @@ jobs:
         run: |
           npm run commands:poll:once -- --command-file ops/hourly_commands.json --state-file ops/hourly_commands_state.json --persist-executed-only
 
+      - name: Send 30-min status email (optional)
+        env:
+          RAGWEB_SMTP_USER: ${{ secrets.RAGWEB_SMTP_USER }}
+          RAGWEB_SMTP_PASS: ${{ secrets.RAGWEB_SMTP_PASS }}
+          RAGWEB_MAIL_TO: ${{ secrets.RAGWEB_MAIL_TO }}
+          RAGWEB_MAIL_FROM: ${{ secrets.RAGWEB_MAIL_FROM }}
+          RAGWEB_MAIL_SUBJECT: '[RAGWEB] GitHub 30-min automation summary'
+        run: |
+          if [ -z "$RAGWEB_SMTP_USER" ] || [ -z "$RAGWEB_SMTP_PASS" ]; then
+            echo "SMTP secrets not configured; skip mail sending."
+            exit 0
+          fi
+          if [ -z "$RAGWEB_MAIL_TO" ]; then
+            export RAGWEB_MAIL_TO="a0986962831@gmail.com"
+          fi
+          python scripts/send_status_email.py
+
       - name: Persist executed-id state
         run: |
           if ! git diff --quiet -- ops/hourly_commands_state.json; then
