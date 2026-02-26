@@ -1,69 +1,110 @@
 {
   "version": 1,
-  "updated_at": "2026-02-24T12:10:00Z",
+  "updated_at": "2026-02-26T14:30:00Z",
   "commands": [
     {
-      "id": "2026-02-24-idle-web-fraction-decimal-ingest-only",
+      "id": "2026-02-26-gate-verify-all",
+      "enabled": true,
+      "action": "npm_script",
+      "value": "verify:all",
+      "cooldown_minutes": 180,
+      "note": "週期驗證：每 3 小時做一次全量檢查，確保優化流程不破壞穩定性"
+    },
+    {
+      "id": "2026-02-26-g5-fraction-decimal-ingest",
       "enabled": true,
       "action": "npm_script",
       "value": "fraction-decimal:web:ingest",
-      "note": "僅在 idle/stuck 時抓取並整理外網小五小六分數小數應用題摘要，不修改題型程式碼"
+      "cooldown_minutes": 180,
+      "note": "持續搜尋外網小五小六分數/小數應用題素材（含教學重點訊號）"
     },
     {
-      "id": "2026-02-23-國字測試-驗證全部",
+      "id": "2026-02-26-g5-fraction-decimal-build",
       "enabled": true,
       "action": "npm_script",
-      "value": "verify:all",
-      "note": "國字測試：每小時輪詢時執行 verify:all（只會執行一次）"
+      "value": "fraction-decimal:web:build",
+      "cooldown_minutes": 180,
+      "note": "將抓到的分數/小數素材轉成可用題型包與提示種子"
     },
     {
-      "id": "2026-02-23-手動觸發-verify-all-1525",
+      "id": "2026-02-26-g5-fraction-decimal-validate-pack",
       "enabled": true,
       "action": "npm_script",
-      "value": "verify:all",
-      "note": "手動新增：立即輪詢可執行一次 verify:all"
+      "value": "fraction-decimal:web:validate",
+      "cooldown_minutes": 180,
+      "note": "驗證分數/小數新題型包格式與一致性"
     },
     {
-      "id": "2026-02-24-g5g6-web-signal-optimize-5h",
+      "id": "2026-02-26-g5-fraction-decimal-loop-test",
+      "enabled": true,
+      "action": "npm_script",
+      "value": "test:fraction-decimal:web",
+      "cooldown_minutes": 180,
+      "note": "回歸測試新題型與提示流程，確保孩童引導清晰且不爆答案"
+    },
+    {
+      "id": "2026-02-26-g5-fraction-ratio-ingest",
+      "enabled": true,
+      "action": "npm_script",
+      "value": "external:web:ingest",
+      "cooldown_minutes": 360,
+      "note": "擴充分數應用與比例/百分率相關教學訊號來源（外網摘要）"
+    },
+    {
+      "id": "2026-02-26-g5-fraction-ratio-build",
+      "enabled": true,
+      "action": "npm_script",
+      "value": "external:web:build",
+      "cooldown_minutes": 360,
+      "note": "把分數/比例外網訊號轉成可融合的教學包"
+    },
+    {
+      "id": "2026-02-26-g5-fraction-ratio-validate",
+      "enabled": true,
+      "action": "npm_script",
+      "value": "external:web:validate",
+      "cooldown_minutes": 360,
+      "note": "驗證分數/比例教學包，避免低品質資料進入流程"
+    },
+    {
+      "id": "2026-02-26-g5-fraction-ratio-loop-test",
+      "enabled": true,
+      "action": "npm_script",
+      "value": "test:external:fraction",
+      "cooldown_minutes": 360,
+      "note": "回歸測試分數/比例外網融合結果"
+    },
+    {
+      "id": "2026-02-26-idle-expand-fraction-decimal",
+      "enabled": true,
+      "action": "npm_script",
+      "value": "idle:web:fraction-decimal:expand",
+      "cooldown_minutes": 240,
+      "note": "任務完成或 idle/stuck 時優先執行的擴充流程，持續優化出題與提示"
+    },
+    {
+      "id": "2026-02-26-topic-align",
+      "enabled": true,
+      "action": "npm_script",
+      "value": "topic:align",
+      "cooldown_minutes": 360,
+      "note": "定期檢查題型主題對齊，讓分數/小數/比例路徑更清晰"
+    },
+    {
+      "id": "2026-02-26-optimize-g5g6-5h",
       "enabled": true,
       "action": "npm_script",
       "value": "optimize:g5g6:web:5h",
-      "note": "G5/G6 網路題型訊號抓取與提示/教學/家長報告優化，5 小時以上，通過驗證才提交流程"
+      "cooldown_minutes": 720,
+      "note": "長時段自動優化（含提示、教學重點、家長報告訊號），通過驗證才提交"
     },
     {
-      "id": "2026-02-24-all-allow-7h-nonstop",
-      "enabled": true,
+      "id": "2026-02-26-overnight-7h",
+      "enabled": false,
       "action": "npm_script",
       "value": "overnight:optimize",
-      "note": "ALL ALLOW ALL：不中斷 7 小時模式，含安全 fallback、驗證通過才提交"
-    },
-    {
-      "id": "2026-02-24-idle-web-fraction-decimal-expand",
-      "enabled": true,
-      "action": "npm_script",
-      "value": "idle:web:fraction-decimal:expand",
-      "note": "當前任務完成/無任務/卡住時，自動搜尋外網小五小六分數與小數應用題資源，參考既有分數應用題框架新增『分數小數活用題型』，需含清晰提示，且不得破壞原有題型機制；通過驗證才提交"
-    },
-    {
-      "id": "2026-02-24-job-verify-all-001",
-      "enabled": true,
-      "action": "npm_script",
-      "value": "verify:all",
-      "note": "先做全量驗證"
-    },
-    {
-      "id": "2026-02-24-job-idle-expand-001",
-      "enabled": true,
-      "action": "npm_script",
-      "value": "idle:web:fraction-decimal:expand",
-      "note": "空閒/卡住時執行外網分數小數題型擴充"
-    },
-    {
-      "id": "2026-02-24-job-optimize-5h-001",
-      "enabled": true,
-      "action": "npm_script",
-      "value": "optimize:g5g6:web:5h",
-      "note": "需要時再開啟 5 小時優化"
+      "cooldown_minutes": 1440,
+      "note": "7 小時重優化模式，預設關閉，需要時手動打開"
     }
   ]
 }

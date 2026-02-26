@@ -22,7 +22,15 @@ const ALLOWED_NPM_SCRIPTS = new Set([
   'optimize:g5g6:web:5h',
   'overnight:optimize',
   'idle:web:fraction-decimal:expand',
-  'fraction-decimal:web:ingest'
+  'fraction-decimal:web:ingest',
+  'fraction-decimal:web:build',
+  'fraction-decimal:web:validate',
+  'test:fraction-decimal:web',
+  'external:web:ingest',
+  'external:web:build',
+  'external:web:validate',
+  'test:external:fraction',
+  'verify:kind-coverage'
 ]);
 
 function argValue(name, fallback) {
@@ -144,6 +152,25 @@ function normalizeCommands(payload) {
   return payload.commands.filter((c) => c && typeof c.id === 'string');
 }
 
+function parseIsoMs(v) {
+  const t = Date.parse(String(v || ''));
+  return Number.isFinite(t) ? t : 0;
+}
+
+function shouldRunCommand(cmd, executed, lastRunAtMap, nowMs) {
+  if (!cmd || !cmd.enabled) return false;
+
+  const cooldownMinutes = Number(cmd.cooldown_minutes || 0);
+  if (Number.isFinite(cooldownMinutes) && cooldownMinutes > 0) {
+    const lastAt = parseIsoMs(lastRunAtMap[String(cmd.id || '')]);
+    if (!lastAt) return true;
+    const elapsedMin = (nowMs - lastAt) / 60000;
+    return elapsedMin >= cooldownMinutes;
+  }
+
+  return !executed.has(cmd.id);
+}
+
 async function readCommandSource(commandFilePath, commandUrl) {
   if (commandUrl) {
     const rawUrl = toRawGithubUrl(commandUrl);
@@ -244,18 +271,23 @@ function autoCommitForCommand(commandId) {
 
 async function runOnce(commandFilePath, commandUrl, statePath, runLogPath, latestStatusPath, persistExecutedOnly) {
   const now = new Date().toISOString();
+  const nowMs = Date.now();
   const state = readState(statePath);
   const executed = new Set(state.executed_ids || []);
+  const lastRunAtMap = (state && typeof state.command_last_run_at === 'object' && state.command_last_run_at)
+    ? { ...state.command_last_run_at }
+    : {};
 
   const pullRes = runCommand('git', ['pull', '--ff-only', 'origin', 'main']);
   const pullOk = pullRes.pass;
 
   const payload = await readCommandSource(commandFilePath, commandUrl);
   const commands = normalizeCommands(payload);
-  const pending = commands.filter((c) => c.enabled && !executed.has(c.id));
+  const pending = commands.filter((c) => shouldRunCommand(c, executed, lastRunAtMap, nowMs));
 
   for (const cmd of pending) {
     const startedAt = new Date().toISOString();
+    lastRunAtMap[String(cmd.id)] = startedAt;
     const result = executeCommand(cmd);
     let validation = { pass: false, stage: 'not-run', status: 1, reason: '' };
     let commitResult = { pass: false, status: 1, committed: false, pushed: false, commit_hash: null, reason: '' };
@@ -294,13 +326,17 @@ async function runOnce(commandFilePath, commandUrl, statePath, runLogPath, lates
   }
 
   const nextState = persistExecutedOnly
-    ? { executed_ids: Array.from(executed) }
+    ? {
+        executed_ids: Array.from(executed),
+        command_last_run_at: lastRunAtMap,
+      }
     : {
         last_checked_at: now,
         command_file: commandFilePath,
         command_url: commandUrl || null,
         git_pull_ok: pullOk,
-        executed_ids: Array.from(executed)
+        executed_ids: Array.from(executed),
+        command_last_run_at: lastRunAtMap,
       };
   writeState(statePath, nextState);
 
