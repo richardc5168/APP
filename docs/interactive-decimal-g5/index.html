@@ -270,6 +270,7 @@
 
   <script src="./bank.js"></script>
   <script src="../shared/ux_enhancer.js"></script>
+  <script src="../shared/hint_engine.js"></script>
   <script>
     // ---------- tabs ----------
     const tabGame = document.getElementById('tabGame');
@@ -455,6 +456,7 @@
 
     function showQuestion(q){
       state.q = q;
+      window.AIMathHintEngine?.setCurrentQuestion(q);
       state.revealed = false;
       state.hintUsed = 0;
       state.hintStepIndex = 0;
@@ -1116,6 +1118,7 @@
       nextModulePath: '../interactive-g5-empire/',
       nextModuleLabel: '互動小五數學帝國'
     });
+    window.AIMathHintEngine?.init({ moduleId: 'interactive-decimal-g5' });
   </script>
 </body>
 </html>

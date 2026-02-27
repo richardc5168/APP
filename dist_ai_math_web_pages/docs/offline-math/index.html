@@ -144,6 +144,7 @@
   <script src="./aggregate_compat.js?v=1"></script>
   <script src="./bank.js?v=3"></script>
   <script src="../shared/ux_enhancer.js"></script>
+  <script src="../shared/hint_engine.js"></script>
   <script>
   (function(){
     'use strict';
@@ -357,6 +358,9 @@
 
     function renderQuestion(it){
       state.cur = it;
+      if (window.AIMathHintEngine && typeof window.AIMathHintEngine.setCurrentQuestion === 'function') {
+        window.AIMathHintEngine.setCurrentQuestion(it);
+      }
       state.startedAt = Date.now();
       state.shownLevels = new Set();
       state.shownSolution = false;
@@ -573,6 +577,9 @@
           nextModulePath: '../exam-sprint/',
           nextModuleLabel: '考前衝刺'
         });
+      }
+      if (window.AIMathHintEngine && typeof window.AIMathHintEngine.init === 'function') {
+        window.AIMathHintEngine.init({ moduleId: 'offline-math' });
       }
     }
 

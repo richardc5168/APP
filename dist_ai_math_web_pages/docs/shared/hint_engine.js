@@ -1,0 +1,744 @@
+/**
+ * hint_engine.js — 全站提示優化引擎 v1
+ *
+ * 六大功能：
+ *  1. 全站提示語法模板化（圈重點→定基準→列式→估算檢查）
+ *  2. 強化「基準量切換」顯示
+ *  3. Level 3 嚴格防洩漏（只到式子與中間量）
+ *  4. 錯因對應提示（常見錯誤映射到補救句）
+ *  5. 視覺提示分級（L2=圖像化, L3=代數化）
+ *  6. 提示成效閉環（記錄看到哪層後答對）
+ *
+ * 回朔方式：URL ?hint_engine=off 或 localStorage aimath.hintEngine.enabled=0
+ */
+(function(){
+  'use strict';
+
+  /* ============================================================
+   * 0. Feature toggle (rollback-safe)
+   * ============================================================ */
+  var ENABLE_KEY = 'aimath.hintEngine.enabled';
+  var TRACK_KEY  = 'aimath.hintEffectiveness';
+
+  function isEnabled(){
+    var qs = new URLSearchParams(window.location.search || '');
+    var q  = (qs.get('hint_engine') || '').toLowerCase();
+    if (q === 'off' || q === '0' || q === 'false') return false;
+    var v = localStorage.getItem(ENABLE_KEY);
+    if (v === null) return true;
+    return v !== '0' && v !== 'false' && v !== 'off';
+  }
+
+  /* ============================================================
+   * 1. 四步模板系統 — 圈 → 基 → 式 → 查
+   * ============================================================ */
+  var TEMPLATE_MAP = {
+    /* ------- 分數加減 ------- */
+    fracAdd: {
+      circle: '先圈出題目裡所有分數，看看分母是否相同。',
+      base:   '基準量：分母相同可直接算分子；不同先找最小公倍數通分。',
+      expr:   '列式：改寫成同分母後，分子做加減。',
+      check:  '估算檢查：結果約分到最簡分數，並看大小是否合理。'
+    },
+    /* ------- 分數文字題 ------- */
+    fracWord: {
+      circle: '先圈出「全部」「部分」「剩下」，找出要求的量。',
+      base:   '基準量：注意第二段的分數是對哪個量（全部 or 剩下）。',
+      expr:   '列式：把文字翻成算式（比例→乘法、反推→除法）。',
+      check:  '估算檢查：把答案代回題目情境，看是否符合邏輯。'
+    },
+    /* ------- 分數的分數 / 兩段剩餘 ------- */
+    fracRemain: {
+      circle: '先圈出每一段的「分數」與「對象」（全部 or 剩下）。',
+      base:   '⚠️ 基準量切換：第二次的分數不是對全部，而是對「剩下的量」。\n　→ 先算第一段剩下多少，再把「剩下」當新基準。',
+      expr:   '列式：按順序分步計算，不要一次列一條式子。',
+      check:  '估算檢查：最終答案應該比原始全體量小。'
+    },
+    /* ------- 小數運算 ------- */
+    decimal: {
+      circle: '先圈出算式裡每個小數的位數（幾位小數）。',
+      base:   '基準量：先估算答案應該「變大」還是「變小」。',
+      expr:   '列式：先當整數算，最後再放回小數點（位數加總）。',
+      check:  '估算檢查：用整數近似值驗算量級是否合理。'
+    },
+    /* ------- 百分率 / 折扣 ------- */
+    percent: {
+      circle: '先圈出「原量」「百分率/折扣率」「要求什麼」。',
+      base:   '基準量：百分率先換成倍率（p% = p/100 或 x折 = x/10）。',
+      expr:   '列式：求部分 → 原量×倍率；求全體 → 部分÷倍率。',
+      check:  '估算檢查：打折後應小於原價；增加後應大於原量。'
+    },
+    /* ------- 時間 ------- */
+    time: {
+      circle: '先圈出所有時間數值，統一成（時:分）或（分鐘）。',
+      base:   '基準量：先決定要加還是減，判斷是否跨日。',
+      expr:   '列式：分鐘部分做運算，超過 60 要進位、不夠減要借位。',
+      check:  '估算檢查：最終結果轉回要求格式，看鐘面是否合理。'
+    },
+    /* ------- 體積 / 面積 ------- */
+    volume: {
+      circle: '先圈出長、寬、高（或底、高），確認是求面積還是體積。',
+      base:   '基準量：底面積 = 長×寬；體積 = 底面積×高。',
+      expr:   '列式：逐步乘法，注意組合體要拆分成基本形。',
+      check:  '估算檢查：面積用平方單位、體積用立方單位。'
+    },
+    /* ------- 平均 ------- */
+    average: {
+      circle: '先圈出「總量」和「分成幾份」。',
+      base:   '基準量：平均 = 總量 ÷ 份數。',
+      expr:   '列式：分數的平均 → 分數÷整數 → 分數×(1/整數)。',
+      check:  '估算檢查：答案應介於最大與最小值之間。'
+    },
+    /* ------- 通用兜底 ------- */
+    generic: {
+      circle: '先圈出題目的已知量、未知量與單位。',
+      base:   '基準量：先想好「對誰做運算」。',
+      expr:   '列式：把文字翻成算式，逐步寫清楚。',
+      check:  '估算檢查：把答案代回去看是否合理，並確認單位。'
+    }
+  };
+
+  /* 題型 → 模板家族 */
+  var KIND_TO_FAMILY = {};
+  /* fracAdd */
+  ['fraction_addsub','add_unlike','sub_unlike','fraction_add_unlike','fraction_sub_mixed','u2_frac_addsub_life'].forEach(function(k){ KIND_TO_FAMILY[k] = 'fracAdd'; });
+  /* fracWord */
+  ['fraction_of_quantity','reverse_fraction','average_division','generic_fraction_word','fraction_mul','mul','u1_avg_fraction','u3_frac_times_int'].forEach(function(k){ KIND_TO_FAMILY[k] = 'fracWord'; });
+  /* fracRemain (two-step remainder) */
+  ['remaining_after_fraction','remain_then_fraction','fraction_remaining','remaining_by_fraction','fraction_of_fraction'].forEach(function(k){ KIND_TO_FAMILY[k] = 'fracRemain'; });
+  /* decimal */
+  ['d_mul_d','d_div_int','d_mul_int','int_mul_d','int_div_int_to_decimal','decimal_mul','decimal_div','decimal_times_decimal','x10_shift','u6_frac_dec_convert','u9_unit_convert_decimal'].forEach(function(k){ KIND_TO_FAMILY[k] = 'decimal'; });
+  /* percent */
+  ['percent_of','percent_find_whole','percent_increase_decrease','percent_interest','ratio_missing_to_1','ratio_sub_decimal','discount'].forEach(function(k){ KIND_TO_FAMILY[k] = 'percent'; });
+  /* time */
+  ['time_add','time_add_cross_day','time_sub_cross_day'].forEach(function(k){ KIND_TO_FAMILY[k] = 'time'; });
+  /* volume */
+  ['rect_cm3','composite','composite3','rect_find_height','cube_find_edge','cm3_to_m3','m3_to_cm3','surface_area_rect_prism','area_tiling','decimal_dims','mixed_units','volume_rect_prism'].forEach(function(k){ KIND_TO_FAMILY[k] = 'volume'; });
+  /* average */
+  ['shopping_two_step','general'].forEach(function(k){ KIND_TO_FAMILY[k] = 'average'; });
+
+  function getFamily(kind){
+    return KIND_TO_FAMILY[String(kind || '')] || 'generic';
+  }
+
+  function getTemplate(kind){
+    var fam = getFamily(kind);
+    return TEMPLATE_MAP[fam] || TEMPLATE_MAP.generic;
+  }
+
+  /**
+   * getTemplatedHint(question, level) — 四步模板 hint
+   * level: 1=圈+基 (觀念), 2=基+式 (列式), 3=式+查 (收尾, no final answer)
+   */
+  function getTemplatedHint(q, level){
+    var lv = Math.max(1, Math.min(3, Number(level) || 1));
+    var tpl = getTemplate(q && q.kind);
+    if (lv === 1) return tpl.circle + '\n' + tpl.base;
+    if (lv === 2) return tpl.base + '\n' + tpl.expr;
+    return tpl.expr + '\n' + tpl.check;
+  }
+
+  /* ============================================================
+   * 2. 基準量切換提醒
+   * ============================================================ */
+  var BASE_SWITCH_KEYWORDS = /剩下的|剩餘的|餘下的|再[取看用拿]|又[取看用拿]|第二次/;
+
+  function needsBaseSwitchWarning(questionText){
+    return BASE_SWITCH_KEYWORDS.test(String(questionText || ''));
+  }
+
+  function getBaseSwitchReminder(questionText){
+    if (!needsBaseSwitchWarning(questionText)) return '';
+    return '⚠️ 注意基準切換：第二次操作不是對「全部」，而是對「前一步剩下的量」。\n　請先算出第一步結果，再用它當第二步的基準。';
+  }
+
+  /* ============================================================
+   * 3. Level 3 嚴格防洩漏
+   * ============================================================ */
+  function normalizeForCompare(s){
+    return String(s || '').replace(/\s+/g, '').replace(/,/g, '');
+  }
+
+  function stripAnswerFromHint(hintText, answer){
+    var h = String(hintText || '');
+    var ans = normalizeForCompare(answer);
+    if (!ans || ans.length < 1) return h;
+
+    /* Replace exact answer occurrences */
+    var hNorm = normalizeForCompare(h);
+    if (hNorm.indexOf(ans) !== -1){
+      /* Replace in the original (non-normalized) text */
+      h = h.replace(new RegExp(escapeRegex(String(answer || '').trim()), 'g'), '（先自己算）');
+    }
+
+    /* Also catch patterns like "答案是 X", "= X (最終)" */
+    h = h.replace(/(?:答案[是為]?|所以|因此|得到|等於)\s*[:：]?\s*\d[\d.\/\s]*(?:\s*[a-zA-Z%㎡³元個頁公分公尺]*)?\s*[。.！!]?/g, '（請自行完成最後計算）');
+    h = h.replace(/=\s*\d[\d.\/\s]*\s*$/gm, '= ？（自行計算）');
+
+    return h;
+  }
+
+  function escapeRegex(s){
+    return String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  /**
+   * enforceL3Gate(hintText, question)
+   * L3 hard gate: strips final answer, ensures only intermediate values remain.
+   */
+  function enforceL3Gate(hintText, q){
+    if (!q) return hintText;
+    var h = stripAnswerFromHint(hintText, q.answer);
+    /* Extra safety: if the answer appears anywhere in normalized form, blank it */
+    var ansNorm = normalizeForCompare(q.answer);
+    var hNorm = normalizeForCompare(h);
+    if (ansNorm && ansNorm.length >= 1 && hNorm.indexOf(ansNorm) !== -1){
+      h = h + '\n⛔ 不直接給最後數值，請自行完成計算。';
+    }
+    return h;
+  }
+
+  /* ============================================================
+   * 4. 錯因對應提示 — 常見錯誤 → 補救句
+   * ============================================================ */
+  var MISCONCEPTION_MAP = {
+    /* 分數 */
+    'base_switch_error': {
+      detect: function(q, wrongAns){
+        /* Student treated "剩下的 1/3" as "全部的 1/3" */
+        if (!needsBaseSwitchWarning(q.question)) return false;
+        var total = extractFirstNumber(q.question);
+        if (!total) return false;
+        /* Check if wrong answer matches "total × second_fraction" (wrong base) */
+        return false; /* Conservative: use tag-based matching below */
+      },
+      remedy: '你可能把「剩下的幾分之幾」當成「全部的幾分之幾」了。\n→ 先算出第一步剩下多少，再用剩下的量做第二步。'
+    },
+    'unit_mismatch': {
+      detect: function(q, wrongAns){
+        return /單位|cm³|m³|公分|公尺|元|分鐘|小時|頁/.test(q.question) &&
+               !/[a-zA-Z%㎡³元個頁]/.test(String(wrongAns));
+      },
+      remedy: '最後答案漏寫或寫錯單位了。\n→ 回到題目找出答案需要什麼單位，再補上。'
+    },
+    'percent_decimal_error': {
+      detect: function(q, wrongAns){
+        if (getFamily(q.kind) !== 'percent') return false;
+        var correctNum = parseFloat(q.answer);
+        var wrongNum = parseFloat(wrongAns);
+        if (!isFinite(correctNum) || !isFinite(wrongNum)) return false;
+        return Math.abs(wrongNum - correctNum * 10) < 0.01 || Math.abs(wrongNum - correctNum / 10) < 0.01;
+      },
+      remedy: '折數轉小數可能錯了。\n→ 記住：N 折 = N/10 = 0.N（例如 9折=0.9）。'
+    },
+    'direction_error': {
+      detect: function(q, wrongAns){
+        var correctNum = parseFloat(q.answer);
+        var wrongNum = parseFloat(wrongAns);
+        if (!isFinite(correctNum) || !isFinite(wrongNum)) return false;
+        /* Wrong direction: addition instead of subtraction or vice versa */
+        return (correctNum > 0 && wrongNum > 0 && Math.abs(wrongNum + correctNum) < correctNum * 0.1);
+      },
+      remedy: '運算方向可能反了（加↔減 或 乘↔除）。\n→ 回到題目：是「取走/用掉」→減法，還是「合在一起」→加法？'
+    },
+    'decimal_point_error': {
+      detect: function(q, wrongAns){
+        if (getFamily(q.kind) !== 'decimal') return false;
+        var correctNum = parseFloat(q.answer);
+        var wrongNum = parseFloat(wrongAns);
+        if (!isFinite(correctNum) || !isFinite(wrongNum) || correctNum === 0) return false;
+        var ratio = wrongNum / correctNum;
+        return Math.abs(ratio - 10) < 0.01 || Math.abs(ratio - 100) < 0.01 ||
+               Math.abs(ratio - 0.1) < 0.01 || Math.abs(ratio - 0.01) < 0.01;
+      },
+      remedy: '小數點位置可能放錯了。\n→ 乘法：小數位數相加；除法：對齊被除數的小數點往上點。'
+    },
+    'time_borrow_error': {
+      detect: function(q, wrongAns){
+        if (getFamily(q.kind) !== 'time') return false;
+        return /^-?\d/.test(String(wrongAns));
+      },
+      remedy: '時間進位/借位可能出錯。\n→ 60 分鐘 = 1 小時；不夠減先從小時借 1 變成 60 分鐘。'
+    }
+  };
+
+  function diagnoseWrongAnswer(q, wrongAns){
+    if (!q || !wrongAns) return null;
+    var results = [];
+    for (var key in MISCONCEPTION_MAP){
+      if (!MISCONCEPTION_MAP.hasOwnProperty(key)) continue;
+      var m = MISCONCEPTION_MAP[key];
+      try {
+        if (m.detect(q, wrongAns)){
+          results.push({ tag: key, remedy: m.remedy });
+        }
+      } catch(e){}
+    }
+    /* Also check common_wrong_answers from question data */
+    if (Array.isArray(q.common_wrong_answers)){
+      var wNorm = normalizeForCompare(wrongAns);
+      for (var i = 0; i < q.common_wrong_answers.length; i++){
+        if (normalizeForCompare(q.common_wrong_answers[i]) === wNorm){
+          results.push({ tag: 'known_misconception', remedy: '這是常見錯誤答案。請回到提示重新審題，特別注意基準量與運算方向。' });
+          break;
+        }
+      }
+    }
+    /* Base switch special */
+    if (needsBaseSwitchWarning(q.question) && results.length === 0){
+      results.push({ tag: 'base_switch_warning', remedy: MISCONCEPTION_MAP.base_switch_error.remedy });
+    }
+    return results.length ? results : null;
+  }
+
+  function extractFirstNumber(text){
+    var m = String(text || '').match(/\d+(?:\.\d+)?/);
+    return m ? parseFloat(m[0]) : null;
+  }
+
+  /* ============================================================
+   * 5. 視覺提示分級（L2=圖像化標記, L3=代數化標記）
+   * ============================================================ */
+  function getHintTier(level){
+    var lv = Math.max(1, Math.min(3, Number(level) || 1));
+    if (lv === 1) return { tier: 'concept',   icon: '🔍', label: '觀念引導', style: 'visual' };
+    if (lv === 2) return { tier: 'visual',    icon: '📐', label: '圖像化列式', style: 'visual' };
+    return             { tier: 'algebraic', icon: '✏️', label: '代數化收尾', style: 'algebraic' };
+  }
+
+  function formatHintWithTier(hintText, level, q){
+    var t = getHintTier(level);
+    var lv = Math.max(1, Math.min(3, Number(level) || 1));
+    var header = t.icon + '【Level ' + lv + '｜' + t.label + '】';
+    var body = String(hintText || '');
+
+    /* L2: prepend visual cue */
+    if (lv === 2){
+      var family = q ? getFamily(q.kind) : 'generic';
+      var vizCue = '';
+      if (family === 'fracWord' || family === 'fracRemain') vizCue = '🟦 想像把全體量切成條狀，用不同顏色標出每一部分。';
+      else if (family === 'fracAdd') vizCue = '🟦 想像兩個分數條排在一起比較長短。';
+      else if (family === 'volume') vizCue = '🟦 想像堆積木：底面排好再一層一層往上疊。';
+      else if (family === 'percent') vizCue = '🟦 想像 100 格方格紙，塗滿百分比對應的格數。';
+      else if (family === 'decimal') vizCue = '🟦 想像數線，先找整數位置再細分小數格。';
+      if (vizCue) body = vizCue + '\n' + body;
+    }
+
+    /* L3: add algebraic framing */
+    if (lv === 3){
+      body = body + '\n📝 用算式一步步寫出中間值，最後自行完成計算。';
+    }
+
+    /* Base switch reminder injection (all levels) */
+    if (q && needsBaseSwitchWarning(q.question)){
+      var reminder = getBaseSwitchReminder(q.question);
+      if (reminder && body.indexOf('基準切換') === -1){
+        body = body + '\n' + reminder;
+      }
+    }
+
+    return header + '\n' + body;
+  }
+
+  /* ============================================================
+   * 6. 提示成效閉環 — 記錄看到哪層後答對
+   * ============================================================ */
+  var _tracking = null;
+
+  function _loadTracking(){
+    if (_tracking) return _tracking;
+    try {
+      _tracking = JSON.parse(localStorage.getItem(TRACK_KEY) || '{}');
+    } catch(e){
+      _tracking = {};
+    }
+    return _tracking;
+  }
+
+  function _saveTracking(){
+    if (!_tracking) return;
+    try {
+      /* Keep size bounded: only last 500 entries */
+      var keys = Object.keys(_tracking);
+      if (keys.length > 500){
+        var sorted = keys.map(function(k){ return { k:k, ts:_tracking[k].ts||0 }; })
+                         .sort(function(a,b){ return a.ts - b.ts; });
+        for (var i = 0; i < sorted.length - 500; i++){
+          delete _tracking[sorted[i].k];
+        }
+      }
+      localStorage.setItem(TRACK_KEY, JSON.stringify(_tracking));
+    } catch(e){}
+  }
+
+  /**
+   * recordHintUsage(questionId, maxHintLevel, isCorrect)
+   * Call after student submits answer.
+   */
+  function recordHintUsage(questionId, maxHintLevel, isCorrect){
+    var data = _loadTracking();
+    var id = String(questionId || 'unknown');
+    if (!data[id]) data[id] = { attempts: 0, correctAfterHint: {}, totalHint: {} };
+    var rec = data[id];
+    rec.attempts = (rec.attempts || 0) + 1;
+    rec.ts = Date.now();
+    var lvKey = 'L' + Math.max(0, Math.min(3, Number(maxHintLevel) || 0));
+    rec.totalHint[lvKey] = (rec.totalHint[lvKey] || 0) + 1;
+    if (isCorrect){
+      rec.correctAfterHint[lvKey] = (rec.correctAfterHint[lvKey] || 0) + 1;
+    }
+    _saveTracking();
+  }
+
+  /**
+   * getHintEffectivenessReport()
+   * Returns { highDependency: [...], summary: {...} }
+   */
+  function getHintEffectivenessReport(){
+    var data = _loadTracking();
+    var items = [];
+    for (var id in data){
+      if (!data.hasOwnProperty(id)) continue;
+      var rec = data[id];
+      var total = rec.attempts || 0;
+      var correctL0 = (rec.correctAfterHint && rec.correctAfterHint.L0) || 0;
+      var correctL1 = (rec.correctAfterHint && rec.correctAfterHint.L1) || 0;
+      var correctL2 = (rec.correctAfterHint && rec.correctAfterHint.L2) || 0;
+      var correctL3 = (rec.correctAfterHint && rec.correctAfterHint.L3) || 0;
+      var hintNeeded = total - correctL0; /* attempts that needed at least L1 */
+      var dependency = total > 0 ? (hintNeeded / total) : 0;
+      items.push({
+        id: id,
+        total: total,
+        correctNoHint: correctL0,
+        correctL1: correctL1,
+        correctL2: correctL2,
+        correctL3: correctL3,
+        dependencyRatio: Math.round(dependency * 100)
+      });
+    }
+    items.sort(function(a,b){ return b.dependencyRatio - a.dependencyRatio; });
+    var highDep = items.filter(function(it){ return it.dependencyRatio >= 70 && it.total >= 2; });
+    return {
+      highDependency: highDep.slice(0, 20),
+      totalTracked: items.length,
+      summary: {
+        avgDependency: items.length ? Math.round(items.reduce(function(s,i){ return s + i.dependencyRatio; },0) / items.length) : 0
+      }
+    };
+  }
+
+  /* ============================================================
+   * Public API — processHint()
+   * ============================================================
+   * Main entry point. Takes raw hint text + question + level.
+   * Returns enhanced hint string ready for display.
+   */
+  function processHint(rawHint, q, level){
+    if (!isEnabled()) return rawHint;
+    var lv = Math.max(1, Math.min(3, Number(level) || 1));
+    var text = String(rawHint || '');
+
+    /* If raw hint is empty/boilerplate, use template */
+    if (!text.trim() || isBoilerplate(text)){
+      text = getTemplatedHint(q, lv);
+    }
+
+    /* L3 anti-leak gate */
+    if (lv === 3 && q){
+      text = enforceL3Gate(text, q);
+    }
+
+    /* Format with tier decoration */
+    text = formatHintWithTier(text, lv, q);
+
+    return text;
+  }
+
+  function isBoilerplate(text){
+    var t = String(text || '');
+    return /請依前面步驟完成計算|最後請自行寫出答案|^[\s（）()]*$/.test(t);
+  }
+
+  /* ============================================================
+   * Auto-integration: DOM hooks for hint enhancement + tracking
+   * ============================================================ */
+  var _currentQ = null;  /* set by page via setCurrentQuestion() */
+  var _maxHintLv = 0;
+  var _moduleId = '';
+  var _observer = null;
+
+  function setCurrentQuestion(q){
+    _currentQ = q || null;
+    _maxHintLv = 0;
+  }
+
+  /** Post-process a hint DOM node: add tier label, base-switch, L3 gate */
+  function enhanceHintNode(node){
+    if (!node || node.dataset.heProcessed) return;
+    node.dataset.heProcessed = '1';
+    var text = node.textContent || '';
+    if (!text.trim()) return;
+
+    var q = _currentQ;
+    /* Detect hint level from node dataset, class, or text prefix */
+    var lv = 0;
+    if (node.dataset.level) lv = Number(node.dataset.level);
+    else {
+      var m = text.match(/(?:Level|提示|Hint)\s*(\d)/i);
+      if (m) lv = Number(m[1]);
+      else {
+        /* Infer from content stage: 觀念=1, 列式=2, 步驟/檢查=3 */
+        if (/觀念|重點|先想/.test(text)) lv = 1;
+        else if (/列式|做法|算式/.test(text)) lv = 2;
+        else if (/步驟|完成計算|檢查|收尾/.test(text)) lv = 3;
+        else lv = 1;
+      }
+    }
+    if (lv > 0) _maxHintLv = Math.max(_maxHintLv, lv);
+
+    /* --- L3 anti-leak gate --- */
+    if (lv >= 3 && q){
+      var cleaned = enforceL3Gate(text, q);
+      if (cleaned !== text){
+        node.textContent = cleaned;
+        text = cleaned;
+      }
+    }
+
+    /* --- Add tier visual badge --- */
+    var tier = getHintTier(lv);
+    var badge = document.createElement('span');
+    badge.style.cssText = 'display:inline-block;font-size:11px;padding:1px 6px;border-radius:4px;margin-right:6px;font-weight:700;' +
+      (lv === 1 ? 'background:rgba(88,166,255,.15);color:#58a6ff' :
+       lv === 2 ? 'background:rgba(63,185,80,.15);color:#3fb950' :
+                  'background:rgba(210,153,34,.15);color:#d29922');
+    badge.textContent = tier.icon + ' ' + tier.label;
+    if (!node.querySelector('.he-badge')){
+      badge.className = 'he-badge';
+      node.insertBefore(badge, node.firstChild);
+    }
+
+    /* --- Base switch warning injection --- */
+    if (q && needsBaseSwitchWarning(q.question)){
+      var existing = node.textContent || '';
+      if (existing.indexOf('基準切換') === -1 && existing.indexOf('基準量切換') === -1){
+        var warn = document.createElement('div');
+        warn.className = 'he-base-switch';
+        warn.textContent = getBaseSwitchReminder(q.question);
+        node.appendChild(warn);
+      }
+    }
+
+    /* --- L2 visual cue --- */
+    if (lv === 2 && q){
+      var family = getFamily(q.kind);
+      var vizCue = '';
+      if (family === 'fracWord' || family === 'fracRemain') vizCue = '🟦 想像把全體量切成條狀，用不同顏色標出每一部分。';
+      else if (family === 'fracAdd') vizCue = '🟦 想像兩個分數條排在一起比較長短。';
+      else if (family === 'volume') vizCue = '🟦 想像堆積木：底面排好再一層一層往上疊。';
+      else if (family === 'percent') vizCue = '🟦 想像 100 格方格紙，塗滿百分比對應的格數。';
+      else if (family === 'decimal') vizCue = '🟦 想像數線，先找整數位置再細分小數格。';
+      if (vizCue && (node.textContent || '').indexOf(vizCue) === -1){
+        var cueDiv = document.createElement('div');
+        cueDiv.style.cssText = 'font-size:12px;opacity:.85;margin-top:4px';
+        cueDiv.textContent = vizCue;
+        node.appendChild(cueDiv);
+      }
+    }
+
+    /* --- L3 algebraic framing --- */
+    if (lv === 3){
+      var algDiv = document.createElement('div');
+      algDiv.style.cssText = 'font-size:12px;color:#d29922;margin-top:4px';
+      algDiv.textContent = '📝 用算式一步步寫出中間值，最後自行完成計算。';
+      if ((node.textContent || '').indexOf('自行完成計算') === -1){
+        node.appendChild(algDiv);
+      }
+    }
+  }
+
+  /** Observe #hints container for new hint nodes */
+  function observeHints(){
+    var containers = document.querySelectorAll('#hints, #hintBox, .hints');
+    if (!containers.length) return;
+
+    if (_observer) _observer.disconnect();
+    _observer = new MutationObserver(function(mutations){
+      for (var i = 0; i < mutations.length; i++){
+        var mut = mutations[i];
+        for (var j = 0; j < mut.addedNodes.length; j++){
+          var n = mut.addedNodes[j];
+          if (n.nodeType === 1 && (n.classList.contains('hint') || n.classList.contains('hint-ladder-card'))){
+            enhanceHintNode(n);
+          }
+          /* Also check child .hint elements */
+          if (n.nodeType === 1 && n.querySelectorAll){
+            var kids = n.querySelectorAll('.hint, .hint-ladder-card');
+            for (var k = 0; k < kids.length; k++) enhanceHintNode(kids[k]);
+          }
+        }
+        /* Text content change on #hintBox */
+        if (mut.type === 'characterData' || (mut.type === 'childList' && mut.target.id === 'hintBox')){
+          enhanceHintNode(mut.target);
+        }
+      }
+    });
+
+    for (var c = 0; c < containers.length; c++){
+      _observer.observe(containers[c], { childList: true, subtree: true, characterData: true });
+    }
+  }
+
+  /** Hook btnCheck for answer tracking + wrong-answer diagnosis */
+  function hookAnswerCheck(){
+    var btnCheck = document.getElementById('btnCheck') || document.getElementById('btnSubmit');
+    if (!btnCheck || btnCheck.dataset.heHooked) return;
+    btnCheck.dataset.heHooked = '1';
+
+    btnCheck.addEventListener('click', function(){
+      setTimeout(function(){
+        var q = _currentQ;
+        if (!q) return;
+
+        var banner = document.getElementById('banner');
+        var bannerText = (banner && banner.textContent) || '';
+        var isCorrect = banner && (/\bgood\b/.test(banner.className) || /正確|答對|✓/.test(bannerText));
+        var isBad = banner && (/\bbad\b/.test(banner.className) || /再想想|不對|錯誤/.test(bannerText));
+
+        /* Track hint effectiveness */
+        recordHintUsage(q.id, _maxHintLv, !!isCorrect);
+
+        /* Wrong-answer diagnosis */
+        if (isBad){
+          var ansInput = document.getElementById('answer') || document.getElementById('ans') || document.getElementById('gAnswer');
+          var wrongAns = ansInput ? ansInput.value : '';
+          var diagnosis = diagnoseWrongAnswer(q, wrongAns);
+          if (diagnosis && diagnosis.length > 0){
+            showDiagnosisUI(diagnosis);
+          }
+        }
+      }, 200); /* Wait for page's own check handler to set banner */
+    }, true); /* Capture phase to run after native handler */
+  }
+
+  function showDiagnosisUI(diagList){
+    /* Remove previous diagnosis */
+    var old = document.getElementById('heDiagnosis');
+    if (old) old.remove();
+
+    var container = document.getElementById('hints') || document.getElementById('banner');
+    if (!container || !container.parentElement) return;
+
+    var wrap = document.createElement('div');
+    wrap.id = 'heDiagnosis';
+    wrap.className = 'he-diag';
+    var title = document.createElement('div');
+    title.className = 'he-diag-tag';
+    title.textContent = '🔎 錯因診斷';
+    wrap.appendChild(title);
+
+    for (var i = 0; i < Math.min(diagList.length, 3); i++){
+      var d = diagList[i];
+      var item = document.createElement('div');
+      item.className = 'he-diag-remedy';
+      item.textContent = '• ' + d.remedy;
+      wrap.appendChild(item);
+    }
+
+    container.parentElement.insertBefore(wrap, container.nextSibling);
+  }
+
+  /** Hook boilerplate hint replacement: intercept before render */
+  function hookHintButtons(){
+    /* For pages with #hintLevel dropdown + #btnHint button */
+    var btnHint = document.getElementById('btnHint');
+    if (btnHint && !btnHint.dataset.heHooked){
+      btnHint.dataset.heHooked = '1';
+      btnHint.addEventListener('click', function(){
+        var sel = document.getElementById('hintLevel');
+        var lv = sel ? Number(sel.value) : 1;
+        _maxHintLv = Math.max(_maxHintLv, lv);
+      }, true);
+    }
+
+    /* For pages with #btnHint1, #btnHint2, #btnHint3 */
+    for (var i = 1; i <= 4; i++){
+      (function(level){
+        var btn = document.getElementById('btnHint' + level);
+        if (btn && !btn.dataset.heHooked){
+          btn.dataset.heHooked = '1';
+          btn.addEventListener('click', function(){
+            _maxHintLv = Math.max(_maxHintLv, level);
+          }, true);
+        }
+      })(i);
+    }
+  }
+
+  /* ============================================================
+   * init() — auto-inject styles + auto-hook DOM
+   * ============================================================ */
+  function injectStyle(){
+    if (document.getElementById('hintEngineStyle')) return;
+    var st = document.createElement('style');
+    st.id = 'hintEngineStyle';
+    st.textContent = [
+      '.he-base-switch{color:#ffe3b0;font-weight:700;border-left:3px solid #f0b429;padding-left:6px;margin:4px 0;font-size:12px}',
+      '.he-badge{display:inline-block;font-size:11px;padding:1px 6px;border-radius:4px;margin-right:6px;font-weight:700}',
+      '.he-diag{margin-top:8px;border:1px solid rgba(248,81,73,.35);border-radius:8px;padding:8px;background:rgba(248,81,73,.06)}',
+      '.he-diag-tag{font-weight:800;color:#ffd2cf}',
+      '.he-diag-remedy{margin-top:4px;color:#c9d1d9;font-size:13px}',
+      '.he-report{margin-top:10px;font-size:12px;border:1px solid rgba(88,166,255,.25);border-radius:8px;padding:8px;background:rgba(88,166,255,.05)}'
+    ].join('');
+    document.head.appendChild(st);
+  }
+
+  function init(config){
+    if (!isEnabled()) return;
+    config = config || {};
+    _moduleId = config.moduleId || '';
+    injectStyle();
+    _loadTracking();
+    /* Auto-hook after a short delay to let page init complete */
+    setTimeout(function(){
+      observeHints();
+      hookAnswerCheck();
+      hookHintButtons();
+    }, 300);
+  }
+
+  /* Expose */
+  window.AIMathHintEngine = {
+    init: init,
+    isEnabled: isEnabled,
+    enable: function(){ localStorage.setItem(ENABLE_KEY, '1'); },
+    disable: function(){ localStorage.setItem(ENABLE_KEY, '0'); },
+
+    /* Core */
+    processHint: processHint,
+    getTemplatedHint: getTemplatedHint,
+    getFamily: getFamily,
+    getHintTier: getHintTier,
+    formatHintWithTier: formatHintWithTier,
+
+    /* L3 gate */
+    enforceL3Gate: enforceL3Gate,
+    stripAnswerFromHint: stripAnswerFromHint,
+
+    /* Base switch */
+    needsBaseSwitchWarning: needsBaseSwitchWarning,
+    getBaseSwitchReminder: getBaseSwitchReminder,
+
+    /* Error diagnosis */
+    diagnoseWrongAnswer: diagnoseWrongAnswer,
+
+    /* Tracking */
+    recordHintUsage: recordHintUsage,
+    getHintEffectivenessReport: getHintEffectivenessReport,
+
+    /* Page integration */
+    setCurrentQuestion: setCurrentQuestion
+  };
+
+})();

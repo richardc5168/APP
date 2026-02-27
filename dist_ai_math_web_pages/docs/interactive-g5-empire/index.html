@@ -838,6 +838,7 @@
 
   <script src="./bank.js"></script>
   <script src="../shared/ux_enhancer.js"></script>
+  <script src="../shared/hint_engine.js"></script>
   <script>
     // ---------- tabs ----------
     const tabGame = document.getElementById('tabGame');
@@ -1970,6 +1971,7 @@
 
     function showQuestion(q){
       state.q = q;
+      window.AIMathHintEngine?.setCurrentQuestion(q);
       state.revealed = false;
       state.hintUsed = 0;
       state.shownHintLevels = {1:false,2:false,3:false};
@@ -3775,6 +3777,7 @@
       nextModulePath: '../interactive-g5-life-pack1-empire/',
       nextModuleLabel: '生活應用帝國（第一包）'
     });
+    window.AIMathHintEngine?.init({ moduleId: 'interactive-g5-empire' });
   </script>
 </body>
 </html>

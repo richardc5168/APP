@@ -184,6 +184,7 @@
 <script src="../shared/coach_event_log.js"></script>
 <script src="../shared/attempt_telemetry.js"></script>
 <script src="../shared/ux_enhancer.js"></script>
+<script src="../shared/hint_engine.js"></script>
 <script>
   const BANK_GLOBAL = 'EXAM_SPRINT_BANK';
   const LS_KEY = 'examSprint.v1';
@@ -1128,6 +1129,7 @@
       return;
     }
     state.q = q;
+    window.AIMathHintEngine?.setCurrentQuestion(q);
     state.lastPick = { topic: q.topic || '未分類', kind: q.kind || '', diff: q.difficulty || '', text: q.question || '' };
     startAttempt();
     state.maxHint = 0;
@@ -1521,6 +1523,7 @@
         const q = bank.find(x => String(x.id) === String(id));
         if (q){
           state.q = q;
+          window.AIMathHintEngine?.setCurrentQuestion(q);
           state.startedAt = nowMs();
           state.maxHint = 0;
           state.showedSteps = false;
@@ -1659,6 +1662,7 @@
     nextModulePath: '../interactive-g5-empire/',
     nextModuleLabel: '互動小五數學帝國'
   });
+  window.AIMathHintEngine?.init({ moduleId: 'exam-sprint' });
 </script>
 </body>
 </html>
