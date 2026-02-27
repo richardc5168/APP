@@ -179,7 +179,7 @@
   /* volume */
   ['rect_cm3','composite','composite3','rect_find_height','cube_find_edge','cm3_to_m3','m3_to_cm3','surface_area_rect_prism','area_tiling','decimal_dims','mixed_units','volume_rect_prism','u8_area_perimeter','base_area_h','volume_fill','perimeter_fence','cube_cm3','area_trapezoid','surface_area_contact_removed','area_congruent_tile','volume_calculation','ha_to_m2','km2_to_ha','are_to_m2','cm3_to_ml','area_triangle','surface_area_cube','area_parallelogram','area_difference'].forEach(function(k){ KIND_TO_FAMILY[k] = 'volume'; });
   /* average */
-  ['shopping_two_step','general','u1_average','temperature_change','u7_speed','make_change','u3_money','buy_many','displacement','proportional_split','table_stats'].forEach(function(k){ KIND_TO_FAMILY[k] = 'average'; });
+  ['shopping_two_step','general','u1_average','temperature_change','u7_speed','make_change','u3_money','buy_many','displacement','proportional_split','table_stats','u10_multi_step','multi_step'].forEach(function(k){ KIND_TO_FAMILY[k] = 'average'; });
 
   function getFamily(kind){
     return KIND_TO_FAMILY[String(kind || '')] || 'generic';
@@ -916,6 +916,75 @@
    * Useful for multiplication (including fraction multiplication).
    * opts.partitions: [{ label, fraction, color }] — vertical partitions of the rectangle
    */
+  /**
+   * buildTapeModelSVG(segments, opts)
+   * A tape (number strip) diagram showing sequential segments.
+   * segments: [{ label, fraction?, value?, color? }]
+   * Total of all fractions should sum to 1 (whole).
+   * Great for part-part-whole decomposition.
+   */
+  function buildTapeModelSVG(segments, opts){
+    opts = opts || {};
+    if (!segments || segments.length === 0) return '';
+    var W = opts.width || 300;
+    var tapeH = 36;
+    var pad = 8;
+    var H = tapeH + 44;
+    var defColors = ['#ef4444','#f97316','#3b82f6','#22c55e','#8b5cf6','#ec4899'];
+
+    /* Calculate total to normalize */
+    var totalFrac = 0;
+    for (var i = 0; i < segments.length; i++){
+      totalFrac += segments[i].fraction || (1 / segments.length);
+    }
+    if (totalFrac === 0) totalFrac = 1;
+
+    var ariaFragments = segments.map(function(s){ return s.label || ''; });
+    var ariaLabel = 'Tape model: ' + ariaFragments.join(', ');
+    var svg = '<svg width="'+W+'" height="'+H+'" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="'+escapeHTML(ariaLabel)+'" style="display:block;margin:6px auto">';
+
+    /* Background tape */
+    svg += '<rect x="'+pad+'" y="'+pad+'" width="'+(W - pad*2)+'" height="'+tapeH+'" fill="#374151" stroke="#6b7280" stroke-width="1" rx="4"/>';
+
+    /* Draw segments */
+    var x = pad;
+    var tapeW = W - pad * 2;
+    for (var j = 0; j < segments.length; j++){
+      var seg = segments[j];
+      var frac = (seg.fraction || (1 / segments.length)) / totalFrac;
+      var sw = Math.round(frac * tapeW);
+      var color = seg.color || defColors[j % defColors.length];
+
+      /* Segment fill */
+      svg += '<rect x="'+x+'" y="'+pad+'" width="'+sw+'" height="'+tapeH+'" fill="'+color+'" opacity="0.5" rx="'+(j===0?4:0)+'" />';
+
+      /* Segment border */
+      if (j > 0){
+        svg += '<line x1="'+x+'" y1="'+pad+'" x2="'+x+'" y2="'+(pad+tapeH)+'" stroke="#e5e7eb" stroke-width="1.5"/>';
+      }
+
+      /* Label inside segment */
+      var labelText = seg.label || '';
+      if (sw > 30){
+        svg += '<text x="'+(x + sw/2)+'" y="'+(pad + tapeH/2)+'" text-anchor="middle" dy=".35em" fill="#e5e7eb" font-size="9" font-weight="700">'+escapeHTML(labelText)+'</text>';
+      }
+
+      /* Value below segment */
+      if (seg.value !== undefined){
+        svg += '<text x="'+(x + sw/2)+'" y="'+(pad + tapeH + 14)+'" text-anchor="middle" fill="'+color+'" font-size="9" font-weight="700">'+escapeHTML(String(seg.value))+'</text>';
+      }
+
+      x += sw;
+    }
+
+    /* Total bracket below */
+    svg += '<line x1="'+pad+'" y1="'+(pad+tapeH+22)+'" x2="'+(W-pad)+'" y2="'+(pad+tapeH+22)+'" stroke="#9ca3af" stroke-width="1"/>';
+    svg += '<text x="'+(W/2)+'" y="'+(pad+tapeH+36)+'" text-anchor="middle" fill="#9ca3af" font-size="10">全部</text>';
+
+    svg += '</svg>';
+    return svg;
+  }
+
   function buildAreaModelSVG(length, width, opts){
     opts = opts || {};
     var l = (length !== undefined && length !== null) ? Number(length) : 0;
@@ -1409,12 +1478,12 @@
         var fa4a = fracs[0], fa4b = fracs[1];
         var cd4 = lcm(fa4a.den, fa4b.den) || fa4a.den * fa4b.den;
         html += '<div class="he-formula">';
-        html += '通分 → 分母 = '+cd4+'<br>';
-        html += escapeHTML(fa4a.num+'/'+fa4a.den)+' = '+(fa4a.num*(cd4/fa4a.den))+'/'+cd4+'<br>';
-        html += escapeHTML(fa4b.num+'/'+fa4b.den)+' = '+(fa4b.num*(cd4/fa4b.den))+'/'+cd4+'<br>';
+        html += '<div class="he-step-row">步驟① 通分：分母 = '+cd4+'</div>';
+        html += '<div class="he-step-row">'+escapeHTML(fa4a.num+'/'+fa4a.den)+' = <span class="he-placeholder">□</span>/'+cd4+'</div>';
+        html += '<div class="he-step-row">'+escapeHTML(fa4b.num+'/'+fa4b.den)+' = <span class="he-placeholder">□</span>/'+cd4+'</div>';
         var isAdd = !/減|差|少|扣/.test(text);
-        html += '分子 '+(isAdd?'加':'減')+'：'+(fa4a.num*(cd4/fa4a.den))+' '+(isAdd?'+':'−')+' '+(fa4b.num*(cd4/fa4b.den))+' = ？<br>';
-        html += '最後約分到最簡 → ？';
+        html += '<div class="he-step-row">步驟② 分子 '+(isAdd?'加':'減')+'：<span class="he-placeholder">□</span> '+(isAdd?'+':'−')+' <span class="he-placeholder">□</span> = <span class="he-placeholder">□</span></div>';
+        html += '<div class="he-step-row">步驟③ 約分到最簡 → <span class="he-placeholder">□</span>/<span class="he-placeholder">□</span></div>';
         html += '</div>';
         html += '<div class="he-check-ok">✅ '+(isAdd?'加的結果 ≥ 兩個分數中較大的':'減的結果 ≤ 被減數')+'</div>';
       } else if (family === 'percent'){
@@ -2402,6 +2471,7 @@
     buildFractionCircleSVG: buildFractionCircleSVG,
     buildTreeDiagramSVG: buildTreeDiagramSVG,
     buildAreaModelSVG: buildAreaModelSVG,
+    buildTapeModelSVG: buildTapeModelSVG,
     highlightKeywords: highlightKeywords,
 
     /* L4 gate */

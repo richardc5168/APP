@@ -757,3 +757,51 @@ test('suggestHintLevel — returns L2 when prior misconception exists', () => {
   assert.equal(suggestion.level, 2);
   assert.ok(suggestion.reason.includes('direction_error'), 'Should mention the misconception');
 });
+
+/* ============================================================
+ * 27. buildTapeModelSVG
+ * ============================================================ */
+test('buildTapeModelSVG — renders tape with segments', () => {
+  const svg = HE.buildTapeModelSVG([
+    { label: '吃掉', fraction: 0.3, color: '#ef4444' },
+    { label: '剩下', fraction: 0.7, color: '#3b82f6' }
+  ]);
+  assert.ok(svg.includes('<svg'), 'Should render SVG');
+  assert.ok(svg.includes('role="img"'), 'Should have ARIA role');
+  assert.ok(svg.includes('Tape model'), 'Should have tape model aria-label');
+  assert.ok(svg.includes('吃掉'), 'Should show first segment label');
+  assert.ok(svg.includes('剩下'), 'Should show second segment label');
+  assert.ok(svg.includes('全部'), 'Should show total bracket');
+});
+
+test('buildTapeModelSVG — returns empty for empty input', () => {
+  assert.equal(HE.buildTapeModelSVG([]), '');
+  assert.equal(HE.buildTapeModelSVG(null), '');
+});
+
+test('buildTapeModelSVG — with values below segments', () => {
+  const svg = HE.buildTapeModelSVG([
+    { label: 'A', fraction: 0.5, value: '120' },
+    { label: 'B', fraction: 0.5, value: '120' }
+  ]);
+  assert.ok(svg.includes('120'), 'Should show value below segment');
+});
+
+/* ============================================================
+ * 28. fracAdd L4 placeholder boxes
+ * ============================================================ */
+test('fracAdd L4 includes placeholder boxes', () => {
+  const q = { kind: 'fraction_addsub', question: '算 1/3 + 1/4', answer: '7/12' };
+  const html = HE.buildRichHintHTML(q, 4);
+  assert.ok(html.includes('he-placeholder'), 'L4 should have placeholder boxes');
+  assert.ok(html.includes('步驟①'), 'L4 should show step 1 (通分)');
+  assert.ok(html.includes('步驟②'), 'L4 should show step 2 (分子加)');
+  assert.ok(html.includes('步驟③'), 'L4 should show step 3 (約分)');
+});
+
+/* ============================================================
+ * 29. u10_multi_step now maps to average
+ * ============================================================ */
+test('u10_multi_step maps to average family', () => {
+  assert.equal(HE.getFamily('u10_multi_step'), 'average');
+});

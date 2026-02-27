@@ -1478,12 +1478,12 @@
         var fa4a = fracs[0], fa4b = fracs[1];
         var cd4 = lcm(fa4a.den, fa4b.den) || fa4a.den * fa4b.den;
         html += '<div class="he-formula">';
-        html += '通分 → 分母 = '+cd4+'<br>';
-        html += escapeHTML(fa4a.num+'/'+fa4a.den)+' = '+(fa4a.num*(cd4/fa4a.den))+'/'+cd4+'<br>';
-        html += escapeHTML(fa4b.num+'/'+fa4b.den)+' = '+(fa4b.num*(cd4/fa4b.den))+'/'+cd4+'<br>';
+        html += '<div class="he-step-row">步驟① 通分：分母 = '+cd4+'</div>';
+        html += '<div class="he-step-row">'+escapeHTML(fa4a.num+'/'+fa4a.den)+' = <span class="he-placeholder">□</span>/'+cd4+'</div>';
+        html += '<div class="he-step-row">'+escapeHTML(fa4b.num+'/'+fa4b.den)+' = <span class="he-placeholder">□</span>/'+cd4+'</div>';
         var isAdd = !/減|差|少|扣/.test(text);
-        html += '分子 '+(isAdd?'加':'減')+'：'+(fa4a.num*(cd4/fa4a.den))+' '+(isAdd?'+':'−')+' '+(fa4b.num*(cd4/fa4b.den))+' = ？<br>';
-        html += '最後約分到最簡 → ？';
+        html += '<div class="he-step-row">步驟② 分子 '+(isAdd?'加':'減')+'：<span class="he-placeholder">□</span> '+(isAdd?'+':'−')+' <span class="he-placeholder">□</span> = <span class="he-placeholder">□</span></div>';
+        html += '<div class="he-step-row">步驟③ 約分到最簡 → <span class="he-placeholder">□</span>/<span class="he-placeholder">□</span></div>';
         html += '</div>';
         html += '<div class="he-check-ok">✅ '+(isAdd?'加的結果 ≥ 兩個分數中較大的':'減的結果 ≤ 被減數')+'</div>';
       } else if (family === 'percent'){
@@ -2471,6 +2471,7 @@
     buildFractionCircleSVG: buildFractionCircleSVG,
     buildTreeDiagramSVG: buildTreeDiagramSVG,
     buildAreaModelSVG: buildAreaModelSVG,
+    buildTapeModelSVG: buildTapeModelSVG,
     highlightKeywords: highlightKeywords,
 
     /* L4 gate */
