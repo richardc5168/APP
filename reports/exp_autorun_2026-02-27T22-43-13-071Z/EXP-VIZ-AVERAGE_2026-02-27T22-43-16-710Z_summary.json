@@ -1,0 +1,34 @@
+{
+  "exp_id": "EXP-VIZ-AVERAGE_2026-02-27T22-43-16-710Z",
+  "roundStart": "2026-02-27T22:43:16.712Z",
+  "roundEnd": "2026-02-27T22:43:16.713Z",
+  "kpis": {},
+  "comparisons": [
+    {
+      "exp_id": "EXP-VIZ-AVERAGE_2026-02-27T22-43-16-710Z",
+      "baseline": "A_leveling_bar",
+      "arm": "B_bar_first",
+      "metric": "step_success_rate",
+      "baseline_rate": null,
+      "arm_rate": null,
+      "delta": 0,
+      "z": null,
+      "p": null,
+      "bayes_prob_arm_gt_base": 0.5066,
+      "p_bh": 1
+    },
+    {
+      "exp_id": "EXP-VIZ-AVERAGE_2026-02-27T22-43-16-710Z",
+      "baseline": "A_leveling_bar",
+      "arm": "C_dotplot",
+      "metric": "step_success_rate",
+      "baseline_rate": null,
+      "arm_rate": null,
+      "delta": 0,
+      "z": null,
+      "p": null,
+      "bayes_prob_arm_gt_base": 0.5011,
+      "p_bh": 1
+    }
+  ]
+}

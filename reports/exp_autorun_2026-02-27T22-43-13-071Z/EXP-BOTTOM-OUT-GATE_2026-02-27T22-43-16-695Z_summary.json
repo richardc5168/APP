@@ -1,0 +1,34 @@
+{
+  "exp_id": "EXP-BOTTOM-OUT-GATE_2026-02-27T22-43-16-695Z",
+  "roundStart": "2026-02-27T22:43:16.697Z",
+  "roundEnd": "2026-02-27T22:43:16.698Z",
+  "kpis": {},
+  "comparisons": [
+    {
+      "exp_id": "EXP-BOTTOM-OUT-GATE_2026-02-27T22-43-16-695Z",
+      "baseline": "A_direct",
+      "arm": "B_self_explain",
+      "metric": "step_success_rate",
+      "baseline_rate": null,
+      "arm_rate": null,
+      "delta": 0,
+      "z": null,
+      "p": null,
+      "bayes_prob_arm_gt_base": 0.5041,
+      "p_bh": 1
+    },
+    {
+      "exp_id": "EXP-BOTTOM-OUT-GATE_2026-02-27T22-43-16-695Z",
+      "baseline": "A_direct",
+      "arm": "C_force_step",
+      "metric": "step_success_rate",
+      "baseline_rate": null,
+      "arm_rate": null,
+      "delta": 0,
+      "z": null,
+      "p": null,
+      "bayes_prob_arm_gt_base": 0.4983,
+      "p_bh": 1
+    }
+  ]
+}

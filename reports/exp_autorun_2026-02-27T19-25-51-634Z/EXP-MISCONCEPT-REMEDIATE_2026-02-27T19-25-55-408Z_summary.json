@@ -1,0 +1,21 @@
+{
+  "exp_id": "EXP-MISCONCEPT-REMEDIATE_2026-02-27T19-25-55-408Z",
+  "roundStart": "2026-02-27T19:25:55.409Z",
+  "roundEnd": "2026-02-27T19:25:55.409Z",
+  "kpis": {},
+  "comparisons": [
+    {
+      "exp_id": "EXP-MISCONCEPT-REMEDIATE_2026-02-27T19-25-55-408Z",
+      "baseline": "A_detect_only",
+      "arm": "B_remediate",
+      "metric": "step_success_rate",
+      "baseline_rate": null,
+      "arm_rate": null,
+      "delta": 0,
+      "z": null,
+      "p": null,
+      "bayes_prob_arm_gt_base": 0.495,
+      "p_bh": 1
+    }
+  ]
+}

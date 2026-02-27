@@ -1,0 +1,8 @@
+{
+  "run_id": "exp_autorun_2026-02-27T22-43-13-071Z",
+  "started_at": "2026-02-27T22:43:13.075Z",
+  "max_runtime_min": 480,
+  "guard_max_error_rate": 0.02,
+  "guard_max_p95_latency_ms": 1200,
+  "offline_mode": true
+}

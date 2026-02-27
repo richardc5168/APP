@@ -1,0 +1,7 @@
+{"type":"step_attempt","ts":"2026-02-28T00:00:00Z","user_id":"u1","session_id":"s1","arm":"A_baseline","correct":true,"latency_ms":320}
+{"type":"hint_requested","ts":"2026-02-28T00:00:02Z","user_id":"u1","session_id":"s1","arm":"A_baseline","hint_level":2,"latency_ms":280}
+{"type":"step_attempt","ts":"2026-02-28T00:00:04Z","user_id":"u1","session_id":"s1","arm":"A_baseline","correct":true,"latency_ms":310}
+{"type":"step_attempt","ts":"2026-02-28T00:00:00Z","user_id":"u2","session_id":"s2","arm":"B_threshold2","correct":false,"latency_ms":410}
+{"type":"hint_requested","ts":"2026-02-28T00:00:02Z","user_id":"u2","session_id":"s2","arm":"B_threshold2","hint_level":3,"latency_ms":390}
+{"type":"step_attempt","ts":"2026-02-28T00:00:04Z","user_id":"u2","session_id":"s2","arm":"B_threshold2","correct":true,"latency_ms":360}
+{"type":"svc_error","ts":"2026-02-28T00:00:05Z","user_id":"u2","session_id":"s2","arm":"B_threshold2","latency_ms":50}

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="160">
+  <polyline fill="none" stroke="#4C78A8" stroke-width="2" points="20.0,120.0 260.0,120.0 500.0,120.0"/>
+  <line x1="20" y1="130" x2="500" y2="130" stroke="#999"/>
+  <text x="20" y="150" font-size="12">t</text>
+</svg>
