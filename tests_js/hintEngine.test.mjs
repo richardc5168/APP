@@ -1036,3 +1036,69 @@ test('volume L2 has step-by-step narration for 3D', () => {
   assert.ok(html.includes('5'), 'L2 narration should show dimensions from question');
   assert.ok(html.includes('4'), 'L2 narration should show height');
 });
+
+/* ============================================================
+ * 47. fracAdd L3 — detailed tongfen narration
+ * ============================================================ */
+test('fracAdd L3 shows detailed tongfen narration with equivalent fractions', () => {
+  const q = { kind: 'fraction_addsub', question: '算 1/3 + 1/4', answer: '7/12' };
+  const html = HE.buildRichHintHTML(q, 3);
+  assert.ok(html.includes('通分後分母'), 'L3 should mention tongfen denominator');
+  assert.ok(html.includes('12'), 'L3 should show LCD = 12');
+  assert.ok(html.includes('4/12'), 'L3 should show 1/3 = 4/12');
+  assert.ok(html.includes('3/12'), 'L3 should show 1/4 = 3/12');
+  assert.ok(html.includes('加起來'), 'L3 should show add narration');
+});
+
+/* ============================================================
+ * 48. fracAdd L4 — shows actual equivalent fractions (intermediate)
+ * ============================================================ */
+test('fracAdd L4 shows actual equivalent fractions as intermediate values', () => {
+  const q = { kind: 'fraction_addsub', question: '算 1/3 + 1/4', answer: '7/12' };
+  const html = HE.buildRichHintHTML(q, 4);
+  assert.ok(html.includes('<strong>4/12</strong>'), 'L4 should show 1/3 = 4/12 as strong');
+  assert.ok(html.includes('<strong>3/12</strong>'), 'L4 should show 1/4 = 3/12 as strong');
+  assert.ok(html.includes('he-placeholder'), 'L4 should still have □ for final result');
+  assert.ok(html.includes('約分到最簡'), 'L4 should mention simplification step');
+});
+
+/* ============================================================
+ * 49. percent L4 — shows original quantity in formula
+ * ============================================================ */
+test('percent L4 shows original quantity in formula when available', () => {
+  const q = { kind: 'percent_of', question: '500 的 30% 是多少', answer: '150' };
+  const html = HE.buildRichHintHTML(q, 4);
+  assert.ok(html.includes('500'), 'L4 should show orig qty 500 in formula');
+  assert.ok(html.includes('<strong>30%</strong>'), 'L4 should bold the percentage');
+  assert.ok(html.includes('he-placeholder'), 'L4 should still have □ for final result');
+});
+
+/* ============================================================
+ * 50. volume L4 — shows actual base area as intermediate
+ * ============================================================ */
+test('volume L4 shows actual base area as intermediate value', () => {
+  const q = { kind: 'rect_cm3', question: '長 5 寬 3 高 4 公分的長方體體積', answer: '60' };
+  const html = HE.buildRichHintHTML(q, 4);
+  assert.ok(html.includes('<strong>15</strong>'), 'L4 should show base area 5×3=15 as strong');
+  assert.ok(html.includes('he-placeholder'), 'L4 should still have □ for final volume');
+});
+
+/* ============================================================
+ * 51. average L4 — shows actual sum as intermediate value
+ * ============================================================ */
+test('average L4 shows actual sum as intermediate value', () => {
+  const q = { kind: 'u1_average', question: '小明考了 85 90 75 分，平均幾分', answer: '83.3' };
+  const html = HE.buildRichHintHTML(q, 4);
+  assert.ok(html.includes('<strong>250</strong>'), 'L4 should show sum 85+90+75=250 as strong');
+  assert.ok(html.includes('he-placeholder'), 'L4 should still have □ for average result');
+});
+
+/* ============================================================
+ * 52. fracAdd L3 — auto 約分 detection for reducible result
+ * ============================================================ */
+test('fracAdd L3 shows 約分 when result is reducible', () => {
+  const q = { kind: 'fraction_addsub', question: '算 1/6 + 1/2', answer: '2/3' };
+  const html = HE.buildRichHintHTML(q, 3);
+  assert.ok(html.includes('約分'), 'L3 should mention 約分 for 4/6 → 2/3');
+  assert.ok(html.includes('2/3'), 'L3 should show reduced fraction 2/3');
+});

@@ -1,5 +1,5 @@
 /**
- * hint_engine.js — 全站提示優化引擎 v2.13
+ * hint_engine.js — 全站提示優化引擎 v2.17
  *
  * 四級視覺鷹架系統：
  *  L1 觀念鎖定 — 圈重點、辨題型、基準切換警示
@@ -1694,25 +1694,45 @@
       } else if (family === 'fracAdd' && fracs.length >= 2){
         var fa4a = fracs[0], fa4b = fracs[1];
         var cd4 = lcm(fa4a.den, fa4b.den) || fa4a.den * fa4b.den;
-        html += '<div class="he-formula">';
-        html += '<div class="he-step-row">步驟① 通分：分母 = '+cd4+'</div>';
-        html += '<div class="he-step-row">'+escapeHTML(fa4a.num+'/'+fa4a.den)+' = <span class="he-placeholder">□</span>/'+cd4+'</div>';
-        html += '<div class="he-step-row">'+escapeHTML(fa4b.num+'/'+fa4b.den)+' = <span class="he-placeholder">□</span>/'+cd4+'</div>';
+        var eq4a = fa4a.num * (cd4 / fa4a.den);
+        var eq4b = fa4b.num * (cd4 / fa4b.den);
         var isAdd = !/減|差|少|扣/.test(text);
-        html += '<div class="he-step-row">步驟② 分子 '+(isAdd?'加':'減')+'：<span class="he-placeholder">□</span> '+(isAdd?'+':'−')+' <span class="he-placeholder">□</span> = <span class="he-placeholder">□</span></div>';
+        html += '<div class="he-formula">';
+        html += '<div class="he-step-row">步驟① 通分：分母 = <strong>' + cd4 + '</strong></div>';
+        html += '<div class="he-step-row">' + escapeHTML(fa4a.num + '/' + fa4a.den) + ' = <strong>' + eq4a + '/' + cd4 + '</strong></div>';
+        html += '<div class="he-step-row">' + escapeHTML(fa4b.num + '/' + fa4b.den) + ' = <strong>' + eq4b + '/' + cd4 + '</strong></div>';
+        html += '<div class="he-step-row">步驟② 分子 ' + (isAdd ? '加' : '減') + '：' + eq4a + ' ' + (isAdd ? '+' : '−') + ' ' + eq4b + ' = <span class="he-placeholder">□</span></div>';
         html += '<div class="he-step-row">步驟③ 約分到最簡 → <span class="he-placeholder">□</span>/<span class="he-placeholder">□</span></div>';
         html += '</div>';
-        html += '<div class="he-check-ok">✅ '+(isAdd?'加的結果 ≥ 兩個分數中較大的':'減的結果 ≤ 被減數')+'</div>';
+        html += '<div class="he-check-ok">✅ ' + (isAdd ? '加的結果 ≥ 兩個分數中較大的' : '減的結果 ≤ 被減數') + '</div>';
       } else if (family === 'percent'){
         var m3 = text.match(/(\d+)\s*[%％]/); var m3f = text.match(/(\d+)\s*折/);
+        /* Try to extract original quantity */
+        var origQty = 0;
+        if (ints.length > 0){
+          for (var oq = 0; oq < ints.length; oq++){
+            if (m3 && ints[oq] !== parseInt(m3[1],10)){ origQty = ints[oq]; break; }
+            if (m3f && ints[oq] !== parseInt(m3f[1],10)){ origQty = ints[oq]; break; }
+          }
+        }
         html += '<div class="he-formula">';
         if (m3){
-          html += '<div class="he-step-row">步驟① 寫出倍率：'+m3[1]+'% = '+m3[1]+'/100</div>';
-          html += '<div class="he-step-row">步驟② 列式：原量 × '+m3[1]+'/100 = <span class="he-placeholder">□</span></div>';
+          var pct4 = parseInt(m3[1],10);
+          html += '<div class="he-step-row">步驟① 寫出倍率：<strong>'+pct4+'%</strong> = <strong>'+pct4+'/100</strong></div>';
+          if (origQty > 0){
+            html += '<div class="he-step-row">步驟② 列式：'+origQty+' × '+pct4+'/100 = <span class="he-placeholder">□</span></div>';
+          } else {
+            html += '<div class="he-step-row">步驟② 列式：原量 × '+pct4+'/100 = <span class="he-placeholder">□</span></div>';
+          }
           html += '<div class="he-step-row">步驟③ 合理性檢查</div>';
         } else if (m3f){
-          html += '<div class="he-step-row">步驟① 寫出倍率：'+m3f[1]+'折 = '+m3f[1]+'/10 = 0.'+m3f[1]+'</div>';
-          html += '<div class="he-step-row">步驟② 列式：原價 × 0.'+m3f[1]+' = <span class="he-placeholder">□</span></div>';
+          var disc4 = parseInt(m3f[1],10);
+          html += '<div class="he-step-row">步驟① 寫出倍率：<strong>'+disc4+'折</strong> = <strong>'+disc4+'/10 = 0.'+disc4+'</strong></div>';
+          if (origQty > 0){
+            html += '<div class="he-step-row">步驟② 列式：'+origQty+' × 0.'+disc4+' = <span class="he-placeholder">□</span></div>';
+          } else {
+            html += '<div class="he-step-row">步驟② 列式：原價 × 0.'+disc4+' = <span class="he-placeholder">□</span></div>';
+          }
           html += '<div class="he-step-row">步驟③ 合理性檢查</div>';
         } else {
           html += '<div class="he-step-row">步驟① 找出百分率或折扣率</div>';
@@ -1766,8 +1786,9 @@
         var v4l = ints[0], v4w = ints[1], v4h = ints.length > 2 ? ints[2] : 0;
         html += '<div class="he-formula">';
         if (v4h > 0){
-          html += '<div class="he-step-row">步驟① 底面積 = '+v4l+' × '+v4w+' = <span class="he-placeholder">□</span></div>';
-          html += '<div class="he-step-row">步驟② 體積 = <span class="he-placeholder">□</span> × '+v4h+' = <span class="he-placeholder">□</span></div>';
+          var baseArea4 = v4l * v4w;
+          html += '<div class="he-step-row">步驟① 底面積 = '+v4l+' × '+v4w+' = <strong>'+baseArea4+'</strong></div>';
+          html += '<div class="he-step-row">步驟② 體積 = <strong>'+baseArea4+'</strong> × '+v4h+' = <span class="he-placeholder">□</span></div>';
           html += '<div class="he-step-row">步驟③ 寫上單位（立方公分 or 立方公尺）</div>';
         } else {
           html += '<div class="he-step-row">步驟① 面積 = '+v4l+' × '+v4w+' = <span class="he-placeholder">□</span></div>';
@@ -1779,8 +1800,8 @@
       } else if (family === 'average' && ints.length >= 2){
         var sum4 = ints.reduce(function(s,v){ return s+v; }, 0);
         html += '<div class="he-formula">';
-        html += '<div class="he-step-row">步驟① 加總：' + ints.join(' + ') + ' = <span class="he-placeholder">□</span></div>';
-        html += '<div class="he-step-row">步驟② 除以個數：<span class="he-placeholder">□</span> ÷ ' + ints.length + ' = <span class="he-placeholder">□</span></div>';
+        html += '<div class="he-step-row">步驟① 加總：' + ints.join(' + ') + ' = <strong>' + sum4 + '</strong></div>';
+        html += '<div class="he-step-row">步驟② 除以個數：<strong>' + sum4 + '</strong> ÷ ' + ints.length + ' = <span class="he-placeholder">□</span></div>';
         html += '</div>';
         html += '<div class="he-check-ok">✅ 答案介於 ' + Math.min.apply(null, ints) + ' 和 ' + Math.max.apply(null, ints) + ' 之間？</div>';
         html += '<div class="he-check-bad">❌ 常見錯：忘記除以個數、或把「多出的量」當平均</div>';
