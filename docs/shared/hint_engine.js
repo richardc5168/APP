@@ -1,11 +1,11 @@
 /**
- * hint_engine.js — 全站提示優化引擎 v2.11
+ * hint_engine.js — 全站提示優化引擎 v2.13
  *
  * 四級視覺鷹架系統：
  *  L1 觀念鎖定 — 圈重點、辨題型、基準切換警示
- *  L2 畫圖     — 動態 SVG 長條圖/數線/百格/3D 盒/位值圖/圓餅圖
+ *  L2 畫圖     — 動態 SVG 長條圖/數線/百格/3D 盒/位值圖/圓餅圖/對比圖
  *  L3 讀圖得分數 — 格子圖 + 色塊對應分數 + 位值分解 + 驗證加總
- *  L4 算式收斂 + 合理性檢查 — 分步公式 + ✅/❌ 檢核
+ *  L4 算式收斂 + 合理性檢查 — 分步公式 + ✅/❌ 檢核 + 填空框
  *
  * 額外功能：
  *  • L4 嚴格防洩漏（只到中間量，不給最終答案）
@@ -985,6 +985,61 @@
     return svg;
   }
 
+  /**
+   * buildFractionComparisonSVG(frac1, frac2, opts)
+   * Side-by-side fraction bars with comparison symbol (>, <, =).
+   * frac1/frac2: {num, den}   opts: {width, height}
+   */
+  function buildFractionComparisonSVG(frac1, frac2, opts){
+    opts = opts || {};
+    if (!frac1 || !frac2 || !frac1.den || !frac2.den) return '';
+    var W = opts.width || 300;
+    var barH = 28;
+    var gap = 36;
+    var pad = 8;
+    var barW = (W - gap - pad * 2) / 2;
+    var H = barH + 40 + pad * 2;
+
+    var val1 = frac1.num / frac1.den;
+    var val2 = frac2.num / frac2.den;
+    var cmp = val1 > val2 ? '>' : (val1 < val2 ? '<' : '=');
+
+    var ariaLabel = frac1.num + '/' + frac1.den + ' ' + cmp + ' ' + frac2.num + '/' + frac2.den;
+    var svg = '<svg width="'+W+'" height="'+H+'" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Fraction comparison: '+escapeHTML(ariaLabel)+'" style="display:block;margin:6px auto">';
+
+    /* Helper: draw one fraction bar */
+    function drawBar(x, y, w, h, frac, color){
+      var cells = Math.min(frac.den, 20);
+      var cellW = w / cells;
+      var fillCount = Math.min(Math.round(frac.num * cells / frac.den), cells);
+      var s = '';
+      /* Background */
+      s += '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="#374151" rx="4" stroke="#6b7280" stroke-width="1"/>';
+      /* Grid lines */
+      for (var i = 1; i < cells; i++){
+        s += '<line x1="'+(x + i*cellW)+'" y1="'+y+'" x2="'+(x + i*cellW)+'" y2="'+(y+h)+'" stroke="#6b7280" stroke-width="0.5"/>';
+      }
+      /* Filled cells */
+      for (var j = 0; j < fillCount; j++){
+        s += '<rect x="'+(x + j*cellW + 0.5)+'" y="'+(y+0.5)+'" width="'+(cellW-1)+'" height="'+(h-1)+'" fill="'+color+'" opacity="0.6" rx="2"/>';
+      }
+      /* Label below */
+      s += '<text x="'+(x + w/2)+'" y="'+(y + h + 14)+'" text-anchor="middle" fill="'+color+'" font-size="11" font-weight="700">'+frac.num+'/'+frac.den+'</text>';
+      return s;
+    }
+
+    svg += drawBar(pad, pad, barW, barH, frac1, '#ef4444');
+    svg += drawBar(pad + barW + gap, pad, barW, barH, frac2, '#3b82f6');
+
+    /* Comparison symbol in the middle */
+    var midX = pad + barW + gap / 2;
+    var midY = pad + barH / 2;
+    svg += '<text x="'+midX+'" y="'+midY+'" text-anchor="middle" dy=".35em" fill="#e5e7eb" font-size="18" font-weight="700">'+cmp+'</text>';
+
+    svg += '</svg>';
+    return svg;
+  }
+
   function buildAreaModelSVG(length, width, opts){
     opts = opts || {};
     var l = (length !== undefined && length !== null) ? Number(length) : 0;
@@ -1194,6 +1249,11 @@
         var barColors = ['#ef4444','#3b82f6','#22c55e'];
         for (var fi = 0; fi < Math.min(fracs.length, 3); fi++){
           html += buildFractionBarSVG([fracs[fi]], { width: 280, height: 28, colors: [barColors[fi]] });
+        }
+        /* Side-by-side comparison if exactly 2 fractions */
+        if (fracs.length === 2){
+          html += '<div style="font-size:10px;color:#9ca3af;margin:2px 0 0 0">▼ 大小比較：</div>';
+          html += buildFractionComparisonSVG(fracs[0], fracs[1]);
         }
         /* Merged bar: common denominator */
         if (fracs.length >= 2){
@@ -1495,8 +1555,27 @@
         }
         html += '<div class="he-check-ok">✅ 打折 → 結果 &lt; 原價；加成 → 結果 &gt; 原量</div>';
       } else if (family === 'decimal'){
-        html += '<div class="he-formula">先當整數算 → 再放回小數點（位數加總）</div>';
-        html += '<div class="he-check-ok">✅ 用整數近似值檢查量級</div>';
+        /* Detect decimal values and operation from question text */
+        var decs4 = [];
+        var dm4 = text.match(/\d+\.\d+/g);
+        if (dm4) for (var di4 = 0; di4 < dm4.length; di4++) decs4.push(parseFloat(dm4[di4]));
+        var decPlaces4 = 0;
+        if (dm4) for (var dp4 = 0; dp4 < dm4.length; dp4++){
+          var dotPart = dm4[dp4].split('.')[1] || '';
+          decPlaces4 += dotPart.length;
+        }
+        html += '<div class="he-formula">';
+        html += '<div class="he-step-row">步驟① 先當整數算（去掉小數點）</div>';
+        if (decs4.length >= 2){
+          html += '<div class="he-step-row">' + escapeHTML(String(decs4[0])) + ' → <span class="he-placeholder">□</span>　' + escapeHTML(String(decs4[1])) + ' → <span class="he-placeholder">□</span></div>';
+        } else if (decs4.length === 1){
+          html += '<div class="he-step-row">' + escapeHTML(String(decs4[0])) + ' → <span class="he-placeholder">□</span></div>';
+        }
+        html += '<div class="he-step-row">步驟② 整數運算：<span class="he-placeholder">□</span></div>';
+        html += '<div class="he-step-row">步驟③ 放回小數點（' + (decPlaces4 > 0 ? '共 ' + decPlaces4 + ' 位' : '位數加總') + '）→ <span class="he-placeholder">□</span></div>';
+        html += '</div>';
+        html += '<div class="he-check-ok">✅ 用整數近似值檢查量級是否合理</div>';
+        html += '<div class="he-check-bad">❌ 常見錯：小數點位數數錯（乘法相加、除法相減）</div>';
       } else if (family === 'time'){
         var timeRe4 = /(\d{1,2})\s*[:：時]\s*(\d{1,2})?/g;
         var times4 = [];
@@ -1519,10 +1598,12 @@
         var v4l = ints[0], v4w = ints[1], v4h = ints.length > 2 ? ints[2] : 0;
         html += '<div class="he-formula">';
         if (v4h > 0){
-          html += '底面積 = '+v4l+' × '+v4w+' = '+(v4l*v4w)+'<br>';
-          html += '體積 = '+(v4l*v4w)+' × '+v4h+' = ？（自行計算）<br>';
+          html += '<div class="he-step-row">步驟① 底面積 = '+v4l+' × '+v4w+' = <span class="he-placeholder">□</span></div>';
+          html += '<div class="he-step-row">步驟② 體積 = <span class="he-placeholder">□</span> × '+v4h+' = <span class="he-placeholder">□</span></div>';
+          html += '<div class="he-step-row">步驟③ 寫上單位（立方公分 or 立方公尺）</div>';
         } else {
-          html += '面積 = '+v4l+' × '+v4w+' = ？（自行計算）<br>';
+          html += '<div class="he-step-row">步驟① 面積 = '+v4l+' × '+v4w+' = <span class="he-placeholder">□</span></div>';
+          html += '<div class="he-step-row">步驟② 寫上單位（平方公分 or 平方公尺）</div>';
         }
         html += '</div>';
         html += '<div class="he-check-ok">✅ 組合體：先拆成基本形再加減</div>';
@@ -2472,6 +2553,7 @@
     buildTreeDiagramSVG: buildTreeDiagramSVG,
     buildAreaModelSVG: buildAreaModelSVG,
     buildTapeModelSVG: buildTapeModelSVG,
+    buildFractionComparisonSVG: buildFractionComparisonSVG,
     highlightKeywords: highlightKeywords,
 
     /* L4 gate */

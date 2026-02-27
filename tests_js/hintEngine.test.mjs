@@ -805,3 +805,59 @@ test('fracAdd L4 includes placeholder boxes', () => {
 test('u10_multi_step maps to average family', () => {
   assert.equal(HE.getFamily('u10_multi_step'), 'average');
 });
+
+/* ============================================================
+ * 30. buildFractionComparisonSVG
+ * ============================================================ */
+test('buildFractionComparisonSVG — renders two bars with comparison', () => {
+  const svg = HE.buildFractionComparisonSVG({ num: 1, den: 3 }, { num: 1, den: 2 });
+  assert.ok(svg.includes('<svg'), 'Should produce SVG');
+  assert.ok(svg.includes('role="img"'), 'Should have ARIA role');
+  assert.ok(svg.includes('<'), 'Should compare (1/3 < 1/2)');
+  assert.ok(svg.includes('1/3'), 'Should label first fraction');
+  assert.ok(svg.includes('1/2'), 'Should label second fraction');
+});
+
+test('buildFractionComparisonSVG — empty for invalid input', () => {
+  assert.equal(HE.buildFractionComparisonSVG(null, { num: 1, den: 2 }), '');
+  assert.equal(HE.buildFractionComparisonSVG({ num: 1, den: 0 }, { num: 1, den: 2 }), '');
+});
+
+test('buildFractionComparisonSVG — equal fractions show =', () => {
+  const svg = HE.buildFractionComparisonSVG({ num: 1, den: 2 }, { num: 2, den: 4 });
+  assert.ok(svg.includes('='), 'Should show = for equal fractions');
+});
+
+/* ============================================================
+ * 31. fracAdd L2 now includes comparison SVG
+ * ============================================================ */
+test('fracAdd L2 includes fraction comparison SVG', () => {
+  const q = { kind: 'fraction_addsub', question: '算 1/3 + 1/4', answer: '7/12' };
+  const html = HE.buildRichHintHTML(q, 2);
+  assert.ok(html.includes('大小比較'), 'L2 should show comparison section');
+  assert.ok(html.includes('Fraction comparison'), 'L2 should contain comparison SVG');
+});
+
+/* ============================================================
+ * 32. decimal L4 placeholder boxes
+ * ============================================================ */
+test('decimal L4 includes placeholder boxes', () => {
+  const q = { kind: 'd_mul_d', question: '算 0.3 × 0.12', answer: '0.036' };
+  const html = HE.buildRichHintHTML(q, 4);
+  assert.ok(html.includes('he-placeholder'), 'L4 should have placeholder boxes');
+  assert.ok(html.includes('步驟①'), 'L4 should show step 1');
+  assert.ok(html.includes('步驟②'), 'L4 should show step 2');
+  assert.ok(html.includes('步驟③'), 'L4 should show step 3');
+  assert.ok(html.includes('小數點'), 'L4 should mention decimal point');
+});
+
+/* ============================================================
+ * 33. volume L4 placeholder boxes
+ * ============================================================ */
+test('volume L4 includes placeholder boxes for 3D', () => {
+  const q = { kind: 'rect_cm3', question: '長 5 寬 3 高 4 公分的長方體體積', answer: '60' };
+  const html = HE.buildRichHintHTML(q, 4);
+  assert.ok(html.includes('he-placeholder'), 'L4 should have placeholder boxes');
+  assert.ok(html.includes('步驟①'), 'L4 should show step 1 (底面積)');
+  assert.ok(html.includes('步驟②'), 'L4 should show step 2 (體積)');
+});
