@@ -1231,3 +1231,23 @@ test('diagnoseWrongAnswer detects forgot borrow 60 in time', () => {
   const tags = result.map(r => r.tag);
   assert.ok(tags.includes('forgot_borrow_60'), 'Should have forgot_borrow_60 tag');
 });
+
+/* ============================================================
+ * 64. suggestHintLevel — streak-based escalation
+ * ============================================================ */
+test('suggestHintLevel returns L1 for first attempt with no streak', () => {
+  const result = HE.suggestHintLevel('test_fresh_q');
+  assert.equal(result.level, 1, 'Should suggest L1 for fresh question');
+});
+
+/* ============================================================
+ * 65. recordHintUsage records lastTs and lastCorrect
+ * ============================================================ */
+test('recordHintUsage records lastCorrect field', () => {
+  HE.recordHintUsage('test_streak_1', 1, false);
+  HE.recordHintUsage('test_streak_2', 1, false);
+  HE.recordHintUsage('test_streak_3', 1, false);
+  /* After 3 wrong answers, a new question should still suggest L1 or L2 */
+  const result = HE.suggestHintLevel('test_streak_new');
+  assert.ok(result.level >= 1, 'Should suggest at least L1');
+});

@@ -2296,6 +2296,8 @@
     var rec = data[id];
     rec.attempts = (rec.attempts || 0) + 1;
     rec.ts = Date.now();
+    rec.lastTs = rec.ts;
+    rec.lastCorrect = !!isCorrect;
     var lvKey = 'L' + Math.max(0, Math.min(4, Number(maxHintLevel) || 0));
     rec.totalHint[lvKey] = (rec.totalHint[lvKey] || 0) + 1;
     if (isCorrect){
@@ -2466,13 +2468,19 @@
     var rec = hData[id];
     var dRec = dData[id];
 
+    /* Calculate recent wrong streak across all questions */
+    var streak = _getRecentWrongStreak(hData);
+
     /* Has prior misconceptions that weren't corrected — suggest L2 */
     if (dRec && dRec.triggers && dRec.triggers.length > 0 && !dRec.corrected){
       return { level: 2, reason: '上次有錯因（' + dRec.triggers[0] + '），建議從畫圖確認' };
     }
 
-    /* First attempt: start at L1 */
+    /* First attempt: if on a hot streak of wrongs, bump up */
     if (!rec || !rec.attempts || rec.attempts === 0){
+      if (streak >= 3){
+        return { level: 2, reason: '連續 ' + streak + ' 題答錯，建議從畫圖確認' };
+      }
       return { level: 1, reason: '初次作答，從觀念鎖定開始' };
     }
 
@@ -2482,8 +2490,36 @@
       return { level: 3, reason: '多次需要 L3+ 提示才答對，建議從讀圖階段開始' };
     }
 
+    /* Streak-based escalation for returning question */
+    if (streak >= 5){
+      return { level: 2, reason: '連錯 ' + streak + ' 題，建議從畫圖重新確認觀念' };
+    }
+
     /* Has been seen but not a hard question */
     return { level: 1, reason: '複習題目，從觀念鎖定開始' };
+  }
+
+  /**
+   * _getRecentWrongStreak(hData)
+   * Returns the number of consecutive most-recent wrong answers across all questions.
+   */
+  function _getRecentWrongStreak(hData){
+    var entries = [];
+    for (var k in hData){
+      if (!hData.hasOwnProperty(k)) continue;
+      var r = hData[k];
+      if (r && r.lastTs && typeof r.lastCorrect === 'boolean'){
+        entries.push({ ts: r.lastTs, correct: r.lastCorrect });
+      }
+    }
+    if (entries.length === 0) return 0;
+    entries.sort(function(a,b){ return b.ts - a.ts; });
+    var streak = 0;
+    for (var i = 0; i < entries.length; i++){
+      if (!entries[i].correct) streak++;
+      else break;
+    }
+    return streak;
   }
 
   /* ============================================================
