@@ -1548,6 +1548,14 @@
             { count: f.num, color: '#ef4444', label: f.num+'/'+f.den },
             { count: f.den - f.num, color: '#374151', label: '剩 '+(f.den-f.num)+'/'+f.den }
           ]);
+          /* Narration for fracWord with single fraction */
+          if (family === 'fracWord' && ints.length >= 1){
+            html += '<div style="font-size:11px;color:#e5e7eb;margin:4px 0;line-height:1.6">';
+            html += '📊 全部 = <strong>' + ints[0] + '</strong><br>';
+            html += '取其中 <strong>' + f.num + '/' + f.den + '</strong> → ' + ints[0] + ' × ' + f.num + '/' + f.den + ' = ？（自行算）<br>';
+            html += '💡 格子裡塗色的 <strong>' + f.num + '</strong> 格（共 ' + f.den + ' 格）就是答案的比例';
+            html += '</div>';
+          }
         }
       } else if (family === 'fracAdd' && fracs.length >= 1){
         /* Grid for fraction addition: show each fraction in common denominator */
@@ -1596,7 +1604,20 @@
         var m2 = text.match(/(\d+)\s*[%％折]/);
         if (m2) pVal2 = parseInt(m2[1], 10);
         if (/折/.test(text)) pVal2 = pVal2 * 10;
-        if (pVal2 > 0) html += '<div style="font-size:11px;color:#d29922">📊 '+pVal2+' 格塗色 / 100 格 = '+pVal2+'%</div>';
+        if (pVal2 > 0){
+          html += buildPercentGridSVG(pVal2);
+          html += '<div style="font-size:11px;color:#e5e7eb;margin:4px 0;line-height:1.6">';
+          html += '📊 <strong>' + pVal2 + '</strong> 格塗色 / 100 格 = <strong>' + pVal2 + '%</strong><br>';
+          /* Show original quantity if found */
+          var origL3 = 0;
+          for (var oq3 = 0; oq3 < ints.length; oq3++){
+            if (m2 && ints[oq3] !== parseInt(m2[1],10)){ origL3 = ints[oq3]; break; }
+          }
+          if (origL3 > 0){
+            html += '原量 = <strong>' + origL3 + '</strong> → ' + origL3 + ' × ' + pVal2 + '/100 = ？（自行算）';
+          }
+          html += '</div>';
+        }
       } else if (family === 'decimal'){
         /* Place-value decomposition for L3 */
         var decs3 = [];
@@ -1620,6 +1641,24 @@
           }
           if (decomp.length > 0){
             html += '<div style="font-size:11px;color:#9ca3af;margin:2px 0">'+decs3[0]+' = '+decomp.join(' + ')+'</div>';
+          }
+          /* If 2+ decimals, also show second decomposition + comparison hint */
+          if (decs3.length >= 2){
+            html += buildPlaceValueSVG(decs3[1]);
+            var decStr2 = String(decs3[1]);
+            var dParts2 = decStr2.split('.');
+            var intD2 = dParts2[0] || '0';
+            var fracD2 = dParts2[1] || '';
+            var decomp2 = [];
+            if (parseInt(intD2,10) > 0) decomp2.push(intD2 + ' 個');
+            for (var dp2 = 0; dp2 < fracD2.length && dp2 < 3; dp2++){
+              var dg2 = parseInt(fracD2[dp2],10);
+              if (dg2 > 0) decomp2.push(dg2 + ' 個 ' + dNames3[dp2]);
+            }
+            if (decomp2.length > 0){
+              html += '<div style="font-size:11px;color:#9ca3af;margin:2px 0">'+decs3[1]+' = '+decomp2.join(' + ')+'</div>';
+            }
+            html += '<div style="font-size:11px;color:#e5e7eb;margin:4px 0">💡 兩個小數一起比較：逐位對齊，從最左開始比</div>';
           }
         }
       } else if (family === 'time'){

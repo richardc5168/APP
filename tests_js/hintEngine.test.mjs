@@ -1102,3 +1102,36 @@ test('fracAdd L3 shows 約分 when result is reducible', () => {
   assert.ok(html.includes('約分'), 'L3 should mention 約分 for 4/6 → 2/3');
   assert.ok(html.includes('2/3'), 'L3 should show reduced fraction 2/3');
 });
+
+/* ============================================================
+ * 53. fracWord L3 — narration with actual numbers
+ * ============================================================ */
+test('fracWord L3 shows narration with actual numbers', () => {
+  const q = { kind: 'fraction_of_quantity', question: '全班有 40 人，其中 3/8 是女生，女生有幾人', answer: '15' };
+  const html = HE.buildRichHintHTML(q, 3);
+  assert.ok(html.includes('40'), 'L3 should show total 40');
+  assert.ok(html.includes('3/8'), 'L3 should show fraction 3/8');
+  assert.ok(html.includes('自行算'), 'L3 should prompt student to calculate');
+});
+
+/* ============================================================
+ * 54. percent L3 — enhanced with percent grid + original qty
+ * ============================================================ */
+test('percent L3 shows percent grid and original quantity', () => {
+  const q = { kind: 'percent_of', question: '500 的 30% 是多少', answer: '150' };
+  const html = HE.buildRichHintHTML(q, 3);
+  assert.ok(html.includes('30%'), 'L3 should show 30%');
+  assert.ok(html.includes('500'), 'L3 should show orig qty 500');
+  assert.ok(html.includes('自行算'), 'L3 should prompt student to calculate');
+});
+
+/* ============================================================
+ * 55. decimal L3 — dual decomposition for 2 decimals
+ * ============================================================ */
+test('decimal L3 shows dual decomposition for 2 decimals', () => {
+  const q = { kind: 'd_mul_d', question: '算 0.3 × 0.12', answer: '0.036' };
+  const html = HE.buildRichHintHTML(q, 3);
+  assert.ok(html.includes('0.3'), 'L3 should decompose first decimal');
+  assert.ok(html.includes('0.12'), 'L3 should decompose second decimal');
+  assert.ok(html.includes('逐位對齊'), 'L3 should show comparison hint for 2 decimals');
+});
