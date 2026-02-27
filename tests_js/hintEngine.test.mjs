@@ -411,3 +411,65 @@ test('formatHintWithTier — includes tier icon and label', () => {
   assert.ok(result.includes('讀圖得分數'));
   assert.ok(result.includes('test hint text'));
 });
+
+/* ============================================================
+ * 14. buildPlaceValueSVG — decimal decomposition
+ * ============================================================ */
+test('buildPlaceValueSVG — decomposes 3.14', () => {
+  const svg = HE.buildPlaceValueSVG(3.14);
+  assert.ok(svg.includes('<svg'));
+  assert.ok(svg.includes('role="img"'));
+  assert.ok(svg.includes('aria-label'));
+  assert.ok(svg.includes('3'));
+  assert.ok(svg.includes('個'));
+  assert.ok(svg.includes('十分位'));
+  assert.ok(svg.includes('百分位'));
+});
+
+test('buildPlaceValueSVG — returns empty for invalid', () => {
+  const svg = HE.buildPlaceValueSVG(-5);
+  assert.strictEqual(svg, '');
+});
+
+/* ============================================================
+ * 15. SVG generators — ARIA labels present
+ * ============================================================ */
+test('buildFractionBarSVG — has aria-label', () => {
+  const svg = HE.buildFractionBarSVG([{num:1,den:4}]);
+  assert.ok(svg.includes('role="img"'));
+  assert.ok(svg.includes('aria-label'));
+});
+
+test('buildGridSVG — has aria-label', () => {
+  const svg = HE.buildGridSVG(2, 3, [{count:3, color:'red', label:'test'},{count:3,color:'blue',label:'rest'}]);
+  assert.ok(svg.includes('role="img"'));
+  assert.ok(svg.includes('aria-label'));
+});
+
+test('buildClockFaceSVG — has aria-label', () => {
+  const svg = HE.buildClockFaceSVG(3, 30, {});
+  assert.ok(svg.includes('role="img"'));
+  assert.ok(svg.includes('3:30'));
+});
+
+test('buildLevelingSVG — has aria-label', () => {
+  const svg = HE.buildLevelingSVG([10,20,30]);
+  assert.ok(svg.includes('role="img"'));
+  assert.ok(svg.includes('average'));
+});
+
+test('buildNumberBondSVG — has aria-label', () => {
+  const svg = HE.buildNumberBondSVG([3,5], 8);
+  assert.ok(svg.includes('role="img"'));
+  assert.ok(svg.includes('8'));
+});
+
+/* ============================================================
+ * 16. decimal L2 — includes place value chart
+ * ============================================================ */
+test('processHintHTML decimal L2 — includes place value SVG', () => {
+  const q = { kind: 'd_mul_d', question: '算 3.14 × 2.5', answer: '7.85' };
+  const html = HE.processHintHTML(q, 2);
+  assert.ok(html.includes('位值分解'));
+  assert.ok(html.includes('十分位') || html.includes('buildPlaceValueSVG') || html.includes('個'));
+});

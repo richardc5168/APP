@@ -1,10 +1,10 @@
 /**
- * hint_engine.js — 全站提示優化引擎 v2
+ * hint_engine.js — 全站提示優化引擎 v2.6
  *
  * 四級視覺鷹架系統：
  *  L1 觀念鎖定 — 圈重點、辨題型、基準切換警示
- *  L2 畫圖     — 動態 SVG 長條圖/數線/百格/3D 盒
- *  L3 讀圖得分數 — 格子圖 + 色塊對應分數 + 驗證加總
+ *  L2 畫圖     — 動態 SVG 長條圖/數線/百格/3D 盒/位值圖
+ *  L3 讀圖得分數 — 格子圖 + 色塊對應分數 + 位值分解 + 驗證加總
  *  L4 算式收斂 + 合理性檢查 — 分步公式 + ✅/❌ 檢核
  *
  * 額外功能：
@@ -206,7 +206,10 @@
              '</svg>';
     }
 
-    var svg = '<svg width="'+W+'" height="'+(H+24)+'" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:6px auto">';
+    var ariaLabel = 'Fraction bar diagram';
+    if (fracs.length >= 2) ariaLabel = 'Fraction bar: ' + fracs[0].num+'/'+fracs[0].den + ' then ' + fracs[1].num+'/'+fracs[1].den + ' of remainder';
+    else if (fracs.length === 1) ariaLabel = 'Fraction bar: ' + fracs[0].num+'/'+fracs[0].den;
+    var svg = '<svg width="'+W+'" height="'+(H+24)+'" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="'+ariaLabel+'" style="display:block;margin:6px auto">';
 
     /* Cross-hatch pattern for consumed portions */
     svg += '<defs>';
@@ -307,7 +310,9 @@
     var cellSize = opts.cellSize || 24;
     var W = cols * cellSize;
     var H = rows * cellSize;
-    var svg = '<svg width="'+(W+2)+'" height="'+(H+30)+'" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:6px auto">';
+    var gridAriaLabel = 'Grid diagram ' + rows + ' by ' + cols;
+    if (colorMap && colorMap.length > 0) gridAriaLabel += ': ' + colorMap.map(function(c){ return (c.label||c.count+' cells'); }).join(', ');
+    var svg = '<svg width="'+(W+2)+'" height="'+(H+30)+'" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="'+gridAriaLabel+'" style="display:block;margin:6px auto">';
 
     /* Draw cells */
     var cellIdx = 0;
@@ -360,7 +365,8 @@
     if (min === max) { min -= 1; max += 1; }
     var range = max - min;
 
-    var svg = '<svg width="'+W+'" height="'+H+'" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:6px auto">';
+    var nlAriaLabel = 'Number line with values: ' + values.join(', ');
+    var svg = '<svg width="'+W+'" height="'+H+'" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="'+nlAriaLabel+'" style="display:block;margin:6px auto">';
     var pad = 20;
     var lineW = W - pad * 2;
 
@@ -399,6 +405,94 @@
   }
 
   /**
+   * buildPlaceValueSVG(value, opts)
+   * Visualizes a decimal number by decomposing it into place-value columns.
+   * Each column is a labeled stack: ones, tenths, hundredths, etc.
+   * value: number (e.g. 3.14)
+   */
+  function buildPlaceValueSVG(value, opts){
+    opts = opts || {};
+    var v = Number(value);
+    if (!isFinite(v) || v < 0) return '';
+
+    /* Decompose into integer + decimal digits */
+    var parts = String(v).split('.');
+    var intPart = parts[0] || '0';
+    var decPart = parts[1] || '';
+
+    /* Build columns: each digit with its place name and value */
+    var columns = [];
+    var placeNames = ['千','百','十','個'];
+    /* Pad integer part to at least show '個' */
+    var intDigits = intPart.split('');
+    var intLen = intDigits.length;
+    for (var i = 0; i < intLen; i++){
+      var pIdx = placeNames.length - intLen + i;
+      var pName = pIdx >= 0 ? placeNames[pIdx] : '';
+      columns.push({ digit: intDigits[i], place: pName, val: parseInt(intDigits[i],10) * Math.pow(10, intLen - i - 1) });
+    }
+
+    /* Decimal point marker */
+    columns.push({ digit: '.', place: '', val: 0, isDot: true });
+
+    /* Decimal digits */
+    var decNames = ['十分位','百分位','千分位'];
+    for (var d = 0; d < decPart.length && d < 3; d++){
+      columns.push({ digit: decPart[d], place: decNames[d], val: parseInt(decPart[d],10) / Math.pow(10, d+1) });
+    }
+
+    /* SVG layout */
+    var colW = 38;
+    var dotW = 14;
+    var totalW = 0;
+    for (var c = 0; c < columns.length; c++) totalW += columns[c].isDot ? dotW : colW;
+    totalW += 12; /* padding */
+    var chartH = 80;
+    var maxDigit = 9;
+
+    var ariaLabel = 'Place value chart for ' + v;
+    var svg = '<svg width="'+totalW+'" height="'+(chartH+36)+'" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="'+ariaLabel+'" style="display:block;margin:6px auto">';
+
+    var x = 6;
+    var baseY = chartH + 4;
+    var barColors = { '千': '#ef4444', '百': '#f97316', '十': '#eab308', '個': '#22c55e', '十分位': '#3b82f6', '百分位': '#8b5cf6', '千分位': '#ec4899' };
+
+    for (var ci = 0; ci < columns.length; ci++){
+      var col = columns[ci];
+      if (col.isDot){
+        svg += '<text x="'+(x+dotW/2)+'" y="'+(baseY-2)+'" text-anchor="middle" fill="#fbbf24" font-size="18" font-weight="900">.</text>';
+        x += dotW;
+        continue;
+      }
+      var dv = parseInt(col.digit, 10) || 0;
+      var barH = (dv / maxDigit) * (chartH - 16);
+      var fillColor = barColors[col.place] || '#6b7280';
+
+      /* Bar */
+      if (dv > 0){
+        svg += '<rect x="'+x+'" y="'+(baseY-barH)+'" width="'+(colW-4)+'" height="'+barH+'" fill="'+fillColor+'" opacity="0.65" rx="2"/>';
+      }
+
+      /* Digit label on bar */
+      svg += '<text x="'+(x+(colW-4)/2)+'" y="'+(baseY-barH-3)+'" text-anchor="middle" fill="'+fillColor+'" font-size="12" font-weight="700">'+col.digit+'</text>';
+
+      /* Place name below */
+      svg += '<text x="'+(x+(colW-4)/2)+'" y="'+(baseY+12)+'" text-anchor="middle" fill="#9ca3af" font-size="8">'+col.place+'</text>';
+
+      /* Value below place name */
+      if (dv > 0){
+        var valStr = col.val >= 1 ? String(col.val) : col.val.toFixed(Math.max(1, (col.place.length > 1 ? String(col.val).length - 2 : 1)));
+        svg += '<text x="'+(x+(colW-4)/2)+'" y="'+(baseY+24)+'" text-anchor="middle" fill="#6b7280" font-size="7">'+valStr+'</text>';
+      }
+
+      x += colW;
+    }
+
+    svg += '</svg>';
+    return svg;
+  }
+
+  /**
    * buildClockFaceSVG(h, m, opts)
    * Draws an analog clock face with hour/minute hands.
    * h = hours (0-23), m = minutes (0-59).
@@ -414,7 +508,8 @@
     var totalH = S + 30;
     var label = opts.label || '';
 
-    var svg = '<svg width="'+(S+8)+'" height="'+totalH+'" xmlns="http://www.w3.org/2000/svg" style="display:inline-block;margin:4px 8px;vertical-align:top">';
+    var clockAriaLabel = 'Clock face showing ' + (h%12||12) + ':' + ('0'+m).slice(-2) + (label ? ' (' + label + ')' : '');
+    var svg = '<svg width="'+(S+8)+'" height="'+totalH+'" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="'+clockAriaLabel+'" style="display:inline-block;margin:4px 8px;vertical-align:top">';
 
     /* Clock face circle */
     svg += '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="#1e293b" stroke="#6b7280" stroke-width="1.5"/>';
@@ -501,7 +596,8 @@
     var bx = 20; /* base x */
     var by = sH + 10; /* base y */
 
-    var svg = '<svg width="'+W+'" height="'+(H+20)+'" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:6px auto">';
+    var boxAriaLabel = 'Isometric box: length '+l+', width '+w+', height '+h+(unit?' '+unit:'');
+    var svg = '<svg width="'+W+'" height="'+(H+20)+'" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="'+boxAriaLabel+'" style="display:block;margin:6px auto">';
 
     /* Front face (visible) */
     svg += '<polygon points="' +
@@ -568,7 +664,8 @@
     var topPad = 12;
     var H = chartH + topPad + 32;
 
-    var svg = '<svg width="'+W+'" height="'+H+'" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:6px auto">';
+    var lvlAriaLabel = 'Bar chart showing leveling (average) of ' + values.length + ' values, average = ' + Math.round(avg*100)/100;
+    var svg = '<svg width="'+W+'" height="'+H+'" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="'+lvlAriaLabel+'" style="display:block;margin:6px auto">';
 
     var colors = ['#ef4444','#3b82f6','#22c55e','#f97316','#a855f7','#06b6d4'];
 
@@ -620,7 +717,8 @@
     var W = Math.max(200, parts.length * 70 + 40);
     var H = 90;
 
-    var svg = '<svg width="'+W+'" height="'+H+'" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:6px auto">';
+    var nbAriaLabel = 'Number bond: ' + (whole !== undefined ? whole : '?') + ' splits into ' + parts.join(', ');
+    var svg = '<svg width="'+W+'" height="'+H+'" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="'+nbAriaLabel+'" style="display:block;margin:6px auto">';
 
     /* Whole circle at top center */
     var cx = W / 2;
@@ -741,7 +839,12 @@
         var decs = [];
         var dm = text.match(/\d+\.\d+/g);
         if (dm) for (var di = 0; di < dm.length; di++) decs.push(parseFloat(dm[di]));
-        if (decs.length > 0) html += buildNumberLineSVG(decs);
+        if (decs.length > 0){
+          html += buildNumberLineSVG(decs);
+          /* Place value decomposition for the first decimal */
+          html += '<div style="font-size:10px;color:#9ca3af;margin:2px 0 0 0">▼ 位值分解：</div>';
+          html += buildPlaceValueSVG(decs[0]);
+        }
       } else if (family === 'volume' && ints.length >= 2){
         /* 3D isometric box for volume questions */
         var vl = ints[0] || 1, vw = ints[1] || 1, vh = ints.length > 2 ? ints[2] : 0;
@@ -867,6 +970,31 @@
         if (m2) pVal2 = parseInt(m2[1], 10);
         if (/折/.test(text)) pVal2 = pVal2 * 10;
         if (pVal2 > 0) html += '<div style="font-size:11px;color:#d29922">📊 '+pVal2+' 格塗色 / 100 格 = '+pVal2+'%</div>';
+      } else if (family === 'decimal'){
+        /* Place-value decomposition for L3 */
+        var decs3 = [];
+        var dm3 = text.match(/\d+\.\d+/g);
+        if (dm3) for (var di3 = 0; di3 < dm3.length; di3++) decs3.push(parseFloat(dm3[di3]));
+        if (decs3.length > 0){
+          html += '<div style="font-size:12px;color:#d29922;margin:4px 0">';
+          html += '📊 分解每一位的值：</div>';
+          html += buildPlaceValueSVG(decs3[0]);
+          /* Show decomposition text */
+          var decStr = String(decs3[0]);
+          var dParts = decStr.split('.');
+          var intD = dParts[0] || '0';
+          var fracD = dParts[1] || '';
+          var decomp = [];
+          if (parseInt(intD,10) > 0) decomp.push(intD + ' 個');
+          var dNames3 = ['十分位','百分位','千分位'];
+          for (var dp = 0; dp < fracD.length && dp < 3; dp++){
+            var dg = parseInt(fracD[dp],10);
+            if (dg > 0) decomp.push(dg + ' 個 ' + dNames3[dp]);
+          }
+          if (decomp.length > 0){
+            html += '<div style="font-size:11px;color:#9ca3af;margin:2px 0">'+decs3[0]+' = '+decomp.join(' + ')+'</div>';
+          }
+        }
       } else if (family === 'time'){
         /* Read clock: count hours + minutes from the arc */
         var timeRe3 = /(\d{1,2})\s*[:：時]\s*(\d{1,2})?/g;
@@ -1634,6 +1762,7 @@
     buildIsometricBoxSVG: buildIsometricBoxSVG,
     buildLevelingSVG: buildLevelingSVG,
     buildNumberBondSVG: buildNumberBondSVG,
+    buildPlaceValueSVG: buildPlaceValueSVG,
 
     /* L4 gate */
     enforceL3Gate: enforceL3Gate,
