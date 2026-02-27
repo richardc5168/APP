@@ -170,15 +170,358 @@
   }
 
   /**
-   * getTemplatedHint(question, level) — 四步模板 hint
-   * level: 1=圈+基 (觀念), 2=基+式 (列式), 3=式+查 (收尾, no final answer)
+   * getTemplatedHint(question, level) — 四級模板 hint (v2)
+   * level: 1=觀念鎖定, 2=畫圖, 3=讀圖得分數, 4=算式收斂+合理性檢查
+   * Backward-compat: old 3-level callers map L3→L4.
    */
   function getTemplatedHint(q, level){
-    var lv = Math.max(1, Math.min(3, Number(level) || 1));
+    var lv = Math.max(1, Math.min(4, Number(level) || 1));
     var tpl = getTemplate(q && q.kind);
-    if (lv === 1) return tpl.circle + '\n' + tpl.base;
-    if (lv === 2) return tpl.base + '\n' + tpl.expr;
-    return tpl.expr + '\n' + tpl.check;
+    var keys = ['L1','L2','L3','L4'];
+    return tpl[keys[lv-1]] || tpl.L1;
+  }
+
+  /* ============================================================
+   * 2b. SVG Diagram Generators
+   * ============================================================ */
+
+  /**
+   * buildFractionBarSVG(fracs, colors, width, height)
+   * Generates an inline SVG string showing a bar model.
+   * fracs: array of {num, den}, e.g. [{num:1,den:5},{num:1,den:3}]
+   * Actions: first fraction consumed from whole, second from remainder.
+   * For fracRemain: bar is cut vertically first, then horizontally.
+   */
+  function buildFractionBarSVG(fracs, opts){
+    opts = opts || {};
+    var W = opts.width  || 320;
+    var H = opts.height || 60;
+    var colors = opts.colors || ['#ef4444','#f97316','#3b82f6'];
+    var labels = opts.labels || [];
+
+    if (!fracs || fracs.length === 0){
+      return '<svg width="'+W+'" height="'+H+'" xmlns="http://www.w3.org/2000/svg">' +
+             '<rect x="0" y="0" width="'+W+'" height="'+H+'" fill="#374151" rx="4"/>' +
+             '<text x="'+W/2+'" y="'+H/2+'" text-anchor="middle" dy=".35em" fill="#9ca3af" font-size="12">（無分數可顯示）</text>' +
+             '</svg>';
+    }
+
+    var svg = '<svg width="'+W+'" height="'+(H+24)+'" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:6px auto">';
+
+    /* Background bar */
+    svg += '<rect x="0" y="0" width="'+W+'" height="'+H+'" fill="#374151" rx="4" stroke="#6b7280" stroke-width="1"/>';
+
+    /* For fracRemain: show sequential consumption */
+    if (fracs.length >= 2){
+      var f1 = fracs[0]; /* first consumed fraction */
+      var f2 = fracs[1]; /* second consumed from remainder */
+      var den1 = f1.den || 1;
+      var num1 = f1.num || 0;
+      var den2 = f2.den || 1;
+      var num2 = f2.num || 0;
+
+      var totalParts = lcm(den1, den2) || den1 * den2;
+      var partW = W / totalParts;
+
+      /* Parts for first fraction */
+      var parts1 = totalParts * num1 / den1;
+      /* Remaining after first */
+      var remaining = totalParts - parts1;
+      /* Parts for second fraction (of remainder) */
+      var parts2 = remaining * num2 / den2;
+
+      /* Draw grid lines */
+      for (var g = 1; g < totalParts; g++){
+        svg += '<line x1="'+(g*partW)+'" y1="0" x2="'+(g*partW)+'" y2="'+H+'" stroke="#6b7280" stroke-width="0.5"/>';
+      }
+
+      /* Color first fraction (consumed) */
+      for (var i = 0; i < Math.round(parts1); i++){
+        svg += '<rect x="'+(i*partW+0.5)+'" y="0.5" width="'+(partW-1)+'" height="'+(H-1)+'" fill="'+colors[0]+'" opacity="0.7"/>';
+      }
+
+      /* Color second fraction (consumed from remainder) */
+      var start2 = Math.round(parts1);
+      for (var j = 0; j < Math.round(parts2); j++){
+        svg += '<rect x="'+((start2+j)*partW+0.5)+'" y="0.5" width="'+(partW-1)+'" height="'+(H-1)+'" fill="'+colors[1]+'" opacity="0.7"/>';
+      }
+
+      /* Remaining is uncolored (or blue) */
+      var start3 = start2 + Math.round(parts2);
+      for (var k = start3; k < totalParts; k++){
+        svg += '<rect x="'+(k*partW+0.5)+'" y="0.5" width="'+(partW-1)+'" height="'+(H-1)+'" fill="'+colors[2]+'" opacity="0.4"/>';
+      }
+
+      /* Labels below */
+      var lbl1 = labels[0] || ('🟥 '+num1+'/'+den1);
+      var lbl2 = labels[1] || ('🟧 '+num2+'/'+den2+' of 剩下');
+      var lbl3 = labels[2] || '🟦 最後剩下';
+      svg += '<text x="'+(Math.round(parts1)/2*partW)+'" y="'+(H+14)+'" text-anchor="middle" fill="'+colors[0]+'" font-size="11" font-weight="700">'+lbl1+'</text>';
+      svg += '<text x="'+((start2+Math.round(parts2)/2)*partW)+'" y="'+(H+14)+'" text-anchor="middle" fill="'+colors[1]+'" font-size="11" font-weight="700">'+lbl2+'</text>';
+      if (totalParts - start3 > 0){
+        svg += '<text x="'+((start3+(totalParts-start3)/2)*partW)+'" y="'+(H+14)+'" text-anchor="middle" fill="'+colors[2]+'" font-size="11" font-weight="700">'+lbl3+'</text>';
+      }
+    } else {
+      /* Single fraction bar */
+      var f = fracs[0];
+      var den = f.den || 1;
+      var num = f.num || 0;
+      var pw = W / den;
+      for (var g2 = 1; g2 < den; g2++){
+        svg += '<line x1="'+(g2*pw)+'" y1="0" x2="'+(g2*pw)+'" y2="'+H+'" stroke="#6b7280" stroke-width="0.5"/>';
+      }
+      for (var i2 = 0; i2 < num; i2++){
+        svg += '<rect x="'+(i2*pw+0.5)+'" y="0.5" width="'+(pw-1)+'" height="'+(H-1)+'" fill="'+colors[0]+'" opacity="0.7"/>';
+      }
+      svg += '<text x="'+(W/2)+'" y="'+(H+14)+'" text-anchor="middle" fill="#e5e7eb" font-size="11">'+num+'/'+den+'</text>';
+    }
+
+    svg += '</svg>';
+    return svg;
+  }
+
+  /**
+   * buildGridSVG(rows, cols, colorMap)
+   * colorMap: array of {count, color, label}
+   * Generates a grid showing fraction decomposition.
+   */
+  function buildGridSVG(rows, cols, colorMap, opts){
+    opts = opts || {};
+    var cellSize = opts.cellSize || 24;
+    var W = cols * cellSize;
+    var H = rows * cellSize;
+    var svg = '<svg width="'+(W+2)+'" height="'+(H+30)+'" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:6px auto">';
+
+    /* Draw cells */
+    var cellIdx = 0;
+    var colorIdx = 0;
+    var colorUsed = 0;
+    for (var r = 0; r < rows; r++){
+      for (var c = 0; c < cols; c++){
+        var fill = '#374151';
+        if (colorMap && colorIdx < colorMap.length){
+          fill = colorMap[colorIdx].color || '#374151';
+          colorUsed++;
+          if (colorUsed >= colorMap[colorIdx].count){
+            colorIdx++;
+            colorUsed = 0;
+          }
+        }
+        svg += '<rect x="'+(c*cellSize+1)+'" y="'+(r*cellSize+1)+'" width="'+(cellSize-2)+'" height="'+(cellSize-2)+'" fill="'+fill+'" rx="2" stroke="#6b7280" stroke-width="0.5"/>';
+        cellIdx++;
+      }
+    }
+
+    /* Labels below grid */
+    if (colorMap){
+      var labelX = 4;
+      for (var ci = 0; ci < colorMap.length; ci++){
+        var cm = colorMap[ci];
+        var total = rows * cols;
+        svg += '<rect x="'+labelX+'" y="'+(H+6)+'" width="12" height="12" fill="'+(cm.color||'#374151')+'" rx="2"/>';
+        svg += '<text x="'+(labelX+16)+'" y="'+(H+16)+'" fill="#e5e7eb" font-size="10">'+(cm.label || cm.count+'/'+total)+'</text>';
+        labelX += 16 + ((cm.label||'').length + 6) * 6;
+      }
+    }
+
+    svg += '</svg>';
+    return svg;
+  }
+
+  /**
+   * buildNumberLineSVG(values, highlight)
+   * For decimal visualization.
+   */
+  function buildNumberLineSVG(values, opts){
+    opts = opts || {};
+    var W = opts.width || 320;
+    var H = 50;
+    if (!values || values.length === 0) return '';
+
+    var min = Math.floor(Math.min.apply(null, values));
+    var max = Math.ceil(Math.max.apply(null, values));
+    if (min === max) { min -= 1; max += 1; }
+    var range = max - min;
+
+    var svg = '<svg width="'+W+'" height="'+H+'" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:6px auto">';
+    var pad = 20;
+    var lineW = W - pad * 2;
+
+    /* Main line */
+    svg += '<line x1="'+pad+'" y1="25" x2="'+(W-pad)+'" y2="25" stroke="#9ca3af" stroke-width="2"/>';
+
+    /* Tick marks for integers */
+    for (var t = min; t <= max; t++){
+      var x = pad + (t - min) / range * lineW;
+      svg += '<line x1="'+x+'" y1="20" x2="'+x+'" y2="30" stroke="#9ca3af" stroke-width="1"/>';
+      svg += '<text x="'+x+'" y="42" text-anchor="middle" fill="#9ca3af" font-size="10">'+t+'</text>';
+    }
+
+    /* Value markers */
+    var colors = ['#ef4444','#3b82f6','#22c55e','#f97316'];
+    for (var v = 0; v < values.length; v++){
+      var vx = pad + (values[v] - min) / range * lineW;
+      svg += '<circle cx="'+vx+'" cy="25" r="5" fill="'+(colors[v%colors.length])+'"/>';
+      svg += '<text x="'+vx+'" y="14" text-anchor="middle" fill="'+(colors[v%colors.length])+'" font-size="10" font-weight="700">'+values[v]+'</text>';
+    }
+
+    svg += '</svg>';
+    return svg;
+  }
+
+  /**
+   * buildPercentGridSVG(percent)
+   * 10x10 grid with colored cells for percentage.
+   */
+  function buildPercentGridSVG(percent){
+    var p = Math.max(0, Math.min(100, Math.round(Number(percent) || 0)));
+    var colorMap = [];
+    if (p > 0) colorMap.push({ count: p, color: '#3b82f6', label: p+'%' });
+    if (p < 100) colorMap.push({ count: 100 - p, color: '#374151', label: (100-p)+'%' });
+    return buildGridSVG(10, 10, colorMap, { cellSize: 16 });
+  }
+
+  /* ============================================================
+   * 2c. Rich Hint HTML Builder — per-family parametric hints
+   * ============================================================ */
+
+  /**
+   * buildRichHintHTML(q, level)
+   * Returns HTML string with SVG diagrams + formatted text for a specific level.
+   * q = question object { question, kind, answer, ... }
+   */
+  function buildRichHintHTML(q, level){
+    if (!q) return '';
+    var lv = Math.max(1, Math.min(4, Number(level) || 1));
+    var family = getFamily(q.kind);
+    var tpl = getTemplate(q.kind);
+    var text = q.question || '';
+    var fracs = extractFractions(text);
+    var ints = extractIntegers(text);
+
+    var html = '';
+
+    /* --- L1: 觀念鎖定 (all families) --- */
+    if (lv === 1){
+      html += '<div class="he-rich-l1">' + escapeHTML(tpl.L1).replace(/\n/g, '<br>') + '</div>';
+      if (family === 'fracRemain' || needsBaseSwitchWarning(text)){
+        html += '<div class="he-base-switch">⚠️ 基準量切換：第二次操作不是對「全部」，而是對「前一步剩下的量」。</div>';
+      }
+      return html;
+    }
+
+    /* --- L2: 畫圖 (SVG diagrams) --- */
+    if (lv === 2){
+      html += '<div class="he-rich-l2">' + escapeHTML(tpl.L2).replace(/\n/g, '<br>') + '</div>';
+
+      if ((family === 'fracRemain' || family === 'fracWord') && fracs.length >= 1){
+        html += buildFractionBarSVG(fracs);
+      } else if (family === 'fracAdd' && fracs.length >= 1){
+        /* Show separate bars for comparison */
+        for (var fi = 0; fi < Math.min(fracs.length, 3); fi++){
+          html += buildFractionBarSVG([fracs[fi]], { width: 280, height: 30, colors: [['#ef4444','#3b82f6','#22c55e'][fi]] });
+        }
+      } else if (family === 'percent'){
+        var pVal = 0;
+        var m = text.match(/(\d+)\s*[%％折]/);
+        if (m) pVal = parseInt(m[1], 10);
+        if (/折/.test(text)) pVal = pVal * 10;
+        if (pVal > 0 && pVal <= 100) html += buildPercentGridSVG(pVal);
+      } else if (family === 'decimal'){
+        var decs = [];
+        var dm = text.match(/\d+\.\d+/g);
+        if (dm) for (var di = 0; di < dm.length; di++) decs.push(parseFloat(dm[di]));
+        if (decs.length > 0) html += buildNumberLineSVG(decs);
+      } else if (family === 'volume' && ints.length >= 2){
+        /* Simple 3D box representation */
+        html += '<div style="font-size:12px;color:#e5e7eb;margin:4px 0">📦 長=' + ints[0] + ' 寬=' + (ints[1]||'?') + (ints.length > 2 ? ' 高=' + ints[2] : '') + '</div>';
+      }
+
+      if (needsBaseSwitchWarning(text)){
+        html += '<div class="he-base-switch">⚠️ 注意：圖中第二段的顏色是從「剩下」的部分切出來的！</div>';
+      }
+      return html;
+    }
+
+    /* --- L3: 讀圖得分數 (grid + labels) --- */
+    if (lv === 3){
+      html += '<div class="he-rich-l3">' + escapeHTML(tpl.L3).replace(/\n/g, '<br>') + '</div>';
+
+      if ((family === 'fracRemain' || family === 'fracWord') && fracs.length >= 1){
+        /* Build a grid showing the fraction decomposition */
+        if (fracs.length >= 2){
+          var f1 = fracs[0], f2 = fracs[1];
+          var totalCells = lcm(f1.den, f2.den) || f1.den * f2.den;
+          var cells1 = totalCells * f1.num / f1.den;
+          var remaining = totalCells - cells1;
+          var cells2 = remaining * f2.num / f2.den;
+          var cellsLeft = totalCells - cells1 - cells2;
+
+          /* Pick grid dimensions close to square */
+          var gridCols = Math.min(totalCells, 10);
+          var gridRows = Math.ceil(totalCells / gridCols);
+          var cm = [
+            { count: Math.round(cells1), color: '#ef4444', label: '🟥 '+f1.num+'/'+f1.den+' = '+Math.round(cells1)+'/'+totalCells },
+            { count: Math.round(cells2), color: '#f97316', label: '🟧 '+Math.round(cells2)+'/'+totalCells },
+            { count: Math.round(cellsLeft), color: '#3b82f6', label: '🟦 剩 '+Math.round(cellsLeft)+'/'+totalCells }
+          ];
+          html += buildGridSVG(gridRows, gridCols, cm);
+          html += '<div style="font-size:11px;color:#9ca3af;margin:2px 0">每格 = 1/'+totalCells+'　驗證：'+Math.round(cells1)+' + '+Math.round(cells2)+' + '+Math.round(cellsLeft)+' = '+totalCells+' ✓</div>';
+        } else if (fracs.length === 1){
+          var f = fracs[0];
+          var gc = Math.min(f.den, 10);
+          var gr = Math.ceil(f.den / gc);
+          html += buildGridSVG(gr, gc, [
+            { count: f.num, color: '#ef4444', label: f.num+'/'+f.den },
+            { count: f.den - f.num, color: '#374151', label: '剩 '+(f.den-f.num)+'/'+f.den }
+          ]);
+        }
+      } else if (family === 'percent'){
+        var pVal2 = 0;
+        var m2 = text.match(/(\d+)\s*[%％折]/);
+        if (m2) pVal2 = parseInt(m2[1], 10);
+        if (/折/.test(text)) pVal2 = pVal2 * 10;
+        if (pVal2 > 0) html += '<div style="font-size:11px;color:#d29922">📊 '+pVal2+' 格塗色 / 100 格 = '+pVal2+'%</div>';
+      }
+
+      return html;
+    }
+
+    /* --- L4: 算式收斂 + 合理性檢查 --- */
+    if (lv === 4){
+      html += '<div class="he-rich-l4">' + escapeHTML(tpl.L4).replace(/\n/g, '<br>') + '</div>';
+
+      /* Family-specific formula scaffolding */
+      if (family === 'fracRemain' && fracs.length >= 2){
+        var f1r = fracs[0], f2r = fracs[1];
+        html += '<div class="he-formula">';
+        html += '步驟① 1 − ' + f1r.num + '/' + f1r.den + ' = ' + (f1r.den-f1r.num) + '/' + f1r.den + ' (剩下)<br>';
+        html += '步驟② ' + (f1r.den-f1r.num) + '/' + f1r.den + ' × ' + f2r.num + '/' + f2r.den + ' = ？（自行計算）<br>';
+        html += '</div>';
+        html += '<div class="he-check-ok">✅ 第二段 &lt; 剩下？全部 &gt; 答案？</div>';
+        html += '<div class="he-check-bad">❌ 常見錯：直接用 1 × ' + f2r.num + '/' + f2r.den + '（忽略基準切換）</div>';
+      } else if (family === 'percent'){
+        var m3 = text.match(/(\d+)\s*[%％]/); var m3f = text.match(/(\d+)\s*折/);
+        if (m3){
+          html += '<div class="he-formula">列式：原量 × ' + m3[1] + '/100 = ？</div>';
+        } else if (m3f){
+          html += '<div class="he-formula">列式：原量 × ' + m3f[1] + '/10 = ？（' + m3f[1] + '折 = 0.' + m3f[1] + '）</div>';
+        }
+        html += '<div class="he-check-ok">✅ 打折 → 結果 &lt; 原價；加成 → 結果 &gt; 原量</div>';
+      } else if (family === 'decimal'){
+        html += '<div class="he-formula">先當整數算 → 再放回小數點（位數加總）</div>';
+        html += '<div class="he-check-ok">✅ 用整數近似值檢查量級</div>';
+      }
+
+      html += '<div class="he-finish">🏁 填入你的答案</div>';
+      return html;
+    }
+
+    return html;
+  }
+
+  function escapeHTML(s){
+    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
 
   /* ============================================================
