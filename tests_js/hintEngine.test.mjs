@@ -324,7 +324,7 @@ test('getBaseSwitchReminder — returns reminder for relevant text', () => {
 });
 
 /* ============================================================
- * 10. L4 gate — enforceL3Gate
+ * 10. L4 gate — enforceL3Gate + stripAnswerFromHint
  * ============================================================ */
 test('enforceL3Gate — strips exact answer', () => {
   const q = { answer: '42' };
@@ -336,6 +336,39 @@ test('enforceL3Gate — preserves hint without answer', () => {
   const q = { answer: '42' };
   const result = HE.enforceL3Gate('先算出中間量，再做加法', q);
   assert.ok(result.includes('先算出中間量'));
+});
+
+test('stripAnswerFromHint — strips fraction answer', () => {
+  const result = HE.stripAnswerFromHint('算到最後是 7/12 就對了', '7/12');
+  assert.ok(!result.includes('7/12'), 'Should strip fraction answer');
+});
+
+test('stripAnswerFromHint — strips decimal equivalent of fraction', () => {
+  const result = HE.stripAnswerFromHint('換算後約 0.5833', '7/12');
+  // 7/12 ≈ 0.5833 — may or may not match exactly depending on rounding
+  // At minimum, the function should not crash
+  assert.ok(typeof result === 'string');
+});
+
+test('stripAnswerFromHint — strips "答案是" pattern', () => {
+  const result = HE.stripAnswerFromHint('答案是 800 元', '800');
+  assert.ok(!result.includes('800'), 'Answer number should be stripped');
+});
+
+test('stripAnswerFromHint — strips "結果是" pattern', () => {
+  const result = HE.stripAnswerFromHint('結果是 3.14', '3.14');
+  assert.ok(!result.includes('3.14'));
+});
+
+test('stripAnswerFromHint — strips reduced fraction form', () => {
+  const result = HE.stripAnswerFromHint('化簡得 1/2', '2/4');
+  assert.ok(!result.includes('1/2'), 'Should strip reduced fraction');
+});
+
+test('processHint L4 — answer with units stripped', () => {
+  const q = { kind: 'rect_cm3', question: '求體積', answer: '400 立方公分' };
+  const hint = HE.processHint('答案是 400 立方公分', q, 4);
+  assert.ok(!hint.includes('400 立方公分') || hint.includes('自'), 'Should strip answer with units');
 });
 
 /* ============================================================

@@ -1022,16 +1022,53 @@
     var ans = normalizeForCompare(answer);
     if (!ans || ans.length < 1) return h;
 
-    /* Replace exact answer occurrences */
-    var hNorm = normalizeForCompare(h);
-    if (hNorm.indexOf(ans) !== -1){
-      /* Replace in the original (non-normalized) text */
-      h = h.replace(new RegExp(escapeRegex(String(answer || '').trim()), 'g'), '（先自己算）');
+    /* Build set of answer variants to strip */
+    var variants = [String(answer || '').trim()];
+
+    /* If answer is fraction, also strip decimal equivalent */
+    var fMatch = String(answer || '').match(/^(\d+)\s*[\/／]\s*(\d+)$/);
+    if (fMatch){
+      var decVal = parseInt(fMatch[1],10) / parseInt(fMatch[2],10);
+      if (isFinite(decVal)){
+        var decStr = String(Math.round(decVal * 10000) / 10000);
+        variants.push(decStr);
+        /* Also add reduced form */
+        var g = gcd(parseInt(fMatch[1],10), parseInt(fMatch[2],10));
+        if (g > 1) variants.push((parseInt(fMatch[1],10)/g) + '/' + (parseInt(fMatch[2],10)/g));
+      }
+    }
+    /* If answer is decimal, also strip equivalent fraction */
+    var dMatch = String(answer || '').match(/^(\d+)\.(\d+)$/);
+    if (dMatch){
+      var places = dMatch[2].length;
+      var den = Math.pow(10, places);
+      var num = parseInt(dMatch[1] + dMatch[2], 10);
+      var g2 = gcd(num, den);
+      variants.push((num/g2) + '/' + (den/g2));
     }
 
-    /* Also catch patterns like "答案是 X", "= X (最終)" */
-    h = h.replace(/(?:答案[是為]?|所以|因此|得到|等於)\s*[:：]?\s*\d[\d.\/\s]*(?:\s*[a-zA-Z%㎡³元個頁公分公尺]*)?\s*[。.！!]?/g, '（請自行完成最後計算）');
+    /* If answer has units, also strip the bare number */
+    var unitMatch = String(answer || '').match(/^([\d.\/]+)\s*([^\d.\/]+)$/);
+    if (unitMatch){
+      variants.push(unitMatch[1].trim());
+    }
+
+    /* Replace all variants */
+    for (var vi = 0; vi < variants.length; vi++){
+      var v = variants[vi];
+      if (!v || v.length < 1) continue;
+      var hNorm = normalizeForCompare(h);
+      var vNorm = normalizeForCompare(v);
+      if (vNorm && hNorm.indexOf(vNorm) !== -1){
+        h = h.replace(new RegExp(escapeRegex(v), 'g'), '（先自己算）');
+      }
+    }
+
+    /* Catch patterns like "答案是 X", "結果是 X", "答: X", "= X (最終)" */
+    h = h.replace(/(?:答案[是為]?|結果[是為]?|最後[是為]?|答\s*[:：]|所以|因此|得到|等於)\s*[:：]?\s*\d[\d.\/\s]*(?:\s*[a-zA-Z%㎡³元個頁公分公尺]*)?\s*[。.！!]?/g, '（請自行完成最後計算）');
     h = h.replace(/=\s*\d[\d.\/\s]*\s*$/gm, '= ？（自行計算）');
+    /* "算出 X" or "得 X" at end of sentence */
+    h = h.replace(/(?:算出|得出|算得)\s*\d[\d.\/\s]*\s*$/gm, '？（自行計算）');
 
     return h;
   }
