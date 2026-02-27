@@ -208,6 +208,16 @@
 
     var svg = '<svg width="'+W+'" height="'+(H+24)+'" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:6px auto">';
 
+    /* Cross-hatch pattern for consumed portions */
+    svg += '<defs>';
+    svg += '<pattern id="hatch0" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)">';
+    svg += '<line x1="0" y1="0" x2="0" y2="6" stroke="'+colors[0]+'" stroke-width="1.5" opacity="0.4"/>';
+    svg += '</pattern>';
+    svg += '<pattern id="hatch1" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(-45)">';
+    svg += '<line x1="0" y1="0" x2="0" y2="6" stroke="'+colors[1]+'" stroke-width="1.5" opacity="0.4"/>';
+    svg += '</pattern>';
+    svg += '</defs>';
+
     /* Background bar */
     svg += '<rect x="0" y="0" width="'+W+'" height="'+H+'" fill="#374151" rx="4" stroke="#6b7280" stroke-width="1"/>';
 
@@ -235,15 +245,22 @@
         svg += '<line x1="'+(g*partW)+'" y1="0" x2="'+(g*partW)+'" y2="'+H+'" stroke="#6b7280" stroke-width="0.5"/>';
       }
 
-      /* Color first fraction (consumed) */
+      /* Color first fraction (consumed) — solid fill + cross-hatch overlay */
       for (var i = 0; i < Math.round(parts1); i++){
-        svg += '<rect x="'+(i*partW+0.5)+'" y="0.5" width="'+(partW-1)+'" height="'+(H-1)+'" fill="'+colors[0]+'" opacity="0.7"/>';
+        svg += '<rect x="'+(i*partW+0.5)+'" y="0.5" width="'+(partW-1)+'" height="'+(H-1)+'" fill="'+colors[0]+'" opacity="0.6"/>';
+        svg += '<rect x="'+(i*partW+0.5)+'" y="0.5" width="'+(partW-1)+'" height="'+(H-1)+'" fill="url(#hatch0)"/>';
       }
 
-      /* Color second fraction (consumed from remainder) */
+      /* Dashed cut boundary after first consumption */
+      var cutX = Math.round(parts1) * partW;
+      svg += '<line x1="'+cutX+'" y1="0" x2="'+cutX+'" y2="'+H+'" stroke="#fbbf24" stroke-width="2" stroke-dasharray="4,3"/>';
+      svg += '<text x="'+cutX+'" y="-3" text-anchor="middle" fill="#fbbf24" font-size="9">✂ 切</text>';
+
+      /* Color second fraction (consumed from remainder) — solid + cross-hatch */
       var start2 = Math.round(parts1);
       for (var j = 0; j < Math.round(parts2); j++){
-        svg += '<rect x="'+((start2+j)*partW+0.5)+'" y="0.5" width="'+(partW-1)+'" height="'+(H-1)+'" fill="'+colors[1]+'" opacity="0.7"/>';
+        svg += '<rect x="'+((start2+j)*partW+0.5)+'" y="0.5" width="'+(partW-1)+'" height="'+(H-1)+'" fill="'+colors[1]+'" opacity="0.6"/>';
+        svg += '<rect x="'+((start2+j)*partW+0.5)+'" y="0.5" width="'+(partW-1)+'" height="'+(H-1)+'" fill="url(#hatch1)"/>';
       }
 
       /* Remaining is uncolored (or blue) */
@@ -381,6 +398,153 @@
     return buildGridSVG(10, 10, colorMap, { cellSize: 16 });
   }
 
+  /**
+   * buildClockFaceSVG(h, m, opts)
+   * Draws an analog clock face with hour/minute hands.
+   * h = hours (0-23), m = minutes (0-59).
+   * opts.label = text below clock, opts.size = diameter.
+   * For time span: pass opts.h2, opts.m2 to draw end-time arc.
+   */
+  function buildClockFaceSVG(h, m, opts){
+    opts = opts || {};
+    var S = opts.size || 120;
+    var cx = S / 2 + 4;
+    var cy = S / 2 + 4;
+    var r = S / 2 - 2;
+    var totalH = S + 30;
+    var label = opts.label || '';
+
+    var svg = '<svg width="'+(S+8)+'" height="'+totalH+'" xmlns="http://www.w3.org/2000/svg" style="display:inline-block;margin:4px 8px;vertical-align:top">';
+
+    /* Clock face circle */
+    svg += '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="#1e293b" stroke="#6b7280" stroke-width="1.5"/>';
+
+    /* Hour markers */
+    for (var i = 1; i <= 12; i++){
+      var angle = (i * 30 - 90) * Math.PI / 180;
+      var tx = cx + (r - 10) * Math.cos(angle);
+      var ty = cy + (r - 10) * Math.sin(angle);
+      var outerX = cx + (r - 3) * Math.cos(angle);
+      var outerY = cy + (r - 3) * Math.sin(angle);
+      svg += '<line x1="'+outerX+'" y1="'+outerY+'" x2="'+(cx+(r-7)*Math.cos(angle))+'" y2="'+(cy+(r-7)*Math.sin(angle))+'" stroke="#9ca3af" stroke-width="1.5"/>';
+      svg += '<text x="'+tx+'" y="'+ty+'" text-anchor="middle" dy=".35em" fill="#e5e7eb" font-size="'+(r > 50 ? 10 : 8)+'" font-weight="600">'+i+'</text>';
+    }
+
+    /* Minute ticks */
+    for (var t = 0; t < 60; t++){
+      if (t % 5 === 0) continue;
+      var ta = (t * 6 - 90) * Math.PI / 180;
+      svg += '<line x1="'+(cx+(r-2)*Math.cos(ta))+'" y1="'+(cy+(r-2)*Math.sin(ta))+'" x2="'+(cx+(r-5)*Math.cos(ta))+'" y2="'+(cy+(r-5)*Math.sin(ta))+'" stroke="#4b5563" stroke-width="0.5"/>';
+    }
+
+    /* Time span arc (if end time provided) */
+    if (opts.h2 !== undefined && opts.m2 !== undefined){
+      var startAngle = ((h % 12) * 30 + m * 0.5 - 90) * Math.PI / 180;
+      var endAngle = ((opts.h2 % 12) * 30 + opts.m2 * 0.5 - 90) * Math.PI / 180;
+      var arcR = r - 16;
+      var sx = cx + arcR * Math.cos(startAngle);
+      var sy = cy + arcR * Math.sin(startAngle);
+      var ex = cx + arcR * Math.cos(endAngle);
+      var ey = cy + arcR * Math.sin(endAngle);
+      /* Determine large-arc flag */
+      var diff = ((opts.h2 % 12) * 60 + opts.m2) - ((h % 12) * 60 + m);
+      if (diff < 0) diff += 720;
+      var largeArc = diff > 360 ? 1 : 0;
+      svg += '<path d="M '+sx+' '+sy+' A '+arcR+' '+arcR+' 0 '+largeArc+' 1 '+ex+' '+ey+'" fill="none" stroke="rgba(59,130,246,.4)" stroke-width="'+(arcR > 30 ? 8 : 5)+'" stroke-linecap="round"/>';
+    }
+
+    /* Hour hand */
+    var hAngle = ((h % 12) * 30 + m * 0.5 - 90) * Math.PI / 180;
+    var hLen = r * 0.5;
+    svg += '<line x1="'+cx+'" y1="'+cy+'" x2="'+(cx+hLen*Math.cos(hAngle))+'" y2="'+(cy+hLen*Math.sin(hAngle))+'" stroke="#ef4444" stroke-width="3" stroke-linecap="round"/>';
+
+    /* Minute hand */
+    var mAngle = (m * 6 - 90) * Math.PI / 180;
+    var mLen = r * 0.72;
+    svg += '<line x1="'+cx+'" y1="'+cy+'" x2="'+(cx+mLen*Math.cos(mAngle))+'" y2="'+(cy+mLen*Math.sin(mAngle))+'" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>';
+
+    /* Center dot */
+    svg += '<circle cx="'+cx+'" cy="'+cy+'" r="3" fill="#e5e7eb"/>';
+
+    /* Label */
+    if (label){
+      svg += '<text x="'+cx+'" y="'+(S+16)+'" text-anchor="middle" fill="#e5e7eb" font-size="10" font-weight="600">'+escapeHTML(label)+'</text>';
+    }
+
+    svg += '</svg>';
+    return svg;
+  }
+
+  /**
+   * buildIsometricBoxSVG(l, w, h, opts)
+   * Draws a 3D isometric rectangular box with labels.
+   * l = length, w = width, h = height (in problem units).
+   * opts.unit = unit string, opts.label = extra label.
+   */
+  function buildIsometricBoxSVG(l, w, h, opts){
+    opts = opts || {};
+    var unit = opts.unit || '';
+
+    /* Scale to fit in a reasonable SVG */
+    var maxDim = Math.max(l, w, h, 1);
+    var scale = Math.min(20, 120 / maxDim);
+    var sL = Math.max(20, l * scale);
+    var sW = Math.max(14, w * scale * 0.5); /* foreshortened */
+    var sH = Math.max(20, h * scale);
+
+    /* Isometric offsets */
+    var ofsX = sW * 0.866; /* cos(30°) */
+    var ofsY = sW * 0.5;   /* sin(30°) */
+
+    var W = Math.ceil(sL + ofsX + 40);
+    var H = Math.ceil(sH + ofsY + 40);
+    var bx = 20; /* base x */
+    var by = sH + 10; /* base y */
+
+    var svg = '<svg width="'+W+'" height="'+(H+20)+'" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:6px auto">';
+
+    /* Front face (visible) */
+    svg += '<polygon points="' +
+      bx+','+by+' '+(bx+sL)+','+by+' '+(bx+sL)+','+(by-sH)+' '+bx+','+(by-sH) +
+      '" fill="rgba(59,130,246,.25)" stroke="#3b82f6" stroke-width="1.5"/>';
+
+    /* Top face */
+    svg += '<polygon points="' +
+      bx+','+(by-sH)+' '+(bx+sL)+','+(by-sH)+' '+(bx+sL+ofsX)+','+(by-sH-ofsY)+' '+(bx+ofsX)+','+(by-sH-ofsY) +
+      '" fill="rgba(59,130,246,.15)" stroke="#3b82f6" stroke-width="1"/>';
+
+    /* Right side face */
+    svg += '<polygon points="' +
+      (bx+sL)+','+by+' '+(bx+sL)+','+(by-sH)+' '+(bx+sL+ofsX)+','+(by-sH-ofsY)+' '+(bx+sL+ofsX)+','+(by-ofsY) +
+      '" fill="rgba(59,130,246,.10)" stroke="#3b82f6" stroke-width="1"/>';
+
+    /* Dimension labels */
+    /* Length (bottom of front face) */
+    svg += '<text x="'+(bx+sL/2)+'" y="'+(by+14)+'" text-anchor="middle" fill="#3b82f6" font-size="11" font-weight="700">長 '+l+(unit?' '+unit:'')+'</text>';
+
+    /* Height (left side) */
+    svg += '<text x="'+(bx-4)+'" y="'+(by-sH/2)+'" text-anchor="end" fill="#ef4444" font-size="11" font-weight="700">高 '+h+(unit?' '+unit:'')+'</text>';
+    /* Height arrow line */
+    svg += '<line x1="'+(bx-2)+'" y1="'+(by-2)+'" x2="'+(bx-2)+'" y2="'+(by-sH+2)+'" stroke="#ef4444" stroke-width="1" marker-start="url(#arrS)" marker-end="url(#arrE)"/>';
+
+    /* Width (top-right edge) */
+    var wMidX = bx + sL + ofsX / 2;
+    var wMidY = by - sH - ofsY / 2;
+    svg += '<text x="'+(wMidX+4)+'" y="'+(wMidY-4)+'" fill="#22c55e" font-size="11" font-weight="700">寬 '+w+(unit?' '+unit:'')+'</text>';
+
+    /* Arrow markers */
+    svg += '<defs><marker id="arrS" markerWidth="4" markerHeight="4" refX="2" refY="2" orient="auto"><path d="M0,0 L4,2 L0,4" fill="#ef4444" /></marker>';
+    svg += '<marker id="arrE" markerWidth="4" markerHeight="4" refX="2" refY="2" orient="auto"><path d="M4,0 L0,2 L4,4" fill="#ef4444" /></marker></defs>';
+
+    /* Optional label */
+    if (opts.label){
+      svg += '<text x="'+(W/2)+'" y="'+(H+14)+'" text-anchor="middle" fill="#9ca3af" font-size="10">'+escapeHTML(opts.label)+'</text>';
+    }
+
+    svg += '</svg>';
+    return svg;
+  }
+
   /* ============================================================
    * 2c. Rich Hint HTML Builder — per-family parametric hints
    * ============================================================ */
@@ -433,8 +597,42 @@
         if (dm) for (var di = 0; di < dm.length; di++) decs.push(parseFloat(dm[di]));
         if (decs.length > 0) html += buildNumberLineSVG(decs);
       } else if (family === 'volume' && ints.length >= 2){
-        /* Simple 3D box representation */
-        html += '<div style="font-size:12px;color:#e5e7eb;margin:4px 0">📦 長=' + ints[0] + ' 寬=' + (ints[1]||'?') + (ints.length > 2 ? ' 高=' + ints[2] : '') + '</div>';
+        /* 3D isometric box for volume questions */
+        var vl = ints[0] || 1, vw = ints[1] || 1, vh = ints.length > 2 ? ints[2] : 0;
+        /* Detect unit from question text */
+        var unitM = text.match(/公分|cm|公尺|m/);
+        var vUnit = unitM ? unitM[0] : '';
+        if (vh > 0){
+          html += buildIsometricBoxSVG(vl, vw, vh, { unit: vUnit, label: '體積 = 長×寬×高' });
+        } else {
+          html += buildIsometricBoxSVG(vl, vw, 1, { unit: vUnit, label: '面積 = 長×寬' });
+        }
+      } else if (family === 'time'){
+        /* Clock face for time questions */
+        var timeRe = /(\d{1,2})\s*[:：時]\s*(\d{1,2})?/g;
+        var times = [];
+        var tm;
+        while ((tm = timeRe.exec(text)) !== null){
+          times.push({ h: parseInt(tm[1],10), m: parseInt(tm[2]||'0',10) });
+        }
+        if (times.length >= 2){
+          /* Show start and end clocks with span arc */
+          html += '<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:4px">';
+          html += buildClockFaceSVG(times[0].h, times[0].m, {
+            label: '起 '+times[0].h+':'+('0'+times[0].m).slice(-2),
+            h2: times[1].h, m2: times[1].m, size: 110
+          });
+          html += buildClockFaceSVG(times[1].h, times[1].m, {
+            label: '迄 '+times[1].h+':'+('0'+times[1].m).slice(-2),
+            size: 110
+          });
+          html += '</div>';
+        } else if (times.length === 1){
+          html += buildClockFaceSVG(times[0].h, times[0].m, {
+            label: times[0].h+':'+('0'+times[0].m).slice(-2),
+            size: 110
+          });
+        }
       }
 
       if (needsBaseSwitchWarning(text)){
@@ -482,6 +680,34 @@
         if (m2) pVal2 = parseInt(m2[1], 10);
         if (/折/.test(text)) pVal2 = pVal2 * 10;
         if (pVal2 > 0) html += '<div style="font-size:11px;color:#d29922">📊 '+pVal2+' 格塗色 / 100 格 = '+pVal2+'%</div>';
+      } else if (family === 'time'){
+        /* Read clock: count hours + minutes from the arc */
+        var timeRe3 = /(\d{1,2})\s*[:：時]\s*(\d{1,2})?/g;
+        var times3 = [];
+        var tm3;
+        while ((tm3 = timeRe3.exec(text)) !== null){
+          times3.push({ h: parseInt(tm3[1],10), m: parseInt(tm3[2]||'0',10) });
+        }
+        if (times3.length >= 2){
+          var diffMin = (times3[1].h * 60 + times3[1].m) - (times3[0].h * 60 + times3[0].m);
+          if (diffMin < 0) diffMin += 24 * 60;
+          var dH = Math.floor(diffMin / 60);
+          var dM = diffMin % 60;
+          html += '<div style="font-size:12px;color:#d29922;margin:4px 0">';
+          html += '📊 從鐘面讀出：走了 <strong>' + dH + '</strong> 大格（小時）';
+          if (dM > 0) html += ' + <strong>' + dM + '</strong> 小格（分鐘）';
+          html += ' = <strong>' + dH + ' 時 ' + dM + ' 分</strong>';
+          html += '</div>';
+        }
+      } else if (family === 'volume' && ints.length >= 2){
+        /* Read the box: count layers × per-layer units */
+        var v3l = ints[0], v3w = ints[1], v3h = ints.length > 2 ? ints[2] : 1;
+        html += '<div style="font-size:12px;color:#d29922;margin:4px 0">';
+        html += '📊 底面 = ' + v3l + ' × ' + v3w + ' = <strong>' + (v3l * v3w) + '</strong> 個';
+        if (v3h > 1){
+          html += '　疊 <strong>' + v3h + '</strong> 層 → 合計 <strong>' + (v3l * v3w) + ' × ' + v3h + '</strong> = ？（自行算）';
+        }
+        html += '</div>';
       }
 
       return html;
@@ -511,6 +737,36 @@
       } else if (family === 'decimal'){
         html += '<div class="he-formula">先當整數算 → 再放回小數點（位數加總）</div>';
         html += '<div class="he-check-ok">✅ 用整數近似值檢查量級</div>';
+      } else if (family === 'time'){
+        var timeRe4 = /(\d{1,2})\s*[:：時]\s*(\d{1,2})?/g;
+        var times4 = [];
+        var tm4;
+        while ((tm4 = timeRe4.exec(text)) !== null){
+          times4.push({ h: parseInt(tm4[1],10), m: parseInt(tm4[2]||'0',10) });
+        }
+        if (times4.length >= 2){
+          html += '<div class="he-formula">';
+          html += '列式：'+times4[1].h+'時'+('0'+times4[1].m).slice(-2)+'分 − '+times4[0].h+'時'+('0'+times4[0].m).slice(-2)+'分<br>';
+          if (times4[1].m < times4[0].m){
+            html += '分鐘不夠減 → 借 1 小時 = 60 分鐘<br>';
+          }
+          html += '= ？時？分（自行計算）';
+          html += '</div>';
+          html += '<div class="he-check-ok">✅ 結果轉回鐘面看是否合理</div>';
+          html += '<div class="he-check-bad">❌ 常見錯：忘記借位（60進位）</div>';
+        }
+      } else if (family === 'volume' && ints.length >= 2){
+        var v4l = ints[0], v4w = ints[1], v4h = ints.length > 2 ? ints[2] : 0;
+        html += '<div class="he-formula">';
+        if (v4h > 0){
+          html += '底面積 = '+v4l+' × '+v4w+' = '+(v4l*v4w)+'<br>';
+          html += '體積 = '+(v4l*v4w)+' × '+v4h+' = ？（自行計算）<br>';
+        } else {
+          html += '面積 = '+v4l+' × '+v4w+' = ？（自行計算）<br>';
+        }
+        html += '</div>';
+        html += '<div class="he-check-ok">✅ 組合體：先拆成基本形再加減</div>';
+        html += '<div class="he-check-bad">❌ 常見錯：搞混面積（²）與體積（³）單位</div>';
       }
 
       html += '<div class="he-finish">🏁 填入你的答案</div>';
@@ -1121,6 +1377,8 @@
     buildGridSVG: buildGridSVG,
     buildNumberLineSVG: buildNumberLineSVG,
     buildPercentGridSVG: buildPercentGridSVG,
+    buildClockFaceSVG: buildClockFaceSVG,
+    buildIsometricBoxSVG: buildIsometricBoxSVG,
 
     /* L4 gate */
     enforceL3Gate: enforceL3Gate,
