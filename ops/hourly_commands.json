@@ -35,6 +35,14 @@
       "note": "每 30 分鐘執行提示優化，依題型自動收斂為更清晰且不洩漏答案的教學語句"
     },
     {
+      "id": "2026-02-27-hint-summary-30m",
+      "enabled": true,
+      "action": "npm_script",
+      "value": "summary:hints",
+      "cooldown_minutes": 30,
+      "note": "每 30 分鐘輸出單一教學提示優化摘要（JSON+MD），方便快速檢視每輪改善"
+    },
+    {
       "id": "2026-02-26-gate-verify-all",
       "enabled": true,
       "action": "npm_script",

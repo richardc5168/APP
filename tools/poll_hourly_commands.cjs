@@ -12,6 +12,7 @@ const ALLOWED_NPM_SCRIPTS = new Set([
   'verify:all',
   'topic:align',
   'summary:iteration',
+  'summary:hints',
   'autotune:hints',
   'triage:agent',
   'agent:web-search',
