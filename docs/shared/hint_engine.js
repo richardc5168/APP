@@ -581,9 +581,45 @@
       if ((family === 'fracRemain' || family === 'fracWord') && fracs.length >= 1){
         html += buildFractionBarSVG(fracs);
       } else if (family === 'fracAdd' && fracs.length >= 1){
-        /* Show separate bars for comparison */
+        /* Show separate bars for comparison, then a merged common-denominator bar */
+        var barColors = ['#ef4444','#3b82f6','#22c55e'];
         for (var fi = 0; fi < Math.min(fracs.length, 3); fi++){
-          html += buildFractionBarSVG([fracs[fi]], { width: 280, height: 30, colors: [['#ef4444','#3b82f6','#22c55e'][fi]] });
+          html += buildFractionBarSVG([fracs[fi]], { width: 280, height: 28, colors: [barColors[fi]] });
+        }
+        /* Merged bar: common denominator */
+        if (fracs.length >= 2){
+          var comDen = fracs[0].den;
+          for (var ci = 1; ci < fracs.length; ci++) comDen = lcm(comDen, fracs[ci].den);
+          if (comDen > 0 && comDen <= 60){
+            var mergedParts = [];
+            var mergedLabels = [];
+            var totalFilled = 0;
+            for (var mi = 0; mi < fracs.length; mi++){
+              var equiv = fracs[mi].num * (comDen / fracs[mi].den);
+              mergedParts.push({ num: equiv, den: comDen });
+              mergedLabels.push(barColors[mi % barColors.length]);
+              totalFilled += equiv;
+            }
+            /* Build merged bar manually */
+            var mW = 280, mH = 32;
+            var msvg = '<svg width="'+mW+'" height="'+(mH+22)+'" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:6px auto">';
+            msvg += '<rect x="0" y="0" width="'+mW+'" height="'+mH+'" fill="#374151" rx="4" stroke="#6b7280" stroke-width="1"/>';
+            var pw = mW / comDen;
+            for (var gi = 1; gi < comDen; gi++){
+              msvg += '<line x1="'+(gi*pw)+'" y1="0" x2="'+(gi*pw)+'" y2="'+mH+'" stroke="#6b7280" stroke-width="0.5"/>';
+            }
+            var pos = 0;
+            for (var pi = 0; pi < mergedParts.length; pi++){
+              for (var qi = 0; qi < mergedParts[pi].num; qi++){
+                msvg += '<rect x="'+((pos+qi)*pw+0.5)+'" y="0.5" width="'+(pw-1)+'" height="'+(mH-1)+'" fill="'+mergedLabels[pi]+'" opacity="0.65"/>';
+              }
+              pos += mergedParts[pi].num;
+            }
+            msvg += '<text x="'+(mW/2)+'" y="'+(mH+14)+'" text-anchor="middle" fill="#e5e7eb" font-size="10">通分 → 分母 = '+comDen+'　合計 '+totalFilled+'/'+comDen+'</text>';
+            msvg += '</svg>';
+            html += '<div style="font-size:10px;color:#9ca3af;margin:2px 0 0 0">▼ 通分後合併：</div>';
+            html += msvg;
+          }
         }
       } else if (family === 'percent'){
         var pVal = 0;
@@ -674,6 +710,35 @@
             { count: f.den - f.num, color: '#374151', label: '剩 '+(f.den-f.num)+'/'+f.den }
           ]);
         }
+      } else if (family === 'fracAdd' && fracs.length >= 1){
+        /* Grid for fraction addition: show each fraction in common denominator */
+        if (fracs.length >= 2){
+          var fa1 = fracs[0], fa2 = fracs[1];
+          var comD3 = lcm(fa1.den, fa2.den) || fa1.den * fa2.den;
+          if (comD3 > 0 && comD3 <= 60){
+            var eq1 = fa1.num * (comD3 / fa1.den);
+            var eq2 = fa2.num * (comD3 / fa2.den);
+            var total3 = eq1 + eq2;
+            var gc3 = Math.min(comD3, 10);
+            var gr3 = Math.ceil(comD3 / gc3);
+            var addColors = ['#ef4444','#3b82f6'];
+            var cm3 = [
+              { count: Math.round(eq1), color: addColors[0], label: '🟥 '+fa1.num+'/'+fa1.den+' = '+Math.round(eq1)+'/'+comD3 },
+              { count: Math.round(eq2), color: addColors[1], label: '🟦 '+fa2.num+'/'+fa2.den+' = '+Math.round(eq2)+'/'+comD3 },
+              { count: Math.max(0, comD3 - Math.round(eq1) - Math.round(eq2)), color: '#374151', label: '空' }
+            ];
+            html += buildGridSVG(gr3, gc3, cm3);
+            html += '<div style="font-size:11px;color:#9ca3af;margin:2px 0">通分 → 分母 '+comD3+'　'+Math.round(eq1)+' + '+Math.round(eq2)+' = '+Math.round(total3)+'（'+Math.round(total3)+'/'+comD3+'）</div>';
+          }
+        } else {
+          var fa = fracs[0];
+          var gc4 = Math.min(fa.den, 10);
+          var gr4 = Math.ceil(fa.den / gc4);
+          html += buildGridSVG(gr4, gc4, [
+            { count: fa.num, color: '#ef4444', label: fa.num+'/'+fa.den },
+            { count: fa.den - fa.num, color: '#374151', label: '' }
+          ]);
+        }
       } else if (family === 'percent'){
         var pVal2 = 0;
         var m2 = text.match(/(\d+)\s*[%％折]/);
@@ -726,6 +791,18 @@
         html += '</div>';
         html += '<div class="he-check-ok">✅ 第二段 &lt; 剩下？全部 &gt; 答案？</div>';
         html += '<div class="he-check-bad">❌ 常見錯：直接用 1 × ' + f2r.num + '/' + f2r.den + '（忽略基準切換）</div>';
+      } else if (family === 'fracAdd' && fracs.length >= 2){
+        var fa4a = fracs[0], fa4b = fracs[1];
+        var cd4 = lcm(fa4a.den, fa4b.den) || fa4a.den * fa4b.den;
+        html += '<div class="he-formula">';
+        html += '通分 → 分母 = '+cd4+'<br>';
+        html += escapeHTML(fa4a.num+'/'+fa4a.den)+' = '+(fa4a.num*(cd4/fa4a.den))+'/'+cd4+'<br>';
+        html += escapeHTML(fa4b.num+'/'+fa4b.den)+' = '+(fa4b.num*(cd4/fa4b.den))+'/'+cd4+'<br>';
+        var isAdd = !/減|差|少|扣/.test(text);
+        html += '分子 '+(isAdd?'加':'減')+'：'+(fa4a.num*(cd4/fa4a.den))+' '+(isAdd?'+':'−')+' '+(fa4b.num*(cd4/fa4b.den))+' = ？<br>';
+        html += '最後約分到最簡 → ？';
+        html += '</div>';
+        html += '<div class="he-check-ok">✅ '+(isAdd?'加的結果 ≥ 兩個分數中較大的':'減的結果 ≤ 被減數')+'</div>';
       } else if (family === 'percent'){
         var m3 = text.match(/(\d+)\s*[%％]/); var m3f = text.match(/(\d+)\s*折/);
         if (m3){
