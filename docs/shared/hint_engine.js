@@ -1248,9 +1248,49 @@
     /* Step progress indicator for all levels */
     html += buildStepIndicatorSVG(lv);
 
-    /* --- L1: 觀念鎖定 (all families) --- */
+    /* --- L1: 觀念鎖定 (all families) — context-specific --- */
     if (lv === 1){
-      html += '<div class="he-rich-l1">' + highlightKeywords(escapeHTML(tpl.L1).replace(/\n/g, '<br>')) + '</div>';
+      html += '<div class="he-rich-l1">';
+
+      /* Inject question-specific context before the generic template */
+      if (family === 'fracRemain' && fracs.length >= 2 && ints.length >= 1){
+        html += '<div style="color:#e5e7eb;font-size:12px;margin-bottom:4px">';
+        html += '全部 = <strong>' + ints[0] + '</strong><br>';
+        html += '先用掉全部的 <strong>' + fracs[0].num + '/' + fracs[0].den + '</strong>，<br>';
+        html += '「剩下的」又用掉 <strong>' + fracs[1].num + '/' + fracs[1].den + '</strong>。';
+        html += '</div>';
+      } else if (family === 'fracWord' && fracs.length >= 1 && ints.length >= 1){
+        html += '<div style="color:#e5e7eb;font-size:12px;margin-bottom:4px">';
+        html += '全部 = <strong>' + ints[0] + '</strong><br>';
+        html += '取其中的 <strong>' + fracs[0].num + '/' + fracs[0].den + '</strong>';
+        if (fracs.length >= 2) html += '，再取 <strong>' + fracs[1].num + '/' + fracs[1].den + '</strong>';
+        html += '</div>';
+      } else if (family === 'fracAdd' && fracs.length >= 2){
+        html += '<div style="color:#e5e7eb;font-size:12px;margin-bottom:4px">';
+        html += '分數① <strong>' + fracs[0].num + '/' + fracs[0].den + '</strong>　分數② <strong>' + fracs[1].num + '/' + fracs[1].den + '</strong><br>';
+        html += '分母' + (fracs[0].den === fracs[1].den ? '相同 → 直接算分子' : '不同 → 需要通分') + '';
+        html += '</div>';
+      } else if (family === 'percent' && ints.length >= 1){
+        var pctM1 = text.match(/(\d+)\s*[%％]/);
+        var discM1 = text.match(/(\d+)\s*折/);
+        html += '<div style="color:#e5e7eb;font-size:12px;margin-bottom:4px">';
+        if (pctM1) html += '百分率 = <strong>' + pctM1[1] + '%</strong>　';
+        if (discM1) html += '折扣 = <strong>' + discM1[1] + ' 折</strong>　';
+        if (ints.length >= 1) html += '原量 = <strong>' + ints[0] + '</strong>';
+        html += '</div>';
+      } else if (family === 'volume' && ints.length >= 2){
+        html += '<div style="color:#e5e7eb;font-size:12px;margin-bottom:4px">';
+        html += '長 = <strong>' + ints[0] + '</strong>　寬 = <strong>' + ints[1] + '</strong>';
+        if (ints.length >= 3) html += '　高 = <strong>' + ints[2] + '</strong>';
+        html += '</div>';
+      } else if (family === 'average' && ints.length >= 2){
+        html += '<div style="color:#e5e7eb;font-size:12px;margin-bottom:4px">';
+        html += '數據：<strong>' + ints.join(', ') + '</strong>（共 ' + ints.length + ' 個）';
+        html += '</div>';
+      }
+
+      html += highlightKeywords(escapeHTML(tpl.L1).replace(/\n/g, '<br>'));
+      html += '</div>';
       if (family === 'fracRemain' || needsBaseSwitchWarning(text)){
         html += '<div class="he-base-switch">⚠️ 基準量切換：第二次操作不是對「全部」，而是對「前一步剩下的量」。</div>';
       }
@@ -1263,6 +1303,21 @@
 
       if ((family === 'fracRemain' || family === 'fracWord') && fracs.length >= 1){
         html += buildFractionBarSVG(fracs);
+        /* Step-by-step narration for fracRemain (matching reference example) */
+        if (family === 'fracRemain' && fracs.length >= 2){
+          var f2a = fracs[0], f2b = fracs[1];
+          html += '<div style="font-size:11px;color:#e5e7eb;margin:4px 0;line-height:1.6">';
+          html += '① 畫一個長方形代表全部';
+          if (ints.length >= 1) html += ' = <strong>' + ints[0] + '</strong>';
+          html += '<br>';
+          html += '② 用直線切成 <strong>' + f2a.den + '</strong> 等份<br>';
+          html += '③ 🟥 塗掉 <strong>' + f2a.num + '</strong> 份 → 第1次用掉 <strong>' + f2a.num + '/' + f2a.den + '</strong><br>';
+          html += '④ 剩下 <strong>' + (f2a.den - f2a.num) + '</strong> 份 = <strong>' + (f2a.den - f2a.num) + '/' + f2a.den + '</strong><br>';
+          html += '⬇️ 只在「剩下的 <strong>' + (f2a.den - f2a.num) + '</strong> 份」用橫線再切 <strong>' + f2b.den + '</strong> 等份<br>';
+          html += '⑤ 🟧 「剩下的 <strong>' + f2b.num + '/' + f2b.den + '</strong>」→ 從小格取出<br>';
+          html += '⑥ 🟦 最後剩下的小格';
+          html += '</div>';
+        }
         /* Supplementary circle diagram for intuitive "part of whole" */
         if (fracs.length <= 3){
           html += '<div style="font-size:10px;color:#9ca3af;margin:2px 0 0 0">▼ 圓餅圖：</div>';
@@ -1426,7 +1481,15 @@
             { count: Math.round(cellsLeft), color: '#3b82f6', label: '🟦 剩 '+Math.round(cellsLeft)+'/'+totalCells }
           ];
           html += buildGridSVG(gridRows, gridCols, cm);
-          html += '<div style="font-size:11px;color:#9ca3af;margin:2px 0">每格 = 1/'+totalCells+'　驗證：'+Math.round(cells1)+' + '+Math.round(cells2)+' + '+Math.round(cellsLeft)+' = '+totalCells+' ✓</div>';
+          /* Detailed narration matching reference example */
+          html += '<div style="font-size:11px;color:#e5e7eb;margin:4px 0;line-height:1.6">';
+          html += '整個長方形 = ' + f1.den + ' × ' + f2.den + ' = <strong>' + totalCells + '</strong> 小格<br>';
+          html += '每個小格 = 1/' + totalCells + '<br><br>';
+          html += '🟥 第1次用掉 = <strong>' + Math.round(cells1) + '</strong> 格 = ' + Math.round(cells1) + '/' + totalCells + ' = ' + f1.num + '/' + f1.den + '<br>';
+          html += '🟧 第2次用掉 = <strong>' + Math.round(cells2) + '</strong> 格 = ' + Math.round(cells2) + '/' + totalCells + '<br>';
+          html += '🟦 剩下 = <strong>' + Math.round(cellsLeft) + '</strong> 格 = ' + Math.round(cellsLeft) + '/' + totalCells + '<br><br>';
+          html += '💡 驗算：' + Math.round(cells1) + ' + ' + Math.round(cells2) + ' + ' + Math.round(cellsLeft) + ' = ' + totalCells + ' ✓';
+          html += '</div>';
           /* Tree breakdown: whole → parts */
           html += '<div style="font-size:10px;color:#9ca3af;margin:4px 0 0 0">▼ 分拆結構：</div>';
           html += buildTreeDiagramSVG(
@@ -1555,13 +1618,26 @@
       /* Family-specific formula scaffolding */
       if (family === 'fracRemain' && fracs.length >= 2){
         var f1r = fracs[0], f2r = fracs[1];
+        var remainNum = f1r.den - f1r.num;
         html += '<div class="he-formula">';
-        html += '<div class="he-step-row">步驟① 1 − ' + f1r.num + '/' + f1r.den + ' = <span class="he-placeholder">□</span>/' + f1r.den + ' (剩下)</div>';
-        html += '<div class="he-step-row">步驟② <span class="he-placeholder">□</span>/' + f1r.den + ' × ' + f2r.num + '/' + f2r.den + ' = <span class="he-placeholder">□</span>（第二段量）</div>';
-        html += '<div class="he-step-row">步驟③ 剩下 − 第二段 = <span class="he-placeholder">□</span>（最終答案）</div>';
+        if (ints.length >= 1 && ints[0] > 0){
+          /* Context-specific with actual numbers (but still □ for final answer) */
+          var total4r = ints[0];
+          var step1Val = total4r * remainNum / f1r.den;
+          var step1Show = Number.isInteger(step1Val) ? String(step1Val) : (total4r + '×' + remainNum + '/' + f1r.den);
+          html += '<div class="he-step-row">步驟① 第1次剩 = ' + total4r + ' × ' + remainNum + '/' + f1r.den + ' = <strong>' + step1Show + '</strong></div>';
+          html += '<div class="he-step-row">步驟② 第2次用 = ' + step1Show + ' × ' + f2r.num + '/' + f2r.den + ' = <span class="he-placeholder">□</span></div>';
+          html += '<div class="he-step-row">步驟③ 最後剩 = ' + step1Show + ' − <span class="he-placeholder">□</span> = <span class="he-placeholder">□</span></div>';
+        } else {
+          /* Pure fraction form */
+          html += '<div class="he-step-row">步驟① 1 − ' + f1r.num + '/' + f1r.den + ' = ' + remainNum + '/' + f1r.den + '（剩下）</div>';
+          html += '<div class="he-step-row">步驟② ' + remainNum + '/' + f1r.den + ' × ' + f2r.num + '/' + f2r.den + ' = <span class="he-placeholder">□</span>（第二段量）</div>';
+          html += '<div class="he-step-row">步驟③ 剩下 − 第二段 = <span class="he-placeholder">□</span>（最終答案）</div>';
+        }
         html += '</div>';
         html += '<div class="he-check-ok">✅ 第二段 &lt; 剩下？全部 &gt; 答案？</div>';
-        html += '<div class="he-check-bad">❌ 常見錯：直接用 1 × ' + f2r.num + '/' + f2r.den + '（忽略基準切換）</div>';
+        html += '<div class="he-check-ok">✅ 剩下 ≥ 0 → 合理</div>';
+        html += '<div class="he-check-bad">❌ 常見錯誤：1 − ' + f1r.num + '/' + f1r.den + ' − ' + f2r.num + '/' + f2r.den + ' ← 錯！<br>　　第二次的 ' + f2r.num + '/' + f2r.den + ' 不是從全部算的！</div>';
       } else if (family === 'fracAdd' && fracs.length >= 2){
         var fa4a = fracs[0], fa4b = fracs[1];
         var cd4 = lcm(fa4a.den, fa4b.den) || fa4a.den * fa4b.den;

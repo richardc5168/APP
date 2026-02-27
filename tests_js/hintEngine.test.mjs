@@ -941,3 +941,56 @@ test('getMisconceptionReport returns byFamily field', () => {
   assert.ok('byFamily' in report, 'Report should have byFamily field');
   assert.equal(typeof report.byFamily, 'object', 'byFamily should be an object');
 });
+
+/* ============================================================
+ * 39. Context-specific L1 for fracRemain
+ * ============================================================ */
+test('fracRemain L1 shows actual question numbers', () => {
+  const q = { kind: 'remaining_after_fraction', question: '一本書有 165 頁，先看了 2/5，剩下的又看了 1/3，還剩多少頁？', answer: '66' };
+  const html = HE.buildRichHintHTML(q, 1);
+  assert.ok(html.includes('165'), 'L1 should show the total from question');
+  assert.ok(html.includes('2/5'), 'L1 should show first fraction');
+  assert.ok(html.includes('1/3'), 'L1 should show second fraction');
+});
+
+test('fracAdd L1 shows denominator comparison', () => {
+  const q = { kind: 'fraction_addsub', question: '算 1/3 + 1/4', answer: '7/12' };
+  const html = HE.buildRichHintHTML(q, 1);
+  assert.ok(html.includes('不同'), 'L1 should note different denominators for 1/3 + 1/4');
+});
+
+/* ============================================================
+ * 40. Enhanced L2 narration for fracRemain
+ * ============================================================ */
+test('fracRemain L2 has step-by-step narration ①②③', () => {
+  const q = { kind: 'remaining_after_fraction', question: '一本書有 165 頁，先看了 2/5，剩下的又看了 1/3，還剩多少頁？', answer: '66' };
+  const html = HE.buildRichHintHTML(q, 2);
+  assert.ok(html.includes('①'), 'L2 should have step ①');
+  assert.ok(html.includes('③'), 'L2 should have step ③');
+  assert.ok(html.includes('⑤'), 'L2 should have step ⑤');
+  assert.ok(html.includes('165'), 'L2 narration should include the total');
+});
+
+/* ============================================================
+ * 41. Enhanced L3 narration for fracRemain
+ * ============================================================ */
+test('fracRemain L3 shows detailed grid narration', () => {
+  const q = { kind: 'remaining_after_fraction', question: '一本書有 165 頁，先看了 2/5，剩下的又看了 1/3，還剩多少頁？', answer: '66' };
+  const html = HE.buildRichHintHTML(q, 3);
+  assert.ok(html.includes('小格'), 'L3 should describe grid cells');
+  assert.ok(html.includes('驗算'), 'L3 should show verification');
+  assert.ok(html.includes('🟥'), 'L3 should color-code first portion');
+  assert.ok(html.includes('🟦'), 'L3 should color-code remainder');
+});
+
+/* ============================================================
+ * 42. Enhanced L4 for fracRemain with actual intermediate calc
+ * ============================================================ */
+test('fracRemain L4 shows intermediate calculation with numbers', () => {
+  const q = { kind: 'remaining_after_fraction', question: '一本書有 165 頁，先看了 2/5，剩下的又看了 1/3，還剩多少頁？', answer: '66' };
+  const html = HE.buildRichHintHTML(q, 4);
+  assert.ok(html.includes('99'), 'L4 should show intermediate: 165 × 3/5 = 99');
+  assert.ok(html.includes('he-placeholder'), 'L4 should still have placeholders for final steps');
+  assert.ok(html.includes('常見錯誤'), 'L4 should warn about common mistake');
+  assert.ok(!html.includes('>66<'), 'L4 should NOT reveal final answer 66');
+});
