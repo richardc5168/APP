@@ -648,3 +648,57 @@ test('fracWord L2 includes fraction circle SVG', () => {
   assert.ok(html.includes('圓餅圖'), 'L2 should include circle diagram label');
   assert.ok(html.includes('Fraction circle'), 'L2 should include fraction circle SVG');
 });
+
+/* ============================================================
+ * 22. buildTreeDiagramSVG
+ * ============================================================ */
+test('buildTreeDiagramSVG — renders tree with root and children', () => {
+  const svg = HE.buildTreeDiagramSVG(
+    { label: '全部', value: '1' },
+    [
+      { label: '🟥 1/3', color: '#ef4444' },
+      { label: '🟦 2/3', color: '#3b82f6' }
+    ]
+  );
+  assert.ok(svg.includes('<svg'), 'Should render SVG');
+  assert.ok(svg.includes('role="img"'), 'Should have ARIA role');
+  assert.ok(svg.includes('Tree diagram'), 'Should have aria-label with tree');
+  assert.ok(svg.includes('全部'), 'Should show root node');
+  assert.ok(svg.includes('1/3'), 'Should show first child');
+  assert.ok(svg.includes('2/3'), 'Should show second child');
+});
+
+test('buildTreeDiagramSVG — returns empty for missing input', () => {
+  assert.equal(HE.buildTreeDiagramSVG(null, []), '');
+  assert.equal(HE.buildTreeDiagramSVG({ label: 'x' }, []), '');
+  assert.equal(HE.buildTreeDiagramSVG({ label: 'x' }, null), '');
+});
+
+test('fracRemain L3 includes tree diagram', () => {
+  const q = { kind: 'remain_then_fraction', question: '吃 1/3 再吃剩下的 1/2', answer: '1/3' };
+  const html = HE.buildRichHintHTML(q, 3);
+  assert.ok(html.includes('分拆結構'), 'L3 should show tree breakdown label');
+  assert.ok(html.includes('Tree diagram'), 'L3 should include tree diagram SVG');
+});
+
+/* ============================================================
+ * 23. Misconception retry tracking
+ * ============================================================ */
+test('recordMisconception + getMisconceptionReport — tracks and reports', () => {
+  HE.recordMisconception('q1', ['off_by_one', 'direction_error']);
+  HE.recordMisconception('q2', ['off_by_one']);
+  const report = HE.getMisconceptionReport();
+  assert.ok(report.totalTriggered >= 2, 'Should track at least 2 questions');
+  assert.ok(report.frequent.length > 0, 'Should have frequent misconceptions');
+  const offByOne = report.frequent.find(f => f.tag === 'off_by_one');
+  assert.ok(offByOne, 'off_by_one should appear in frequent list');
+  assert.ok(offByOne.count >= 2, 'off_by_one should have count >= 2');
+});
+
+test('recordMisconceptionCorrected — marks correction', () => {
+  HE.recordMisconception('qCorr', ['decimal_point_error']);
+  HE.recordMisconceptionCorrected('qCorr');
+  const report = HE.getMisconceptionReport();
+  assert.ok(report.totalCorrected >= 1, 'Should have at least 1 corrected');
+  assert.ok(report.correctionRate > 0, 'Correction rate should be > 0');
+});

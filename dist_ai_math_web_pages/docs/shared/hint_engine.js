@@ -859,6 +859,57 @@
     return svg;
   }
 
+  /**
+   * buildTreeDiagramSVG(root, children, opts)
+   * Tree breakdown diagram: a root node splits into child nodes.
+   * root: { label, value? }
+   * children: [{ label, value?, color? }, ...]
+   * Good for showing how "全部" breaks into parts in multi-step problems.
+   */
+  function buildTreeDiagramSVG(root, children, opts){
+    opts = opts || {};
+    if (!root || !children || children.length === 0) return '';
+    var nodeW = 72;
+    var nodeH = 28;
+    var gapX = 16;
+    var gapY = 40;
+    var totalChildW = children.length * nodeW + (children.length - 1) * gapX;
+    var W = Math.max(totalChildW + 24, nodeW + 24);
+    var H = nodeH + gapY + nodeH + 30;
+    var rootX = W / 2;
+    var rootY = 16;
+    var defColors = ['#ef4444','#f97316','#3b82f6','#22c55e','#8b5cf6'];
+
+    var ariaLabel = 'Tree diagram: ' + (root.label || 'whole') + ' splits into ' + children.map(function(c){ return c.label; }).join(', ');
+    var svg = '<svg width="'+W+'" height="'+H+'" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="'+escapeHTML(ariaLabel)+'" style="display:block;margin:6px auto">';
+
+    /* Root node */
+    svg += '<rect x="'+(rootX - nodeW/2)+'" y="'+rootY+'" width="'+nodeW+'" height="'+nodeH+'" fill="#1f2937" stroke="#9ca3af" stroke-width="1" rx="6"/>';
+    var rootText = root.label || '全部';
+    if (root.value !== undefined) rootText += ' ' + root.value;
+    svg += '<text x="'+rootX+'" y="'+(rootY + nodeH/2)+'" text-anchor="middle" dy=".35em" fill="#e5e7eb" font-size="10" font-weight="700">'+escapeHTML(rootText)+'</text>';
+
+    /* Child nodes + connecting lines */
+    var childStartX = (W - totalChildW) / 2 + nodeW / 2;
+    var childY = rootY + nodeH + gapY;
+    for (var i = 0; i < children.length; i++){
+      var cx = childStartX + i * (nodeW + gapX);
+      var color = children[i].color || defColors[i % defColors.length];
+
+      /* Line from root bottom to child top */
+      svg += '<line x1="'+rootX+'" y1="'+(rootY + nodeH)+'" x2="'+cx+'" y2="'+childY+'" stroke="'+color+'" stroke-width="1.5" opacity="0.6"/>';
+
+      /* Child node */
+      svg += '<rect x="'+(cx - nodeW/2)+'" y="'+childY+'" width="'+nodeW+'" height="'+nodeH+'" fill="'+color+'" opacity="0.2" stroke="'+color+'" stroke-width="1" rx="6"/>';
+      var childText = children[i].label || '';
+      if (children[i].value !== undefined) childText += ' ' + children[i].value;
+      svg += '<text x="'+cx+'" y="'+(childY + nodeH/2)+'" text-anchor="middle" dy=".35em" fill="'+color+'" font-size="9" font-weight="700">'+escapeHTML(childText)+'</text>';
+    }
+
+    svg += '</svg>';
+    return svg;
+  }
+
   function buildComparisonBarSVG(items, opts){
     opts = opts || {};
     if (!items || items.length === 0) return '';
@@ -1156,6 +1207,16 @@
           ];
           html += buildGridSVG(gridRows, gridCols, cm);
           html += '<div style="font-size:11px;color:#9ca3af;margin:2px 0">每格 = 1/'+totalCells+'　驗證：'+Math.round(cells1)+' + '+Math.round(cells2)+' + '+Math.round(cellsLeft)+' = '+totalCells+' ✓</div>';
+          /* Tree breakdown: whole → parts */
+          html += '<div style="font-size:10px;color:#9ca3af;margin:4px 0 0 0">▼ 分拆結構：</div>';
+          html += buildTreeDiagramSVG(
+            { label: '全部', value: '1' },
+            [
+              { label: '🟥 '+f1.num+'/'+f1.den, color: '#ef4444' },
+              { label: '🟧 '+Math.round(cells2)+'/'+totalCells, color: '#f97316' },
+              { label: '🟦 '+Math.round(cellsLeft)+'/'+totalCells, color: '#3b82f6' }
+            ]
+          );
         } else if (fracs.length === 1){
           var f = fracs[0];
           var gc = Math.min(f.den, 10);
@@ -1737,6 +1798,101 @@
   }
 
   /* ============================================================
+   * 6b. Misconception retry tracking
+   * ============================================================ */
+  var DIAG_TRACK_KEY = 'aimath.diagTracking';
+  var _diagTracking = null;
+
+  function _loadDiagTracking(){
+    if (_diagTracking) return _diagTracking;
+    try {
+      _diagTracking = JSON.parse(localStorage.getItem(DIAG_TRACK_KEY) || '{}');
+    } catch(e){
+      _diagTracking = {};
+    }
+    return _diagTracking;
+  }
+
+  function _saveDiagTracking(){
+    if (!_diagTracking) return;
+    try {
+      var keys = Object.keys(_diagTracking);
+      if (keys.length > 300){
+        var sorted = keys.map(function(k){ return { k:k, ts:_diagTracking[k].ts||0 }; })
+                         .sort(function(a,b){ return a.ts - b.ts; });
+        for (var i = 0; i < sorted.length - 300; i++){
+          delete _diagTracking[sorted[i].k];
+        }
+      }
+      localStorage.setItem(DIAG_TRACK_KEY, JSON.stringify(_diagTracking));
+    } catch(e){}
+  }
+
+  /**
+   * recordMisconception(questionId, tags)
+   * Record which misconception tags were triggered for a question.
+   */
+  function recordMisconception(questionId, tags){
+    var data = _loadDiagTracking();
+    var id = String(questionId || 'unknown');
+    if (!data[id]) data[id] = { triggers: [], corrected: false, ts: Date.now() };
+    var rec = data[id];
+    rec.ts = Date.now();
+    for (var i = 0; i < tags.length; i++){
+      if (rec.triggers.indexOf(tags[i]) === -1) rec.triggers.push(tags[i]);
+    }
+    rec.corrected = false;
+    _saveDiagTracking();
+  }
+
+  /**
+   * recordMisconceptionCorrected(questionId)
+   * Mark that the student got it right after diagnosis.
+   */
+  function recordMisconceptionCorrected(questionId){
+    var data = _loadDiagTracking();
+    var id = String(questionId || 'unknown');
+    if (data[id]){
+      data[id].corrected = true;
+      data[id].ts = Date.now();
+      _saveDiagTracking();
+    }
+  }
+
+  /**
+   * getMisconceptionReport()
+   * Returns { frequent: [...], correctionRate: Number }
+   */
+  function getMisconceptionReport(){
+    var data = _loadDiagTracking();
+    var tagCounts = {};
+    var totalTriggered = 0;
+    var totalCorrected = 0;
+    for (var id in data){
+      if (!data.hasOwnProperty(id)) continue;
+      var rec = data[id];
+      totalTriggered++;
+      if (rec.corrected) totalCorrected++;
+      for (var t = 0; t < (rec.triggers || []).length; t++){
+        var tag = rec.triggers[t];
+        tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+      }
+    }
+    var frequent = [];
+    for (var key in tagCounts){
+      if (!tagCounts.hasOwnProperty(key)) continue;
+      frequent.push({ tag: key, count: tagCounts[key] });
+    }
+    frequent.sort(function(a,b){ return b.count - a.count; });
+    return {
+      frequent: frequent.slice(0, 15),
+      totalTriggered: totalTriggered,
+      totalCorrected: totalCorrected,
+      correctionRate: totalTriggered > 0 ? Math.round(totalCorrected / totalTriggered * 100) : 0
+    };
+  }
+
+  /* ============================================================
    * Public API — processHint()
    * ============================================================
    * Main entry point. Takes raw hint text + question + level.
@@ -1923,12 +2079,19 @@
         /* Track hint effectiveness */
         recordHintUsage(q.id, _maxHintLv, !!isCorrect);
 
+        /* If correct and previously had misconception, mark corrected */
+        if (isCorrect){
+          recordMisconceptionCorrected(q.id);
+        }
+
         /* Wrong-answer diagnosis */
         if (isBad){
           var ansInput = document.getElementById('answer') || document.getElementById('ans') || document.getElementById('gAnswer');
           var wrongAns = ansInput ? ansInput.value : '';
           var diagnosis = diagnoseWrongAnswer(q, wrongAns);
           if (diagnosis && diagnosis.length > 0){
+            var diagTags = diagnosis.map(function(d){ return d.tag; });
+            recordMisconception(q.id, diagTags);
             showDiagnosisUI(diagnosis);
           }
         }
@@ -2137,6 +2300,7 @@
     buildComparisonBarSVG: buildComparisonBarSVG,
     buildStepIndicatorSVG: buildStepIndicatorSVG,
     buildFractionCircleSVG: buildFractionCircleSVG,
+    buildTreeDiagramSVG: buildTreeDiagramSVG,
     highlightKeywords: highlightKeywords,
 
     /* L4 gate */
@@ -2153,6 +2317,9 @@
     /* Tracking */
     recordHintUsage: recordHintUsage,
     getHintEffectivenessReport: getHintEffectivenessReport,
+    recordMisconception: recordMisconception,
+    recordMisconceptionCorrected: recordMisconceptionCorrected,
+    getMisconceptionReport: getMisconceptionReport,
 
     /* Utilities */
     extractFractions: extractFractions,
