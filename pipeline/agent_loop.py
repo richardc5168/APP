@@ -94,6 +94,9 @@ ALLOWED_NPM_SCRIPTS = {
     "pipeline:generate:run",
     "pipeline:coverage",
     "pipeline:solver:test",
+    "autonomous:12h",
+    "autonomous:8h",
+    "autonomous:dry",
 }
 
 

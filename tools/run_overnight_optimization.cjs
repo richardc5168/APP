@@ -108,6 +108,7 @@ async function main() {
 
     const steps = [
       ['npm', ['run', 'agent:web-search']],
+      ['npm', ['run', 'pipeline:generate:run']],
       ['npm', ['run', 'autotune:hints']],
       ['npm', ['run', 'derive:report-signals']],
       ['npm', ['run', 'apply:report-signals']],

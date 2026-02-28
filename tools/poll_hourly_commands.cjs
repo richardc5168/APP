@@ -39,7 +39,10 @@ const ALLOWED_NPM_SCRIPTS = new Set([
   'pipeline:generate',
   'pipeline:generate:run',
   'pipeline:coverage',
-  'pipeline:solver:test'
+  'pipeline:solver:test',
+  'autonomous:12h',
+  'autonomous:8h',
+  'autonomous:dry'
 ]);
 
 function argValue(name, fallback) {

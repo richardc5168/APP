@@ -61,6 +61,9 @@
     ,"pipeline:generate:run": "python -m pipeline.auto_pipeline --offline"
     ,"pipeline:coverage": "python -c \"from pipeline.oer_fetcher import compute_topic_coverage; import json; print(json.dumps(compute_topic_coverage([]),indent=2))\""
     ,"pipeline:solver:test": "python -m pytest tests/unit/test_pipeline_solver.py tests/unit/test_pipeline_auto_pipeline.py -q"
+    ,"autonomous:12h": "node tools/run_12h_autonomous.cjs --hours 12 --interval-min 20"
+    ,"autonomous:8h": "node tools/run_12h_autonomous.cjs --hours 8 --interval-min 15"
+    ,"autonomous:dry": "node tools/run_12h_autonomous.cjs --hours 1 --interval-min 5 --dry-run"
   },
   "devDependencies": {
     "@playwright/test": "^1.54.2",
