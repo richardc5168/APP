@@ -52,6 +52,11 @@
       "enum": ["integer", "fraction", "decimal", "percent", "unit", "mixed"],
       "description": "Expected answer format"
     },
+    "expected_steps_min": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Minimum number of solution steps required for this problem"
+    },
     "solution": {
       "type": "object",
       "required": ["steps", "answer"],
@@ -104,6 +109,10 @@
           "enum": ["allow", "deny", "needs_review"],
           "default": "needs_review",
           "description": "Automated or manual license decision"
+        },
+        "evidence_snapshot": {
+          "type": "string",
+          "description": "File path or hash of source content snapshot for reproducibility"
         }
       }
     },
@@ -112,6 +121,41 @@
       "minimum": 0,
       "maximum": 1,
       "description": "Model confidence; < 0.7 triggers human review queue"
+    },
+    "grading_exempt": {
+      "type": "boolean",
+      "default": false,
+      "description": "If true, skip certain topic-specific restrictions (e.g. N-6-3 remainder problems marked as non-assessed)"
+    },
+    "similarity_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Similarity to existing problems in the bank; > 0.85 triggers dedup review"
+    },
+    "generation_metadata": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string",
+          "description": "Model used for generation (e.g. gpt-4o, gemini-2.0-flash)"
+        },
+        "self_refine_iterations": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of Self-Refine iterations before passing"
+        },
+        "prompt_version": {
+          "type": "string",
+          "description": "Version hash of the prompt template used"
+        },
+        "generated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of generation"
+        }
+      },
+      "description": "Metadata about the generation process for auditability"
     },
     "checks": {
       "type": "object",
@@ -129,8 +173,40 @@
           "type": "array",
           "items": { "type": "string" },
           "description": "Words that must NOT appear (e.g. curriculum restrictions)"
+        },
+        "common_error_reminder": {
+          "type": "string",
+          "description": "A reminder about common misconceptions (e.g. S-6-2 scale misconception)"
+        },
+        "data_points_min": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Minimum data points for chart/graph problems (e.g. D-5-1 line charts)"
         }
       }
+    },
+    "human_review": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["pending", "approved", "rejected"],
+          "description": "Human review status for low-confidence or edge-case problems"
+        },
+        "reviewer": {
+          "type": "string",
+          "description": "Reviewer identifier"
+        },
+        "reviewed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Reviewer notes"
+        }
+      },
+      "description": "Human review tracking for problems that failed auto-qualification"
     }
   },
   "additionalProperties": true

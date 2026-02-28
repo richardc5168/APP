@@ -7,8 +7,9 @@ Gates:
   3) steps    — solution steps pass lint (unit consistency, no jump, min length)
   4) license  — source.license_type on allowlist; deny → block auto-publish
               + prompt injection detection + anti-cheat/dedup
+              + textbook reproduction detection
 
-Scorecard (0-100):
+Scorecard (0-100) via pipeline/scorecard.py:
   - correctness weight 40
   - step_consistency weight 25
   - step_completeness weight 15
@@ -28,21 +29,18 @@ from collections import Counter
 from pathlib import Path
 from typing import Any
 
+from pipeline.scorecard import compute_scorecard
+from pipeline.source_governance import (
+    LICENSE_ALLOWLIST,
+    LICENSE_DENY,
+    check_textbook_reproduction,
+    validate_source,
+)
+
 # ── Constants ──────────────────────────────────────────────
 
-LICENSE_ALLOWLIST = frozenset({
-    "CC BY 4.0",
-    "CC BY-SA 4.0",
-    "CC BY-NC 4.0",
-    "CC BY-NC-SA 4.0",
-    "CC0",
-    "public-domain",
-})
-
-DENY_AUTO_PUBLISH = frozenset({
-    "all-rights-reserved",
-    "unknown",
-})
+# Re-export for backward compatibility
+DENY_AUTO_PUBLISH = LICENSE_DENY
 
 TOPIC_SPECIFIC_RULES: dict[str, dict[str, Any]] = {
     "N-6-7": {
@@ -60,9 +58,11 @@ TOPIC_SPECIFIC_RULES: dict[str, dict[str, Any]] = {
     },
     "S-6-2": {
         "min_steps": 2,
+        "common_error_check": True,  # Must address scale misconception
     },
     "D-5-1": {
         "min_data_points": 5,  # 折線圖至少 5 個資料點
+        "min_steps": 2,
     },
 }
 
@@ -184,11 +184,41 @@ def gate_steps(p: dict) -> tuple[bool, str]:
             if not any(f in all_text for f in formulas):
                 return False, f"{code} requires one of {formulas} in steps"
 
+        # D-5-1: check minimum data points in question
+        min_dp = rules.get("min_data_points")
+        if min_dp is not None:
+            question = p.get("question", "")
+            # Count numeric data points in question (e.g., temperature values, counts)
+            data_point_re = re.compile(r"\d+(?:\.\d+)?(?:\s*[°℃%元公分公尺公升])?")
+            question_nums = data_point_re.findall(question)
+            # Also check checks.data_points_min if specified
+            checks = p.get("checks", {})
+            explicit_min = checks.get("data_points_min", min_dp)
+            if len(question_nums) < explicit_min:
+                return False, (
+                    f"{code} requires >= {explicit_min} data points, "
+                    f"found {len(question_nums)} in question"
+                )
+
+        # S-6-2: check for common error reminder
+        if rules.get("common_error_check") and code == "S-6-2":
+            all_text_with_q = p.get("question", "") + " " + " ".join(steps)
+            checks = p.get("checks", {})
+            reminder = checks.get("common_error_reminder", "")
+            # Must address scale misconception somewhere
+            scale_terms = ["比例尺", "分母", "放大", "縮小", "比例"]
+            has_scale_context = any(t in all_text_with_q for t in scale_terms)
+            if not has_scale_context:
+                return False, (
+                    f"{code} problem should reference scale concepts "
+                    f"(比例尺/分母/放大/縮小)"
+                )
+
     return True, "ok"
 
 
 def gate_license(p: dict) -> tuple[bool, str]:
-    """License allowlist check + prompt injection detection + anti-cheat."""
+    """License allowlist check + prompt injection detection + anti-cheat + textbook repro."""
     src = p.get("source", {})
     lt = src.get("license_type", "unknown")
     decision = src.get("license_decision", "needs_review")
@@ -206,24 +236,23 @@ def gate_license(p: dict) -> tuple[bool, str]:
     if match:
         return False, f"prompt injection detected: '{match.group()}'"
 
+    # Textbook reproduction detection
+    is_safe_q, pattern_q = check_textbook_reproduction(question)
+    if not is_safe_q:
+        return False, f"textbook reproduction detected in question: '{pattern_q}'"
+    is_safe_s, pattern_s = check_textbook_reproduction(steps_text)
+    if not is_safe_s:
+        return False, f"textbook reproduction detected in steps: '{pattern_s}'"
+
     return True, "ok"
 
 
 # ── Scorecard ──────────────────────────────────────────────
 
 def compute_score(p: dict, gates: dict[str, bool]) -> int:
-    """Compute weighted score (0-100). Only meaningful when all gates pass."""
-    score = 0
-    if gates.get("correctness"):
-        score += 40
-    if gates.get("steps"):
-        score += 25  # step_consistency
-        score += 15  # step_completeness
-    if gates.get("schema"):
-        score += 10  # answer_reasonableness (proxy)
-    if gates.get("license"):
-        score += 10  # anti_cheat_dedup (proxy)
-    return score
+    """Compute weighted score (0-100) using granular scorecard. Gate-aware."""
+    sc = compute_scorecard(p, gates)
+    return sc["total"]
 
 
 # ── Main Verification ─────────────────────────────────────
@@ -244,7 +273,8 @@ def verify_problem(p: dict) -> dict:
         reasons[name] = reason
 
     passed = all(gates.values())
-    score = compute_score(p, gates)
+    scorecard = compute_scorecard(p, gates)
+    score = scorecard["total"]
 
     return {
         "id": p.get("id", "?"),
@@ -252,6 +282,7 @@ def verify_problem(p: dict) -> dict:
         "reasons": reasons,
         "passed": passed,
         "score": score,
+        "scorecard": scorecard["dimensions"],
     }
 
 

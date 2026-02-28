@@ -93,3 +93,34 @@ class TestPromptInjection:
             question="小明有 5 顆蘋果，吃了 2 顆，還剩幾顆？"
         ))
         assert ok is True
+
+
+class TestTextbookReproduction:
+    """Textbook reproduction patterns must be detected and blocked."""
+
+    @pytest.mark.parametrize("text", [
+        "翰林版第 3 課練習",
+        "南一出版社教材",
+        "康軒數學習作",
+        "課本第 25 頁",
+        "教科書第三章",
+    ])
+    def test_textbook_in_question_blocked(self, text):
+        ok, msg = gate_license(_make_problem(question=text))
+        assert ok is False
+        assert "reproduction" in msg.lower() or "textbook" in msg.lower()
+
+    @pytest.mark.parametrize("text", [
+        "翰林版解法",
+        "習作第 5 題步驟",
+    ])
+    def test_textbook_in_steps_blocked(self, text):
+        ok, msg = gate_license(_make_problem(steps=[text, "正常步驟"]))
+        assert ok is False
+        assert "reproduction" in msg.lower() or "textbook" in msg.lower()
+
+    def test_clean_question_not_blocked(self):
+        ok, _ = gate_license(_make_problem(
+            question="小明走了 30 分鐘到學校，時速 4 公里，距離多遠？"
+        ))
+        assert ok is True
