@@ -604,73 +604,146 @@
   }
 
   /**
+   * parseVolumeDims(text, kind)
+   * Intelligently extract length / width / height from question text.
+   * For rect_find_height or similar reverse-solve questions,
+   * detects which dimension is unknown and avoids putting volume into height.
+   * Returns { l, w, h, vol, area, unit, unknownDim:'h'|'w'|'l'|'edge'|null }
+   */
+  function parseVolumeDims(text, kind){
+    var um = text.match(/公分|cm|公尺|m/);
+    var unit = um ? um[0] : '';
+    /* Explicit labelled extraction */
+    var lm = text.match(/長[是為]?\s*(\d+(?:\.\d+)?)/);
+    var wm = text.match(/寬[是為]?\s*(\d+(?:\.\d+)?)/);
+    var hm = text.match(/高[是為]?\s*(\d+(?:\.\d+)?)/);
+    var vm = text.match(/體積[是為]?\s*(\d+(?:\.\d+)?)/);
+    var am = text.match(/面積[是為]?\s*(\d+(?:\.\d+)?)/);
+    var em = text.match(/邊長[是為]?\s*(\d+(?:\.\d+)?)/);
+    var l = lm ? parseFloat(lm[1]) : 0;
+    var w = wm ? parseFloat(wm[1]) : 0;
+    var h = hm ? parseFloat(hm[1]) : 0;
+    var vol = vm ? parseFloat(vm[1]) : 0;
+    var area = am ? parseFloat(am[1]) : 0;
+    var edge = em ? parseFloat(em[1]) : 0;
+    var unknownDim = null;
+    /* Detect reverse-solve type */
+    var isFindH = /反求高|高是多少|求高/.test(text) || kind === 'rect_find_height';
+    var isFindEdge = /反求邊|邊長是多少|求邊長/.test(text) || kind === 'cube_find_edge';
+    if (isFindH && l > 0 && w > 0 && vol > 0 && h === 0){
+      h = Math.round(vol / (l * w) * 100) / 100;
+      unknownDim = 'h';
+    } else if (isFindEdge && vol > 0 && edge === 0){
+      edge = Math.round(Math.pow(vol, 1/3));
+      l = w = h = edge;
+      unknownDim = 'edge';
+    }
+    /* Fallback: if labelled parse found nothing, use raw ints */
+    if (l === 0 && w === 0 && h === 0 && edge === 0){
+      var rawInts = extractIntegers(text);
+      l = rawInts[0] || 1;
+      w = rawInts[1] || 1;
+      h = rawInts.length > 2 ? rawInts[2] : 0;
+      /* Guard: if h is very large relative to l*w, it is likely the volume */
+      if (h > 0 && l > 0 && w > 0 && h > l * w * 2){
+        vol = h;
+        h = Math.round(vol / (l * w) * 100) / 100;
+        unknownDim = 'h';
+      }
+    }
+    return { l: l, w: w, h: h, vol: vol, area: area, edge: edge, unit: unit, unknownDim: unknownDim };
+  }
+
+  /**
    * buildIsometricBoxSVG(l, w, h, opts)
-   * Draws a 3D isometric rectangular box with labels.
-   * l = length, w = width, h = height (in problem units).
-   * opts.unit = unit string, opts.label = extra label.
+   * Draws a 3D isometric rectangular box with clear dimension labels.
+   * All three dimensions get colour-coded arrow markers + labels.
+   * opts.unit, opts.label, opts.unknownDim ('h'|'w'|'l'|'edge').
    */
   function buildIsometricBoxSVG(l, w, h, opts){
     opts = opts || {};
     var unit = opts.unit || '';
+    var unknownDim = opts.unknownDim || null;
 
     /* Scale to fit in a reasonable SVG */
     var maxDim = Math.max(l, w, h, 1);
     var scale = Math.min(20, 120 / maxDim);
-    var sL = Math.max(20, l * scale);
-    var sW = Math.max(14, w * scale * 0.5); /* foreshortened */
-    var sH = Math.max(20, h * scale);
+    var sL = Math.max(30, l * scale);
+    var sW = Math.max(18, w * scale * 0.5); /* foreshortened */
+    var sH = Math.max(30, h * scale);
 
     /* Isometric offsets */
-    var ofsX = sW * 0.866; /* cos(30°) */
-    var ofsY = sW * 0.5;   /* sin(30°) */
+    var ofsX = sW * 0.866; /* cos(30) */
+    var ofsY = sW * 0.5;   /* sin(30) */
 
-    /* Estimate height label width to set left padding */
-    var heightLabel = '高 '+h+(unit?' '+unit:'');
-    var labelWidth = Math.max(50, heightLabel.length * 8 + 16);
-    var bx = labelWidth; /* base x — enough room for height label */
-    var W = Math.ceil(bx + sL + ofsX + 30);
-    var H = Math.ceil(sH + ofsY + 40);
-    var by = sH + 10; /* base y */
+    /* Padding for labels */
+    var leftPad = 80;
+    var rightPad = 80;
+    var bx = leftPad;
+    var W = Math.ceil(bx + sL + ofsX + rightPad);
+    var H = Math.ceil(sH + ofsY + 50);
+    var by = sH + 16;
 
-    var boxAriaLabel = 'Isometric box: length '+l+', width '+w+', height '+h+(unit?' '+unit:'');
-    var svg = '<svg width="'+W+'" height="'+(H+20)+'" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="'+boxAriaLabel+'" style="display:block;margin:6px auto">';
+    /* Build label texts */
+    var uSfx = unit ? ' ' + unit : '';
+    var hText = unknownDim === 'h' ? '高 = ?' : ('高 ' + h + uSfx);
+    var lText = unknownDim === 'l' ? '長 = ?' : ('長 ' + l + uSfx);
+    var wText = unknownDim === 'w' ? '寬 = ?' : ('寬 ' + w + uSfx);
+    if (unknownDim === 'edge'){
+      hText = '邊長 = ?'; lText = '邊長 = ?'; wText = '邊長 = ?';
+    }
 
-    /* Front face (visible) */
+    var boxAriaLabel = 'Isometric box: length ' + l + ', width ' + w + ', height ' + h + uSfx;
+    var svg = '<svg width="' + W + '" height="' + (H + 20) + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' + boxAriaLabel + '" style="display:block;margin:6px auto">';
+
+    /* Arrow marker defs — unique IDs per colour */
+    svg += '<defs>';
+    svg += '<marker id="arr_r_s" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="#ef4444"/></marker>';
+    svg += '<marker id="arr_r_e" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M6,0 L0,3 L6,6" fill="#ef4444"/></marker>';
+    svg += '<marker id="arr_b_s" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="#3b82f6"/></marker>';
+    svg += '<marker id="arr_b_e" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M6,0 L0,3 L6,6" fill="#3b82f6"/></marker>';
+    svg += '<marker id="arr_g_s" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="#22c55e"/></marker>';
+    svg += '<marker id="arr_g_e" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M6,0 L0,3 L6,6" fill="#22c55e"/></marker>';
+    svg += '</defs>';
+
+    /* Front face */
     svg += '<polygon points="' +
-      bx+','+by+' '+(bx+sL)+','+by+' '+(bx+sL)+','+(by-sH)+' '+bx+','+(by-sH) +
+      bx + ',' + by + ' ' + (bx + sL) + ',' + by + ' ' + (bx + sL) + ',' + (by - sH) + ' ' + bx + ',' + (by - sH) +
       '" fill="rgba(59,130,246,.25)" stroke="#3b82f6" stroke-width="1.5"/>';
 
     /* Top face */
     svg += '<polygon points="' +
-      bx+','+(by-sH)+' '+(bx+sL)+','+(by-sH)+' '+(bx+sL+ofsX)+','+(by-sH-ofsY)+' '+(bx+ofsX)+','+(by-sH-ofsY) +
+      bx + ',' + (by - sH) + ' ' + (bx + sL) + ',' + (by - sH) + ' ' + (bx + sL + ofsX) + ',' + (by - sH - ofsY) + ' ' + (bx + ofsX) + ',' + (by - sH - ofsY) +
       '" fill="rgba(59,130,246,.15)" stroke="#3b82f6" stroke-width="1"/>';
 
     /* Right side face */
     svg += '<polygon points="' +
-      (bx+sL)+','+by+' '+(bx+sL)+','+(by-sH)+' '+(bx+sL+ofsX)+','+(by-sH-ofsY)+' '+(bx+sL+ofsX)+','+(by-ofsY) +
+      (bx + sL) + ',' + by + ' ' + (bx + sL) + ',' + (by - sH) + ' ' + (bx + sL + ofsX) + ',' + (by - sH - ofsY) + ' ' + (bx + sL + ofsX) + ',' + (by - ofsY) +
       '" fill="rgba(59,130,246,.10)" stroke="#3b82f6" stroke-width="1"/>';
 
-    /* Dimension labels */
-    /* Length (bottom of front face) */
-    svg += '<text x="'+(bx+sL/2)+'" y="'+(by+14)+'" text-anchor="middle" fill="#3b82f6" font-size="11" font-weight="700">長 '+l+(unit?' '+unit:'')+'</text>';
+    /* ── Length: arrow + label (bottom of front face, blue) ── */
+    var lenY = by + 8;
+    svg += '<line x1="' + (bx + 2) + '" y1="' + lenY + '" x2="' + (bx + sL - 2) + '" y2="' + lenY + '" stroke="#3b82f6" stroke-width="1.5" marker-start="url(#arr_b_s)" marker-end="url(#arr_b_e)"/>';
+    svg += '<text x="' + (bx + sL / 2) + '" y="' + (lenY + 14) + '" text-anchor="middle" fill="#3b82f6" font-size="12" font-weight="700">' + escapeHTML(lText) + '</text>';
 
-    /* Height (left side — positioned with enough left margin, never clipped) */
-    var arrowX = bx - 12;
-    svg += '<line x1="'+arrowX+'" y1="'+(by-2)+'" x2="'+arrowX+'" y2="'+(by-sH+2)+'" stroke="#ef4444" stroke-width="1.5" marker-start="url(#arrS)" marker-end="url(#arrE)"/>';
-    svg += '<text x="'+(arrowX-4)+'" y="'+(by-sH/2)+'" text-anchor="end" fill="#ef4444" font-size="11" font-weight="700">'+escapeHTML(heightLabel)+'</text>';
+    /* ── Height: arrow + label (left side, red) ── */
+    var arrowX = bx - 14;
+    svg += '<line x1="' + arrowX + '" y1="' + (by - 2) + '" x2="' + arrowX + '" y2="' + (by - sH + 2) + '" stroke="#ef4444" stroke-width="1.5" marker-start="url(#arr_r_s)" marker-end="url(#arr_r_e)"/>';
+    svg += '<text x="' + (arrowX - 4) + '" y="' + (by - sH / 2 + 4) + '" text-anchor="end" fill="#ef4444" font-size="12" font-weight="700">' + escapeHTML(hText) + '</text>';
 
-    /* Width (top-right edge) */
-    var wMidX = bx + sL + ofsX / 2;
-    var wMidY = by - sH - ofsY / 2;
-    svg += '<text x="'+(wMidX+4)+'" y="'+(wMidY-4)+'" fill="#22c55e" font-size="11" font-weight="700">寬 '+w+(unit?' '+unit:'')+'</text>';
-
-    /* Arrow markers */
-    svg += '<defs><marker id="arrS" markerWidth="4" markerHeight="4" refX="2" refY="2" orient="auto"><path d="M0,0 L4,2 L0,4" fill="#ef4444" /></marker>';
-    svg += '<marker id="arrE" markerWidth="4" markerHeight="4" refX="2" refY="2" orient="auto"><path d="M4,0 L0,2 L4,4" fill="#ef4444" /></marker></defs>';
+    /* ── Width: arrow + label (top-right isometric edge, green) ── */
+    var wX1 = bx + sL + 2;
+    var wY1 = by - sH - 1;
+    var wX2 = bx + sL + ofsX - 2;
+    var wY2 = by - sH - ofsY + 1;
+    svg += '<line x1="' + wX1 + '" y1="' + wY1 + '" x2="' + wX2 + '" y2="' + wY2 + '" stroke="#22c55e" stroke-width="1.5" marker-start="url(#arr_g_s)" marker-end="url(#arr_g_e)"/>';
+    var wLabelX = (wX1 + wX2) / 2 + 8;
+    var wLabelY = (wY1 + wY2) / 2 - 6;
+    svg += '<text x="' + wLabelX + '" y="' + wLabelY + '" fill="#22c55e" font-size="12" font-weight="700">' + escapeHTML(wText) + '</text>';
 
     /* Optional label */
     if (opts.label){
-      svg += '<text x="'+(W/2)+'" y="'+(H+14)+'" text-anchor="middle" fill="#9ca3af" font-size="10">'+escapeHTML(opts.label)+'</text>';
+      svg += '<text x="' + (W / 2) + '" y="' + (H + 14) + '" text-anchor="middle" fill="#9ca3af" font-size="10">' + escapeHTML(opts.label) + '</text>';
     }
 
     svg += '</svg>';
@@ -1405,9 +1478,13 @@
         if (ints.length >= 1) html += '原量 = <strong>' + ints[0] + '</strong>';
         html += '</div>';
       } else if (family === 'volume' && ints.length >= 2){
+        var vd1 = parseVolumeDims(text, q.kind);
         html += '<div style="color:#e5e7eb;font-size:12px;margin-bottom:4px">';
-        html += '長 = <strong>' + ints[0] + '</strong>　寬 = <strong>' + ints[1] + '</strong>';
-        if (ints.length >= 3) html += '　高 = <strong>' + ints[2] + '</strong>';
+        if (vd1.l > 0) html += '長 = <strong>' + vd1.l + '</strong>　';
+        if (vd1.w > 0) html += '寬 = <strong>' + vd1.w + '</strong>　';
+        if (vd1.unknownDim === 'h') html += '高 = <strong>?</strong>　';
+        else if (vd1.h > 0) html += '高 = <strong>' + vd1.h + '</strong>　';
+        if (vd1.vol > 0) html += '體積 = <strong>' + vd1.vol + '</strong>';
         html += '</div>';
       } else if (family === 'average' && ints.length >= 2){
         html += '<div style="color:#e5e7eb;font-size:12px;margin-bottom:4px">';
@@ -1628,16 +1705,24 @@
           html += '③ 各自算出體積再相加 = <strong>' + totalVol + '</strong>' + (vUnit ? ' ' + vUnit : '');
           html += '</div>';
         } else {
-          var vl = ints[0] || 1, vw = ints[1] || 1, vh = ints.length > 2 ? ints[2] : 0;
-          /* Detect unit from question text */
-          var unitM = text.match(/公分|cm|公尺|m/);
-          var vUnit = unitM ? unitM[0] : '';
+          /* Smart dimension extraction (handles rect_find_height etc.) */
+          var vd = parseVolumeDims(text, q.kind);
+          var vl = vd.l || 1, vw = vd.w || 1, vh = vd.h || 0;
+          var vUnit = vd.unit;
+          var vUnk = vd.unknownDim;
         if (vh > 0){
-          html += buildIsometricBoxSVG(vl, vw, vh, { unit: vUnit, label: '體積 = 長×寬×高' });
+          var boxLabel2 = vUnk === 'h' ? '高 = 體積 ÷ (長×寬)' : '體積 = 長×寬×高';
+          html += buildIsometricBoxSVG(vl, vw, vh, { unit: vUnit, label: boxLabel2, unknownDim: vUnk });
           html += '<div style="font-size:11px;color:#e5e7eb;margin:4px 0;line-height:1.6">';
-          html += '① 底面排好：<strong>' + vl + ' × ' + vw + '</strong>' + (vUnit ? ' ' + vUnit : '') + '<br>';
-          html += '② 一層一層往上疊 <strong>' + vh + '</strong> 層<br>';
-          html += '③ 體積 = 底面積 × 高';
+          if (vUnk === 'h'){
+            html += '① 已知：長 = <strong>' + vd.l + '</strong>、寬 = <strong>' + vd.w + '</strong>、體積 = <strong>' + vd.vol + '</strong><br>';
+            html += '② 底面積 = 長 × 寬 = <strong>' + vd.l + ' × ' + vd.w + '</strong><br>';
+            html += '③ 高 = 體積 ÷ 底面積';
+          } else {
+            html += '① 底面排好：<strong>' + vl + ' × ' + vw + '</strong>' + (vUnit ? ' ' + vUnit : '') + '<br>';
+            html += '② 一層一層往上疊 <strong>' + vh + '</strong> 層<br>';
+            html += '③ 體積 = 底面積 × 高';
+          }
           html += '</div>';
         } else {
           html += buildIsometricBoxSVG(vl, vw, 1, { unit: vUnit, label: '面積 = 長×寬' });
@@ -1876,12 +1961,18 @@
           html += '</div>';
         }
       } else if (family === 'volume' && ints.length >= 2){
-        /* Read the box: count layers × per-layer units */
-        var v3l = ints[0], v3w = ints[1], v3h = ints.length > 2 ? ints[2] : 1;
+        /* Read the box: count layers x per-layer units */
+        var vd3 = parseVolumeDims(text, q.kind);
         html += '<div style="font-size:12px;color:#d29922;margin:4px 0">';
-        html += '📊 底面 = ' + v3l + ' × ' + v3w + ' = <strong>' + (v3l * v3w) + '</strong> 個';
-        if (v3h > 1){
-          html += '　疊 <strong>' + v3h + '</strong> 層 → 合計 <strong>' + (v3l * v3w) + ' × ' + v3h + '</strong> = ？（自行算）';
+        if (vd3.unknownDim === 'h'){
+          html += '📊 底面積 = ' + vd3.l + ' × ' + vd3.w + ' = <strong>' + (vd3.l * vd3.w) + '</strong><br>';
+          html += '高 = 體積 ÷ 底面積 = ' + vd3.vol + ' ÷ ' + (vd3.l * vd3.w) + ' = ？（自行算）';
+        } else {
+          var v3l = vd3.l || ints[0], v3w = vd3.w || ints[1], v3h = vd3.h || (ints.length > 2 ? ints[2] : 1);
+          html += '📊 底面 = ' + v3l + ' × ' + v3w + ' = <strong>' + (v3l * v3w) + '</strong> 個';
+          if (v3h > 1){
+            html += '　疊 <strong>' + v3h + '</strong> 層 → 合計 <strong>' + (v3l * v3w) + ' × ' + v3h + '</strong> = ？（自行算）';
+          }
         }
         html += '</div>';
       } else if (family === 'average' && ints.length >= 2){
@@ -2046,15 +2137,20 @@
           html += '<div class="he-check-bad">❌ 常見錯：忘記借位（60進位）</div>';
         }
       } else if (family === 'volume' && ints.length >= 2){
-        var v4l = ints[0], v4w = ints[1], v4h = ints.length > 2 ? ints[2] : 0;
+        var vd4 = parseVolumeDims(text, q.kind);
         html += '<div class="he-formula">';
-        if (v4h > 0){
-          var baseArea4 = v4l * v4w;
-          html += '<div class="he-step-row">步驟① 底面積 = '+v4l+' × '+v4w+' = <strong>'+baseArea4+'</strong></div>';
-          html += '<div class="he-step-row">步驟② 體積 = <strong>'+baseArea4+'</strong> × '+v4h+' = <span class="he-placeholder">□</span></div>';
+        if (vd4.unknownDim === 'h'){
+          var ba4h = vd4.l * vd4.w;
+          html += '<div class="he-step-row">步驟① 底面積 = ' + vd4.l + ' × ' + vd4.w + ' = <strong>' + ba4h + '</strong></div>';
+          html += '<div class="he-step-row">步驟② 高 = 體積 ÷ 底面積 = ' + vd4.vol + ' ÷ ' + ba4h + ' = <span class="he-placeholder">□</span></div>';
+          html += '<div class="he-step-row">步驟③ 寫上單位（公分 or 公尺）</div>';
+        } else if (vd4.h > 0){
+          var baseArea4 = vd4.l * vd4.w;
+          html += '<div class="he-step-row">步驟① 底面積 = ' + vd4.l + ' × ' + vd4.w + ' = <strong>' + baseArea4 + '</strong></div>';
+          html += '<div class="he-step-row">步驟② 體積 = <strong>' + baseArea4 + '</strong> × ' + vd4.h + ' = <span class="he-placeholder">□</span></div>';
           html += '<div class="he-step-row">步驟③ 寫上單位（立方公分 or 立方公尺）</div>';
         } else {
-          html += '<div class="he-step-row">步驟① 面積 = '+v4l+' × '+v4w+' = <span class="he-placeholder">□</span></div>';
+          html += '<div class="he-step-row">步驟① 面積 = ' + vd4.l + ' × ' + vd4.w + ' = <span class="he-placeholder">□</span></div>';
           html += '<div class="he-step-row">步驟② 寫上單位（平方公分 or 平方公尺）</div>';
         }
         html += '</div>';
