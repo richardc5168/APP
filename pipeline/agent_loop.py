@@ -88,6 +88,12 @@ ALLOWED_NPM_SCRIPTS = {
     "verify:kind-coverage",
     "status:mail",
     "self-heal:verify",
+    "pipeline:agent-loop",
+    "pipeline:agent-loop:run",
+    "pipeline:generate",
+    "pipeline:generate:run",
+    "pipeline:coverage",
+    "pipeline:solver:test",
 }
 
 
@@ -370,6 +376,15 @@ def interpret_command_intent(cmd: dict) -> dict[str, Any]:
         "修復": "self-heal:verify",
         "topic": "topic:align",
         "主題": "topic:align",
+        "pipeline": "pipeline:generate:run",
+        "出題": "pipeline:generate:run",
+        "generate": "pipeline:generate:run",
+        "自動出題": "pipeline:generate:run",
+        "agent loop": "pipeline:agent-loop:run",
+        "agent-loop": "pipeline:agent-loop:run",
+        "coverage": "pipeline:coverage",
+        "覆蓋率": "pipeline:coverage",
+        "solver": "pipeline:solver:test",
     }
 
     for keyword, script in keyword_map.items():

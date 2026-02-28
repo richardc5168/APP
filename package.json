@@ -55,6 +55,12 @@
     ,"bulk:download": "node tools/tcool_downloader/bulk_download.js"
     ,"organize:teaching": "python tools/tcool_downloader/organize_teaching_focus.py"
     ,"tcool:add-to-bank": "node tools/tcool_downloader/add_pairs_to_national_bank.mjs"
+    ,"pipeline:agent-loop": "python -m pipeline.agent_loop --once --dry-run"
+    ,"pipeline:agent-loop:run": "python -m pipeline.agent_loop --once"
+    ,"pipeline:generate": "python -m pipeline.auto_pipeline --offline --dry-run"
+    ,"pipeline:generate:run": "python -m pipeline.auto_pipeline --offline"
+    ,"pipeline:coverage": "python -c \"from pipeline.oer_fetcher import compute_topic_coverage; import json; print(json.dumps(compute_topic_coverage([]),indent=2))\""
+    ,"pipeline:solver:test": "python -m pytest tests/unit/test_pipeline_solver.py tests/unit/test_pipeline_auto_pipeline.py -q"
   },
   "devDependencies": {
     "@playwright/test": "^1.54.2",

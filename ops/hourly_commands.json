@@ -145,6 +145,38 @@
       "value": "overnight:optimize",
       "cooldown_minutes": 1440,
       "note": "7 小時重優化模式，預設關閉，需要時手動打開"
+    },
+    {
+      "id": "2026-07-01-pipeline-generate-180m",
+      "enabled": true,
+      "action": "npm_script",
+      "value": "pipeline:generate:run",
+      "cooldown_minutes": 180,
+      "note": "每 3 小時自動出題：搜尋 OER → 生成題目 → deterministic solver 驗證 → 回寫 repo"
+    },
+    {
+      "id": "2026-07-01-pipeline-agent-loop-60m",
+      "enabled": true,
+      "action": "npm_script",
+      "value": "pipeline:agent-loop:run",
+      "cooldown_minutes": 60,
+      "note": "每小時 agent loop：讀取 error_memory → 執行未跑指令 → idle 時觸發自動改善"
+    },
+    {
+      "id": "2026-07-01-pipeline-solver-test-360m",
+      "enabled": true,
+      "action": "npm_script",
+      "value": "pipeline:solver:test",
+      "cooldown_minutes": 360,
+      "note": "每 6 小時跑 solver + auto_pipeline 單元測試，確保 deterministic 驗證完整"
+    },
+    {
+      "id": "2026-07-01-pipeline-coverage-720m",
+      "enabled": true,
+      "action": "npm_script",
+      "value": "pipeline:coverage",
+      "cooldown_minutes": 720,
+      "note": "每 12 小時檢查主題覆蓋率，找出尚未有題目的五六年級課綱主題"
     }
   ]
 }

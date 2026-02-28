@@ -33,7 +33,13 @@ const ALLOWED_NPM_SCRIPTS = new Set([
   'external:web:validate',
   'test:external:fraction',
   'verify:kind-coverage',
-  'status:mail'
+  'status:mail',
+  'pipeline:agent-loop',
+  'pipeline:agent-loop:run',
+  'pipeline:generate',
+  'pipeline:generate:run',
+  'pipeline:coverage',
+  'pipeline:solver:test'
 ]);
 
 function argValue(name, fallback) {

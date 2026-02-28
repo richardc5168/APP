@@ -34,8 +34,8 @@ checks:
     enabled: true
     path: docs/offline-math/index.html
     contains:
-      - ./aggregate_compat.js?v=1
-      - ./bank.js?v=3
+      - ./aggregate_compat.js?v=3
+      - ./bank.js?v=4
 
   - id: offline_math_no_eval_bank_loader
     type: forbid_string
