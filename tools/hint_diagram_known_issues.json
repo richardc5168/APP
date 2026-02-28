@@ -1,0 +1,114 @@
+{
+  "_comment": "Machine-readable registry of past hint/diagram issues. Used by audit_hint_diagrams.cjs and copilot agent for autonomous optimization.",
+  "_updated": "2026-02-28",
+  "issues": [
+    {
+      "id": "VOL-001",
+      "title": "rect_find_height: volume value rendered as height dimension",
+      "category": "wrong-data-in-diagram",
+      "family": "volume",
+      "kinds": ["rect_find_height"],
+      "symptom": "Box diagram shows absurdly tall box because ints[2] is the volume (e.g. 420), not the height",
+      "root_cause": "extractIntegers() returns [L, W, Volume] but code blindly uses ints[2] as height",
+      "fix": "parseVolumeDims() detects labelled dimensions from text; computes actual height = volume / (L*W) for proportional rendering",
+      "commit": "58d17b5",
+      "detection_regex": "rect_find_height|反求高",
+      "affected_levels": ["L1", "L2", "L3", "L4"]
+    },
+    {
+      "id": "VOL-002",
+      "title": "Width label not clearly visible on isometric box",
+      "category": "label-unclear",
+      "family": "volume",
+      "kinds": ["rect_cm3", "composite", "rect_find_height", "volume_rect_prism"],
+      "symptom": "Width label was plain text without arrow, easily missed on small boxes or distorted proportions",
+      "root_cause": "Only height had arrow markers; width was a bare text label at top-right edge",
+      "fix": "All 3 dimensions (長/寬/高) now have colour-coded arrow markers (blue/green/red) + enlarged font-size 12px",
+      "commit": "58d17b5",
+      "detection_regex": null,
+      "affected_levels": ["L2"]
+    },
+    {
+      "id": "FRAC-001",
+      "title": "Fraction addition word problems rendered as remainder bar chart",
+      "category": "wrong-diagram-type",
+      "family": "fracWord",
+      "kinds": ["generic_fraction_word"],
+      "symptom": "Questions with 一共/合計/總共 show sequential consumption bar with ✂切 and 剩下 labels",
+      "root_cause": "fracWord L2 branch unconditionally calls buildFractionBarSVG() designed for fracRemain problems",
+      "fix": "Added isFracAddition/isFracSubtraction regex detection; renders step-by-step text for add/sub instead of bar/pie diagrams",
+      "commit": "1d9795a",
+      "detection_regex": "一共|合計|總共|相加|加起來",
+      "affected_levels": ["L2"]
+    },
+    {
+      "id": "FRAC-002",
+      "title": "fracAdd branch shows overly complex multi-bar + comparison + merged bar SVG",
+      "category": "diagram-too-complex",
+      "family": "fracAdd",
+      "kinds": ["fraction_add_sub", "fraction_add", "fraction_sub"],
+      "symptom": "Multiple bar charts + comparison SVG + merged common-denominator bar is confusing for elementary students",
+      "root_cause": "L2 fracAdd branch rendered 3 separate SVG components in sequence",
+      "fix": "Replaced with simple text-based step format: 列式→通分→分子計算→約分",
+      "commit": "1d9795a",
+      "detection_regex": null,
+      "affected_levels": ["L2"]
+    },
+    {
+      "id": "CALC-001",
+      "title": "Pure calculation problems rendered with unnecessary diagrams",
+      "category": "wrong-diagram-type",
+      "family": "fracWord",
+      "kinds": ["generic_fraction_word", "fraction_mul", "fraction_div"],
+      "symptom": "Bare arithmetic like '3/5 × 2/7 = ?' shows bar/pie diagrams instead of simple text steps",
+      "root_cause": "No detection of pure calculation context before rendering diagrams",
+      "fix": "isPureCalculation() detection skips diagrams for bare arithmetic; shows direct step-by-step text",
+      "commit": "e76f8f0",
+      "detection_regex": null,
+      "affected_levels": ["L2"]
+    },
+    {
+      "id": "VOL-003",
+      "title": "Composite volume height label showed wrong value",
+      "category": "wrong-data-in-diagram",
+      "family": "volume",
+      "kinds": ["composite", "composite3"],
+      "symptom": "Height label on composite box diagram displayed incorrect dimension value",
+      "root_cause": "Height label text was computed incorrectly for composite boxes",
+      "fix": "Fixed height label computation in buildIsometricBoxSVG",
+      "commit": "c8bbf41",
+      "detection_regex": null,
+      "affected_levels": ["L2"]
+    }
+  ],
+  "anti_patterns": [
+    {
+      "id": "AP-001",
+      "name": "blind-ints-as-dimensions",
+      "description": "Using extractIntegers() output directly as length/width/height without checking question semantics",
+      "check": "Any volume question where ints[2] > ints[0] * ints[1] * 2 likely has volume in ints[2], not height",
+      "fix_pattern": "Use parseVolumeDims(text, kind) which checks labelled dimensions and reverse-solve context"
+    },
+    {
+      "id": "AP-002",
+      "name": "wrong-family-diagram",
+      "description": "Rendering a diagram designed for one problem type on a semantically different problem",
+      "check": "fracWord questions with addition keywords (一共/合計/總共) should NOT use buildFractionBarSVG remainder diagram",
+      "fix_pattern": "Check question text keywords before choosing diagram type"
+    },
+    {
+      "id": "AP-003",
+      "name": "label-without-arrow",
+      "description": "Dimension labels shown as bare text without arrow markers are easily missed",
+      "check": "All dimension labels in SVG should have colour-coded arrow markers parallel to the dimension edge",
+      "fix_pattern": "Use <line> with marker-start/marker-end for each dimension"
+    },
+    {
+      "id": "AP-004",
+      "name": "diagram-for-pure-calc",
+      "description": "Rendering complex diagrams for bare arithmetic expressions that need no visual aid",
+      "check": "If question text is pure calculation (no word problem context), use text-based steps",
+      "fix_pattern": "isPureCalculation() gate before diagram rendering"
+    }
+  ]
+}

@@ -64,6 +64,7 @@
     ,"autonomous:12h": "node tools/run_12h_autonomous.cjs --hours 12 --interval-min 20"
     ,"autonomous:8h": "node tools/run_12h_autonomous.cjs --hours 8 --interval-min 15"
     ,"autonomous:dry": "node tools/run_12h_autonomous.cjs --hours 1 --interval-min 5 --dry-run"
+    ,"audit:diagrams": "node tools/audit_hint_diagrams.cjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.54.2",

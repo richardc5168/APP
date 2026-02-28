@@ -156,12 +156,18 @@ function phaseContent(logs) {
  * Phase 4: Validation — verify:all, elementary banks, improvement trend
  */
 function phaseValidate(logs) {
-  console.log('  [Phase 4] Validate: verify:all → elementary banks → improvement');
+  console.log('  [Phase 4] Validate: verify:all → elementary banks → diagram audit → improvement');
   const verifyAll = runStep('npm', ['run', 'verify:all'], logs, 1);
   if (!verifyAll.pass) return false;
 
   const banks = runStep(py, ['tools/validate_all_elementary_banks.py'], logs, 1);
   if (!banks.pass) return false;
+
+  // Diagram/hint regression audit (non-fatal but logged)
+  const diagAudit = runStep('node', ['tools/audit_hint_diagrams.cjs'], logs, 0);
+  if (!diagAudit.pass) {
+    console.log('  ⚠ Diagram audit found issues (see artifacts/hint_diagram_audit.json)');
+  }
 
   // Improvement trend — check if golden changed
   const diffGolden = runCommand('git', ['diff', '--quiet', '--', 'golden/grade5_pack_v1.jsonl']);

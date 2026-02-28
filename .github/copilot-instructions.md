@@ -27,3 +27,17 @@ A change is complete ONLY when:
 
 ---
 **CRITICAL**: Always check `README.md` for the latest validation commands.
+
+## Hint/Diagram Optimization Memory (Auto-learned)
+Before modifying `docs/shared/hint_engine.js` or any diagram rendering, **MUST** consult `tools/hint_diagram_known_issues.json` for past issues and anti-patterns. After every fix, update the registry.
+
+### Known Anti-Patterns (DO NOT reintroduce):
+1. **AP-001**: Never use `extractIntegers()[2]` as height for volume diagrams — use `parseVolumeDims(text, kind)`.
+2. **AP-002**: Never render `buildFractionBarSVG` (remainder diagram) for fraction addition word problems — check `isFracAddition` first.
+3. **AP-003**: Every SVG dimension label must have a colour-coded arrow marker (not bare text).
+4. **AP-004**: Pure calculations (`isPureCalculation()`) must skip diagrams and show text-based steps.
+
+### Validation Gate:
+- Run `node tools/audit_hint_diagrams.cjs` before committing any hint_engine.js changes.
+- This audit is also run automatically in the 12h autonomous runner (Phase 4).
+- After editing `docs/shared/hint_engine.js`, always sync to `dist_ai_math_web_pages/docs/shared/hint_engine.js`.
