@@ -149,16 +149,20 @@
     <div class="card">
       <div class="row">
         <button id="btnCopyText">📋 複製文字報告</button>
-        <button id="btnShareUrl" style="display:none">📤 分享連結到其他裝置</button>
         <a href="../" style="text-decoration:none"><button style="background:transparent;border-color:rgba(255,255,255,.18)">← 回到 AI MATH WEB</button></a>
       </div>
-      <div id="shareUrlBox" style="display:none;margin-top:10px">
-        <div class="small" style="margin-bottom:6px">家長可把此連結傳到手機或其他電腦，打開後輸入密碼即可查看：</div>
-        <textarea id="shareUrlText" readonly style="width:100%;min-height:60px;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.22);color:var(--accent);font-size:12px;word-break:break-all;resize:vertical"></textarea>
-        <button id="btnCopyUrl" style="margin-top:8px;font-size:13px;padding:6px 12px">📋 複製連結</button>
-        <span id="copyUrlMsg" style="color:#2ea043;font-size:13px;margin-left:8px;display:none">✅ 已複製！</span>
-      </div>
       <div id="copyMsg" style="color:#2ea043;font-size:13px;margin-top:8px;display:none">✅ 已複製到剪貼簿</div>
+    </div>
+
+    <!-- share to other device (auto-shown in local mode) -->
+    <div id="shareCard" class="card" style="border-color:var(--accent);display:none">
+      <div style="font-weight:800">📲 在其他裝置查看</div>
+      <div class="small" style="margin-bottom:8px">複製下方連結傳到手機（LINE / WhatsApp），打開後輸入密碼即可查看同一份報告。</div>
+      <textarea id="shareUrlText" readonly style="width:100%;min-height:50px;padding:10px;border-radius:10px;border:1px solid rgba(88,166,255,.35);background:rgba(0,0,0,.22);color:var(--accent);font-size:12px;word-break:break-all;resize:vertical"></textarea>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:8px">
+        <button id="btnCopyUrl" style="font-size:13px;padding:8px 14px">📋 複製連結</button>
+        <span id="copyUrlMsg" style="color:#2ea043;font-size:13px;display:none">✅ 已複製！</span>
+      </div>
     </div>
   </div>
 </div>
@@ -469,39 +473,31 @@
       } catch {}
     });
 
-    /* share URL button (only in local mode — generates a portable URL with embedded data) */
+    /* share URL — auto-show in local mode */
     if (MODE === 'local' && window.AIMathStudentAuth){
-      var btnShare = document.getElementById('btnShareUrl');
-      if (btnShare){
-        btnShare.style.display = '';
-        btnShare.addEventListener('click', function(){
-          var box = document.getElementById('shareUrlBox');
-          if (box.style.display === 'none'){
-            var student = window.AIMathStudentAuth.getCurrentStudent();
-            var pin = student ? student.pin : '';
-            var url = window.AIMathStudentAuth.encodeReportUrl(d, pin);
-            document.getElementById('shareUrlText').value = url;
-            box.style.display = 'block';
-          } else {
-            box.style.display = 'none';
-          }
-        });
+      var shareCard = document.getElementById('shareCard');
+      if (shareCard){
+        var student = window.AIMathStudentAuth.getCurrentStudent();
+        var pin = student ? student.pin : '';
+        var url = window.AIMathStudentAuth.encodeReportUrl(d, pin);
+        document.getElementById('shareUrlText').value = url;
+        shareCard.style.display = 'block';
       }
-      var btnCopyUrl = document.getElementById('btnCopyUrl');
-      if (btnCopyUrl){
-        btnCopyUrl.addEventListener('click', async function(){
-          var txt = document.getElementById('shareUrlText').value;
-          if (!txt) return;
-          try {
-            await navigator.clipboard.writeText(txt);
-            var m = document.getElementById('copyUrlMsg');
-            if (m){ m.style.display = 'inline'; setTimeout(function(){ m.style.display = 'none'; }, 2500); }
-          } catch(e){
-            document.getElementById('shareUrlText').select();
-            document.execCommand('copy');
-          }
-        });
-      }
+    }
+    var btnCopyUrl = document.getElementById('btnCopyUrl');
+    if (btnCopyUrl){
+      btnCopyUrl.addEventListener('click', async function(){
+        var txt = document.getElementById('shareUrlText').value;
+        if (!txt) return;
+        try {
+          await navigator.clipboard.writeText(txt);
+          var m = document.getElementById('copyUrlMsg');
+          if (m){ m.style.display = 'inline'; setTimeout(function(){ m.style.display = 'none'; }, 2500); }
+        } catch(e){
+          document.getElementById('shareUrlText').select();
+          document.execCommand('copy');
+        }
+      });
     }
   }
 })();
