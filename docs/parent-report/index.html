@@ -781,6 +781,7 @@
             var idx = Number(btn.getAttribute('data-idx') || 0);
             var target = wrongs[idx] || wrongs[0];
             renderPracticeCard(target, 'single');
+            try { lab.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch(e){}
           });
         })(btns[bi]);
       }
@@ -791,6 +792,7 @@
             var idx = Number(btn.getAttribute('data-idx') || 0);
             var target = wrongs[idx] || wrongs[0];
             renderPracticeCard(target, 'quiz');
+            try { lab.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch(e){}
           });
         })(quizBtns[qi]);
       }
