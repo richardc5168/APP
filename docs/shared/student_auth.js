@@ -517,11 +517,8 @@
     if (isLoggedIn()){
       scheduleCloudSync();
       hookTelemetryForCloudSync();
-      /* also hook exam-sprint if present (watches for new attempts) */
-      try {
-        var origExamSave = window.localStorage.setItem;
-        /* we already hooked telemetry; page-load sync covers exam-sprint too */
-      } catch(e){}
+      /* ensure this student is in the cloud registry (runs on every page load) */
+      if (getCloudBlobId()) updateRegistry();
     }
   }
 
