@@ -17,6 +17,13 @@
   /* ─── helpers ─── */
   function safeJson(s, fb){ try { return JSON.parse(s); } catch { return fb; } }
   function nowIso(){ return new Date().toISOString(); }
+  function normalizeName(name){
+    return String(name || '')
+      .normalize('NFKC')
+      .trim()
+      .replace(/\s+/g, ' ')
+      .toUpperCase();
+  }
 
   /* ─── load / save ─── */
   function load(){
@@ -275,6 +282,8 @@
   var GIST_PAT  = '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';
   var GIST_API  = 'https://api.github.com/gists/' + GIST_ID;
   var _cloudTimer = null;
+  var _cloudInterval = null;
+  var _syncInFlight = false;
 
   function scheduleCloudSync(){
     if (!isLoggedIn()) return;
@@ -288,18 +297,23 @@
    */
   function doCloudSync(){
     if (!isLoggedIn()) return;
+    if (_syncInFlight) return;
     try {
       var reportData = collectReportData(7);
       var student = load();
       if (!student) return;
-      var nameKey = student.name.trim();
+      var nameKeyRaw = String(student.name || '').trim();
+      var nameKey = normalizeName(nameKeyRaw);
+      if (!nameKey) return;
       var entry = {
+        name: nameKeyRaw,
         pin: student.pin || '',
         data: reportData,
         cloud_ts: Date.now()
       };
 
       /* read current gist, merge, write back */
+      _syncInFlight = true;
       fetch(GIST_API, {
         headers: {
           'Accept': 'application/vnd.github+json',
@@ -333,7 +347,8 @@
       .then(function(resp){
         if (resp && resp.ok) console.log('[cloud-sync] OK');
       })
-      .catch(function(e){ console.warn('[cloud-sync] fail', e); });
+      .catch(function(e){ console.warn('[cloud-sync] fail', e); })
+      .finally(function(){ _syncInFlight = false; });
     } catch(e){}
   }
 
@@ -342,7 +357,8 @@
    * Returns { pin, data, cloud_ts } or null.
    */
   function lookupStudentReport(name){
-    var nameKey = String(name || '').trim();
+    var raw = String(name || '').trim();
+    var nameKey = normalizeName(raw);
     if (!nameKey) return Promise.resolve(null);
     /* public gist — no auth required, has CORS */
     return fetch(GIST_API, {
@@ -357,7 +373,14 @@
       var reg;
       try { reg = JSON.parse(gist.files['registry.json'].content); } catch(e){ return null; }
       if (!reg || !reg.entries) return null;
-      return reg.entries[nameKey] || null;
+      if (reg.entries[nameKey]) return reg.entries[nameKey];
+      if (raw && reg.entries[raw]) return reg.entries[raw];
+      var keys = Object.keys(reg.entries);
+      for (var i = 0; i < keys.length; i++){
+        var k = keys[i];
+        if (normalizeName(k) === nameKey) return reg.entries[k];
+      }
+      return null;
     })
     .catch(function(){ return null; });
   }
@@ -493,6 +516,13 @@
     if (isLoggedIn()){
       scheduleCloudSync();
       hookTelemetryForCloudSync();
+      if (!_cloudInterval){
+        _cloudInterval = setInterval(scheduleCloudSync, 20000);
+      }
+      window.addEventListener('visibilitychange', function(){
+        if (document.visibilityState === 'hidden') doCloudSync();
+      });
+      window.addEventListener('beforeunload', doCloudSync);
     }
   }
 
