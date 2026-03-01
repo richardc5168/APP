@@ -154,6 +154,7 @@
       <div style="font-weight:800">📚 本週再練成效</div>
       <div class="small">統計最近 7 天在本頁「再練/小測驗」的作答成效</div>
       <div id="practiceSummary" class="banner muted" style="margin-top:8px">尚無再練紀錄。</div>
+      <div id="practiceByKind" style="margin-top:8px"></div>
     </div>
 
     <!-- advice -->
@@ -436,6 +437,7 @@
 
     function renderPracticeSummary(){
       var box = document.getElementById('practiceSummary');
+      var byKindBox = document.getElementById('practiceByKind');
       if (!box) return;
       var events = (r.practice && Array.isArray(r.practice.events)) ? r.practice.events : [];
       var since = Date.now() - 7 * 86400000;
@@ -443,6 +445,7 @@
       if (!recent.length){
         box.className = 'banner muted';
         box.textContent = '最近 7 天尚無再練紀錄。';
+        if (byKindBox) byKindBox.innerHTML = '';
         return;
       }
       var totalQ = recent.reduce(function(s, e){ return s + Number(e.total || 0); }, 0);
@@ -457,6 +460,35 @@
         '答對：<strong>' + correctQ + '</strong>　' +
         '正確率：<strong>' + acc + '%</strong><br>' +
         '<span class="small">最近一次：' + esc(latestText) + '</span>';
+
+      if (byKindBox){
+        var byKind = {};
+        recent.forEach(function(e){
+          var key = String(e.kind || e.topic || '未分類').trim() || '未分類';
+          if (!byKind[key]) byKind[key] = { total: 0, score: 0, n: 0 };
+          byKind[key].total += Number(e.total || 0);
+          byKind[key].score += Number(e.score || 0);
+          byKind[key].n += 1;
+        });
+        var rows = Object.keys(byKind).map(function(k){
+          var v = byKind[k];
+          var a = v.total ? Math.round(v.score / v.total * 100) : 0;
+          return { k: k, total: v.total, score: v.score, n: v.n, acc: a };
+        }).sort(function(a, b){ return b.total - a.total || b.acc - a.acc; });
+
+        if (!rows.length){
+          byKindBox.innerHTML = '';
+        } else {
+          var html = '<div class="small" style="font-weight:700;margin-bottom:4px">依題型分組（最近 7 天）：</div>';
+          rows.forEach(function(row){
+            var cls = row.acc >= 80 ? 'ok' : row.acc >= 60 ? 'warn' : 'bad';
+            html += '<span class="pill ' + cls + '" style="margin:2px 4px">' +
+              esc(row.k) + ' ' + row.score + '/' + row.total + '（' + row.acc + '%）' +
+              '</span>';
+          });
+          byKindBox.innerHTML = html;
+        }
+      }
     }
     document.getElementById('rptName').textContent = d.name || '未知';
     document.getElementById('rptTime').textContent = d.ts ? new Date(d.ts).toLocaleString('zh-TW') : '—';
