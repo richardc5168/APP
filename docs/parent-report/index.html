@@ -775,21 +775,25 @@
       }
 
       var btns = wrongList.querySelectorAll('.btnPracticeFromWrong');
-      btns.forEach(function(btn){
-        btn.addEventListener('click', function(){
-          var idx = Number(btn.getAttribute('data-idx') || 0);
-          var target = wrongs[idx] || wrongs[0];
-          renderPracticeCard(target, 'single');
-        });
-      });
+      for (var bi = 0; bi < btns.length; bi++){
+        (function(btn){
+          btn.addEventListener('click', function(){
+            var idx = Number(btn.getAttribute('data-idx') || 0);
+            var target = wrongs[idx] || wrongs[0];
+            renderPracticeCard(target, 'single');
+          });
+        })(btns[bi]);
+      }
       var quizBtns = wrongList.querySelectorAll('.btnQuizFromWrong');
-      quizBtns.forEach(function(btn){
-        btn.addEventListener('click', function(){
-          var idx = Number(btn.getAttribute('data-idx') || 0);
-          var target = wrongs[idx] || wrongs[0];
-          renderPracticeCard(target, 'quiz');
-        });
-      });
+      for (var qi = 0; qi < quizBtns.length; qi++){
+        (function(btn){
+          btn.addEventListener('click', function(){
+            var idx = Number(btn.getAttribute('data-idx') || 0);
+            var target = wrongs[idx] || wrongs[0];
+            renderPracticeCard(target, 'quiz');
+          });
+        })(quizBtns[qi]);
+      }
     } else {
       wrongList.innerHTML = '<div class="banner ok">最近沒有錯題記錄 ✅</div>';
       document.getElementById('detailedAnalysis').innerHTML = '<div class="banner ok" style="margin-top:8px">目前沒有可分析的錯題，建議維持每日練習節奏。</div>';
