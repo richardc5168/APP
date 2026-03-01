@@ -270,6 +270,91 @@
     } catch { return null; }
   }
 
+  /* ─── Cloud Sync (jsonblob.com) ─── */
+  var CLOUD_LS_KEY = 'aimath_cloud_blob_id';
+  var CLOUD_API = 'https://jsonblob.com/api/jsonBlob';
+  var _cloudTimer = null;
+
+  function getCloudBlobId(){
+    try { return localStorage.getItem(CLOUD_LS_KEY) || null; } catch(e){ return null; }
+  }
+  function setCloudBlobId(id){
+    try { localStorage.setItem(CLOUD_LS_KEY, id); } catch(e){}
+  }
+
+  function scheduleCloudSync(){
+    if (!isLoggedIn()) return;
+    if (_cloudTimer) clearTimeout(_cloudTimer);
+    _cloudTimer = setTimeout(doCloudSync, 3000);
+  }
+
+  function doCloudSync(){
+    if (!isLoggedIn()) return;
+    try {
+      var reportData = collectReportData(7);
+      var student = load();
+      var payload = JSON.parse(JSON.stringify(reportData));
+      payload.pin = student ? student.pin : '';
+      payload.cloud_ts = Date.now();
+
+      var blobId = getCloudBlobId();
+      if (blobId){
+        /* update existing blob */
+        fetch(CLOUD_API + '/' + blobId, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify(payload)
+        }).then(function(resp){
+          if (resp.status === 404){
+            /* blob was deleted — create new */
+            setCloudBlobId('');
+            createCloudBlob(payload);
+          }
+        }).catch(function(){});
+      } else {
+        createCloudBlob(payload);
+      }
+    } catch(e){}
+  }
+
+  function createCloudBlob(payload){
+    fetch(CLOUD_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(payload)
+    }).then(function(resp){
+      if (resp.ok){
+        var loc = resp.headers.get('Location') || '';
+        var id = loc.split('/').pop();
+        if (id) setCloudBlobId(id);
+      }
+    }).catch(function(){});
+  }
+
+  function getParentReportCloudUrl(){
+    var blobId = getCloudBlobId();
+    if (!blobId) return null;
+    var base = window.location.pathname.replace(/[^/]*$/, '');
+    var reportPath = base.includes('/docs/')
+      ? base.replace(/\/docs\/.*$/, '/docs/parent-report/')
+      : '../parent-report/';
+    return window.location.origin + reportPath + '?b=' + encodeURIComponent(blobId);
+  }
+
+  /* hook into AIMathAttemptTelemetry.appendAttempt to auto-sync */
+  function hookTelemetryForCloudSync(){
+    if (!window.AIMathAttemptTelemetry) return;
+    if (!window.AIMathAttemptTelemetry.appendAttempt) return;
+    if (window.AIMathAttemptTelemetry._cloudHooked) return;
+    var orig = window.AIMathAttemptTelemetry.appendAttempt;
+    window.AIMathAttemptTelemetry.appendAttempt = function(){
+      var result = orig.apply(this, arguments);
+      scheduleCloudSync();
+      return result;
+    };
+    window.AIMathAttemptTelemetry._cloudHooked = true;
+  }
+
   /* ─── login UI (inject floating button + modal) ─── */
   function injectLoginUI(containerEl){
     if (!containerEl) return;
@@ -289,10 +374,17 @@
       }
     } catch(e){}
 
+    /* build report link — prefer cloud URL (works cross-device) */
+    var reportLink = parentReportHref;
+    var cloudBlobId = getCloudBlobId();
+    if (cloudBlobId){
+      reportLink = parentReportHref + '?b=' + encodeURIComponent(cloudBlobId);
+    }
+
     if (student){
       wrapper.innerHTML = `
         <span style="font-size:13px;color:var(--muted,#9aa4b2)">👤 <strong style="color:var(--text,#e6edf3)">${escHtml(student.name)}</strong></span>
-        <a href="${parentReportHref}" style="text-decoration:none"><button class="btn ghost" style="font-size:12px;padding:6px 10px" type="button">📊 家長報告</button></a>
+        <a href="${reportLink}" id="btnParentReport" style="text-decoration:none"><button class="btn ghost" style="font-size:12px;padding:6px 10px" type="button">📊 家長報告</button></a>
         <button class="btn ghost" id="btnLogout" style="font-size:12px;padding:6px 10px">登出</button>
       `;
     } else {
@@ -380,6 +472,17 @@
 
     /* Click outside to close */
     modal.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
+
+    /* ─── Auto cloud sync on page load + hook telemetry ─── */
+    if (isLoggedIn()){
+      scheduleCloudSync();
+      hookTelemetryForCloudSync();
+      /* also hook exam-sprint if present (watches for new attempts) */
+      try {
+        var origExamSave = window.localStorage.setItem;
+        /* we already hooked telemetry; page-load sync covers exam-sprint too */
+      } catch(e){}
+    }
   }
 
   function escHtml(s){
@@ -397,6 +500,9 @@
     collectReportData,
     encodeReportUrl,
     decodeReportUrl,
-    injectLoginUI
+    injectLoginUI,
+    getCloudBlobId,
+    getParentReportCloudUrl,
+    scheduleCloudSync
   };
 })();
