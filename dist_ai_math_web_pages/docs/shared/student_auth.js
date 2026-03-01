@@ -296,15 +296,15 @@
    * Registry structure (in registry.json): { entries: { "KAI": { pin, data, cloud_ts } } }
    */
   function doCloudSync(){
-    if (!isLoggedIn()) return;
-    if (_syncInFlight) return;
+    if (!isLoggedIn()) return Promise.resolve(false);
+    if (_syncInFlight) return Promise.resolve(false);
     try {
       var reportData = collectReportData(7);
       var student = load();
-      if (!student) return;
+      if (!student) return Promise.resolve(false);
       var nameKeyRaw = String(student.name || '').trim();
       var nameKey = normalizeName(nameKeyRaw);
-      if (!nameKey) return;
+      if (!nameKey) return Promise.resolve(false);
       var entry = {
         name: nameKeyRaw,
         pin: student.pin || '',
@@ -314,7 +314,7 @@
 
       /* read current gist, merge, write back */
       _syncInFlight = true;
-      fetch(GIST_API, {
+      return fetch(GIST_API, {
         headers: {
           'Accept': 'application/vnd.github+json',
           'Authorization': 'token ' + GIST_PAT
@@ -345,11 +345,17 @@
         });
       })
       .then(function(resp){
-        if (resp && resp.ok) console.log('[cloud-sync] OK');
+        if (resp && resp.ok){
+          console.log('[cloud-sync] OK');
+          return true;
+        }
+        return false;
       })
-      .catch(function(e){ console.warn('[cloud-sync] fail', e); })
+      .catch(function(e){ console.warn('[cloud-sync] fail', e); return false; })
       .finally(function(){ _syncInFlight = false; });
-    } catch(e){}
+    } catch(e){
+      return Promise.resolve(false);
+    }
   }
 
   /**
@@ -543,6 +549,7 @@
     decodeReportUrl,
     injectLoginUI,
     scheduleCloudSync,
+    forceCloudSync: doCloudSync,
     lookupStudentReport
   };
 })();

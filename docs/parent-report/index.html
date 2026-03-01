@@ -269,6 +269,11 @@
           return;
         }
         data = window.AIMathStudentAuth.collectReportData(7);
+        if (window.AIMathStudentAuth.forceCloudSync){
+          window.AIMathStudentAuth.forceCloudSync();
+        } else if (window.AIMathStudentAuth.scheduleCloudSync){
+          window.AIMathStudentAuth.scheduleCloudSync();
+        }
         showDashboard(data);
         return;
       }
