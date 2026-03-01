@@ -17,6 +17,8 @@ MVP Backend: 多學生 + 訂閱 gate + 出題/交卷/報表
 import os
 import json
 import sqlite3
+import hashlib
+import secrets
 from contextlib import asynccontextmanager
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -195,6 +197,21 @@ class PracticeNextRequest(BaseModel):
     window_days: int = Field(default=14, ge=1, le=60)
     topic_key: Optional[str] = Field(default=None, description="Optional override for engine generator key")
     seed: Optional[int] = Field(default=None, description="Optional deterministic seed for question generation")
+
+
+class AppAuthLoginRequest(BaseModel):
+    username: str = Field(..., min_length=3)
+    password: str = Field(..., min_length=4)
+
+
+class AppAuthProvisionRequest(BaseModel):
+    username: str = Field(..., min_length=3)
+    password: str = Field(..., min_length=4)
+    account_name: str = Field(default="APP User")
+    student_name: str = Field(default="學生")
+    grade: str = Field(default="G5")
+    plan: str = Field(default="basic")
+    seats: int = Field(default=1, ge=1, le=200)
 
 
 def _with_random_seed(seed: Optional[int]):
@@ -502,6 +519,20 @@ def init_db():
     """)
 
     cur.execute("""
+    CREATE TABLE IF NOT EXISTS app_users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        account_id INTEGER NOT NULL,
+        username TEXT UNIQUE NOT NULL,
+        password_hash TEXT NOT NULL,
+        password_salt TEXT NOT NULL,
+        active INTEGER NOT NULL DEFAULT 1,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        FOREIGN KEY(account_id) REFERENCES accounts(id)
+    )
+    """)
+
+    cur.execute("""
     CREATE TABLE IF NOT EXISTS question_cache (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         topic TEXT,
@@ -791,6 +822,15 @@ def ensure_subscription_active(account_id: int):
     if not sub or sub["status"] != "active":
         raise HTTPException(status_code=402, detail="Subscription required (inactive)")
 
+
+def _pwd_hash(password: str, salt: str) -> str:
+    raw = f"{salt}:{password}".encode("utf-8")
+    return hashlib.sha256(raw).hexdigest()
+
+
+def _pwd_ok(password: str, salt: str, pwd_hash: str) -> bool:
+    return _pwd_hash(password, salt) == str(pwd_hash or "")
+
 # ========= 4) Helper: JSON =========
 def now_iso():
     return datetime.now().isoformat(timespec="seconds")
@@ -891,6 +931,154 @@ def validate_quadratic_pipeline(payload: QuadraticPipelineValidateRequest):
 @app.get("/health")
 def health():
     return {"ok": True, "ts": now_iso()}
+
+
+@app.post("/v1/app/auth/provision", summary="Provision purchased app user (admin only)")
+def app_auth_provision(
+    payload: AppAuthProvisionRequest,
+    x_admin_token: str = Header("", alias="X-Admin-Token"),
+):
+    expected = os.getenv("APP_PROVISION_ADMIN_TOKEN", "").strip()
+    if not expected:
+        raise HTTPException(status_code=503, detail="APP_PROVISION_ADMIN_TOKEN is not configured")
+    if not x_admin_token or x_admin_token != expected:
+        raise HTTPException(status_code=401, detail="Invalid admin token")
+
+    username = payload.username.strip().lower()
+    if not username:
+        raise HTTPException(status_code=400, detail="username required")
+
+    conn = db()
+    cur = conn.cursor()
+    exists = cur.execute("SELECT id FROM app_users WHERE username = ?", (username,)).fetchone()
+    if exists:
+        conn.close()
+        raise HTTPException(status_code=409, detail="username already exists")
+
+    created = now_iso()
+    api_key = secrets.token_urlsafe(24)
+    cur.execute(
+        "INSERT INTO accounts(name, api_key, created_at) VALUES(?,?,?)",
+        (payload.account_name, api_key, created),
+    )
+    account_id = int(cur.lastrowid)
+
+    cur.execute(
+        """
+        INSERT INTO subscriptions(account_id, status, plan, seats, current_period_end, updated_at)
+        VALUES(?,?,?,?,?,?)
+        """,
+        (
+            account_id,
+            "active",
+            payload.plan,
+            int(payload.seats),
+            (datetime.now() + timedelta(days=30)).isoformat(timespec="seconds"),
+            created,
+        ),
+    )
+
+    cur.execute(
+        "INSERT INTO students(account_id, display_name, grade, created_at) VALUES(?,?,?,?)",
+        (account_id, payload.student_name, payload.grade, created),
+    )
+    student_id = int(cur.lastrowid)
+
+    salt = secrets.token_hex(16)
+    pwd_hash = _pwd_hash(payload.password, salt)
+    cur.execute(
+        """
+        INSERT INTO app_users(account_id, username, password_hash, password_salt, active, created_at, updated_at)
+        VALUES(?,?,?,?,1,?,?)
+        """,
+        (account_id, username, pwd_hash, salt, created, created),
+    )
+
+    conn.commit()
+    conn.close()
+
+    return {
+        "ok": True,
+        "username": username,
+        "account_id": account_id,
+        "default_student_id": student_id,
+        "api_key": api_key,
+        "plan": payload.plan,
+        "seats": int(payload.seats),
+    }
+
+
+@app.post("/v1/app/auth/login", summary="Login app user with purchased username/password")
+def app_auth_login(payload: AppAuthLoginRequest):
+    username = payload.username.strip().lower()
+    conn = db()
+    row = conn.execute(
+        """
+        SELECT au.*, a.id AS account_id, a.name AS account_name, a.api_key
+        FROM app_users au
+        JOIN accounts a ON a.id = au.account_id
+        WHERE au.username = ?
+        """,
+        (username,),
+    ).fetchone()
+
+    if not row:
+        conn.close()
+        raise HTTPException(status_code=401, detail="Invalid username or password")
+    if int(row["active"] or 0) != 1:
+        conn.close()
+        raise HTTPException(status_code=403, detail="User is inactive")
+    if not _pwd_ok(payload.password, str(row["password_salt"] or ""), str(row["password_hash"] or "")):
+        conn.close()
+        raise HTTPException(status_code=401, detail="Invalid username or password")
+
+    sub = conn.execute(
+        "SELECT * FROM subscriptions WHERE account_id = ? ORDER BY updated_at DESC LIMIT 1",
+        (int(row["account_id"]),),
+    ).fetchone()
+    if not sub or sub["status"] != "active":
+        conn.close()
+        raise HTTPException(status_code=402, detail="Subscription required (inactive)")
+
+    st = conn.execute(
+        "SELECT id, display_name, grade FROM students WHERE account_id = ? ORDER BY id ASC LIMIT 1",
+        (int(row["account_id"]),),
+    ).fetchone()
+    conn.close()
+
+    return {
+        "ok": True,
+        "username": username,
+        "account_id": int(row["account_id"]),
+        "account_name": row["account_name"],
+        "api_key": row["api_key"],
+        "subscription": {
+            "status": sub["status"],
+            "plan": sub["plan"],
+            "seats": int(sub["seats"] or 0),
+            "current_period_end": sub["current_period_end"],
+        },
+        "default_student": {
+            "id": int(st["id"]) if st else None,
+            "display_name": st["display_name"] if st else None,
+            "grade": st["grade"] if st else None,
+        },
+    }
+
+
+@app.get("/v1/app/auth/whoami", summary="Who am I (via X-API-Key)")
+def app_auth_whoami(x_api_key: str = Header(..., alias="X-API-Key")):
+    acc = get_account_by_api_key(x_api_key)
+    ensure_subscription_active(int(acc["id"]))
+    conn = db()
+    st_count = conn.execute("SELECT COUNT(*) AS c FROM students WHERE account_id = ?", (int(acc["id"]),)).fetchone()
+    conn.close()
+    return {
+        "ok": True,
+        "account_id": int(acc["id"]),
+        "account_name": acc["name"],
+        "students": int((st_count["c"] if st_count else 0) or 0),
+    }
 
 
 @app.get("/verify", response_class=HTMLResponse, summary="Browser-only validation page")
@@ -1028,6 +1216,80 @@ def verify_page():
 </html>
 """
 
+        return HTMLResponse(content=html)
+
+
+@app.get("/app-login", response_class=HTMLResponse, summary="App login (username/password)")
+def app_login_page():
+        html = r"""
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>AI MATH APP 登入</title>
+        <style>
+            body{font-family:Segoe UI,Helvetica,Arial;max-width:520px;margin:30px auto;padding:0 12px;line-height:1.6}
+            .card{background:#f6f8fa;border:1px solid #ddd;border-radius:10px;padding:16px}
+            input{width:100%;padding:10px;border:1px solid #ccc;border-radius:8px;margin:6px 0 12px 0}
+            button{width:100%;padding:10px;border:0;border-radius:8px;background:#2563eb;color:#fff;font-weight:600;cursor:pointer}
+            .muted{color:#666;font-size:13px}
+            .ok{color:#0a7f2e;font-weight:600}
+            .bad{color:#b42318;font-weight:600;white-space:pre-wrap}
+        </style>
+    </head>
+    <body>
+        <h2>AI MATH APP 登入</h2>
+        <p class="muted">購買後請使用帳號密碼登入。登入成功後會自動進入完整題型與家長週報功能。</p>
+        <div class="card">
+            <label>帳號（username）</label>
+            <input id="username" placeholder="例如 parent001" />
+            <label>密碼（password）</label>
+            <input id="password" type="password" placeholder="請輸入密碼" />
+            <button id="btnLogin">登入並開始</button>
+            <div id="msg" class="muted" style="margin-top:10px"></div>
+        </div>
+
+        <script>
+            const msg = document.getElementById('msg');
+            function setMsg(cls, text){ msg.className = cls; msg.textContent = text; }
+
+            document.getElementById('btnLogin').addEventListener('click', async () => {
+                const username = (document.getElementById('username').value || '').trim();
+                const password = (document.getElementById('password').value || '').trim();
+                if (!username || !password) {
+                    setMsg('bad', '請輸入帳號與密碼');
+                    return;
+                }
+                setMsg('muted', '登入中...');
+
+                try {
+                    const res = await fetch('/v1/app/auth/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username, password })
+                    });
+                    const data = await res.json();
+                    if (!res.ok || !data.ok) {
+                        throw new Error(data.detail || '登入失敗');
+                    }
+
+                    localStorage.setItem('rag_api_key', String(data.api_key || ''));
+                    if (data.default_student && data.default_student.id) {
+                        localStorage.setItem('rag_student_id', String(data.default_student.id));
+                    }
+                    localStorage.setItem('rag_topic_key', '2');
+
+                    setMsg('ok', '登入成功，正在進入學習頁...');
+                    setTimeout(() => { location.href = '/'; }, 400);
+                } catch (err) {
+                    setMsg('bad', String(err && err.message ? err.message : err));
+                }
+            });
+        </script>
+    </body>
+</html>
+"""
         return HTMLResponse(content=html)
 
 
