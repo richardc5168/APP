@@ -440,6 +440,21 @@
     function renderHint(text, q, level){
       const div = document.createElement('div');
       div.className = 'hint';
+
+      /* --- Try shared hint_engine rich rendering first --- */
+      let richHTML = '';
+      if (window.AIMathHintEngine && window.AIMathHintEngine.buildRichHintHTML){
+        try { richHTML = window.AIMathHintEngine.buildRichHintHTML(q, level) || ''; } catch(e){ richHTML = ''; }
+      }
+      if (richHTML){
+        /* he-rich-viz class prevents MutationObserver from duplicating */
+        div.innerHTML = '<div class="he-rich-viz">' + richHTML + '</div>' +
+          '<div class="vizLabel" style="margin-top:8px;border-top:1px solid rgba(255,255,255,.12);padding-top:6px">' +
+          gsEsc(text).replaceAll('\n','<br>') + '</div>';
+        return div;
+      }
+
+      /* --- Fallback: grand-slam's own simple viz --- */
       const viz = buildGrandSlamViz(q, level);
       if (viz){
         div.innerHTML = `<div class="viz">${viz}</div><div class="vizLabel">${gsEsc(text).replaceAll('\n','<br>')}</div>`;
