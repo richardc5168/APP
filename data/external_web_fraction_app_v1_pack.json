@@ -2,7 +2,7 @@
   "type_key": "external_web_fraction_app_v1",
   "version": "v20260301",
   "seed": 60223,
-  "generated_at": "2026-03-01T16:26:45",
+  "generated_at": "2026-03-01T16:26:57",
   "items": [
     {
       "id": "extfrac_0001",
@@ -73,7 +73,7 @@
         "quoted_fact": "分數題先看整體與部分",
         "retrieved_at": "2026-03-01T16:26:24"
       },
-      "generated_at": "2026-03-01T16:26:45"
+      "generated_at": "2026-03-01T16:26:57"
     },
     {
       "id": "extfrac_0002",
@@ -143,7 +143,7 @@
         "quoted_fact": "分數題先看整體與部分",
         "retrieved_at": "2026-03-01T16:26:24"
       },
-      "generated_at": "2026-03-01T16:26:45"
+      "generated_at": "2026-03-01T16:26:57"
     },
     {
       "id": "extfrac_0003",
@@ -213,7 +213,7 @@
         "quoted_fact": "分數題先看整體與部分",
         "retrieved_at": "2026-03-01T16:26:24"
       },
-      "generated_at": "2026-03-01T16:26:45"
+      "generated_at": "2026-03-01T16:26:57"
     },
     {
       "id": "extfrac_0004",
@@ -284,7 +284,7 @@
         "quoted_fact": "分數題先看整體與部分",
         "retrieved_at": "2026-03-01T16:26:24"
       },
-      "generated_at": "2026-03-01T16:26:45"
+      "generated_at": "2026-03-01T16:26:57"
     },
     {
       "id": "extfrac_0005",
@@ -355,7 +355,7 @@
         "quoted_fact": "分數題先看整體與部分",
         "retrieved_at": "2026-03-01T16:26:24"
       },
-      "generated_at": "2026-03-01T16:26:45"
+      "generated_at": "2026-03-01T16:26:57"
     },
     {
       "id": "extfrac_0006",
@@ -425,7 +425,7 @@
         "quoted_fact": "分數題先看整體與部分",
         "retrieved_at": "2026-03-01T16:26:24"
       },
-      "generated_at": "2026-03-01T16:26:45"
+      "generated_at": "2026-03-01T16:26:57"
     },
     {
       "id": "extfrac_0007",
@@ -496,7 +496,7 @@
         "quoted_fact": "分數題先看整體與部分",
         "retrieved_at": "2026-03-01T16:26:24"
       },
-      "generated_at": "2026-03-01T16:26:45"
+      "generated_at": "2026-03-01T16:26:57"
     },
     {
       "id": "extfrac_0008",
@@ -567,7 +567,7 @@
         "quoted_fact": "分數題先看整體與部分",
         "retrieved_at": "2026-03-01T16:26:24"
       },
-      "generated_at": "2026-03-01T16:26:45"
+      "generated_at": "2026-03-01T16:26:57"
     },
     {
       "id": "extfrac_0009",
@@ -638,7 +638,7 @@
         "quoted_fact": "分數題先看整體與部分",
         "retrieved_at": "2026-03-01T16:26:24"
       },
-      "generated_at": "2026-03-01T16:26:45"
+      "generated_at": "2026-03-01T16:26:57"
     },
     {
       "id": "extfrac_0010",
@@ -708,7 +708,7 @@
         "quoted_fact": "分數題先看整體與部分",
         "retrieved_at": "2026-03-01T16:26:24"
       },
-      "generated_at": "2026-03-01T16:26:45"
+      "generated_at": "2026-03-01T16:26:57"
     },
     {
       "id": "extfrac_0011",
@@ -778,7 +778,7 @@
         "quoted_fact": "分數題先看整體與部分",
         "retrieved_at": "2026-03-01T16:26:24"
       },
-      "generated_at": "2026-03-01T16:26:45"
+      "generated_at": "2026-03-01T16:26:57"
     },
     {
       "id": "extfrac_0012",
@@ -849,7 +849,7 @@
         "quoted_fact": "分數題先看整體與部分",
         "retrieved_at": "2026-03-01T16:26:24"
       },
-      "generated_at": "2026-03-01T16:26:45"
+      "generated_at": "2026-03-01T16:26:57"
     },
     {
       "id": "extfrac_0013",
@@ -919,7 +919,7 @@
         "quoted_fact": "分數題先看整體與部分",
         "retrieved_at": "2026-03-01T16:26:24"
       },
-      "generated_at": "2026-03-01T16:26:45"
+      "generated_at": "2026-03-01T16:26:57"
     },
     {
       "id": "extfrac_0014",
@@ -990,7 +990,7 @@
         "quoted_fact": "分數題先看整體與部分",
         "retrieved_at": "2026-03-01T16:26:24"
       },
-      "generated_at": "2026-03-01T16:26:45"
+      "generated_at": "2026-03-01T16:26:57"
     },
     {
       "id": "extfrac_0015",
@@ -1060,7 +1060,7 @@
         "quoted_fact": "分數題先看整體與部分",
         "retrieved_at": "2026-03-01T16:26:24"
       },
-      "generated_at": "2026-03-01T16:26:45"
+      "generated_at": "2026-03-01T16:26:57"
     },
     {
       "id": "extfrac_0016",
@@ -1130,7 +1130,7 @@
         "quoted_fact": "分數題先看整體與部分",
         "retrieved_at": "2026-03-01T16:26:24"
       },
-      "generated_at": "2026-03-01T16:26:45"
+      "generated_at": "2026-03-01T16:26:57"
     },
     {
       "id": "extfrac_0017",
@@ -1201,7 +1201,7 @@
         "quoted_fact": "分數題先看整體與部分",
         "retrieved_at": "2026-03-01T16:26:24"
       },
-      "generated_at": "2026-03-01T16:26:45"
+      "generated_at": "2026-03-01T16:26:57"
     },
     {
       "id": "extfrac_0018",
@@ -1272,7 +1272,7 @@
         "quoted_fact": "分數題先看整體與部分",
         "retrieved_at": "2026-03-01T16:26:24"
       },
-      "generated_at": "2026-03-01T16:26:45"
+      "generated_at": "2026-03-01T16:26:57"
     },
     {
       "id": "extfrac_0019",
@@ -1343,7 +1343,7 @@
         "quoted_fact": "分數題先看整體與部分",
         "retrieved_at": "2026-03-01T16:26:24"
       },
-      "generated_at": "2026-03-01T16:26:45"
+      "generated_at": "2026-03-01T16:26:57"
     },
     {
       "id": "extfrac_0020",
@@ -1413,7 +1413,7 @@
         "quoted_fact": "分數題先看整體與部分",
         "retrieved_at": "2026-03-01T16:26:24"
       },
-      "generated_at": "2026-03-01T16:26:45"
+      "generated_at": "2026-03-01T16:26:57"
     },
     {
       "id": "extfrac_0021",
@@ -1484,7 +1484,7 @@
         "quoted_fact": "分數題先看整體與部分",
         "retrieved_at": "2026-03-01T16:26:24"
       },
-      "generated_at": "2026-03-01T16:26:45"
+      "generated_at": "2026-03-01T16:26:57"
     },
     {
       "id": "extfrac_0022",
@@ -1555,7 +1555,7 @@
         "quoted_fact": "分數題先看整體與部分",
         "retrieved_at": "2026-03-01T16:26:24"
       },
-      "generated_at": "2026-03-01T16:26:45"
+      "generated_at": "2026-03-01T16:26:57"
     },
     {
       "id": "extfrac_0023",
@@ -1625,7 +1625,7 @@
         "quoted_fact": "分數題先看整體與部分",
         "retrieved_at": "2026-03-01T16:26:24"
       },
-      "generated_at": "2026-03-01T16:26:45"
+      "generated_at": "2026-03-01T16:26:57"
     },
     {
       "id": "extfrac_0024",
@@ -1695,7 +1695,7 @@
         "quoted_fact": "分數題先看整體與部分",
         "retrieved_at": "2026-03-01T16:26:24"
       },
-      "generated_at": "2026-03-01T16:26:45"
+      "generated_at": "2026-03-01T16:26:57"
     },
     {
       "id": "extfrac_0025",
@@ -1765,7 +1765,7 @@
         "quoted_fact": "分數題先看整體與部分",
         "retrieved_at": "2026-03-01T16:26:24"
       },
-      "generated_at": "2026-03-01T16:26:45"
+      "generated_at": "2026-03-01T16:26:57"
     },
     {
       "id": "extfrac_0026",
@@ -1836,7 +1836,7 @@
         "quoted_fact": "分數題先看整體與部分",
         "retrieved_at": "2026-03-01T16:26:24"
       },
-      "generated_at": "2026-03-01T16:26:45"
+      "generated_at": "2026-03-01T16:26:57"
     },
     {
       "id": "extfrac_0027",
@@ -1906,7 +1906,7 @@
         "quoted_fact": "分數題先看整體與部分",
         "retrieved_at": "2026-03-01T16:26:24"
       },
-      "generated_at": "2026-03-01T16:26:45"
+      "generated_at": "2026-03-01T16:26:57"
     },
     {
       "id": "extfrac_0028",
@@ -1977,7 +1977,7 @@
         "quoted_fact": "分數題先看整體與部分",
         "retrieved_at": "2026-03-01T16:26:24"
       },
-      "generated_at": "2026-03-01T16:26:45"
+      "generated_at": "2026-03-01T16:26:57"
     },
     {
       "id": "extfrac_0029",
@@ -2048,7 +2048,7 @@
         "quoted_fact": "分數題先看整體與部分",
         "retrieved_at": "2026-03-01T16:26:24"
       },
-      "generated_at": "2026-03-01T16:26:45"
+      "generated_at": "2026-03-01T16:26:57"
     },
     {
       "id": "extfrac_0030",
@@ -2119,7 +2119,7 @@
         "quoted_fact": "分數題先看整體與部分",
         "retrieved_at": "2026-03-01T16:26:24"
       },
-      "generated_at": "2026-03-01T16:26:45"
+      "generated_at": "2026-03-01T16:26:57"
     },
     {
       "id": "extfrac_0031",
@@ -2190,7 +2190,7 @@
         "quoted_fact": "分數題先看整體與部分",
         "retrieved_at": "2026-03-01T16:26:24"
       },
-      "generated_at": "2026-03-01T16:26:45"
+      "generated_at": "2026-03-01T16:26:57"
     },
     {
       "id": "extfrac_0032",
@@ -2260,7 +2260,7 @@
         "quoted_fact": "分數題先看整體與部分",
         "retrieved_at": "2026-03-01T16:26:24"
       },
-      "generated_at": "2026-03-01T16:26:45"
+      "generated_at": "2026-03-01T16:26:57"
     },
     {
       "id": "extfrac_0033",
@@ -2331,7 +2331,7 @@
         "quoted_fact": "分數題先看整體與部分",
         "retrieved_at": "2026-03-01T16:26:24"
       },
-      "generated_at": "2026-03-01T16:26:45"
+      "generated_at": "2026-03-01T16:26:57"
     },
     {
       "id": "extfrac_0034",
@@ -2401,7 +2401,7 @@
         "quoted_fact": "分數題先看整體與部分",
         "retrieved_at": "2026-03-01T16:26:24"
       },
-      "generated_at": "2026-03-01T16:26:45"
+      "generated_at": "2026-03-01T16:26:57"
     },
     {
       "id": "extfrac_0035",
@@ -2471,7 +2471,7 @@
         "quoted_fact": "分數題先看整體與部分",
         "retrieved_at": "2026-03-01T16:26:24"
       },
-      "generated_at": "2026-03-01T16:26:45"
+      "generated_at": "2026-03-01T16:26:57"
     },
     {
       "id": "extfrac_0036",
@@ -2541,7 +2541,7 @@
         "quoted_fact": "分數題先看整體與部分",
         "retrieved_at": "2026-03-01T16:26:24"
       },
-      "generated_at": "2026-03-01T16:26:45"
+      "generated_at": "2026-03-01T16:26:57"
     },
     {
       "id": "extfrac_0037",
@@ -2611,7 +2611,7 @@
         "quoted_fact": "分數題先看整體與部分",
         "retrieved_at": "2026-03-01T16:26:24"
       },
-      "generated_at": "2026-03-01T16:26:45"
+      "generated_at": "2026-03-01T16:26:57"
     },
     {
       "id": "extfrac_0038",
@@ -2681,7 +2681,7 @@
         "quoted_fact": "分數題先看整體與部分",
         "retrieved_at": "2026-03-01T16:26:24"
       },
-      "generated_at": "2026-03-01T16:26:45"
+      "generated_at": "2026-03-01T16:26:57"
     },
     {
       "id": "extfrac_0039",
@@ -2751,7 +2751,7 @@
         "quoted_fact": "分數題先看整體與部分",
         "retrieved_at": "2026-03-01T16:26:24"
       },
-      "generated_at": "2026-03-01T16:26:45"
+      "generated_at": "2026-03-01T16:26:57"
     },
     {
       "id": "extfrac_0040",
@@ -2821,7 +2821,7 @@
         "quoted_fact": "分數題先看整體與部分",
         "retrieved_at": "2026-03-01T16:26:24"
       },
-      "generated_at": "2026-03-01T16:26:45"
+      "generated_at": "2026-03-01T16:26:57"
     }
   ]
 }
