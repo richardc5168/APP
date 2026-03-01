@@ -1,0 +1,188 @@
+name: Autonomous Optimizer (Cloud)
+
+# ── Triggers ──────────────────────────────────────────────
+# 1. Scheduled: every 4 hours
+# 2. On push to ops/agent_tasks.json (edit from GitHub web UI → immediate trigger)
+# 3. Manual dispatch with configurable hours
+# 4. After other workflows complete successfully
+on:
+  schedule:
+    - cron: '15 */4 * * *'          # every 4h at :15
+  push:
+    branches: [main]
+    paths:
+      - 'ops/agent_tasks.json'      # edit task queue → trigger run
+  workflow_dispatch:
+    inputs:
+      hours:
+        description: 'Max runtime hours (1-6)'
+        required: false
+        default: '4'
+      dry_run:
+        description: 'Dry run (no commits)'
+        type: boolean
+        default: false
+  workflow_run:
+    workflows: ["Verify All + Scorecard", "Nightly Hint Autotune PR"]
+    types: [completed]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: autonomous-optimizer
+  cancel-in-progress: false          # let running optimization finish
+
+jobs:
+  optimize:
+    # Skip workflow_run triggers if the triggering workflow failed
+    if: |
+      github.event_name != 'workflow_run' ||
+      github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 360             # 6h hard limit
+
+    steps:
+      # ── Setup ──────────────────────────────────────────
+      - name: Checkout (full history for rollback tags)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Setup Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
+      - name: Install Playwright (for e2e checks)
+        run: npx playwright install chromium
+        continue-on-error: true
+
+      - name: Configure git user
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      # ── Pre-flight validation ──────────────────────────
+      - name: Pre-flight verify
+        id: preflight
+        run: npm run verify:all
+        continue-on-error: true
+
+      - name: Self-heal if pre-flight failed
+        if: steps.preflight.outcome == 'failure'
+        run: |
+          npm run self-heal:verify
+          npm run verify:all
+
+      # ── Main optimization loop ─────────────────────────
+      - name: Run Cloud Autonomous Optimizer
+        env:
+          CI: true
+          GITHUB_ACTIONS: true
+        run: |
+          HOURS="${{ github.event.inputs.hours || '4' }}"
+          DRY_FLAG=""
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            DRY_FLAG="--dry-run"
+          fi
+          node tools/run_cloud_autonomous.cjs \
+            --hours "$HOURS" \
+            --interval-min 20 \
+            $DRY_FLAG
+
+      # ── Post-run: push status ──────────────────────────
+      - name: Commit and push final status
+        if: always()
+        run: |
+          git add ops/agent_status.json ops/agent_tasks_state.json || true
+          if ! git diff --cached --quiet; then
+            git commit --no-verify -m "chore: cloud autonomous optimizer status update"
+            git push origin main || true
+          fi
+
+      # ── Artifacts ──────────────────────────────────────
+      - name: Upload optimization artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: autonomous-optimizer-${{ github.run_number }}
+          path: |
+            artifacts/cloud_autonomous_summary.json
+            artifacts/cloud_autonomous_heartbeat.json
+            artifacts/cloud_autonomous_history.jsonl
+            artifacts/cloud_iterations/
+            artifacts/scorecard.json
+            artifacts/hint_judge.json
+            artifacts/improvement_check.json
+            ops/agent_status.json
+            ops/agent_tasks_state.json
+          if-no-files-found: ignore
+          retention-days: 30
+
+      # ── Failure notification ───────────────────────────
+      - name: Create issue on critical failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            let statusText = 'No status file found';
+            try {
+              const status = JSON.parse(fs.readFileSync('ops/agent_status.json', 'utf8'));
+              statusText = JSON.stringify(status, null, 2);
+            } catch (_) {}
+
+            const title = `[autonomous-optimizer] Run #${context.runNumber} failed`;
+            const body = [
+              'The Cloud Autonomous Optimizer workflow failed.',
+              '',
+              `- Run: ${runUrl}`,
+              `- Trigger: ${context.eventName}`,
+              '',
+              '```json',
+              statusText,
+              '```',
+              '',
+              'Check artifacts for detailed logs.',
+            ].join('\n');
+
+            // Deduplicate: update existing open issue if present
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'autonomous-optimizer',
+              per_page: 5,
+            });
+
+            if (issues.data.length > 0) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issues.data[0].number,
+                body: `Recurring failure:\n${body}`,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body,
+                labels: ['autonomous-optimizer'],
+              });
+            }

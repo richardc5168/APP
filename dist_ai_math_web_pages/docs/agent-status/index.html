@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Math | 自主優化狀態儀表板</title>
+<style>
+:root {
+  --bg: #0d1117; --card: #161b22; --border: #30363d;
+  --text: #e6edf3; --muted: #8b949e; --accent: #58a6ff;
+  --green: #3fb950; --red: #f85149; --yellow: #d29922;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; padding: 16px; }
+h1 { font-size: 1.4rem; margin-bottom: 12px; }
+h1 span { color: var(--accent); }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+.card h2 { font-size: 0.9rem; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+.metric { font-size: 2rem; font-weight: 700; }
+.metric.green { color: var(--green); }
+.metric.red { color: var(--red); }
+.metric.yellow { color: var(--yellow); }
+.metric.accent { color: var(--accent); }
+.sub { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+.status-badge {
+  display: inline-block; padding: 4px 12px; border-radius: 20px;
+  font-size: 0.85rem; font-weight: 600; letter-spacing: 0.5px;
+}
+.status-badge.running { background: #1f6feb33; color: var(--accent); border: 1px solid var(--accent); }
+.status-badge.finished { background: #23883533; color: var(--green); border: 1px solid var(--green); }
+.status-badge.idle { background: #d2992233; color: var(--yellow); border: 1px solid var(--yellow); }
+.status-badge.error { background: #f8514933; color: var(--red); border: 1px solid var(--red); }
+.status-badge.initialized { background: #30363d; color: var(--muted); border: 1px solid var(--border); }
+#taskList { list-style: none; }
+#taskList li { padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+#taskList li:last-child { border-bottom: none; }
+.task-status { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+.task-status.pass { background: var(--green); }
+.task-status.fail { background: var(--red); }
+.task-status.pending { background: var(--muted); }
+.refresh-btn {
+  background: var(--card); border: 1px solid var(--border); color: var(--accent);
+  padding: 6px 16px; border-radius: 6px; cursor: pointer; font-size: 0.85rem;
+  margin-bottom: 12px;
+}
+.refresh-btn:hover { background: #1f6feb33; }
+#lastRefresh { font-size: 0.75rem; color: var(--muted); margin-left: 8px; }
+.timeline { max-height: 300px; overflow-y: auto; font-size: 0.8rem; }
+.timeline-entry { padding: 6px 0; border-bottom: 1px solid var(--border); }
+.timeline-entry .time { color: var(--muted); }
+.timeline-entry .task { color: var(--accent); }
+.timeline-entry .result { font-weight: 600; }
+.timeline-entry .result.pass { color: var(--green); }
+.timeline-entry .result.fail { color: var(--red); }
+#error { color: var(--red); font-size: 0.85rem; padding: 8px; display: none; }
+</style>
+</head>
+<body>
+<h1>🤖 <span>AI Math</span> 自主優化狀態儀表板</h1>
+<button class="refresh-btn" onclick="refresh()">🔄 重新整理</button>
+<span id="lastRefresh"></span>
+<div id="error"></div>
+
+<div class="grid">
+  <div class="card">
+    <h2>系統狀態</h2>
+    <div id="modeDisplay"><span class="status-badge initialized">載入中...</span></div>
+    <div class="sub" id="updatedAt">—</div>
+  </div>
+  <div class="card">
+    <h2>目前任務</h2>
+    <div class="metric accent" id="currentTask">—</div>
+    <div class="sub" id="currentTaskDesc">—</div>
+  </div>
+  <div class="card">
+    <h2>累計完成任務</h2>
+    <div class="metric green" id="totalTasks">0</div>
+  </div>
+  <div class="card">
+    <h2>累計 Commits</h2>
+    <div class="metric accent" id="totalCommits">0</div>
+  </div>
+  <div class="card">
+    <h2>連續失敗</h2>
+    <div class="metric" id="failures">0</div>
+  </div>
+  <div class="card">
+    <h2>運行時間</h2>
+    <div class="metric accent" id="runtime">—</div>
+  </div>
+</div>
+
+<div class="grid">
+  <div class="card">
+    <h2>任務佇列</h2>
+    <ul id="taskList"><li>載入中...</li></ul>
+  </div>
+  <div class="card">
+    <h2>最近活動紀錄</h2>
+    <div class="timeline" id="timeline">載入中...</div>
+  </div>
+</div>
+
+<script>
+const STATUS_URL = 'https://raw.githubusercontent.com/richardc5168/ai-math-web/main/ops/agent_status.json';
+const TASKS_URL  = 'https://raw.githubusercontent.com/richardc5168/ai-math-web/main/ops/agent_tasks.json';
+const STATE_URL  = 'https://raw.githubusercontent.com/richardc5168/ai-math-web/main/ops/agent_tasks_state.json';
+
+function timeAgo(iso) {
+  if (!iso) return '—';
+  const diff = Date.now() - Date.parse(iso);
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return '剛才';
+  if (m < 60) return `${m} 分鐘前`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h} 小時前`;
+  return `${Math.floor(h / 24)} 天前`;
+}
+
+function modeClass(mode) {
+  if (!mode) return 'initialized';
+  if (mode === 'running') return 'running';
+  if (mode === 'finished') return 'finished';
+  if (mode === 'idle' || mode === 'initialized') return 'idle';
+  return 'error';
+}
+
+function modeLabel(mode) {
+  const map = { running: '🔄 運行中', finished: '✅ 已完成', idle: '💤 閒置', initialized: '⏳ 初始化', error: '❌ 錯誤' };
+  return map[mode] || mode || '未知';
+}
+
+async function fetchJson(url) {
+  const r = await fetch(url + '?t=' + Date.now());
+  if (!r.ok) throw new Error(`HTTP ${r.status}: ${url}`);
+  return r.json();
+}
+
+async function refresh() {
+  const errEl = document.getElementById('error');
+  errEl.style.display = 'none';
+
+  try {
+    const [status, tasks, state] = await Promise.all([
+      fetchJson(STATUS_URL).catch(() => ({})),
+      fetchJson(TASKS_URL).catch(() => ({ tasks: [] })),
+      fetchJson(STATE_URL).catch(() => ({ last_run_at: {}, results: {} })),
+    ]);
+
+    // Status cards
+    const mode = status.mode || 'initialized';
+    document.getElementById('modeDisplay').innerHTML =
+      `<span class="status-badge ${modeClass(mode)}">${modeLabel(mode)}</span>`;
+    document.getElementById('updatedAt').textContent = `最後更新: ${timeAgo(status.updated_at)}`;
+    document.getElementById('currentTask').textContent = status.current_task || '—';
+    document.getElementById('currentTaskDesc').textContent = status.current_task_description || '—';
+    document.getElementById('totalTasks').textContent = status.total_tasks_run || 0;
+    document.getElementById('totalCommits').textContent = status.total_commits || 0;
+
+    const f = status.consecutive_failures || 0;
+    const fEl = document.getElementById('failures');
+    fEl.textContent = f;
+    fEl.className = 'metric ' + (f === 0 ? 'green' : f < 3 ? 'yellow' : 'red');
+
+    document.getElementById('runtime').textContent =
+      status.runtime_hours ? `${status.runtime_hours}h` : '—';
+
+    // Task list
+    const taskItems = (tasks.tasks || []).map(t => {
+      const result = state.results?.[t.id];
+      const statusCls = !result ? 'pending' : result.last_result === 'pass' ? 'pass' : 'fail';
+      const lastRun = state.last_run_at?.[t.id];
+      return `<li>
+        <span class="task-status ${statusCls}"></span>
+        <strong>${t.id}</strong>
+        ${t.enabled ? '' : ' <em style="color:var(--muted)">(停用)</em>'}
+        <br><span style="color:var(--muted);font-size:0.8rem">${t.description || ''}</span>
+        ${lastRun ? `<br><span style="color:var(--muted);font-size:0.75rem">上次: ${timeAgo(lastRun)}</span>` : ''}
+      </li>`;
+    }).join('');
+    document.getElementById('taskList').innerHTML = taskItems || '<li>無任務</li>';
+
+    // Timeline from results
+    const entries = Object.entries(state.results || {})
+      .map(([id, r]) => ({ id, ...r }))
+      .sort((a, b) => Date.parse(b.last_run || 0) - Date.parse(a.last_run || 0))
+      .slice(0, 20);
+
+    const timelineHtml = entries.map(e =>
+      `<div class="timeline-entry">
+        <span class="time">${timeAgo(e.last_run)}</span> —
+        <span class="task">${e.id}</span>
+        <span class="result ${e.last_result}">${e.last_result === 'pass' ? '✔' : '✖'} ${e.last_result}</span>
+        ${e.last_duration_sec ? `<span style="color:var(--muted)"> (${e.last_duration_sec}s)</span>` : ''}
+      </div>`
+    ).join('');
+    document.getElementById('timeline').innerHTML = timelineHtml || '無紀錄';
+
+    document.getElementById('lastRefresh').textContent = `上次重整: ${new Date().toLocaleTimeString()}`;
+  } catch (err) {
+    errEl.textContent = `載入失敗: ${err.message}`;
+    errEl.style.display = 'block';
+  }
+}
+
+// Auto-refresh every 2 minutes
+refresh();
+setInterval(refresh, 120000);
+</script>
+</body>
+</html>

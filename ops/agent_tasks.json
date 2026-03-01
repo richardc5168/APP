@@ -1,0 +1,92 @@
+{
+  "version": 2,
+  "updated_at": "2026-03-01T12:00:00Z",
+  "config": {
+    "auto_rollback": true,
+    "tag_before_change": true,
+    "status_commit_interval_min": 60,
+    "max_consecutive_failures": 5,
+    "default_timeout_min": 30,
+    "push_targets": ["origin"],
+    "notify_on_failure": true
+  },
+  "tasks": [
+    {
+      "id": "optimize-hints-cycle",
+      "enabled": true,
+      "priority": 1,
+      "schedule": "every_4h",
+      "action": "phase_sequence",
+      "phases": ["hints", "validate", "commit"],
+      "timeout_min": 60,
+      "max_retries": 1,
+      "description": "每 4 小時優化教學提示（autotune → judge → scorecard → gate）"
+    },
+    {
+      "id": "content-expansion-cycle",
+      "enabled": true,
+      "priority": 2,
+      "schedule": "every_6h",
+      "action": "phase_sequence",
+      "phases": ["content", "validate", "commit"],
+      "timeout_min": 90,
+      "max_retries": 1,
+      "description": "每 6 小時擴充內容（web-search → report-signals → topic-align）"
+    },
+    {
+      "id": "pipeline-generate-cycle",
+      "enabled": true,
+      "priority": 3,
+      "schedule": "every_4h",
+      "action": "phase_sequence",
+      "phases": ["pipeline", "validate", "commit"],
+      "timeout_min": 45,
+      "max_retries": 1,
+      "description": "每 4 小時自動出題（OER fetch → generate → solver verify）"
+    },
+    {
+      "id": "full-optimization-cycle",
+      "enabled": true,
+      "priority": 4,
+      "schedule": "every_12h",
+      "action": "phase_sequence",
+      "phases": ["pipeline", "hints", "content", "validate", "commit"],
+      "timeout_min": 180,
+      "max_retries": 1,
+      "description": "每 12 小時完整優化循環（全部 6 階段）"
+    },
+    {
+      "id": "gate-verify-all",
+      "enabled": true,
+      "priority": 0,
+      "schedule": "every_2h",
+      "action": "npm_script",
+      "value": "verify:all",
+      "timeout_min": 15,
+      "max_retries": 2,
+      "description": "每 2 小時全量驗證，確保系統穩定"
+    },
+    {
+      "id": "kpi-report-update",
+      "enabled": true,
+      "priority": 1,
+      "schedule": "every_4h",
+      "action": "npm_script",
+      "value": "summary:kpi",
+      "timeout_min": 10,
+      "max_retries": 0,
+      "description": "每 4 小時更新 KPI 報表"
+    },
+    {
+      "id": "hint-clarity-audit",
+      "enabled": true,
+      "priority": 2,
+      "schedule": "every_8h",
+      "action": "shell",
+      "value": "node tools/audit_hint_clarity.cjs",
+      "timeout_min": 10,
+      "max_retries": 0,
+      "description": "每 8 小時掃描提示品質違規"
+    }
+  ]
+}
