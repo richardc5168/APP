@@ -89,7 +89,18 @@
       </div>
     </div>
 
+    <!-- 24h snapshot -->
+    <div id="h24Section" class="card" style="border-color:var(--accent)">
+      <div style="font-weight:800">⏱️ 最近 24 小時</div>
+      <div class="kpi" id="h24Kpi"></div>
+      <div id="h24Modules" style="margin-top:10px"></div>
+      <div id="h24Empty" class="banner muted" style="display:none;margin-top:8px">最近 24 小時沒有作答紀錄</div>
+    </div>
+
     <!-- KPI -->
+    <div class="card">
+      <div style="font-weight:800">📈 最近 <span class="rptDaysInline">7</span> 天總覽</div>
+    </div>
     <div class="kpi" id="kpiGrid"></div>
 
     <!-- module breakdown -->
@@ -253,7 +264,36 @@
     document.getElementById('rptTime').textContent = d.ts ? new Date(d.ts).toLocaleString('zh-TW') : '—';
     document.getElementById('rptDays').textContent = String(d.days || 7);
 
-    /* KPI */
+    /* 24h section */
+    var h24 = r.h24 || { total:0, correct:0, accuracy:0, avgMs:0, hintDist:[0,0,0,0], modules:[] };
+    if (h24.total > 0){
+      var h24Kpi = document.getElementById('h24Kpi');
+      var h24kpis = [
+        { label: '題數', value: String(h24.total) },
+        { label: '正確率', value: h24.accuracy + '%' },
+        { label: '平均耗時', value: fmtMs(h24.avgMs) },
+        { label: '答對', value: String(h24.correct) },
+      ];
+      h24Kpi.innerHTML = h24kpis.map(function(k){
+        return '<div class="box"><div class="label">' + esc(k.label) + '</div><div class="value">' + esc(k.value) + '</div></div>';
+      }).join('');
+      var h24mods = h24.modules || [];
+      if (h24mods.length){
+        var mhtml24 = '<div class="small" style="font-weight:700;margin-bottom:4px">題型分布：</div>';
+        h24mods.forEach(function(m){
+          var cls = m.acc >= 80 ? 'ok' : m.acc >= 60 ? 'warn' : 'bad';
+          mhtml24 += '<span class="pill ' + cls + '" style="margin:2px 4px">' + esc(m.m) + ' ' + m.n + '題 ' + m.acc + '%</span>';
+        });
+        document.getElementById('h24Modules').innerHTML = mhtml24;
+      }
+    } else {
+      document.getElementById('h24Kpi').style.display = 'none';
+      document.getElementById('h24Empty').style.display = 'block';
+    }
+
+    /* KPI (7-day) */
+    var daysInline = document.querySelectorAll('.rptDaysInline');
+    for (var di = 0; di < daysInline.length; di++) daysInline[di].textContent = String(d.days || 7);
     const kpiGrid = document.getElementById('kpiGrid');
     const kpis = [
       { label: '作答題數', value: String(r.total || 0) },
@@ -383,6 +423,17 @@
       lines.push(`報告時間：${d.ts ? new Date(d.ts).toLocaleString('zh-TW') : '—'}`);
       lines.push(`期間：最近 ${d.days || 7} 天`);
       lines.push('');
+      lines.push('【最近 24 小時】');
+      if (h24.total > 0){
+        lines.push(`  題數：${h24.total}　正確率：${h24.accuracy}%（${h24.correct}/${h24.total}）　平均耗時：${fmtMs(h24.avgMs)}`);
+        if ((h24.modules||[]).length){
+          lines.push('  題型：' + h24.modules.map(function(m){ return m.m + ' ' + m.n + '題 ' + m.acc + '%'; }).join('、'));
+        }
+      } else {
+        lines.push('  （無作答紀錄）');
+      }
+      lines.push('');
+      lines.push(`【最近 ${d.days || 7} 天總覽】`);
       lines.push(`作答題數：${r.total || 0}`);
       lines.push(`正確率：${r.total ? r.accuracy + '%（' + r.correct + '/' + r.total + '）' : '—'}`);
       lines.push(`平均耗時：${r.total ? fmtMs(r.avgMs) : '—'}`);

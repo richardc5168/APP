@@ -201,6 +201,35 @@
       .map(([m, v]) => ({ m, n: v.n, ok: v.ok, acc: v.n ? Math.round(v.ok / v.n * 100) : 0 }))
       .sort((a, b) => b.n - a.n);
 
+    /* last 24h snapshot */
+    var cutoff24 = Date.now() - 86400000;
+    var last24 = all.filter(function(a){
+      var ts = Number(a.ts || a.ts_end || a.timestamp || 0);
+      return ts >= cutoff24;
+    });
+    var h24total = last24.length;
+    var h24correct = last24.filter(function(a){ return a.ok || a.is_correct; }).length;
+    var h24accuracy = h24total ? Math.round(h24correct / h24total * 100) : 0;
+    var h24totalMs = last24.reduce(function(s, a){ return s + (getTimeMs(a) || 0); }, 0);
+    var h24avgMs = h24total ? Math.round(h24totalMs / h24total) : 0;
+    var h24hint = [0,0,0,0];
+    for (var hi = 0; hi < last24.length; hi++){
+      var hv = Math.max(0, Math.min(3, getMaxHint(last24[hi])));
+      h24hint[hv]++;
+    }
+    var h24byMod = {};
+    for (var mi = 0; mi < last24.length; mi++){
+      var ma = last24[mi];
+      var mm = ma.unit_id || ma.module || ma.moduleId || ma.topic || ma.topic_id || '未分類';
+      if (!h24byMod[mm]) h24byMod[mm] = { n:0, ok:0 };
+      h24byMod[mm].n++;
+      if (ma.ok || ma.is_correct) h24byMod[mm].ok++;
+    }
+    var h24modules = Object.keys(h24byMod).map(function(k){
+      var v = h24byMod[k];
+      return { m:k, n:v.n, ok:v.ok, acc: v.n ? Math.round(v.ok/v.n*100) : 0 };
+    }).sort(function(a,b){ return b.n - a.n; });
+
     return {
       v: 1,
       name,
@@ -212,7 +241,11 @@
         weak,
         wrong: wrongList,
         daily,
-        modules
+        modules,
+        h24: {
+          total: h24total, correct: h24correct, accuracy: h24accuracy,
+          avgMs: h24avgMs, hintDist: h24hint, modules: h24modules
+        }
       }
     };
   }
