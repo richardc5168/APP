@@ -273,6 +273,7 @@
   /* ─── Cloud Sync (jsonblob.com) ─── */
   var CLOUD_LS_KEY = 'aimath_cloud_blob_id';
   var CLOUD_API = 'https://jsonblob.com/api/jsonBlob';
+  var REGISTRY_BLOB_ID = '019ca94d-1492-7aeb-a2bb-c17c391d6f22';
   var _cloudTimer = null;
 
   function getCloudBlobId(){
@@ -309,6 +310,8 @@
             /* blob was deleted — create new */
             setCloudBlobId('');
             createCloudBlob(payload);
+          } else if (resp.ok){
+            updateRegistry();
           }
         }).catch(function(){});
       } else {
@@ -326,9 +329,51 @@
       if (resp.ok){
         var loc = resp.headers.get('Location') || '';
         var id = loc.split('/').pop();
-        if (id) setCloudBlobId(id);
+        if (id){ setCloudBlobId(id); updateRegistry(); }
       }
     }).catch(function(){});
+  }
+
+  /* ─── Cloud Registry (name → blobId lookup) ─── */
+  function updateRegistry(){
+    var student = load();
+    if (!student) return;
+    var blobId = getCloudBlobId();
+    if (!blobId) return;
+    var nameKey = student.name.trim();
+    fetch(CLOUD_API + '/' + REGISTRY_BLOB_ID, {
+      headers: { 'Accept': 'application/json' }
+    })
+    .then(function(resp){ return resp.json(); })
+    .then(function(reg){
+      if (!reg || typeof reg !== 'object') reg = {};
+      if (!reg.entries) reg.entries = {};
+      reg.entries[nameKey] = { blobId: blobId, updated: Date.now() };
+      return fetch(CLOUD_API + '/' + REGISTRY_BLOB_ID, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(reg)
+      });
+    })
+    .catch(function(){});
+  }
+
+  function lookupStudentBlob(name){
+    var nameKey = String(name || '').trim();
+    if (!nameKey) return Promise.resolve(null);
+    return fetch(CLOUD_API + '/' + REGISTRY_BLOB_ID, {
+      headers: { 'Accept': 'application/json' }
+    })
+    .then(function(resp){
+      if (!resp.ok) return null;
+      return resp.json();
+    })
+    .then(function(reg){
+      if (!reg || !reg.entries) return null;
+      var entry = reg.entries[nameKey];
+      return entry ? entry.blobId : null;
+    })
+    .catch(function(){ return null; });
   }
 
   function getParentReportCloudUrl(){
@@ -374,12 +419,7 @@
       }
     } catch(e){}
 
-    /* build report link — prefer cloud URL (works cross-device) */
     var reportLink = parentReportHref;
-    var cloudBlobId = getCloudBlobId();
-    if (cloudBlobId){
-      reportLink = parentReportHref + '?b=' + encodeURIComponent(cloudBlobId);
-    }
 
     if (student){
       wrapper.innerHTML = `
@@ -417,7 +457,7 @@
           <button id="authCancel" style="padding:10px 16px;border-radius:10px;border:1px solid rgba(255,255,255,.18);background:transparent;color:var(--text,#e6edf3);cursor:pointer">取消</button>
         </div>
         <div style="margin-top:12px;font-size:11px;color:var(--muted,#9aa4b2);line-height:1.6">
-          💡 登入後，家長可直接點「📊 家長報告」查看孩子作答狀況，<br>孩子每做一題都會自動更新，不需額外操作。
+          💡 登入後，家長可在任何裝置打開「📊 家長報告」，<br>輸入相同暱稱 + 密碼即可查看。每做一題都會自動更新。
         </div>
       </div>
     `;
@@ -503,6 +543,7 @@
     injectLoginUI,
     getCloudBlobId,
     getParentReportCloudUrl,
-    scheduleCloudSync
+    scheduleCloudSync,
+    lookupStudentBlob
   };
 })();

@@ -52,23 +52,22 @@
 <body>
 <div class="wrap">
   <h1>📊 家長遠端報告</h1>
-  <div class="small">孩子做題後資料自動同步至雲端，家長輸入密碼即可隨時查看最新報告（支援跨裝置）。</div>
+  <div class="small">在任何裝置輸入孩子暱稱 + 家長密碼即可查看最新報告，不需複製連結。</div>
 
   <!-- ═══ Login Gate ═══ -->
   <div id="loginGate" class="card" style="border-color:var(--accent)">
-    <h2>🔒 請輸入家長密碼</h2>
+    <h2>🔒 請輸入學生暱稱 + 家長密碼</h2>
     <div class="small" style="margin-bottom:12px">
-      孩子在學習頁面登入後，可產生此報告連結。<br>
-      請輸入孩子設定的「家長密碼」查看報告。
+      孩子在學習頁面登入後做題，資料會自動同步到雲端。<br>
+      在任何裝置輸入暱稱和密碼即可查看最新報告。
     </div>
-    <div class="row">
-      <input id="pinInput" type="password" placeholder="家長密碼（4~6位數字）" maxlength="6" style="max-width:200px" autocomplete="off" />
-      <button class="primary" id="btnUnlock">解鎖查看</button>
+    <div style="display:flex;flex-direction:column;gap:8px;max-width:320px">
+      <input id="nameInput" type="text" placeholder="學生暱稱（例：小明）" autocomplete="off" />
+      <input id="pinInput" type="password" placeholder="家長密碼（4~6位數字）" maxlength="6" autocomplete="off" />
+      <button class="primary" id="btnUnlock" style="align-self:flex-start">🔓 解鎖查看</button>
     </div>
     <div id="pinError" style="color:#f85149;font-size:13px;margin-top:8px;display:none"></div>
-    <div id="noDataMsg" class="banner muted" style="display:none">
-      ⚠️ 網址中沒有報告資料。請讓孩子在學習頁面點「生成家長報告連結」產生新連結。
-    </div>
+    <div id="statusMsg" class="banner muted" style="display:none"></div>
   </div>
 
   <!-- ═══ Report Dashboard ═══ -->
@@ -153,17 +152,6 @@
       </div>
       <div id="copyMsg" style="color:#2ea043;font-size:13px;margin-top:8px;display:none">✅ 已複製到剪貼簿</div>
     </div>
-
-    <!-- share to other device (auto-shown in local mode) -->
-    <div id="shareCard" class="card" style="border-color:var(--accent);display:none">
-      <div style="font-weight:800">📲 在其他裝置查看</div>
-      <div class="small" style="margin-bottom:8px">複製下方連結傳到手機（LINE / WhatsApp），打開後輸入密碼即可查看同一份報告。</div>
-      <textarea id="shareUrlText" readonly style="width:100%;min-height:50px;padding:10px;border-radius:10px;border:1px solid rgba(88,166,255,.35);background:rgba(0,0,0,.22);color:var(--accent);font-size:12px;word-break:break-all;resize:vertical"></textarea>
-      <div style="display:flex;align-items:center;gap:10px;margin-top:8px">
-        <button id="btnCopyUrl" style="font-size:13px;padding:8px 14px">📋 複製連結</button>
-        <span id="copyUrlMsg" style="color:#2ea043;font-size:13px;display:none">✅ 已複製！</span>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -189,34 +177,47 @@
     } catch { return null; }
   }
 
-  /* ─── determine mode: URL vs Cloud vs Local ─── */
+  /* ─── helpers for status messages ─── */
+  var CLOUD_API = 'https://jsonblob.com/api/jsonBlob';
+  var statusEl = document.getElementById('statusMsg');
+  var pinErrEl = document.getElementById('pinError');
+  function showStatus(html, cls){
+    statusEl.className = 'banner ' + (cls || 'muted');
+    statusEl.innerHTML = html;
+    statusEl.style.display = 'block';
+  }
+  function hideStatus(){ statusEl.style.display = 'none'; }
+  function showPinErr(msg){ pinErrEl.textContent = msg; pinErrEl.style.display = 'block'; }
+  function hidePinErr(){ pinErrEl.style.display = 'none'; }
+
+  /* ─── determine mode ─── */
   const params = new URLSearchParams(window.location.search);
   const encodedData = params.get('d');
-  const cloudBlobId = params.get('b');
-  var MODE = 'none';   // 'url' | 'cloud' | 'local' | 'none'
+  const urlBlobId = params.get('b');
+  var MODE = 'name';   // 'url' | 'cloud' | 'name'
   var data = null;
 
   if (encodedData){
     data = decodeData(encodedData);
     if (data && data.d) {
       MODE = 'url';
+      document.getElementById('nameInput').style.display = 'none';
     } else {
-      document.getElementById('noDataMsg').style.display = 'block';
-      document.getElementById('noDataMsg').innerHTML = '⚠️ 報告資料格式錯誤，請讓孩子重新產生連結。';
+      showStatus('⚠️ 報告資料格式錯誤，請讓孩子重新產生連結。', 'muted');
       document.getElementById('pinInput').disabled = true;
       document.getElementById('btnUnlock').disabled = true;
+      document.getElementById('nameInput').disabled = true;
       return;
     }
-  } else if (cloudBlobId) {
-    /* Cloud mode: fetch from jsonblob.com */
+  } else if (urlBlobId) {
+    /* Cloud blob via URL (backward compat) */
     MODE = 'cloud';
-    document.getElementById('noDataMsg').style.display = 'block';
-    document.getElementById('noDataMsg').className = 'banner ok';
-    document.getElementById('noDataMsg').innerHTML = '☁️ 正在載入雲端報告資料…';
+    document.getElementById('nameInput').style.display = 'none';
+    showStatus('☁️ 正在載入雲端報告資料…', 'ok');
     document.getElementById('pinInput').disabled = true;
     document.getElementById('btnUnlock').disabled = true;
 
-    fetch('https://jsonblob.com/api/jsonBlob/' + encodeURIComponent(cloudBlobId), {
+    fetch(CLOUD_API + '/' + encodeURIComponent(urlBlobId), {
       headers: { 'Accept': 'application/json' }
     })
     .then(function(resp){
@@ -225,75 +226,123 @@
     })
     .then(function(cloudData){
       if (!cloudData || !cloudData.d){
-        document.getElementById('noDataMsg').className = 'banner muted';
-        document.getElementById('noDataMsg').innerHTML = '⚠️ 雲端報告資料格式異常，請讓孩子重做幾題後再試。';
+        showStatus('⚠️ 雲端資料格式異常，請讓孩子重做幾題後再試。', 'muted');
         return;
       }
       data = cloudData;
-      document.getElementById('noDataMsg').className = 'banner ok';
       var tsText = cloudData.cloud_ts ? new Date(cloudData.cloud_ts).toLocaleString('zh-TW') : '';
-      document.getElementById('noDataMsg').innerHTML = '☁️ 已載入雲端資料' + (tsText ? '（最後更新：' + esc(tsText) + '）' : '') + '，請輸入家長密碼查看。';
+      showStatus('☁️ 已載入雲端資料' + (tsText ? '（最後更新：' + esc(tsText) + '）' : '') + '，請輸入家長密碼查看。', 'ok');
       document.getElementById('pinInput').disabled = false;
       document.getElementById('btnUnlock').disabled = false;
       document.getElementById('pinInput').focus();
     })
-    .catch(function(err){
-      document.getElementById('noDataMsg').className = 'banner muted';
-      document.getElementById('noDataMsg').innerHTML = '⚠️ 無法載入雲端報告（可能網路問題或資料已過期）。<br>請確認孩子已做過題目，或在同一台電腦上直接查看。';
+    .catch(function(){
+      showStatus('⚠️ 無法載入雲端報告（可能網路問題或資料已過期）。', 'muted');
     });
   } else {
-    /* No URL data — check if local data is available */
+    /* Default: name+PIN mode — pre-fill name if local data available */
+    MODE = 'name';
     var hasAuth = window.AIMathStudentAuth && window.AIMathStudentAuth.isLoggedIn();
     if (hasAuth) {
-      MODE = 'local';
-      document.getElementById('noDataMsg').style.display = 'block';
-      document.getElementById('noDataMsg').className = 'banner ok';
-      document.getElementById('noDataMsg').innerHTML = '📱 偵測到本機學生資料（' + esc(window.AIMathStudentAuth.getCurrentStudent().name) + '），輸入家長密碼即可直接查看報告。';
-    } else {
-      MODE = 'none';
-      document.getElementById('noDataMsg').style.display = 'block';
-      document.getElementById('noDataMsg').innerHTML = '⚠️ 網址中沒有報告資料，本機也沒有登入紀錄。<br>請讓孩子在學習頁面先「登入」並做幾題，然後把「📊 家長報告」連結傳給家長即可。';
-      document.getElementById('pinInput').disabled = true;
-      document.getElementById('btnUnlock').disabled = true;
-      return;
+      var localStudent = window.AIMathStudentAuth.getCurrentStudent();
+      if (localStudent && localStudent.name) {
+        document.getElementById('nameInput').value = localStudent.name;
+        showStatus('📱 偵測到本機學生資料（' + esc(localStudent.name) + '），輸入家長密碼即可查看。', 'ok');
+      }
     }
   }
 
-  /* ─── PIN verification ─── */
+  /* ─── unlock logic ─── */
   document.getElementById('btnUnlock').addEventListener('click', unlock);
   document.getElementById('pinInput').addEventListener('keydown', function(e) {
     if (e.key === 'Enter') unlock();
   });
+  document.getElementById('nameInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') document.getElementById('pinInput').focus();
+  });
+
+  function showDashboard(d){
+    hideStatus(); hidePinErr();
+    document.getElementById('loginGate').classList.add('hidden');
+    document.getElementById('dashboard').classList.remove('hidden');
+    renderDashboard(d);
+  }
 
   function unlock(){
+    var name = (document.getElementById('nameInput').value || '').trim();
     var pin = document.getElementById('pinInput').value.trim();
-    var errEl = document.getElementById('pinError');
+    hidePinErr();
 
     if (MODE === 'url' || MODE === 'cloud'){
-      /* URL/Cloud mode: verify against embedded PIN */
       if (data && data.pin && pin !== data.pin){
-        errEl.textContent = '密碼錯誤，請重試';
-        errEl.style.display = 'block';
+        showPinErr('密碼錯誤，請重試');
         return;
       }
-      errEl.style.display = 'none';
-      document.getElementById('loginGate').classList.add('hidden');
-      document.getElementById('dashboard').classList.remove('hidden');
-      renderDashboard(data);
-    } else if (MODE === 'local'){
-      /* Local mode: verify against stored student PIN */
-      if (!window.AIMathStudentAuth.verifyPin(pin)){
-        errEl.textContent = '密碼錯誤，請重試';
-        errEl.style.display = 'block';
-        return;
-      }
-      errEl.style.display = 'none';
-      /* collect fresh data from local telemetry */
-      data = window.AIMathStudentAuth.collectReportData(7);
-      document.getElementById('loginGate').classList.add('hidden');
-      document.getElementById('dashboard').classList.remove('hidden');
-      renderDashboard(data);
+      showDashboard(data);
+      return;
     }
+
+    /* ─── name+PIN mode ─── */
+    if (!pin){ showPinErr('請輸入家長密碼'); return; }
+
+    /* 1. Try local data first (same device, fast) */
+    var hasLocal = window.AIMathStudentAuth && window.AIMathStudentAuth.isLoggedIn();
+    if (hasLocal){
+      var ls = window.AIMathStudentAuth.getCurrentStudent();
+      var localName = ls ? ls.name.trim() : '';
+      if (!name || localName === name){
+        if (!window.AIMathStudentAuth.verifyPin(pin)){
+          showPinErr('密碼錯誤，請重試');
+          return;
+        }
+        data = window.AIMathStudentAuth.collectReportData(7);
+        showDashboard(data);
+        return;
+      }
+    }
+
+    /* 2. Cloud registry lookup */
+    if (!name){ showPinErr('請輸入學生暱稱'); return; }
+
+    if (!window.AIMathStudentAuth || !window.AIMathStudentAuth.lookupStudentBlob){
+      showStatus('⚠️ 系統元件載入失敗，請重新整理頁面。', 'muted');
+      return;
+    }
+
+    showStatus('☁️ 正在查詢「' + esc(name) + '」的雲端報告…', 'ok');
+    document.getElementById('btnUnlock').disabled = true;
+
+    window.AIMathStudentAuth.lookupStudentBlob(name)
+      .then(function(blobId){
+        if (!blobId){
+          showStatus('⚠️ 找不到「' + esc(name) + '」的報告。請確認暱稱與孩子登入時完全一致。', 'muted');
+          document.getElementById('btnUnlock').disabled = false;
+          return;
+        }
+        showStatus('☁️ 已找到，正在載入報告…', 'ok');
+        return fetch(CLOUD_API + '/' + blobId, { headers:{'Accept':'application/json'} })
+          .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+          .then(function(cd){
+            if (!cd || !cd.d){
+              showStatus('⚠️ 雲端資料異常，請讓孩子重做幾題後再試。', 'muted');
+              document.getElementById('btnUnlock').disabled = false;
+              return;
+            }
+            if (cd.pin && pin !== cd.pin){
+              showPinErr('密碼錯誤，請重試');
+              hideStatus();
+              document.getElementById('btnUnlock').disabled = false;
+              return;
+            }
+            data = cd;
+            document.getElementById('btnUnlock').disabled = false;
+            showDashboard(data);
+          });
+      })
+      .catch(function(){
+        showStatus('⚠️ 無法連接雲端，請檢查網路後再試。', 'muted');
+        document.getElementById('btnUnlock').disabled = false;
+      });
   }
 
   /* ─── render ─── */
@@ -507,48 +556,6 @@
         setTimeout(() => { msg.style.display = 'none'; }, 2500);
       } catch {}
     });
-
-    /* share URL — auto-show in local mode with cloud URL */
-    if (MODE === 'local'){
-      var shareCard = document.getElementById('shareCard');
-      if (shareCard){
-        var shareUrl = '';
-        /* prefer cloud URL (short, stable, works cross-device) */
-        if (window.AIMathStudentAuth && window.AIMathStudentAuth.getParentReportCloudUrl){
-          shareUrl = window.AIMathStudentAuth.getParentReportCloudUrl() || '';
-        }
-        /* fallback: base64 encoded URL */
-        if (!shareUrl && window.AIMathStudentAuth){
-          var student = window.AIMathStudentAuth.getCurrentStudent();
-          var pin = student ? student.pin : '';
-          shareUrl = window.AIMathStudentAuth.encodeReportUrl(d, pin);
-        }
-        if (shareUrl){
-          document.getElementById('shareUrlText').value = shareUrl;
-          shareCard.style.display = 'block';
-          /* update description based on URL type */
-          var descEl = shareCard.querySelector('.small');
-          if (descEl && shareUrl.indexOf('?b=') !== -1){
-            descEl.innerHTML = '此連結可在手機或其他電腦上打開，每次開啟都會顯示最新資料。<br>只需分享一次，家長即可隨時查看。';
-          }
-        }
-      }
-    }
-    var btnCopyUrl = document.getElementById('btnCopyUrl');
-    if (btnCopyUrl){
-      btnCopyUrl.addEventListener('click', async function(){
-        var txt = document.getElementById('shareUrlText').value;
-        if (!txt) return;
-        try {
-          await navigator.clipboard.writeText(txt);
-          var m = document.getElementById('copyUrlMsg');
-          if (m){ m.style.display = 'inline'; setTimeout(function(){ m.style.display = 'none'; }, 2500); }
-        } catch(e){
-          document.getElementById('shareUrlText').select();
-          document.execCommand('copy');
-        }
-      });
-    }
   }
 })();
 </script>
