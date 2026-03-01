@@ -138,6 +138,18 @@
       <div id="wrongList"></div>
     </div>
 
+    <div class="card" style="border-color:var(--warn)">
+      <div style="font-weight:800">🧠 詳細錯題分析與補強建議</div>
+      <div class="small">逐題給出：可能卡點、對應觀念提醒、家長/補教可採取的教學步驟</div>
+      <div id="detailedAnalysis"></div>
+    </div>
+
+    <div class="card" style="border-color:var(--accent)">
+      <div style="font-weight:800">📝 類似題即時再練</div>
+      <div class="small">可從錯題一鍵產生同類型練習題，學生可直接作答並立即看結果</div>
+      <div id="practiceLab" class="banner muted" style="margin-top:8px">請先在「最近錯題摘要」點「再練一題」。</div>
+    </div>
+
     <!-- advice -->
     <div class="card" style="border-color:var(--warn)">
       <div style="font-weight:800">📋 家長建議</div>
@@ -167,6 +179,105 @@
     const s = Math.round(Number(ms||0)/1000);
     if (s < 60) return s + '秒';
     return Math.floor(s/60) + '分' + String(s%60).padStart(2,'0') + '秒';
+  }
+  function randInt(a, b){ return Math.floor(Math.random() * (b - a + 1)) + a; }
+  function gcd(a, b){ a=Math.abs(a); b=Math.abs(b); while(b){ const t=a%b; a=b; b=t; } return a||1; }
+  function frac(n, d){
+    const g = gcd(n, d);
+    return { n: n / g, d: d / g };
+  }
+  function fracText(n, d){ return n + '/' + d; }
+  function explainWrongDetail(w){
+    const kind = String(w.k || '').toLowerCase();
+    const errType = String(w.et || '').toLowerCase();
+    if (kind.includes('fraction-word')){
+      return {
+        cause: '文字題轉算式時，容易漏掉單位或把關鍵詞（共、剩、又）對應錯運算。',
+        concept: '先圈關鍵詞，再寫「已知→需求→算式」三步驟；同分母先算分子，異分母先通分。',
+        tutor: '補教建議：先做 3 題同結構換數字的文字題，要求每題先口述算式理由，再下筆計算。'
+      };
+    }
+    if (kind.includes('fraction')){
+      return {
+        cause: '分數計算常見錯在通分或約分步驟，或把加減乘除規則混用。',
+        concept: '分數加減先通分，乘法分子乘分子、分母乘分母；最後一定檢查是否可約分。',
+        tutor: '補教建議：使用「通分格線法」練 10 分鐘，重點訓練最小公倍數與約分檢查。'
+      };
+    }
+    if (kind.includes('volume')){
+      return {
+        cause: '體積題常把邊長對錯、單位遺漏，或把表面積公式誤用到體積。',
+        concept: '長方體體積固定是 長×寬×高，答案需保留立方單位（cm³、m³）。',
+        tutor: '補教建議：先畫立體示意並標三邊，再做 5 題「只換一個邊長」的對照訓練。'
+      };
+    }
+    if (kind.includes('ratio') || kind.includes('percent')){
+      return {
+        cause: '比率百分率題容易在「部分/全部」對應上顛倒，或%與小數轉換不穩。',
+        concept: '先定義分母是「全部」，再算部分；% 轉小數要除以 100。',
+        tutor: '補教建議：做「語句→比例式」口頭快答練習，再進入數字計算。'
+      };
+    }
+    if (errType.includes('careless') || errType.includes('粗心')){
+      return {
+        cause: '概念大致正確，但計算或抄寫過程出現小錯。',
+        concept: '建立兩段驗算：先估算量級，再做反向檢查（代回或逆運算）。',
+        tutor: '補教建議：每題固定留 15 秒做「符號、位值、單位」三點檢查。'
+      };
+    }
+    return {
+      cause: '可能在題意理解或步驟拆解階段卡住，導致後續計算連鎖出錯。',
+      concept: '先把題目拆成「已知、未知、關係」，每一步只做一個動作。',
+      tutor: '補教建議：先示範一題完整思路，再讓學生用同流程獨立完成兩題。'
+    };
+  }
+  function buildPracticeFromWrong(w){
+    const kind = String(w.k || '').toLowerCase();
+    if (kind.includes('fraction-word')){
+      const d = randInt(4, 10);
+      const a = randInt(1, d - 1);
+      const b = randInt(1, d - 1);
+      const sum = frac(a + b, d);
+      return {
+        q: `小明吃了 ${fracText(a,d)} 個披薩，小華又吃了 ${fracText(b,d)} 個，兩人一共吃了多少個披薩？`,
+        answer: fracText(sum.n, sum.d),
+        hint: '同分母分數相加：分子相加，分母不變，最後約分。'
+      };
+    }
+    if (kind.includes('fraction')){
+      const b = randInt(2, 9), d = randInt(2, 9);
+      const a = randInt(1, b - 1), c = randInt(1, d - 1);
+      const n = a * d + c * b;
+      const den = b * d;
+      const r = frac(n, den);
+      return {
+        q: `計算：${fracText(a,b)} + ${fracText(c,d)} = ?`,
+        answer: fracText(r.n, r.d),
+        hint: '先通分，再把分子相加，最後約分。'
+      };
+    }
+    if (kind.includes('volume')){
+      const l = randInt(2, 12), w2 = randInt(2, 10), h = randInt(2, 9);
+      return {
+        q: `一個長方體長 ${l} 公分、寬 ${w2} 公分、高 ${h} 公分，體積是多少立方公分？`,
+        answer: String(l * w2 * h),
+        hint: '體積 = 長 × 寬 × 高。'
+      };
+    }
+    if (kind.includes('ratio') || kind.includes('percent')){
+      const base = randInt(40, 180), p = [10, 15, 20, 25, 30, 40][randInt(0,5)];
+      return {
+        q: `${base} 的 ${p}% 是多少？`,
+        answer: String(base * p / 100),
+        hint: '先把百分率轉小數，再乘上全部量。'
+      };
+    }
+    const x = randInt(20, 99), y = randInt(10, 49);
+    return {
+      q: `計算：${x} - ${y} = ?`,
+      answer: String(x - y),
+      hint: '注意位值對齊，做完再反向驗算。'
+    };
   }
 
   /* ─── decode URL data ─── */
@@ -451,11 +562,76 @@
             ${w.et ? '　錯誤類型：<span class="pill bad">' + esc(w.et) + '</span>' : ''}
           </div>
           ${w.ed ? '<div class="small" style="margin-top:4px;color:#ffe8bd">診斷：' + esc(w.ed) + '</div>' : ''}
+          <div style="margin-top:8px"><button type="button" class="btnPracticeFromWrong" data-idx="${i}">📝 再練一題（同類型）</button></div>
         </div>`;
       });
       wrongList.innerHTML = html;
+
+      const analysisEl = document.getElementById('detailedAnalysis');
+      let aHtml = '';
+      wrongs.forEach((w, i) => {
+        const dx = explainWrongDetail(w);
+        aHtml += `<div class="banner warn" style="margin-top:${i?'8':'10'}px">
+          <div style="font-weight:800">第 ${i+1} 題補強方案｜${esc(w.t)} / ${esc(w.k)}</div>
+          <div style="margin-top:6px;font-size:13px"><strong>可能卡點：</strong>${esc(dx.cause)}</div>
+          <div style="margin-top:4px;font-size:13px"><strong>觀念提醒：</strong>${esc(dx.concept)}</div>
+          <div style="margin-top:4px;font-size:13px"><strong>補教教學建議：</strong>${esc(dx.tutor)}</div>
+        </div>`;
+      });
+      analysisEl.innerHTML = aHtml;
+
+      const lab = document.getElementById('practiceLab');
+      function renderPracticeCard(w){
+        const p = buildPracticeFromWrong(w);
+        lab.className = 'banner';
+        lab.innerHTML = `
+          <div style="font-weight:800">類似題練習</div>
+          <div class="small" style="margin-top:4px">對應：${esc(w.t)} / ${esc(w.k)}</div>
+          <div style="margin-top:8px">${esc(p.q)}</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+            <input id="practiceAnswer" placeholder="輸入答案（分數可輸入 3/4）" style="max-width:280px" />
+            <button id="practiceCheck" type="button">✅ 送出答案</button>
+            <button id="practiceNext" type="button">🔁 再出一題</button>
+          </div>
+          <div id="practiceFeedback" class="small" style="margin-top:8px"></div>
+          <div class="small" style="margin-top:6px;color:var(--muted)">提示：${esc(p.hint)}</div>
+        `;
+        const ansEl = document.getElementById('practiceAnswer');
+        const fbEl = document.getElementById('practiceFeedback');
+        function normAns(v){ return String(v || '').trim().replace(/\s+/g,'').toLowerCase(); }
+        document.getElementById('practiceCheck').addEventListener('click', function(){
+          const user = normAns(ansEl.value);
+          const corr = normAns(p.answer);
+          if (!user){
+            fbEl.textContent = '請先輸入答案。';
+            fbEl.style.color = '#d29922';
+            return;
+          }
+          if (user === corr){
+            fbEl.textContent = '✅ 答對了！可再出一題鞏固同觀念。';
+            fbEl.style.color = '#2ea043';
+          } else {
+            fbEl.textContent = '❌ 還差一步，正確答案：' + p.answer + '。先看提示再試一次。';
+            fbEl.style.color = '#f85149';
+          }
+        });
+        document.getElementById('practiceNext').addEventListener('click', function(){
+          renderPracticeCard(w);
+        });
+      }
+
+      var btns = wrongList.querySelectorAll('.btnPracticeFromWrong');
+      btns.forEach(function(btn){
+        btn.addEventListener('click', function(){
+          var idx = Number(btn.getAttribute('data-idx') || 0);
+          var target = wrongs[idx] || wrongs[0];
+          renderPracticeCard(target);
+        });
+      });
     } else {
       wrongList.innerHTML = '<div class="banner ok">最近沒有錯題記錄 ✅</div>';
+      document.getElementById('detailedAnalysis').innerHTML = '<div class="banner ok" style="margin-top:8px">目前沒有可分析的錯題，建議維持每日練習節奏。</div>';
+      document.getElementById('practiceLab').textContent = '目前沒有錯題可生成同類練習題。';
     }
 
     /* advice */
