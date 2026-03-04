@@ -285,7 +285,7 @@ function runBuiltinTask(taskKey, cmdObj) {
   }
 
   if (taskKey === 'freeform') {
-    // Acknowledge the freeform request, save to queue, and list available commands
+    // Acknowledge the freeform request and list available commands
     const originalText = String(cmdObj?.args?.original_text || cmdObj?.note || '').slice(0, 500);
 
     // Save request to queue file for later review or autonomous processing
@@ -296,8 +296,7 @@ function runBuiltinTask(taskKey, cmdObj) {
       at: nowIso(),
       issue_number: cmdObj?.source?.issue_number || null,
       author: cmdObj?.source?.author || '',
-      text: String(cmdObj?.args?.original_text || cmdObj?.note || '').slice(0, 2000),
-      status: 'pending',
+      text: originalText
     };
     fs.appendFileSync(queueFile, JSON.stringify(entry) + '\n', 'utf8');
     const tasks = allowList();
