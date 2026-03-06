@@ -130,6 +130,7 @@
         </div>
         <div class="meter" style="margin-top:8px"><div id="gBar"></div></div>
         <div class="small" style="color:var(--muted); margin-top:6px" id="gProgressMeta">進度：0 / 60（答對才前進）</div>
+        <div id="gDailyCounter" style="margin-top:6px"></div>
 
         <div class="q" id="gQ">（按「開始闖關」）</div>
 
@@ -373,6 +374,7 @@
       gFort: document.getElementById('gFort'),
       gProgressMeta: document.getElementById('gProgressMeta'),
       gBar: document.getElementById('gBar'),
+      gDailyCounter: document.getElementById('gDailyCounter'),
       gQ: document.getElementById('gQ'),
       gAnswer: document.getElementById('gAnswer'),
       btnSubmit: document.getElementById('btnSubmit'),
@@ -943,6 +945,11 @@
       els.gBanner.className = `banner ${kind}`;
       els.gBanner.textContent = text;
     }
+    function gUpdateDailyCounter(){
+      if (els.gDailyCounter && window.AIMathDailyLimit){
+        els.gDailyCounter.innerHTML = window.AIMathDailyLimit.buildCounterHTML();
+      }
+    }
 
     function gUpdate(){
       const rs = regionStats(g.activeRegion || 'mul');
@@ -1044,6 +1051,7 @@
       gPick();
       renderEmpire(null);
       gUpdate();
+      gUpdateDailyCounter();
       gBanner('muted', `開始！計時改成「累積秒數」（不會自動結束）。\n口訣：越快越準越好——每題 60 秒內答對、速度變快、連對變長都會給獎勵。`);
       g.timer = setInterval(() => {
         if (!g.running) return;
@@ -1057,6 +1065,7 @@
       if (!g.running || !g.q) return;
       if (window.AIMathDailyLimit){
         window.AIMathDailyLimit.increment();
+        gUpdateDailyCounter();
         if (window.AIMathDailyLimit.isLimitReached()){
           g._endMsg = null; g._endKind = null;
           gStop();
@@ -1178,6 +1187,7 @@
     updateBankMeta();
     renderEmpire(null);
     saveEmpire();
+    gUpdateDailyCounter();
     if (bank.length) showQuestion(bank[0]);
     window.AIMathStudentAuth?.injectLoginUI(document.getElementById('studentAuthBar'));
     window.AIMathUXEnhancer?.init({

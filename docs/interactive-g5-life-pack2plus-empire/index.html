@@ -310,6 +310,7 @@
         <span>領地：<b id="gLand">0</b>/72</span>
       </div>
       <div class="meter" style="margin-top:10px"><div id="gBar"></div></div>
+        <div id="gDailyCounter" style="margin-top:6px"></div>
       <div class="q" id="gQ">按「開始」進入闖關。</div>
       <div class="row">
         <label>答案</label>
@@ -672,6 +673,7 @@
       gAcc: document.getElementById('gAcc'),
       gLand: document.getElementById('gLand'),
       gBar: document.getElementById('gBar'),
+      gDailyCounter: document.getElementById('gDailyCounter'),
       gQ: document.getElementById('gQ'),
       gAnswer: document.getElementById('gAnswer'),
       gBanner: document.getElementById('gBanner'),
@@ -809,6 +811,12 @@
       els.gBanner.className = `banner ${kind}`;
       els.gBanner.textContent = text;
     }
+    function gUpdateDailyCounter(){
+      if (els.gDailyCounter && window.AIMathDailyLimit){
+        els.gDailyCounter.innerHTML = window.AIMathDailyLimit.buildCounterHTML();
+      }
+    }
+
 
     function showExpandToast(text){
       if (!els.expandToast) return;
@@ -2185,6 +2193,7 @@
       g.pool = buildGamePool();
       gPick();
       gUpdate();
+      gUpdateDailyCounter();
       if (els.btnStart) els.btnStart.style.display = 'none';
       if (els.btnStop) els.btnStop.style.display = '';
       if (els.gWrongDetail){ els.gWrongDetail.style.display = 'none'; els.gWrongDetail.textContent = ''; }
@@ -2231,6 +2240,7 @@
       if (!q){ gBanner('warn', '沒有題目可作答。'); return; }
       if (window.AIMathDailyLimit){
         window.AIMathDailyLimit.increment();
+        gUpdateDailyCounter();
         if (window.AIMathDailyLimit.isLimitReached()){
           g._endMsg = null; g._endKind = null;
           gStop();
@@ -2429,6 +2439,7 @@
     els.empireUnit.value = empire.selected;
     renderEmpire();
     saveEmpire();
+    gUpdateDailyCounter();
     window.AIMathStudentAuth?.injectLoginUI(document.getElementById('studentAuthBar'));
     window.AIMathUXEnhancer?.init({
       moduleId: 'interactive-g5-life-pack2plus-empire',
