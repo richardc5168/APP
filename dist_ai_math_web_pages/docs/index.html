@@ -233,6 +233,18 @@
     .mobile-sticky-cta a:hover { background: var(--btn-hover); }
     .mobile-sticky-cta .close-sticky { position: absolute; top: 6px; right: 12px; background: none; border: none; color: #8b949e; font-size: 1.2rem; cursor: pointer; padding: 4px; }
     @media (max-width: 768px) { .mobile-sticky-cta.visible { display: block; } .site-footer { padding-bottom: 80px; } }
+
+    /* ── Onboarding Modal ── */
+    .onboard-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 500; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); justify-content: center; align-items: center; }
+    .onboard-overlay.show { display: flex; }
+    .onboard-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 32px 28px; max-width: 400px; width: 90%; text-align: center; position: relative; }
+    .onboard-box .ob-close { position: absolute; top: 10px; right: 14px; background: none; border: none; color: #8b949e; font-size: 1.3rem; cursor: pointer; }
+    .onboard-box h3 { color: #fff; font-size: 1.2rem; margin: 0 0 8px; }
+    .onboard-box p { color: #8b949e; font-size: 0.88rem; margin: 0 0 20px; }
+    .onboard-box .ob-options { display: flex; flex-direction: column; gap: 10px; }
+    .onboard-box .ob-btn { display: block; padding: 14px 16px; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 0.95rem; border: 1px solid var(--border); color: #fff; background: var(--bg); transition: all 0.2s; }
+    .onboard-box .ob-btn:hover { border-color: var(--accent); background: rgba(88,166,255,0.08); }
+    .onboard-box .ob-btn .ob-icon { font-size: 1.3rem; margin-right: 6px; }
   </style>
   <script type="application/ld+json">
   {
@@ -1041,6 +1053,42 @@
       }
     })();
   </script>
+  <!-- Onboarding Welcome Modal -->
+  <div class="onboard-overlay" id="onboardModal">
+    <div class="onboard-box">
+      <button class="ob-close" onclick="closeOnboard()" aria-label="關閉">&times;</button>
+      <h3>👋 歡迎來到 AI 數學家教！</h3>
+      <p>您想怎麼開始？</p>
+      <div class="ob-options">
+        <a class="ob-btn" href="interactive-g5-empire/" onclick="closeOnboard()">
+          <span class="ob-icon">🏰</span>我是學生，想開始闖關練習
+        </a>
+        <a class="ob-btn" href="exam-sprint/" onclick="closeOnboard()">
+          <span class="ob-icon">📝</span>我快考試了，想考前衝刺
+        </a>
+        <a class="ob-btn" href="parent-report/" onclick="closeOnboard()">
+          <span class="ob-icon">📊</span>我是家長，想看學習報告
+        </a>
+        <a class="ob-btn" href="pricing/" onclick="closeOnboard()">
+          <span class="ob-icon">💰</span>想瞭解方案與價格
+        </a>
+      </div>
+    </div>
+  </div>
+  <script>
+  function closeOnboard(){
+    try{ localStorage.setItem('aimath_onboarded','1'); }catch(e){}
+    document.getElementById('onboardModal').classList.remove('show');
+  }
+  (function(){
+    try{
+      if(!localStorage.getItem('aimath_onboarded')){
+        setTimeout(function(){ document.getElementById('onboardModal').classList.add('show'); }, 1500);
+      }
+    }catch(e){}
+  })();
+  </script>
+
   <!-- Mobile Sticky CTA -->
   <div class="mobile-sticky-cta" id="mobileCta">
     <button class="close-sticky" onclick="document.getElementById('mobileCta').classList.remove('visible');sessionStorage.setItem('cta_closed','1')" aria-label="關閉">&times;</button>
