@@ -499,7 +499,7 @@
     try {
       const json = decodeURIComponent(escape(atob(decodeURIComponent(encoded))));
       return JSON.parse(json);
-    } catch { return null; }
+    } catch(e) { return null; }
   }
 
   /* ─── helpers for status messages ─── */
@@ -1073,8 +1073,8 @@
         await navigator.clipboard.writeText(lines.join('\n'));
         const msg = document.getElementById('copyMsg');
         msg.style.display = 'block';
-        setTimeout(() => { msg.style.display = 'none'; }, 2500);
-      } catch {}
+        setTimeout(function(){ msg.style.display = 'none'; }, 2500);
+      } catch(e) {}
     });
   }
 })();

@@ -15,7 +15,7 @@
   const VERSION = 1;
 
   /* ─── helpers ─── */
-  function safeJson(s, fb){ try { return JSON.parse(s); } catch { return fb; } }
+  function safeJson(s, fb){ try { return JSON.parse(s); } catch(e) { return fb; } }
   function nowIso(){ return new Date().toISOString(); }
   function normalizeName(name){
     return String(name || '')
@@ -32,12 +32,12 @@
       if (!raw) return null;
       const o = safeJson(raw, null);
       if (o && o.version === VERSION && o.name && o.pin) return o;
-    } catch {}
+    } catch(e) {}
     return null;
   }
 
   function save(o){
-    try { localStorage.setItem(LS_KEY, JSON.stringify(o)); } catch {}
+    try { localStorage.setItem(LS_KEY, JSON.stringify(o)); } catch(e) {}
   }
 
   /* ─── public API ─── */
@@ -64,7 +64,7 @@
   }
 
   function logout(){
-    try { localStorage.removeItem(LS_KEY); } catch {}
+    try { localStorage.removeItem(LS_KEY); } catch(e) {}
   }
 
   function verifyPin(input){
@@ -174,12 +174,12 @@
           sprintAttempts = obj.attempts.filter(function(a){ return getAttemptTs(a) >= cutoff; });
         }
       }
-    } catch {}
+    } catch(e) {}
 
     try {
-      const uid = window.AIMathCoachLog?.getOrCreateUserId?.() || 'guest';
-      telAttempts = window.AIMathAttemptTelemetry?.listAttempts?.(uid, { sinceMs: cutoff }) || [];
-    } catch {}
+      const uid = (window.AIMathCoachLog && window.AIMathCoachLog.getOrCreateUserId) ? window.AIMathCoachLog.getOrCreateUserId() : 'guest';
+      telAttempts = (window.AIMathAttemptTelemetry && window.AIMathAttemptTelemetry.listAttempts) ? window.AIMathAttemptTelemetry.listAttempts(uid, { sinceMs: cutoff }) : [];
+    } catch(e) {}
 
     return dedupeAttempts([].concat(sprintAttempts, telAttempts)).map(normalizeAttemptForCloud);
   }
@@ -369,7 +369,7 @@
     try {
       const json = decodeURIComponent(escape(atob(decodeURIComponent(encodedStr))));
       return JSON.parse(json);
-    } catch { return null; }
+    } catch(e) { return null; }
   }
 
   /* ─── Cloud Sync (GitHub Gist — public read, token write) ─── */
@@ -653,14 +653,15 @@
     const btnLogout = document.getElementById('btnLogout');
 
     if (btnLogin){
-      btnLogin.addEventListener('click', () => {
+      btnLogin.addEventListener('click', function(){
         modal.style.display = 'flex';
-        document.getElementById('authName')?.focus();
+        var nameEl = document.getElementById('authName');
+        if (nameEl) nameEl.focus();
       });
     }
 
     if (btnLogout){
-      btnLogout.addEventListener('click', () => {
+      btnLogout.addEventListener('click', function(){
         if (confirm('確定登出？（作答紀錄仍保留在本機）')) {
           logout();
           location.reload();
@@ -668,11 +669,14 @@
       });
     }
 
-    document.getElementById('authSubmit')?.addEventListener('click', () => {
-      const errEl = document.getElementById('authError');
+    var submitEl = document.getElementById('authSubmit');
+    if (submitEl) submitEl.addEventListener('click', function(){
+      var errEl = document.getElementById('authError');
       try {
-        const name = document.getElementById('authName')?.value;
-        const pin = document.getElementById('authPin')?.value;
+        var nameEl2 = document.getElementById('authName');
+        var pinEl2 = document.getElementById('authPin');
+        var name = nameEl2 ? nameEl2.value : '';
+        var pin = pinEl2 ? pinEl2.value : '';
         login(name, pin);
         modal.style.display = 'none';
         location.reload();
@@ -681,20 +685,23 @@
       }
     });
 
-    document.getElementById('authCancel')?.addEventListener('click', () => {
+    var cancelEl = document.getElementById('authCancel');
+    if (cancelEl) cancelEl.addEventListener('click', function(){
       modal.style.display = 'none';
     });
 
     /* Enter key in modal */
-    document.getElementById('authPin')?.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') document.getElementById('authSubmit')?.click();
+    var pinEl3 = document.getElementById('authPin');
+    if (pinEl3) pinEl3.addEventListener('keydown', function(e){
+      if (e.key === 'Enter') { var s = document.getElementById('authSubmit'); if (s) s.click(); }
     });
-    document.getElementById('authName')?.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') document.getElementById('authPin')?.focus();
+    var nameEl3 = document.getElementById('authName');
+    if (nameEl3) nameEl3.addEventListener('keydown', function(e){
+      if (e.key === 'Enter') { var p = document.getElementById('authPin'); if (p) p.focus(); }
     });
 
     /* Click outside to close */
-    modal.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
+    modal.addEventListener('click', function(e){ if (e.target === modal) modal.style.display = 'none'; });
 
     /* ─── Auto cloud sync on page load + hook telemetry ─── */
     if (isLoggedIn()){

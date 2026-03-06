@@ -15,7 +15,7 @@
   const VERSION = 1;
 
   function safeJsonParse(s, fallback){
-    try { return JSON.parse(s); } catch { return fallback; }
+    try { return JSON.parse(s); } catch(e) { return fallback; }
   }
 
   function keyForUser(userId){
@@ -29,7 +29,7 @@
       const raw = localStorage.getItem(key);
       const obj = raw ? safeJsonParse(raw, null) : null;
       if (obj && obj.version === VERSION && Array.isArray(obj.attempts)) return obj;
-    } catch {}
+    } catch(e) {}
     return { version: VERSION, user_id: String(userId || 'guest'), attempts: [] };
   }
 
@@ -37,7 +37,7 @@
     try {
       localStorage.setItem(keyForUser(userId), JSON.stringify(log));
       return true;
-    } catch {
+    } catch(e) {
       return false;
     }
   }
@@ -72,7 +72,7 @@
   }
 
   function clearAttempts(userId){
-    try { localStorage.removeItem(keyForUser(userId)); } catch {}
+    try { localStorage.removeItem(keyForUser(userId)); } catch(e) {}
   }
 
   function exportAttemptsJson(userId){

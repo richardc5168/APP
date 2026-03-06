@@ -27,7 +27,7 @@
   function nowMs(){ return Date.now(); }
 
   function safeJsonParse(s, fallback){
-    try { return JSON.parse(s); } catch { return fallback; }
+    try { return JSON.parse(s); } catch(e) { return fallback; }
   }
 
   function randomHex(nBytes){
@@ -57,14 +57,14 @@
       const uid = newUserId();
       localStorage.setItem(USER_ID_KEY, uid);
       return uid;
-    } catch {
+    } catch(e) {
       return 'guest';
     }
   }
 
   function loadDb(){
     const raw = (function(){
-      try { return localStorage.getItem(EVENTS_KEY); } catch { return null; }
+      try { return localStorage.getItem(EVENTS_KEY); } catch(e) { return null; }
     })();
 
     const db = raw ? safeJsonParse(raw, null) : null;
@@ -77,7 +77,7 @@
   }
 
   function saveDb(db){
-    try { localStorage.setItem(EVENTS_KEY, JSON.stringify(db)); } catch {}
+    try { localStorage.setItem(EVENTS_KEY, JSON.stringify(db)); } catch(e) {}
   }
 
   function normalizeEvent(evt){
@@ -97,7 +97,7 @@
 
   function appendEvent(evt, opts){
     const db = loadDb();
-    const maxEvents = Math.max(50, Number(opts?.maxEvents || 2000));
+    const maxEvents = Math.max(50, Number((opts && opts.maxEvents) || 2000));
 
     const e = normalizeEvent(evt);
     if (!e.type) return { ok: false, reason: 'missing type' };
@@ -113,12 +113,12 @@
 
   function listEvents(opts){
     const db = loadDb();
-    const sinceMs = opts?.sinceMs != null ? Number(opts.sinceMs) : null;
-    const limit = opts?.limit != null ? Math.max(1, Number(opts.limit)) : null;
+    const sinceMs = (opts && opts.sinceMs != null) ? Number(opts.sinceMs) : null;
+    const limit = (opts && opts.limit != null) ? Math.max(1, Number(opts.limit)) : null;
 
     let evts = db.events;
     if (Number.isFinite(sinceMs)){
-      evts = evts.filter(e => Number(e?.ts_ms) >= sinceMs);
+      evts = evts.filter(function(e){ return Number(e && e.ts_ms) >= sinceMs; });
     }
     if (Number.isFinite(limit)){
       evts = evts.slice(-limit);
