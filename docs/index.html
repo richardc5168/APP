@@ -117,7 +117,7 @@
     .hero-hud { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; position:relative; z-index:1; }
     .hero-hud::before { content:''; position:absolute; top:50%; left:50%; width:320px; height:120px; transform:translate(-50%,-50%); background:radial-gradient(ellipse,rgba(88,166,255,0.08) 0%,transparent 70%); pointer-events:none; z-index:-1; }
     .hero-hud-card { background: rgba(22,27,34,0.85); border: 1px solid var(--border); border-radius: 10px; padding: 10px 16px; display: flex; align-items: center; gap: 8px; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); transition: border-color 0.3s, transform 0.2s; }
-    .hero-hud-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .hero-hud-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 16px rgba(88,166,255,0.15); }
     .hero-hud-card { animation: hudFadeIn .6s ease both; }
     .hero-hud-card:nth-child(1) { animation-delay:.15s; }
     .hero-hud-card:nth-child(2) { animation-delay:.3s; }
@@ -232,7 +232,7 @@
 
     /* ── Print ── */
     @media print {
-      .top-nav, .mobile-sticky-cta, #scrollProgress, #pageLoader, .onboard-overlay, .skip-link { display:none !important; }
+      .top-nav, .mobile-sticky-cta, #scrollProgress, #pageLoader, .onboard-overlay, .skip-link, .scroll-top { display:none !important; }
       body { background:#fff; color:#222; }
       .hero { background:none; padding:20px 0; }
       .hero h1, .hero h1 .highlight, .hero h1 .highlight-gold { color:#222; text-shadow:none; }
@@ -242,6 +242,12 @@
     /* ── FAQ smooth toggle ── */
     .faq-item .faq-answer { max-height:0; overflow:hidden; transition:max-height .3s ease, padding .3s ease; padding:0 0 0 28px; }
     .faq-item[open] .faq-answer { max-height:500px; padding:10px 0 4px 28px; }
+
+    /* ── Scroll-to-top ── */
+    .scroll-top { position:fixed; bottom:24px; right:24px; width:44px; height:44px; border-radius:50%; background:var(--btn-bg,#238636); color:#fff; border:none; font-size:1.2rem; cursor:pointer; opacity:0; visibility:hidden; transition:opacity .3s, visibility .3s, transform .3s; z-index:200; box-shadow:0 2px 8px rgba(0,0,0,0.3); display:flex; align-items:center; justify-content:center; }
+    .scroll-top.visible { opacity:1; visibility:visible; }
+    .scroll-top:hover { transform:translateY(-3px); background:var(--btn-hover,#2ea043); }
+    @media (prefers-reduced-motion:reduce) { .scroll-top { transition:none; } }
   </style>
   <script type="application/ld+json">
   {
@@ -649,7 +655,7 @@
       <p>選定單元，深入練習</p>
     </div>
     <div class="quest-grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr));">
-      <div class="quest-card">
+      <div class="quest-card stagger-1">
         <div class="quest-header">
           <div class="quest-icon">&#x1F522;</div>
           <div>
@@ -659,7 +665,7 @@
         </div>
         <a href="./fraction-word-g5/" class="quest-cta">進入練習</a>
       </div>
-      <div class="quest-card">
+      <div class="quest-card stagger-2">
         <div class="quest-header">
           <div class="quest-icon">&#x2702;&#xFE0F;</div>
           <div>
@@ -669,7 +675,7 @@
         </div>
         <a href="./fraction-g5/" class="quest-cta">進入練習</a>
       </div>
-      <div class="quest-card">
+      <div class="quest-card stagger-3">
         <div class="quest-header">
           <div class="quest-icon">&#x2716;</div>
           <div>
@@ -679,7 +685,7 @@
         </div>
         <a href="./mixed-multiply/" class="quest-cta">進入練習</a>
       </div>
-      <div class="quest-card">
+      <div class="quest-card stagger-4">
         <div class="quest-header">
           <div class="quest-icon">&#x1F4CF;</div>
           <div>
@@ -689,7 +695,7 @@
         </div>
         <a href="./decimal-unit4/" class="quest-cta">進入練習</a>
       </div>
-      <div class="quest-card">
+      <div class="quest-card stagger-1">
         <div class="quest-header">
           <div class="quest-icon">&#x1F4E6;</div>
           <div>
@@ -699,7 +705,7 @@
         </div>
         <a href="./volume-g5/" class="quest-cta">進入練習</a>
       </div>
-      <div class="quest-card">
+      <div class="quest-card stagger-2">
         <div class="quest-header">
           <div class="quest-icon">&#x1F4B9;</div>
           <div>
@@ -709,7 +715,7 @@
         </div>
         <a href="./ratio-percent-g5/" class="quest-cta">進入練習</a>
       </div>
-      <div class="quest-card">
+      <div class="quest-card stagger-3">
         <div class="quest-header">
           <div class="quest-icon">&#x1F6D2;</div>
           <div>
@@ -719,7 +725,7 @@
         </div>
         <a href="./life-applications-g5/" class="quest-cta">進入練習</a>
       </div>
-      <div class="quest-card">
+      <div class="quest-card stagger-4">
         <div class="quest-header">
           <div class="quest-icon">&#x1F31F;</div>
           <div>
@@ -729,7 +735,7 @@
         </div>
         <a href="./g5-grand-slam/" class="quest-cta">進入練習</a>
       </div>
-      <div class="quest-card">
+      <div class="quest-card stagger-1">
         <div class="quest-header">
           <div class="quest-icon">&#x1F4AA;</div>
           <div>
@@ -1028,6 +1034,25 @@
       var open = links.classList.toggle('open');
       btn.setAttribute('aria-expanded', open ? 'true' : 'false');
       btn.innerHTML = open ? '&times;' : '&#x2630;';
+    });
+  })();
+  </script>
+
+  <!-- ── Scroll-to-top ── -->
+  <button class="scroll-top" id="scrollTopBtn" aria-label="回到頂部">↑</button>
+  <script>
+  (function(){
+    var btn = document.getElementById('scrollTopBtn');
+    if (!btn) return;
+    window.addEventListener('scroll', function(){
+      if (window.pageYOffset > 600) {
+        btn.classList.add('visible');
+      } else {
+        btn.classList.remove('visible');
+      }
+    });
+    btn.addEventListener('click', function(){
+      window.scrollTo({ top:0, behavior:'smooth' });
     });
   })();
   </script>
