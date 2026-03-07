@@ -54,6 +54,19 @@
     .plan .btn:hover { background: var(--btn-hover); }
     .plan .btn-outline { background: transparent; border: 1px solid var(--accent); color: var(--accent); }
     .plan .btn-outline:hover { background: rgba(88,166,255,0.1); }
+.plan { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+.plan:hover { transform: translateY(-6px); box-shadow: 0 12px 32px rgba(88,166,255,0.12); }
+.plan.featured:hover { box-shadow: 0 12px 32px rgba(88,166,255,0.2); }
+.plan { opacity: 0; transform: translateY(30px); }
+.plan.visible { opacity: 1; transform: translateY(0); }
+.plan:hover.visible { transform: translateY(-6px); }
+.plan { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+.plan:hover { transform: translateY(-6px); box-shadow: 0 12px 32px rgba(88,166,255,0.12); }
+.plan.featured:hover { box-shadow: 0 12px 32px rgba(88,166,255,0.2); }
+/* Stagger entrance */
+.plan { opacity: 0; transform: translateY(30px); }
+.plan.visible { opacity: 1; transform: translateY(0); }
+.plan:hover.visible { transform: translateY(-6px); }
 
     .faq { margin-top: 50px; }
 
@@ -479,5 +492,30 @@
 <script src="../shared/cookie_consent.js"></script>
 <script>(function(){var o=window.setBilling;if(!o)return;window.setBilling=function(a){o(a);var s1=document.getElementById('saveStd');var s2=document.getElementById('savePrem');if(a){if(s1){s1.textContent='\u7701 NT$720/\u5E74';s1.className='annual-save show'}if(s2){s2.textContent='\u7701 NT$1200/\u5E74';s2.className='annual-save show'}}else{if(s1)s1.className='annual-save';if(s2)s2.className='annual-save'}}})()</script>
 <script src="../shared/breadcrumb_jsonld.js"></script>
+<script>
+(function(){
+  if (!('IntersectionObserver' in window)) {
+    var plans = document.querySelectorAll('.plan');
+    for (var i = 0; i < plans.length; i++) plans[i].className += ' visible';
+    return;
+  }
+  var io = new IntersectionObserver(function(entries) {
+    for (var i = 0; i < entries.length; i++) {
+      if (entries[i].isIntersecting) {
+        var el = entries[i].target;
+        var idx = parseInt(el.getAttribute('data-idx') || '0', 10);
+        setTimeout(function(e){ e.className += ' visible'; }, idx * 150, el);
+        io.unobserve(el);
+      }
+    }
+  }, { threshold: 0.15 });
+  var plans = document.querySelectorAll('.plan');
+  for (var i = 0; i < plans.length; i++) {
+    plans[i].setAttribute('data-idx', i);
+    io.observe(plans[i]);
+  }
+})();
+</script>
+<script>(function(){if(!('IntersectionObserver' in window)){var ps=document.querySelectorAll('.plan');for(var i=0;i<ps.length;i++)ps[i].className+=' visible';return}var io=new IntersectionObserver(function(es){for(var i=0;i<es.length;i++){if(es[i].isIntersecting){var el=es[i].target;var idx=parseInt(el.getAttribute('data-idx')||'0',10);setTimeout(function(e){e.className+=' visible'},idx*150,el);io.unobserve(el)}}},{threshold:0.15});var plans=document.querySelectorAll('.plan');for(var i=0;i<plans.length;i++){plans[i].setAttribute('data-idx',i);io.observe(plans[i])}})()</script>
 </body>
 </html>
