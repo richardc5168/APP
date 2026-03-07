@@ -403,7 +403,8 @@
 .dash-card:hover .dash-val.val-green { text-shadow: 0 0 12px rgba(63,185,80,0.3); }
 .dash-card:hover .dash-val.val-blue { text-shadow: 0 0 12px rgba(88,166,255,0.3); }
 .dash-card:hover .dash-val.val-purple { text-shadow: 0 0 12px rgba(163,113,247,0.3); }
-.dash-lbl { font-size: 0.78rem; color: #8b949e; margin-top: 4px; }
+.dash-lbl { font-size: 0.78rem; color: #8b949e; margin-top: 4px; transition: color 0.3s ease; }
+.dash-card:hover .dash-lbl { color: #c9d1d9; }
 
 /* ── Section Dividers ── */
 .section-quest {
@@ -661,7 +662,8 @@
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 .onboard-step:hover .onboard-step-num { transform: scale(1.12); box-shadow: 0 0 18px rgba(88,166,255,0.3); }
-.onboard-step h4 { color: #fff; font-size: 0.95rem; margin: 0 0 6px; }
+.onboard-step h4 { color: #fff; font-size: 0.95rem; margin: 0 0 6px; transition: color 0.3s ease; }
+.onboard-step:hover h4 { color: var(--accent); }
 .onboard-step p { color: #8b949e; font-size: 0.82rem; margin: 0; }
 
 /* ── Mode card gradient glow ── */
