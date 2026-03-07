@@ -30,6 +30,33 @@
     .reveal { opacity:0; transform:translateY(24px); transition:opacity .5s ease, transform .5s ease; }
     .reveal.visible { opacity:1; transform:translateY(0); }
 
+    /* ── Skip to content (a11y) ── */
+    .skip-link { position:absolute;top:-100px;left:16px;background:var(--accent);color:#fff;padding:8px 16px;border-radius:6px;z-index:1000;font-weight:700;text-decoration:none;transition:top .2s; }
+    .skip-link:focus { top:8px; }
+
+    /* ── Focus visible ── */
+    a:focus-visible, button:focus-visible { outline:2px solid var(--accent); outline-offset:2px; border-radius:4px; }
+
+    /* ── Progress bar animation ── */
+    .tc-progress-fill { width:0 !important; }
+    .tc-progress-fill.animate { transition:width 1s cubic-bezier(.4,0,.2,1) !important; }
+
+    /* ── HUD entrance ── */
+    .hud-item { opacity:0; transform:translateY(10px); transition:opacity .4s ease, transform .4s ease, border-color .3s ease; }
+    .hud-item.visible { opacity:1; transform:translateY(0); }
+
+    /* ── Stagger entrance ── */
+    .stagger-1,.stagger-2,.stagger-3 { opacity:0; transform:translateY(16px); transition:opacity .5s ease, transform .5s ease; }
+    .visible .stagger-1 { opacity:1;transform:translateY(0);transition-delay:.08s; }
+    .visible .stagger-2 { opacity:1;transform:translateY(0);transition-delay:.16s; }
+    .visible .stagger-3 { opacity:1;transform:translateY(0);transition-delay:.24s; }
+
+    /* ── Reduced motion ── */
+    @media (prefers-reduced-motion:reduce) {
+      .reveal,.hud-item,.stagger-1,.stagger-2,.stagger-3 { opacity:1!important; transform:none!important; transition:none!important; }
+      .tc-progress-fill { transition:none!important; }
+    }
+
     /* ── Nav ── */
     .top-nav { display: flex; align-items: center; justify-content: space-between; padding: 12px 24px; border-bottom: 1px solid var(--border); background: rgba(13,17,23,0.95); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
     .top-nav .brand { font-size: 1.15rem; font-weight: 800; color: #fff; text-decoration: none; display: flex; align-items: center; gap: 8px; }
@@ -63,6 +90,8 @@
   <link rel="stylesheet" href="../shared/quest_platform.css">
 </head>
 <body>
+
+  <a class="skip-link" href="#todayQuests">跳至任務列表</a>
 
   <!-- ── Nav ── -->
   <nav class="top-nav" aria-label="主選單">
@@ -132,12 +161,12 @@
   <!-- ══════════════════════════════════════════
        A — 今日任務
        ══════════════════════════════════════════ -->
-  <div class="tc-section reveal">
+  <div class="tc-section reveal" id="todayQuests">
     <h2 class="tc-section-title">&#x2600;&#xFE0F; 今日任務</h2>
     <div class="quest-grid">
 
       <!-- 暖身 -->
-      <div class="quest-card">
+      <div class="quest-card stagger-1">
         <div class="quest-header">
           <div class="quest-icon">&#x1F31F;</div>
           <div>
@@ -155,7 +184,7 @@
       </div>
 
       <!-- 主線 -->
-      <div class="quest-card quest-main">
+      <div class="quest-card quest-main stagger-2">
         <div class="quest-header">
           <div class="quest-icon">&#x2694;&#xFE0F;</div>
           <div>
@@ -173,7 +202,7 @@
       </div>
 
       <!-- 加分挑戰 -->
-      <div class="quest-card quest-timed">
+      <div class="quest-card quest-timed stagger-3">
         <div class="quest-header">
           <div class="quest-icon">&#x23F0;</div>
           <div>
@@ -447,9 +476,27 @@
     <div class="footer-copy">&copy; 2025-2026 AI 數學家教. All rights reserved.</div>
   </footer>
 
-  <!-- ── Scroll Reveal ── -->
+  <!-- ── Scroll Reveal + HUD + Progress ── -->
   <script>
   (function(){
+    // HUD entrance stagger
+    var hudItems = document.querySelectorAll('.hud-item');
+    for (var h = 0; h < hudItems.length; h++) {
+      (function(el, delay){
+        setTimeout(function(){ el.classList.add('visible'); }, delay);
+      })(hudItems[h], 200 + h * 120);
+    }
+
+    // Progress bar fill animation
+    var fill = document.querySelector('.tc-progress-fill');
+    if (fill) {
+      setTimeout(function(){
+        fill.classList.add('animate');
+        fill.style.width = '50%';
+      }, 600);
+    }
+
+    // Scroll reveal
     if (!('IntersectionObserver' in window)) {
       var els = document.querySelectorAll('.reveal');
       for (var i = 0; i < els.length; i++) els[i].classList.add('visible');

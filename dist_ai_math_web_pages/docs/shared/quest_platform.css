@@ -168,6 +168,10 @@
   background: var(--btn-bg);
   transition: background 0.2s ease;
   margin-top: auto;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .quest-cta:hover { background: var(--btn-hover); }
 .quest-card.quest-main .quest-cta {
@@ -286,7 +290,9 @@
   border: 1px solid rgba(88,166,255,0.2);
 }
 .mode-cta {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 12px 28px;
   border-radius: 8px;
   font-weight: 700;
@@ -294,6 +300,7 @@
   text-decoration: none;
   color: #fff;
   transition: all 0.2s;
+  min-height: 44px;
 }
 .mode-empire .mode-cta { background: linear-gradient(135deg, #238636, #2ea043); }
 .mode-empire .mode-cta:hover { background: linear-gradient(135deg, #2ea043, #3fb950); }
@@ -515,6 +522,47 @@
 .onboard-step h4 { color: #fff; font-size: 0.95rem; margin: 0 0 6px; }
 .onboard-step p { color: #8b949e; font-size: 0.82rem; margin: 0; }
 
+/* ── Mode card gradient glow ── */
+.mode-card::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 17px;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: -1;
+  pointer-events: none;
+}
+.mode-card.mode-empire::after { background: linear-gradient(135deg, rgba(251,191,36,0.25), rgba(63,185,80,0.15)); }
+.mode-card.mode-sprint::after { background: linear-gradient(135deg, rgba(248,81,73,0.25), rgba(251,146,36,0.15)); }
+.mode-card.mode-topic::after  { background: linear-gradient(135deg, rgba(88,166,255,0.25), rgba(163,113,247,0.15)); }
+.mode-card:hover::after { opacity: 1; }
+
+/* ── Stagger entrance ── */
+.stagger-1, .stagger-2, .stagger-3, .stagger-4 {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.visible .stagger-1 { opacity:1; transform:translateY(0); transition-delay:0.08s; }
+.visible .stagger-2 { opacity:1; transform:translateY(0); transition-delay:0.16s; }
+.visible .stagger-3 { opacity:1; transform:translateY(0); transition-delay:0.24s; }
+.visible .stagger-4 { opacity:1; transform:translateY(0); transition-delay:0.32s; }
+
+/* ── Quest card shimmer on reward tag ── */
+.quest-reward strong {
+  background: linear-gradient(90deg, #ffd700, #fff9c4, #ffd700);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: rewardShimmer 3s ease-in-out infinite;
+}
+@keyframes rewardShimmer {
+  0%,100% { background-position:0% 50%; }
+  50% { background-position:100% 50%; }
+}
+
 /* ── Responsive ── */
 @media (max-width: 640px) {
   .hud-bar { gap: 8px; padding: 12px 12px; }
@@ -537,4 +585,14 @@
 @media (max-width: 400px) {
   .benefit-grid { grid-template-columns: 1fr; }
   .dash-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .stagger-1,.stagger-2,.stagger-3,.stagger-4 { opacity:1; transform:none; transition:none; }
+  .quest-reward strong { animation:none; -webkit-text-fill-color:#ffd700; }
+  .mode-card { transition:none; }
+  .quest-card { transition:none; }
+  .benefit-card { transition:none; }
+  .tc-progress-fill { transition:none; }
 }

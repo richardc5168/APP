@@ -34,9 +34,17 @@
     #pageLoader .ld-text { color:#8b949e;font-size:.85rem;margin-top:12px;font-family:system-ui,sans-serif; }
     @keyframes ldSpin { to{transform:rotate(360deg)} }
 
+    /* ── Skip to content (a11y) ── */
+    .skip-link { position:absolute;top:-100px;left:16px;background:var(--accent);color:#fff;padding:8px 16px;border-radius:6px;z-index:1000;font-weight:700;text-decoration:none;transition:top .2s; }
+    .skip-link:focus { top:8px; }
+
     /* ── Scroll reveal ── */
     .reveal { opacity:0; transform:translateY(30px); transition:opacity .6s ease, transform .6s ease; }
     .reveal.visible { opacity:1; transform:translateY(0); }
+    .reveal.visible .stagger-1 { transition-delay:.1s; }
+    .reveal.visible .stagger-2 { transition-delay:.2s; }
+    .reveal.visible .stagger-3 { transition-delay:.3s; }
+    .reveal.visible .stagger-4 { transition-delay:.4s; }
 
     :root {
       --bg: #0d1117;
@@ -67,6 +75,11 @@
 
     /* ── Hero ── */
     .hero { background: var(--hero-gradient); text-align: center; padding: 56px 24px 40px; position: relative; overflow: hidden; }
+    .hero::before { content:''; position:absolute; inset:0; background-image:
+      linear-gradient(rgba(88,166,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(88,166,255,0.04) 1px, transparent 1px);
+      background-size:48px 48px; pointer-events:none; animation:heroGrid 20s linear infinite; }
+    @keyframes heroGrid { to { background-position:48px 48px; } }
     .hero::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(88,166,255,0.3), transparent); }
     .hero h1 { font-size: 2.2rem; color: #fff; margin: 0 0 14px; line-height: 1.35; }
     .hero h1 .highlight { color: var(--accent); }
@@ -84,13 +97,19 @@
       .hero h1 { font-size: 1.55rem; }
       .hero .subtitle { font-size: 0.95rem; }
       .hero .cta-row { flex-direction: column; align-items: center; }
-      .hero .cta-primary, .hero .cta-secondary { width: 85%; text-align: center; }
+      .hero .cta-primary, .hero .cta-secondary { width: 85%; text-align: center; min-height:48px; display:flex; align-items:center; justify-content:center; }
     }
 
     /* ── Hero HUD Row ── */
     .hero-hud { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; }
     .hero-hud-card { background: rgba(22,27,34,0.85); border: 1px solid var(--border); border-radius: 10px; padding: 10px 16px; display: flex; align-items: center; gap: 8px; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); transition: border-color 0.3s, transform 0.2s; }
     .hero-hud-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .hero-hud-card { animation: hudFadeIn .6s ease both; }
+    .hero-hud-card:nth-child(1) { animation-delay:.15s; }
+    .hero-hud-card:nth-child(2) { animation-delay:.3s; }
+    .hero-hud-card:nth-child(3) { animation-delay:.45s; }
+    .hero-hud-card:nth-child(4) { animation-delay:.6s; }
+    @keyframes hudFadeIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
     .hero-hud-icon { font-size: 1.2rem; }
     .hero-hud-text { text-align: left; }
     .hero-hud-val { font-size: 1rem; font-weight: 800; color: #fff; }
@@ -101,7 +120,8 @@
     }
 
     /* ── Stats Bar ── */
-    .stats-bar { display: flex; justify-content: center; gap: 40px; padding: 24px 24px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+    .stats-bar { display: flex; justify-content: center; gap: 40px; padding: 24px 24px; border-bottom: 1px solid var(--border); flex-wrap: wrap; position:relative; }
+    .stats-bar::after { content:''; position:absolute; bottom:0; left:10%; right:10%; height:2px; background:linear-gradient(90deg,transparent,rgba(88,166,255,0.3),rgba(63,185,80,0.3),transparent); }
     .stat-item { text-align: center; transition: transform 0.3s ease; }
     .stat-item:hover { transform: scale(1.08); }
     .stat-num { font-size: 1.8rem; font-weight: 800; color: #fff; }
@@ -135,9 +155,10 @@
     .faq-section { padding: 50px 24px; max-width: 760px; margin: 0 auto; }
     .faq-section h2 { text-align: center; color: #fff; font-size: 1.5rem; margin: 0 0 30px; }
     .faq-item { border-bottom: 1px solid var(--border); padding: 16px 0; }
-    .faq-item summary { cursor: pointer; font-weight: 600; color: var(--text); font-size: 0.95rem; list-style: none; display: flex; align-items: center; gap: 8px; }
-    .faq-item summary::before { content: '+'; font-size: 1.2rem; color: #8957e5; font-weight: 700; flex-shrink: 0; width: 20px; }
-    .faq-item[open] summary::before { content: '\2212'; }
+    .faq-item summary { cursor: pointer; font-weight: 600; color: var(--text); font-size: 0.95rem; list-style: none; display: flex; align-items: center; gap: 8px; transition: color 0.2s; }
+    .faq-item summary:hover { color:#fff; }
+    .faq-item summary::before { content: '+'; font-size: 1.2rem; color: #8957e5; font-weight: 700; flex-shrink: 0; width: 20px; transition:transform .25s ease; }
+    .faq-item[open] summary::before { content: '\2212'; transform:rotate(180deg); }
     .faq-item .faq-answer { color: #8b949e; font-size: 0.9rem; line-height: 1.7; padding: 10px 0 4px 28px; }
 
     /* ── Footer ── */
@@ -151,7 +172,7 @@
 
     /* ── Mobile Sticky CTA ── */
     .mobile-sticky-cta { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 200; background: rgba(13,17,23,0.97); border-top: 1px solid var(--border); padding: 10px 16px; text-align: center; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-    .mobile-sticky-cta a { display: inline-block; background: var(--btn-bg); color: #fff; padding: 12px 32px; border-radius: 8px; font-weight: 700; font-size: 1rem; text-decoration: none; }
+    .mobile-sticky-cta a { display: inline-block; background: var(--btn-bg); color: #fff; padding: 14px 32px; border-radius: 8px; font-weight: 700; font-size: 1rem; text-decoration: none; min-height:48px; }
     .mobile-sticky-cta a:hover { background: var(--btn-hover); }
     .mobile-sticky-cta .close-sticky { position: absolute; top: 6px; right: 12px; background: none; border: none; color: #8b949e; font-size: 1.2rem; cursor: pointer; padding: 4px; }
     @media (max-width: 768px) { .mobile-sticky-cta.visible { display: block; } .site-footer { padding-bottom: 80px; } }
@@ -171,6 +192,21 @@
     /* ── Performance ── */
     .testimonial-section, .faq-section, .cta-banner { content-visibility: auto; contain-intrinsic-size: auto 500px; }
     #scrollProgress{position:fixed;top:0;left:0;width:0;height:3px;background:linear-gradient(90deg,var(--btn-bg,#238636),#58a6ff);z-index:9999;transition:width 60ms linear;pointer-events:none}
+
+    /* ── Reduced motion ── */
+    @media (prefers-reduced-motion:reduce) {
+      .reveal { transition:none !important; opacity:1 !important; transform:none !important; }
+      .hero-hud-card { animation:none !important; }
+      .hero::before { animation:none !important; }
+      #scrollProgress { transition:none !important; }
+    }
+
+    /* ── Focus visible ── */
+    a:focus-visible, button:focus-visible, summary:focus-visible { outline:2px solid var(--accent); outline-offset:2px; border-radius:4px; }
+
+    /* ── FAQ smooth toggle ── */
+    .faq-item .faq-answer { max-height:0; overflow:hidden; transition:max-height .3s ease, padding .3s ease; padding:0 0 0 28px; }
+    .faq-item[open] .faq-answer { max-height:500px; padding:10px 0 4px 28px; }
   </style>
   <script type="application/ld+json">
   {
@@ -217,6 +253,7 @@
   <link rel="stylesheet" href="shared/quest_platform.css">
 </head>
 <body>
+  <a class="skip-link" href="#hero">跳至主要內容</a>
   <div id="scrollProgress"></div>
   <div id="pageLoader" role="status" aria-live="polite"><div class="ld-ring"></div><div class="ld-text">載入中…</div></div>
 
@@ -240,7 +277,7 @@
   <!-- ══════════════════════════════════════════
        SECTION 1 — HERO
        ══════════════════════════════════════════ -->
-  <section class="hero" id="hero">
+  <section class="hero" id="hero" role="banner">
     <h1>把數學變成孩子<span class="highlight-gold">每天都想破關</span>的挑戰</h1>
     <p class="subtitle">
       專為國小五六年級設計的<strong>闖關式學習平台</strong>——
@@ -300,15 +337,15 @@
   <!-- ══════════════════════════════════════════
        SECTION 2 — 今日任務中心
        ══════════════════════════════════════════ -->
-  <section class="section-quest bg-gradient-quest reveal" id="quests">
+  <section class="section-quest bg-gradient-quest reveal" id="quests" aria-labelledby="questsTitle">
     <div class="section-quest-head">
-      <h2>&#x1F3AF; 今天先挑戰這幾關</h2>
+      <h2 id="questsTitle">&#x1F3AF; 今天先挑戰這幾關</h2>
       <p>不怕不知道要練什麼——每天都有任務等你來破關</p>
     </div>
     <div class="quest-grid">
 
       <!-- Quest 1: 暖身任務 -->
-      <div class="quest-card">
+      <div class="quest-card stagger-1">
         <div class="quest-header">
           <div class="quest-icon">&#x1F31F;</div>
           <div>
@@ -326,7 +363,7 @@
       </div>
 
       <!-- Quest 2: 弱點補強 -->
-      <div class="quest-card quest-weakness">
+      <div class="quest-card quest-weakness stagger-2">
         <div class="quest-header">
           <div class="quest-icon">&#x1F3AF;</div>
           <div>
@@ -344,7 +381,7 @@
       </div>
 
       <!-- Quest 3: 限時挑戰 -->
-      <div class="quest-card quest-timed">
+      <div class="quest-card quest-timed stagger-3">
         <div class="quest-header">
           <div class="quest-icon">&#x23F0;</div>
           <div>
@@ -362,7 +399,7 @@
       </div>
 
       <!-- Quest 4: 主線任務 -->
-      <div class="quest-card quest-main">
+      <div class="quest-card quest-main stagger-4">
         <div class="quest-header">
           <div class="quest-icon">&#x2694;&#xFE0F;</div>
           <div>
@@ -468,9 +505,9 @@
   <!-- ══════════════════════════════════════════
        SECTION 5 — 三大挑戰模式
        ══════════════════════════════════════════ -->
-  <section class="section-quest reveal" id="modes">
+  <section class="section-quest reveal" id="modes" aria-labelledby="modesTitle">
     <div class="section-quest-head">
-      <h2>&#x1F3AE; 選擇你的挑戰模式</h2>
+      <h2 id="modesTitle">&#x1F3AE; 選擇你的挑戰模式</h2>
       <p>三種方式開始，適合不同目標的孩子</p>
     </div>
     <div class="mode-grid">
@@ -704,8 +741,8 @@
   <!-- ══════════════════════════════════════════
        SECTION 8 — FAQ
        ══════════════════════════════════════════ -->
-  <section class="faq-section reveal" id="faq">
-    <h2>常見問題</h2>
+  <section class="faq-section reveal" id="faq" aria-labelledby="faqTitle">
+    <h2 id="faqTitle">常見問題</h2>
     <details class="faq-item">
       <summary>免費版可以用多久？有什麼限制？</summary>
       <div class="faq-answer">免費版沒有使用期限，可以永久使用所有基本練習模組。帝國闖關模式每天免費 10 題，升級後不限題數並解鎖完整 2900+ 題庫。</div>
