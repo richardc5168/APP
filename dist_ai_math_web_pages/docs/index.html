@@ -399,8 +399,12 @@
   }
   </script>
   <link rel="canonical" href="./">
+  <style>
+    #scrollProgress{position:fixed;top:0;left:0;width:0;height:3px;background:linear-gradient(90deg,var(--btn-bg,#238636),#58a6ff);z-index:9999;transition:width 60ms linear;pointer-events:none}
+  </style>
 </head>
 <body>
+  <div id="scrollProgress"></div>
   <div id="pageLoader" role="status" aria-live="polite"><div class="ld-ring"></div><div class="ld-text">載入中…</div></div>
 
   <!-- ── Global Nav ── -->
@@ -1482,6 +1486,23 @@
       try { localStorage.setItem(key, v); } catch(e){}
     }
     hero.setAttribute('data-variant', v);
+  })();
+  </script>
+  <script>
+  /* Scroll progress bar */
+  (function(){
+    var bar = document.getElementById('scrollProgress');
+    if (!bar) return;
+    var ticking = false;
+    window.addEventListener('scroll', function(){
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(function(){
+        var h = document.documentElement.scrollHeight - window.innerHeight;
+        bar.style.width = h > 0 ? (window.pageYOffset / h * 100) + '%' : '0%';
+        ticking = false;
+      });
+    });
   })();
   </script>
 </body>
