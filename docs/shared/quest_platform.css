@@ -377,6 +377,9 @@
 .dash-val.val-gold { color: #fbbf24; text-shadow: 0 0 12px rgba(251,191,36,0.25); }
 .dash-val.val-blue { color: #58a6ff; }
 .dash-val.val-purple { color: #a371f7; }
+.dash-card:hover .dash-val.val-green { text-shadow: 0 0 12px rgba(63,185,80,0.3); }
+.dash-card:hover .dash-val.val-blue { text-shadow: 0 0 12px rgba(88,166,255,0.3); }
+.dash-card:hover .dash-val.val-purple { text-shadow: 0 0 12px rgba(163,113,247,0.3); }
 .dash-lbl { font-size: 0.78rem; color: #8b949e; margin-top: 4px; }
 
 /* ── Section Dividers ── */
@@ -497,9 +500,9 @@
   font-size: 1.05rem;
   font-weight: 700;
   text-decoration: none;
-  transition: background 0.2s;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
 }
-.dual-cta .cta-child:hover { background: var(--btn-hover); }
+.dual-cta .cta-child:hover { background: var(--btn-hover); box-shadow: 0 4px 16px rgba(88,166,255,0.3); transform: translateY(-2px); }
 .dual-cta .cta-parent {
   background: transparent;
   color: #a371f7;
@@ -509,9 +512,9 @@
   font-weight: 600;
   text-decoration: none;
   border: 1px solid #a371f7;
-  transition: background 0.2s;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
 }
-.dual-cta .cta-parent:hover { background: rgba(163,113,247,0.1); }
+.dual-cta .cta-parent:hover { background: rgba(163,113,247,0.1); box-shadow: 0 4px 16px rgba(163,113,247,0.2); transform: translateY(-2px); }
 
 /* ── Task Center Specific ── */
 .tc-section {
