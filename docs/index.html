@@ -1006,6 +1006,40 @@
     </details>
   </section>
 
+  <!-- ── Email Subscribe ── -->
+  <section style="padding:44px 24px;max-width:560px;margin:0 auto">
+    <div style="background:linear-gradient(135deg,rgba(88,166,255,0.08),rgba(137,87,229,0.1));border:1px solid rgba(88,166,255,0.2);border-radius:14px;padding:32px 24px;text-align:center">
+      <div style="font-size:1.6rem;margin-bottom:6px">&#x1F4E7;</div>
+      <h2 style="color:#fff;font-size:1.2rem;margin:0 0 6px">免費學習資源 &amp; 優惠通知</h2>
+      <p style="color:#8b949e;font-size:0.88rem;margin:0 0 18px;line-height:1.6">訂閱即可收到<strong style="color:#c9d1d9">每週數學學習要點</strong>、新題型上線、限時優惠等最新消息。</p>
+      <form id="subscribeForm" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center" onsubmit="return handleSubscribe(event)">
+        <input id="subEmail" type="email" required placeholder="輸入 Email" style="flex:1 1 200px;padding:12px 14px;border-radius:8px;border:1px solid #30363d;background:#0d1117;color:#fff;font-size:0.95rem;outline:none;min-width:160px">
+        <button type="submit" style="background:#238636;color:#fff;border:none;padding:12px 24px;border-radius:8px;font-weight:700;font-size:0.95rem;cursor:pointer;white-space:nowrap">免費訂閱</button>
+      </form>
+      <p id="subMsg" style="display:none;color:#3fb950;font-size:0.85rem;margin:12px 0 0">&#x2705; 訂閱成功！感謝您的關注。</p>
+      <p style="color:#484f58;font-size:0.75rem;margin:12px 0 0">不會寄送垃圾信，隨時可取消訂閱</p>
+    </div>
+  </section>
+  <script>
+  function handleSubscribe(e){
+    e.preventDefault();
+    var email = document.getElementById('subEmail').value;
+    if (!email) return false;
+    /* Store locally + open mailto for backend-less operation */
+    var subs = [];
+    try { subs = JSON.parse(localStorage.getItem('aimath_subscriptions') || '[]'); } catch(x){}
+    subs.push({ email: email, ts: new Date().toISOString() });
+    localStorage.setItem('aimath_subscriptions', JSON.stringify(subs));
+    /* Send via mailto so owner gets the subscription */
+    var link = document.createElement('a');
+    link.href = 'mailto:learnotaiwan@gmail.com?subject=' + encodeURIComponent('AI數學訂閱：' + email) + '&body=' + encodeURIComponent('新訂閱: ' + email);
+    link.click();
+    document.getElementById('subscribeForm').style.display = 'none';
+    document.getElementById('subMsg').style.display = 'block';
+    return false;
+  }
+  </script>
+
   <!-- ── CTA Banner ── -->
   <section class="cta-banner">
     <h2>讓孩子今天就開始進步</h2>
