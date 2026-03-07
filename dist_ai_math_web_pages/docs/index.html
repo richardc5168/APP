@@ -375,10 +375,10 @@
   <link rel="canonical" href="./">
 </head>
 <body>
-  <div id="pageLoader"><div class="ld-ring"></div><div class="ld-text">載入中…</div></div>
+  <div id="pageLoader" role="status" aria-live="polite"><div class="ld-ring"></div><div class="ld-text">載入中…</div></div>
 
   <!-- ── Global Nav ── -->
-  <nav class="top-nav">
+  <nav class="top-nav" aria-label="主選單">
     <a class="brand" href="./">
       <img src="icons/icon-192.png" alt="AI 數學" width="28" height="28">
       AI 數學家教
@@ -409,16 +409,16 @@
   <!-- ── Trust Badges ── -->
   <div style="display:flex;justify-content:center;gap:20px;flex-wrap:wrap;padding:18px 16px;background:rgba(35,134,54,0.06);border-bottom:1px solid rgba(35,134,54,0.15)">
     <span style="display:flex;align-items:center;gap:6px;font-size:0.85rem;color:#3fb950;font-weight:600">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3fb950" stroke-width="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3fb950" stroke-width="2.5" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>
       4.9 &#9733; 家長評價</span>
     <span style="display:flex;align-items:center;gap:6px;font-size:0.85rem;color:#c9d1d9;font-weight:600">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#58a6ff" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#58a6ff" stroke-width="2.5" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
       零廣告零追蹤</span>
     <span style="display:flex;align-items:center;gap:6px;font-size:0.85rem;color:#c9d1d9;font-weight:600">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a371f7" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a371f7" stroke-width="2.5" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>
       教育部課綱對齊</span>
     <span style="display:flex;align-items:center;gap:6px;font-size:0.85rem;color:#c9d1d9;font-weight:600">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f0883e" stroke-width="2.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f0883e" stroke-width="2.5" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
       跨裝置可用</span>
   </div>
 
@@ -447,7 +447,7 @@
     <h2>30 秒看懂 AI 數學家教</h2>
     <p class="section-sub">實際操作畫面：出題 → AI 提示引導 → 答對闖關</p>
     <div class="demo-video-wrap" id="demoVideo" role="button" tabindex="0" aria-label="播放示範影片">
-      <svg class="demo-poster" viewBox="0 0 720 405" xmlns="http://www.w3.org/2000/svg">
+      <svg class="demo-poster" viewBox="0 0 720 405" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <rect width="720" height="405" fill="#161b22"/>
         <rect x="40" y="30" width="640" height="50" rx="8" fill="#21262d"/>
         <text x="360" y="62" text-anchor="middle" fill="#58a6ff" font-size="18" font-family="sans-serif">AI 數學家教 — 分數練習模式</text>
@@ -467,7 +467,7 @@
         <rect x="480" y="330" width="150" height="34" rx="6" fill="#58a6ff"/>
         <text x="555" y="352" text-anchor="middle" fill="#fff" font-size="14" font-family="sans-serif">下一題 →</text>
       </svg>
-      <div class="demo-play-btn"></div>
+      <div class="demo-play-btn" aria-hidden="true"></div>
     </div>
     <div class="demo-video-steps">
       <div class="step"><div class="step-icon">📝</div><div class="step-text">AI 即時出題</div></div>
@@ -520,22 +520,22 @@
     <h2 style="text-align:center;color:#fff;font-size:1.3rem;margin:0 0 8px;">🎯 不知道從哪裡開始？</h2>
     <p style="text-align:center;color:#8b949e;font-size:0.88rem;margin:0 0 20px;">選擇孩子的狀況，我們推薦最適合的練習路徑</p>
     <div id="pathPicker" style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
-      <button onclick="showPath('beginner')" style="background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:16px;cursor:pointer;text-align:left;color:var(--text);">
+      <button onclick="showPath('beginner')" aria-label="推薦路徑：剛開始學" style="background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:16px;cursor:pointer;text-align:left;color:var(--text);">
         <div style="font-size:1.3rem;margin-bottom:6px;">🌱</div>
         <div style="font-weight:700;color:#fff;font-size:0.95rem;">剛開始學</div>
         <div style="font-size:0.78rem;color:#8b949e;margin-top:4px;">數學有點弱，需要從基礎練起</div>
       </button>
-      <button onclick="showPath('review')" style="background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:16px;cursor:pointer;text-align:left;color:var(--text);">
+      <button onclick="showPath('review')" aria-label="推薦路徑：段考複習" style="background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:16px;cursor:pointer;text-align:left;color:var(--text);">
         <div style="font-size:1.3rem;margin-bottom:6px;">📖</div>
         <div style="font-weight:700;color:#fff;font-size:0.95rem;">段考複習</div>
         <div style="font-size:0.78rem;color:#8b949e;margin-top:4px;">快要考試了，需要快速複習</div>
       </button>
-      <button onclick="showPath('challenge')" style="background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:16px;cursor:pointer;text-align:left;color:var(--text);">
+      <button onclick="showPath('challenge')" aria-label="推薦路徑：想挑戰進階" style="background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:16px;cursor:pointer;text-align:left;color:var(--text);">
         <div style="font-size:1.3rem;margin-bottom:6px;">🏆</div>
         <div style="font-weight:700;color:#fff;font-size:0.95rem;">想挑戰進階</div>
         <div style="font-size:0.78rem;color:#8b949e;margin-top:4px;">基本功已有，想練更難的題目</div>
       </button>
-      <button onclick="showPath('fun')" style="background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:16px;cursor:pointer;text-align:left;color:var(--text);">
+      <button onclick="showPath('fun')" aria-label="推薦路徑：遊戲化學習" style="background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:16px;cursor:pointer;text-align:left;color:var(--text);">
         <div style="font-size:1.3rem;margin-bottom:6px;">🎮</div>
         <div style="font-weight:700;color:#fff;font-size:0.95rem;">遊戲化學習</div>
         <div style="font-size:0.78rem;color:#8b949e;margin-top:4px;">孩子不愛數學，想用闖關激發興趣</div>
@@ -1149,8 +1149,8 @@
       <div style="font-size:1.6rem;margin-bottom:6px">&#x1F4E7;</div>
       <h2 style="color:#fff;font-size:1.2rem;margin:0 0 6px">免費學習資源 &amp; 優惠通知</h2>
       <p style="color:#8b949e;font-size:0.88rem;margin:0 0 18px;line-height:1.6">訂閱即可收到<strong style="color:#c9d1d9">每週數學學習要點</strong>、新題型上線、限時優惠等最新消息。</p>
-      <form id="subscribeForm" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center" onsubmit="return handleSubscribe(event)">
-        <input id="subEmail" type="email" required placeholder="輸入 Email" style="flex:1 1 200px;padding:12px 14px;border-radius:8px;border:1px solid #30363d;background:#0d1117;color:#fff;font-size:0.95rem;outline:none;min-width:160px">
+      <form id="subscribeForm" aria-label="訂閱電子報" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center" onsubmit="return handleSubscribe(event)">
+        <input id="subEmail" type="email" required placeholder="輸入 Email" aria-label="電子信箱" style="flex:1 1 200px;padding:12px 14px;border-radius:8px;border:1px solid #30363d;background:#0d1117;color:#fff;font-size:0.95rem;outline:none;min-width:160px">
         <button type="submit" style="background:#238636;color:#fff;border:none;padding:12px 24px;border-radius:8px;font-weight:700;font-size:0.95rem;cursor:pointer;white-space:nowrap">免費訂閱</button>
       </form>
       <p id="subMsg" style="display:none;color:#3fb950;font-size:0.85rem;margin:12px 0 0">&#x2705; 訂閱成功！感謝您的關注。</p>
@@ -1202,8 +1202,8 @@
   <div style="text-align:center;padding:24px 24px 0;">
     <p style="color:#8b949e;font-size:0.85rem;margin:0 0 12px;">覺得不錯？推薦給其他家長</p>
     <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;">
-      <button onclick="window.open('https://social-plugins.line.me/lineit/share?url='+encodeURIComponent(location.href),'_blank','width=500,height=600')" style="background:#06C755;color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:0.9rem;font-weight:700;cursor:pointer;">LINE 分享</button>
-      <button onclick="window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),'_blank','width=600,height=400')" style="background:#1877F2;color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:0.9rem;font-weight:700;cursor:pointer;">Facebook</button>
+      <button onclick="window.open('https://social-plugins.line.me/lineit/share?url='+encodeURIComponent(location.href),'_blank','width=500,height=600')" aria-label="分享到 LINE（開新視窗）" style="background:#06C755;color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:0.9rem;font-weight:700;cursor:pointer;">LINE 分享</button>
+      <button onclick="window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),'_blank','width=600,height=400')" aria-label="分享到 Facebook（開新視窗）" style="background:#1877F2;color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:0.9rem;font-weight:700;cursor:pointer;">Facebook</button>
       <button id="copyLinkBtn" style="background:var(--card-bg);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:10px 20px;font-size:0.9rem;font-weight:700;cursor:pointer;">📋 複製連結</button>
     </div>
   </div>
@@ -1217,6 +1217,16 @@
       });
     }
   });
+  </script>
+  <script>
+  /* Demo video keyboard support */
+  (function(){
+    var dv = document.getElementById('demoVideo');
+    if (!dv) return;
+    function handleDemo() { dv.style.outline = '2px solid #58a6ff'; }
+    dv.addEventListener('click', handleDemo);
+    dv.addEventListener('keydown', function(e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleDemo(); } });
+  })();
   </script>
 
   <!-- ── Footer ── -->
@@ -1294,10 +1304,10 @@
     })();
   </script>
   <!-- Onboarding Welcome Modal -->
-  <div class="onboard-overlay" id="onboardModal">
+  <div class="onboard-overlay" id="onboardModal" role="dialog" aria-modal="true" aria-labelledby="onboardTitle">
     <div class="onboard-box">
       <button class="ob-close" onclick="closeOnboard()" aria-label="關閉">&times;</button>
-      <h3>👋 歡迎來到 AI 數學家教！</h3>
+      <h3 id="onboardTitle">👋 歡迎來到 AI 數學家教！</h3>
       <p>您想怎麼開始？</p>
       <div class="ob-options">
         <a class="ob-btn" href="interactive-g5-empire/" onclick="closeOnboard()">
