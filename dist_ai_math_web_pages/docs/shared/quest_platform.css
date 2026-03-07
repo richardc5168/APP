@@ -331,7 +331,8 @@
 .mode-card:hover .mode-icon { transform: scale(1.15) rotate(-5deg); filter: drop-shadow(0 4px 8px rgba(88,166,255,0.2)); }
 .mode-title { color: #fff; font-size: 1.3rem; font-weight: 800; margin: 0 0 8px; }
 .mode-who { color: var(--accent); font-size: 0.82rem; font-weight: 600; margin: 0 0 10px; }
-.mode-desc { color: #8b949e; font-size: 0.88rem; margin: 0 0 20px; line-height: 1.5; }
+.mode-desc { color: #8b949e; font-size: 0.88rem; margin: 0 0 20px; line-height: 1.5; transition: color 0.3s ease; }
+.mode-card:hover .mode-desc { color: #c9d1d9; }
 .mode-tags { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin-bottom: 18px; }
 .mode-tag {
   font-size: 0.72rem;
@@ -653,7 +654,9 @@
   font-size: 1.1rem;
   margin-bottom: 10px;
   box-shadow: 0 0 12px rgba(88,166,255,0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
+.onboard-step:hover .onboard-step-num { transform: scale(1.12); box-shadow: 0 0 18px rgba(88,166,255,0.3); }
 .onboard-step h4 { color: #fff; font-size: 0.95rem; margin: 0 0 6px; }
 .onboard-step p { color: #8b949e; font-size: 0.82rem; margin: 0; }
 
