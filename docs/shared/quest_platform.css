@@ -93,7 +93,9 @@
   justify-content: center;
   background: rgba(88,166,255,0.08);
   border-radius: 10px;
+  transition: transform 0.3s ease;
 }
+.quest-card:hover .quest-icon { transform: scale(1.1); }
 .quest-card.quest-main .quest-icon { background: rgba(251,191,36,0.1); }
 .quest-card.quest-timed .quest-icon { background: rgba(248,81,73,0.1); }
 .quest-card.quest-weakness .quest-icon { background: rgba(163,113,247,0.1); }
@@ -224,6 +226,7 @@
 .benefit-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 6px 24px rgba(88,166,255,0.1);
+  border-color: var(--accent);
 }
 .benefit-icon { font-size: 2.2rem; margin-bottom: 14px; filter: drop-shadow(0 2px 6px rgba(88,166,255,0.2)); }
 .benefit-title { color: #fff; font-size: 1.05rem; font-weight: 700; margin: 0 0 8px; }
@@ -295,7 +298,8 @@
 .mode-card.mode-sprint::before { background: linear-gradient(90deg, #f85149, #fb923c); }
 .mode-card.mode-topic::before { background: linear-gradient(90deg, #58a6ff, #a371f7); }
 
-.mode-icon { font-size: 2.8rem; margin-bottom: 12px; }
+.mode-icon { font-size: 2.8rem; margin-bottom: 12px; transition: transform 0.3s ease; }
+.mode-card:hover .mode-icon { transform: scale(1.15) rotate(-5deg); }
 .mode-title { color: #fff; font-size: 1.3rem; font-weight: 800; margin: 0 0 8px; }
 .mode-who { color: var(--accent); font-size: 0.82rem; font-weight: 600; margin: 0 0 10px; }
 .mode-desc { color: #8b949e; font-size: 0.88rem; margin: 0 0 20px; line-height: 1.5; }
@@ -384,14 +388,17 @@
 .bg-gradient-quest {
   background: linear-gradient(180deg, rgba(88,166,255,0.05) 0%, transparent 100%);
   border-top: 1px solid rgba(88,166,255,0.15);
+  border-bottom: 1px solid rgba(88,166,255,0.08);
 }
 .bg-gradient-parent {
   background: linear-gradient(180deg, rgba(163,113,247,0.06) 0%, transparent 100%);
   border-top: 1px solid rgba(163,113,247,0.15);
+  border-bottom: 1px solid rgba(163,113,247,0.08);
 }
 .bg-gradient-growth {
   background: linear-gradient(180deg, rgba(63,185,80,0.05) 0%, transparent 100%);
   border-top: 1px solid rgba(63,185,80,0.15);
+  border-bottom: 1px solid rgba(63,185,80,0.08);
 }
 
 /* ── Progress States ── */
@@ -547,6 +554,7 @@
   font-weight: 800;
   font-size: 1.1rem;
   margin-bottom: 10px;
+  box-shadow: 0 0 12px rgba(88,166,255,0.15);
 }
 .onboard-step h4 { color: #fff; font-size: 0.95rem; margin: 0 0 6px; }
 .onboard-step p { color: #8b949e; font-size: 0.82rem; margin: 0; }
