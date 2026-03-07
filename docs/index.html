@@ -1084,6 +1084,27 @@
     </div>
   </section>
 
+  <!-- ── Social Share ── -->
+  <div style="text-align:center;padding:24px 24px 0;">
+    <p style="color:#8b949e;font-size:0.85rem;margin:0 0 12px;">覺得不錯？推薦給其他家長</p>
+    <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;">
+      <button onclick="window.open('https://social-plugins.line.me/lineit/share?url='+encodeURIComponent(location.href),'_blank','width=500,height=600')" style="background:#06C755;color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:0.9rem;font-weight:700;cursor:pointer;">LINE 分享</button>
+      <button onclick="window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(location.href),'_blank','width=600,height=400')" style="background:#1877F2;color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:0.9rem;font-weight:700;cursor:pointer;">Facebook</button>
+      <button id="copyLinkBtn" style="background:var(--card-bg);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:10px 20px;font-size:0.9rem;font-weight:700;cursor:pointer;">📋 複製連結</button>
+    </div>
+  </div>
+  <script>
+  document.getElementById('copyLinkBtn').addEventListener('click', function(){
+    var btn = this;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(location.href).then(function(){
+        btn.textContent = '\u2705 \u5df2\u8907\u88fd';
+        setTimeout(function(){ btn.textContent = '\uD83D\uDCCB \u8907\u88fd\u9023\u7d50'; }, 2000);
+      });
+    }
+  });
+  </script>
+
   <!-- ── Footer ── -->
   <footer class="site-footer">
     <div class="footer-links">
