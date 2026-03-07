@@ -539,6 +539,30 @@
 })();
 </script>
 <script>(function(){if(!('IntersectionObserver' in window)){var ps=document.querySelectorAll('.plan');for(var i=0;i<ps.length;i++)ps[i].className+=' visible';return}var io=new IntersectionObserver(function(es){for(var i=0;i<es.length;i++){if(es[i].isIntersecting){var el=es[i].target;var idx=parseInt(el.getAttribute('data-idx')||'0',10);setTimeout(function(e){e.className+=' visible'},idx*150,el);io.unobserve(el)}}},{threshold:0.15});var plans=document.querySelectorAll('.plan');for(var i=0;i<plans.length;i++){plans[i].setAttribute('data-idx',i);io.observe(plans[i])}})()</script>
+<script>
+(function(){
+  var seals = document.querySelectorAll('.trust-seal');
+  if (!seals.length) return;
+  if (!('IntersectionObserver' in window)) {
+    for (var i=0;i<seals.length;i++) seals[i].className+=' visible';
+    return;
+  }
+  var io = new IntersectionObserver(function(es){
+    for(var i=0;i<es.length;i++){
+      if(es[i].isIntersecting){
+        var el=es[i].target;
+        var idx=parseInt(el.getAttribute('data-seal-idx')||'0',10);
+        setTimeout(function(e){e.className+=' visible'},idx*120,el);
+        io.unobserve(el);
+      }
+    }
+  },{threshold:0.2});
+  for(var i=0;i<seals.length;i++){
+    seals[i].setAttribute('data-seal-idx',i);
+    io.observe(seals[i]);
+  }
+})();
+</script>
 <script src="../shared/skip_to_content.js"></script>
 </body>
 </html>
