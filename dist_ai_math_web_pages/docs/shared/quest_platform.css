@@ -271,7 +271,7 @@
   border-radius: 12px 12px 0 0;
 }
 .parent-icon { font-size: 1.6rem; margin-bottom: 8px; transition: transform 0.3s ease; }
-.parent-card:hover .parent-icon { transform: scale(1.15); }
+.parent-card:hover .parent-icon { transform: scale(1.15) rotate(-8deg); }
 .parent-title { color: #fff; font-size: 0.98rem; font-weight: 700; margin: 0 0 6px; }
 .parent-desc { color: #8b949e; font-size: 0.82rem; margin: 0; line-height: 1.5; }
 
@@ -334,6 +334,10 @@
   color: #fff;
   transition: all 0.2s;
   min-height: 44px;
+}
+.mode-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(88,166,255,0.25);
 }
 .mode-empire .mode-cta { background: linear-gradient(135deg, #238636, #2ea043); }
 .mode-empire .mode-cta:hover { background: linear-gradient(135deg, #2ea043, #3fb950); }
@@ -452,6 +456,20 @@
   animation: statusShimmer 3s ease-in-out infinite;
 }
 @keyframes statusShimmer { 0%{left:-100%} 50%{left:100%} 100%{left:100%} }
+
+/* ── Popular Badge Shimmer ── */
+.popular-badge {
+  position: relative;
+  overflow: hidden;
+}
+.popular-badge::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%; width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+  animation: statusShimmer 3s ease-in-out infinite;
+}
+
 .quest-status-active {
   background: rgba(251,191,36,0.12);
   color: #fbbf24;
