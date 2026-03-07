@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>找不到頁面 — AI 數學家教</title>
+  <meta name="robots" content="noindex">
+  <style>
+    :root { --bg:#0d1117; --card-bg:#161b22; --border:#30363d; --accent:#58a6ff; --text:#c9d1d9; }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--text); min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px; }
+    .err-icon { font-size:5rem; margin-bottom:16px; }
+    h1 { font-size:2rem; color:#fff; margin-bottom:8px; }
+    .sub { color:#8b949e; font-size:1rem; margin-bottom:32px; }
+    .home-btn { display:inline-block; padding:12px 32px; background:var(--accent); color:#fff; text-decoration:none; border-radius:8px; font-weight:600; font-size:1rem; transition:opacity .2s; }
+    .home-btn:hover { opacity:.85; }
+    .suggest { margin-top:40px; max-width:480px; width:100%; }
+    .suggest h2 { color:#fff; font-size:1.1rem; margin-bottom:12px; text-align:center; }
+    .suggest-list { list-style:none; display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    .suggest-list a { display:block; padding:10px 14px; background:var(--card-bg); border:1px solid var(--border); border-radius:8px; color:var(--accent); text-decoration:none; font-size:.9rem; text-align:center; transition:border-color .2s, transform .2s; }
+    .suggest-list a:hover { border-color:var(--accent); transform:translateY(-2px); }
+    @media(max-width:480px){ .suggest-list { grid-template-columns:1fr; } h1 { font-size:1.5rem; } }
+  </style>
+</head>
+<body>
+  <div class="err-icon">🔍</div>
+  <h1>找不到頁面</h1>
+  <p class="sub">這個網址可能已經移動或不存在</p>
+  <a class="home-btn" href="./">回首頁</a>
+  <div class="suggest">
+    <h2>熱門練習模組</h2>
+    <ul class="suggest-list">
+      <li><a href="fraction-g5/">分數四則運算</a></li>
+      <li><a href="decimal-unit4/">小數計算</a></li>
+      <li><a href="volume-g5/">體積與容積</a></li>
+      <li><a href="ratio-percent-g5/">比率與百分率</a></li>
+      <li><a href="fraction-word-g5/">分數應用題</a></li>
+      <li><a href="life-applications-g5/">生活應用題</a></li>
+    </ul>
+  </div>
+</body>
+</html>
