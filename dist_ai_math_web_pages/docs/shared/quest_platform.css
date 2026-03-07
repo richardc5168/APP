@@ -493,7 +493,17 @@
   border-radius: 4px;
   background: linear-gradient(90deg, var(--btn-bg), #3fb950);
   transition: width 0.5s ease;
+  position: relative;
+  overflow: hidden;
 }
+.tc-progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -50%; width: 50%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  animation: progressShimmer 2s ease-in-out infinite;
+}
+@keyframes progressShimmer { to { left: 150%; } }
 
 /* ── Achievement Badges ── */
 .badge-row {

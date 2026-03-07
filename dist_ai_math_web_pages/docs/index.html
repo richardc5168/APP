@@ -89,8 +89,10 @@
       linear-gradient(90deg, rgba(88,166,255,0.04) 1px, transparent 1px);
       background-size:48px 48px; pointer-events:none; animation:heroGrid 20s linear infinite; }
     @keyframes heroGrid { to { background-position:48px 48px; } }
+    @keyframes heroRadialPulse { 0%,100%{opacity:0.3;transform:scale(1)} 50%{opacity:0.6;transform:scale(1.1)} }
     @keyframes liveDot { 0%,100%{opacity:1} 50%{opacity:0.3} }
     .hero::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(88,166,255,0.3), transparent); }
+    .hero-radial-pulse { position:absolute; top:40%; left:50%; width:300px; height:300px; transform:translate(-50%,-50%); border-radius:50%; background:radial-gradient(circle,rgba(88,166,255,0.06) 0%,transparent 70%); pointer-events:none; animation:heroRadialPulse 6s ease-in-out infinite; }
     .hero h1 { font-size: 2.2rem; color: #fff; margin: 0 0 14px; line-height: 1.35; position:relative; z-index:1; }
     .hero h1 .highlight { color: var(--accent); }
     .hero h1 .highlight-gold { color: #fbbf24; text-shadow:0 0 20px rgba(251,191,36,0.3); }
@@ -150,7 +152,8 @@
     .testimonial-section { background: var(--card-bg); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 50px 24px; }
     .testimonial-section h2 { text-align: center; color: #fff; font-size: 1.5rem; margin: 0 0 30px; }
     .testimonial-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; max-width: 960px; margin: 0 auto; }
-    .testimonial-card { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s; }
+    .testimonial-card { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s; position:relative; overflow:hidden; }
+    .testimonial-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,#fbbf24,#58a6ff,#a371f7); border-radius:12px 12px 0 0; }
     .testimonial-card .stars { color: #fbbf24; font-size: 1rem; margin-bottom: 8px; letter-spacing: 2px; }
     .testimonial-card .quote { color: var(--text); font-size: 0.9rem; line-height: 1.6; margin-bottom: 12px; font-style: italic; }
     .testimonial-card .author-row { display: flex; align-items: center; gap: 10px; }
@@ -324,6 +327,7 @@
        SECTION 1 — HERO
        ══════════════════════════════════════════ -->
   <section class="hero" id="hero" role="banner">
+    <div class="hero-radial-pulse" aria-hidden="true"></div>
     <h1>把數學變成孩子<span class="highlight-gold">每天都想破關</span>的挑戰</h1>
     <p class="subtitle">
       專為國小五六年級設計的<strong>闖關式學習平台</strong>——
