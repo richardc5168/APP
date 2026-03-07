@@ -177,12 +177,14 @@
     .faq-item summary:hover { color:#fff; }
     .faq-item summary::before { content: '+'; font-size: 1.2rem; color: #8957e5; font-weight: 700; flex-shrink: 0; width: 20px; transition:transform .25s ease; }
     .faq-item[open] summary::before { content: '\2212'; transform:rotate(180deg); }
+    .faq-item[open] { border-left: 3px solid #8957e5; padding-left: 13px; }
     .faq-item .faq-answer { color: #8b949e; font-size: 0.9rem; line-height: 1.7; padding: 10px 0 4px 28px; }
 
     /* ── Footer ── */
     .site-footer { border-top: 1px solid var(--border); padding: 30px 24px; text-align: center; }
     .footer-grid { max-width:720px; margin:0 auto 24px; display:grid; grid-template-columns:repeat(3,1fr); gap:24px; text-align:left; }
     .footer-copy { color: #484f58; font-size: 0.78rem; }
+    .site-footer a:hover { text-decoration: underline; text-underline-offset: 3px; }
     @media (max-width: 640px) {
       .footer-grid { grid-template-columns:1fr 1fr; gap:20px 16px; }
     }
@@ -602,7 +604,7 @@
     <div class="mode-grid">
 
       <!-- Mode 1: 帝國闖關 -->
-      <div class="mode-card mode-empire">
+      <div class="mode-card mode-empire stagger-1">
         <div class="mode-icon">&#x1F3F0;</div>
         <h3 class="mode-title">帝國闖關</h3>
         <p class="mode-who">適合想先玩、想有遊戲感的孩子</p>
@@ -616,7 +618,7 @@
       </div>
 
       <!-- Mode 2: 考前衝刺 -->
-      <div class="mode-card mode-sprint">
+      <div class="mode-card mode-sprint stagger-2">
         <div class="mode-icon">&#x1F3AF;</div>
         <h3 class="mode-title">考前衝刺</h3>
         <p class="mode-who">適合快要考試、想精準補弱點的孩子</p>
@@ -630,7 +632,7 @@
       </div>
 
       <!-- Mode 3: 主題精修 -->
-      <div class="mode-card mode-topic">
+      <div class="mode-card mode-topic stagger-3">
         <div class="mode-icon">&#x1F4DA;</div>
         <h3 class="mode-title">主題精修</h3>
         <p class="mode-who">適合想指定單元深練的孩子</p>
