@@ -176,7 +176,7 @@
       <span id="lblAnnual" onclick="setBilling(true)">年繳 <span class="save-badge">省 20%</span></span>
     </div>
 
-    <div class="pricing-grid">
+    <div id="pricing-cards" class="pricing-grid">
 
       <!-- Free -->
       <div class="plan">
@@ -254,6 +254,11 @@
           <tr><td>優先取得新題庫</td><td class="no">&#10007;</td><td class="highlight-col no">&#10007;</td><td class="yes">&#10003;</td></tr>
         </tbody>
       </table>
+      <div style="display:flex;justify-content:center;gap:16px;margin-top:20px;flex-wrap:wrap;">
+        <a href="#pricing-cards" style="display:inline-block;background:transparent;color:var(--text);border:1px solid var(--border);padding:10px 24px;border-radius:8px;font-weight:700;text-decoration:none;font-size:0.9rem;">免費開始</a>
+        <a href="#pricing-cards" style="display:inline-block;background:var(--accent);color:#fff;padding:10px 24px;border-radius:8px;font-weight:700;text-decoration:none;font-size:0.9rem;">選擇標準版</a>
+        <a href="#pricing-cards" style="display:inline-block;background:linear-gradient(135deg,#8957e5,#a371f7);color:#fff;padding:10px 24px;border-radius:8px;font-weight:700;text-decoration:none;font-size:0.9rem;">選擇進階版</a>
+      </div>
     </div>
 
     <!-- ── Testimonial Snippet ── -->
