@@ -35,7 +35,26 @@ body{font-family:'Segoe UI','Microsoft JhengHei',sans-serif;background:#0d1117;c
 .time-filter{display:flex;gap:6px;margin-bottom:16px}
 .time-filter button{background:#21262d;border:1px solid #30363d;color:#c9d1d9;padding:4px 12px;border-radius:4px;cursor:pointer;font-size:.8rem}
 .time-filter button.active{background:#388bfd;border-color:#388bfd;color:#fff}
-@media(max-width:600px){.kpi-grid{grid-template-columns:1fr 1fr}.kpi-card .value{font-size:1.3rem}}
+.ab-test-card{background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:16px;margin-bottom:12px}
+.ab-test-card h3{font-size:.95rem;color:#e6edf3;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.ab-test-card .badge{font-size:.7rem;padding:2px 8px;border-radius:10px;font-weight:600}
+.ab-test-card .badge.active{background:#238636;color:#fff}
+.ab-test-card .badge.inactive{background:#6e7681;color:#c9d1d9}
+.ab-variant-row{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid #21262d}
+.ab-variant-row:last-child{border-bottom:none}
+.ab-variant-label{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0}
+.ab-variant-label.a{background:#388bfd;color:#fff}
+.ab-variant-label.b{background:#a371f7;color:#fff}
+.ab-variant-desc{flex:1;font-size:.85rem;color:#8b949e}
+.ab-variant-stats{display:flex;gap:16px;font-size:.85rem}
+.ab-variant-stats .stat{text-align:center}
+.ab-variant-stats .stat .num{font-weight:700;color:#e6edf3;font-size:1rem}
+.ab-variant-stats .stat .lbl{color:#8b949e;font-size:.7rem}
+.ab-winner{color:#3fb950;font-weight:700;font-size:.75rem;margin-left:4px}
+.ab-actions{margin-top:8px;text-align:right}
+.ab-actions button{background:#21262d;border:1px solid #30363d;color:#c9d1d9;padding:3px 10px;border-radius:4px;cursor:pointer;font-size:.75rem}
+.ab-actions button:hover{border-color:#f85149;color:#f85149}
+@media(max-width:600px){.kpi-grid{grid-template-columns:1fr 1fr}.kpi-card .value{font-size:1.3rem}.ab-variant-row{flex-wrap:wrap}}
 </style>
 </head>
 <body>
@@ -76,10 +95,16 @@ body{font-family:'Segoe UI','Microsoft JhengHei',sans-serif;background:#0d1117;c
       <tbody id="recentEvents"></tbody>
     </table>
   </div>
+
+  <div class="section">
+    <h2>🧪 A/B 測試儀表板</h2>
+    <div id="abDashboard"></div>
+  </div>
 </div>
 
 <script src="../shared/analytics.js"></script>
 <script src="../shared/subscription.js"></script>
+<script src="../shared/abtest.js"></script>
 <script>
 (function(){
   'use strict';
@@ -107,6 +132,7 @@ body{font-family:'Segoe UI','Microsoft JhengHei',sans-serif;background:#0d1117;c
     renderFunnel(all);
     renderEventDist(events);
     renderRecent(events);
+    renderABDashboard(events);
   }
 
   function renderKPIs(events, all){
@@ -188,6 +214,88 @@ body{font-family:'Segoe UI','Microsoft JhengHei',sans-serif;background:#0d1117;c
       return '<tr><td>'+time+'</td><td>'+e.event+'</td><td>'+(e.user_id||'-')+'</td><td>'+page+'</td></tr>';
     }).join('') || '<tr><td colspan="4" class="empty-state">尚無事件資料</td></tr>';
   }
+
+  function renderABDashboard(events){
+    var container = document.getElementById('abDashboard');
+    if (!window.AIMathABTest) {
+      container.innerHTML = '<div class="empty-state">A/B 測試模組未載入</div>';
+      return;
+    }
+
+    var tests = window.AIMathABTest.getTests();
+    var testIds = Object.keys(tests);
+    if (testIds.length === 0) {
+      container.innerHTML = '<div class="empty-state">尚無測試設定</div>';
+      return;
+    }
+
+    // Count assignments and conversions from events
+    var assigns = events.filter(function(e){ return e.event === 'ab_assign'; });
+    var conversions = events.filter(function(e){ return e.event === 'ab_conversion'; });
+
+    container.innerHTML = testIds.map(function(testId){
+      var test = tests[testId];
+      var badgeClass = test.active ? 'active' : 'inactive';
+      var badgeText = test.active ? '進行中' : '已停用';
+
+      var variantKeys = Object.keys(test.variants);
+      var rows = variantKeys.map(function(v){
+        var assignCount = assigns.filter(function(e){ return e.test_id === testId && e.variant === v; }).length;
+        var convCount = conversions.filter(function(e){ return e.test_id === testId && e.variant === v; }).length;
+        var convRate = assignCount > 0 ? Math.round(convCount / assignCount * 100) : 0;
+        var config = test.variants[v];
+        var desc = config.desc || '';
+
+        return '<div class="ab-variant-row">'
+          + '<div class="ab-variant-label ' + v.toLowerCase() + '">' + v + '</div>'
+          + '<div class="ab-variant-desc">' + desc + '</div>'
+          + '<div class="ab-variant-stats">'
+          + '<div class="stat"><div class="num">' + assignCount + '</div><div class="lbl">分配</div></div>'
+          + '<div class="stat"><div class="num">' + convCount + '</div><div class="lbl">轉換</div></div>'
+          + '<div class="stat"><div class="num">' + convRate + '%</div><div class="lbl">轉換率</div></div>'
+          + '</div></div>';
+      });
+
+      // Determine winner
+      var statsA = { assign: 0, conv: 0 };
+      var statsB = { assign: 0, conv: 0 };
+      assigns.forEach(function(e){
+        if (e.test_id !== testId) return;
+        if (e.variant === 'A') statsA.assign++;
+        else if (e.variant === 'B') statsB.assign++;
+      });
+      conversions.forEach(function(e){
+        if (e.test_id !== testId) return;
+        if (e.variant === 'A') statsA.conv++;
+        else if (e.variant === 'B') statsB.conv++;
+      });
+      var rateA = statsA.assign > 0 ? statsA.conv / statsA.assign : 0;
+      var rateB = statsB.assign > 0 ? statsB.conv / statsB.assign : 0;
+      var minSample = 10;
+      var winnerHtml = '';
+      if (statsA.assign >= minSample && statsB.assign >= minSample) {
+        if (rateA > rateB) winnerHtml = '<span class="ab-winner">⬆ A 領先</span>';
+        else if (rateB > rateA) winnerHtml = '<span class="ab-winner">⬆ B 領先</span>';
+        else winnerHtml = '<span class="ab-winner">= 持平</span>';
+      } else {
+        winnerHtml = '<span style="color:#8b949e;font-size:.75rem;margin-left:4px">樣本不足（需≥' + minSample + '）</span>';
+      }
+
+      return '<div class="ab-test-card">'
+        + '<h3>' + test.name + ' <span class="badge ' + badgeClass + '">' + badgeText + '</span>' + winnerHtml + '</h3>'
+        + rows.join('')
+        + '<div class="ab-actions"><button onclick="resetABTest(\'' + testId + '\')">重設此測試</button></div>'
+        + '</div>';
+    }).join('');
+  }
+
+  function resetABTest(testId){
+    if (window.AIMathABTest) {
+      window.AIMathABTest.resetTest(testId);
+      render();
+    }
+  }
+  window.resetABTest = resetABTest;
 
   function refreshData(){render()}
   window.refreshData = refreshData;
