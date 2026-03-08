@@ -192,7 +192,7 @@
           <li>家長週報（本機版）</li>
           <li>離線可用（PWA）</li>
         </ul>
-        <a href="../exam-sprint/" class="btn btn-outline">免費開始</a>
+        <a href="../exam-sprint/" class="btn btn-outline" onclick="trackPricingClick('free')">免費開始</a>
       </div>
 
       <!-- Standard -->
@@ -209,12 +209,12 @@
           <li>遠端家長報告（手機查看）</li>
           <li>每日任務 + 學習節奏建議</li>
         </ul>
-        <a href="../commercial-pack1-fraction-sprint/" class="btn">開始試用</a>
+        <button class="btn" onclick="handleCheckout('standard')">🎁 免費試用 7 天</button>
       </div>
 
       <!-- Premium -->
       <div class="plan">
-        <h2>進階版</h2>
+        <h2>家庭版</h2>
         <div class="price" id="pricePrem">NT$499 <span class="unit">/ 月</span></div>
         <p class="desc">全功能 + 核心必殺技，衝刺段考/競試首選</p>
         <ul>
@@ -226,7 +226,7 @@
           <li>優先取得新題庫更新</li>
           <li>專屬學習進度追蹤</li>
         </ul>
-        <a href="../commercial-pack1-fraction-sprint/" class="btn">開始試用</a>
+        <button class="btn" onclick="handleCheckout('family')">🎁 免費試用 7 天</button>
       </div>
     </div>
 
@@ -445,8 +445,103 @@
     if (bar) io.observe(bar);
   })();
   </script>
+<script src="../shared/analytics.js"></script>
+<script src="../shared/subscription.js"></script>
 <script src="../shared/breadcrumb_jsonld.js"></script>
 <script src="../shared/cookie_consent.js"></script>
 <script src="../shared/skip_to_content.js"></script>
+
+<!-- Checkout Modal -->
+<div id="checkoutModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:rgba(0,0,0,.7);align-items:center;justify-content:center;">
+  <div style="background:#161b22;border:1px solid #30363d;border-radius:16px;padding:32px;max-width:420px;width:90%;text-align:center;">
+    <div style="font-size:2rem;margin-bottom:8px;">🎉</div>
+    <h3 id="checkoutTitle" style="color:#fff;margin:0 0 8px;">開始免費試用</h3>
+    <p id="checkoutDesc" style="color:#8b949e;font-size:.9rem;margin:0 0 20px;">7 天完整功能免費體驗，不需信用卡</p>
+    <div id="checkoutPlanInfo" style="background:#0d1117;border:1px solid #30363d;border-radius:10px;padding:16px;margin-bottom:20px;text-align:left;font-size:.88rem;color:#c9d1d9;"></div>
+    <div id="checkoutActions" style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+      <button id="btnConfirmTrial" onclick="confirmTrial()" style="background:linear-gradient(135deg,#238636,#2ea043);color:#fff;border:none;padding:12px 28px;border-radius:8px;font-weight:700;font-size:.95rem;cursor:pointer;">✅ 立即開始試用</button>
+      <button onclick="closeCheckout()" style="background:transparent;border:1px solid #30363d;color:#8b949e;padding:12px 20px;border-radius:8px;font-weight:600;font-size:.9rem;cursor:pointer;">取消</button>
+    </div>
+    <div id="checkoutSuccess" style="display:none;margin-top:16px;">
+      <div style="color:#3fb950;font-size:1.1rem;font-weight:700;margin-bottom:8px;">✅ 試用已開通！</div>
+      <p style="color:#c9d1d9;font-size:.88rem;margin:0 0 16px;">所有付費功能已解鎖，有效期 7 天</p>
+      <a href="../" style="display:inline-block;background:var(--accent);color:#fff;padding:10px 24px;border-radius:8px;font-weight:700;text-decoration:none;font-size:.9rem;">🏠 回首頁開始練習</a>
+    </div>
+  </div>
+</div>
+
+<!-- Subscription Status Banner -->
+<div id="subStatusBanner" style="display:none;position:fixed;top:60px;left:50%;transform:translateX(-50%);z-index:9998;background:#161b22;border:1px solid #3fb950;border-radius:10px;padding:10px 20px;font-size:.85rem;color:#c9d1d9;box-shadow:0 4px 12px rgba(0,0,0,.5);"></div>
+
+<script>
+var _checkoutPlan = 'standard';
+
+function trackPricingClick(plan){
+  if (window.AIMathAnalytics) window.AIMathAnalytics.track('upgrade_click', { plan: plan, source: 'pricing_page' });
+}
+
+function handleCheckout(plan){
+  _checkoutPlan = plan;
+  trackPricingClick(plan);
+
+  var sub = window.AIMathSubscription ? window.AIMathSubscription.getPlanInfo() : null;
+  if (sub && (sub.plan_status === 'paid_active' || sub.plan_status === 'trial')){
+    alert('您已經是' + sub.plan_name + '用戶！');
+    return;
+  }
+
+  var planInfo = window.AIMathSubscription ? window.AIMathSubscription.PLANS[plan] : null;
+  var name = planInfo ? planInfo.name : plan;
+  var price = planInfo ? planInfo.price : 0;
+
+  document.getElementById('checkoutTitle').textContent = name + ' — 免費試用 7 天';
+  document.getElementById('checkoutDesc').textContent = '7 天內完整體驗所有付費功能，無需信用卡';
+  document.getElementById('checkoutPlanInfo').innerHTML =
+    '<div style="margin-bottom:6px;"><strong style="color:#fff;">方案：</strong>' + name + '</div>' +
+    '<div style="margin-bottom:6px;"><strong style="color:#fff;">試用期：</strong>7 天免費</div>' +
+    '<div style="margin-bottom:6px;"><strong style="color:#fff;">試用後：</strong>NT$' + price + '/月</div>' +
+    '<div style="color:#3fb950;font-size:.82rem;">🛡️ 試用期間可隨時取消，不會收費</div>';
+
+  document.getElementById('btnConfirmTrial').style.display = '';
+  document.getElementById('checkoutSuccess').style.display = 'none';
+  document.getElementById('checkoutModal').style.display = 'flex';
+}
+
+function confirmTrial(){
+  if (window.AIMathSubscription){
+    window.AIMathSubscription.startTrial(_checkoutPlan);
+  }
+  document.getElementById('btnConfirmTrial').style.display = 'none';
+  document.getElementById('checkoutSuccess').style.display = 'block';
+}
+
+function closeCheckout(){
+  document.getElementById('checkoutModal').style.display = 'none';
+}
+
+document.getElementById('checkoutModal').addEventListener('click', function(e){
+  if (e.target === this) closeCheckout();
+});
+
+// Track pricing page view
+if (window.AIMathAnalytics) window.AIMathAnalytics.track('pricing_view', {});
+
+// Show subscription status if applicable
+(function(){
+  if (!window.AIMathSubscription) return;
+  var info = window.AIMathSubscription.getPlanInfo();
+  if (info.plan_status === 'free') return;
+  var banner = document.getElementById('subStatusBanner');
+  var msgs = {
+    trial: '🎁 試用中：' + info.plan_name + '（剩餘 ' + info.trial_remaining_days + ' 天）',
+    paid_active: '✅ ' + info.plan_name + '（有效至 ' + new Date(info.expire_at).toLocaleDateString('zh-TW') + '）',
+    expired: '⚠️ ' + info.plan_name + ' 已到期',
+    checkout_pending: '⏳ 結帳進行中…'
+  };
+  banner.textContent = msgs[info.plan_status] || '';
+  banner.style.display = 'block';
+  if (info.plan_status === 'expired') banner.style.borderColor = '#f85149';
+})();
+</script>
 </body>
 </html>

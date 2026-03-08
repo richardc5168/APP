@@ -203,6 +203,8 @@
 
 <script src="../shared/coach_event_log.js"></script>
 <script src="../shared/attempt_telemetry.js"></script>
+<script src="../shared/analytics.js"></script>
+<script src="../shared/subscription.js"></script>
 <script src="../shared/student_auth.js"></script>
 <script>
 (function(){
@@ -1207,5 +1209,8 @@
 <script src="../shared/breadcrumb_jsonld.js"></script>
 <script src="../shared/cookie_consent.js"></script>
 <script src="../shared/skip_to_content.js"></script>
+<script>
+if (window.AIMathAnalytics) window.AIMathAnalytics.track('weekly_report_view', {});
+</script>
 </body>
 </html>

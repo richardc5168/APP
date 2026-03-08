@@ -54,6 +54,8 @@
   }
 
   function isLimitReached(){
+    // 付費用戶不限制
+    if (window.AIMathSubscription && window.AIMathSubscription.isPaid()) return false;
     return getUsed() >= FREE_LIMIT;
   }
 
