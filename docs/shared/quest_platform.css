@@ -254,7 +254,7 @@
   border-color: var(--accent);
 }
 .benefit-icon { font-size: 2.2rem; margin-bottom: 14px; filter: drop-shadow(0 2px 6px rgba(88,166,255,0.2)); transition: filter 0.3s, transform 0.3s; }
-.benefit-card:hover .benefit-icon { filter: drop-shadow(0 2px 8px rgba(88,166,255,0.35)) brightness(1.15); transform: scale(1.1); }
+.benefit-card:hover .benefit-icon { filter: drop-shadow(0 4px 10px rgba(88,166,255,0.35)) brightness(1.2); transform: scale(1.12); }
 .benefit-title { color: #fff; font-size: 1.05rem; font-weight: 700; margin: 0 0 8px; transition: color 0.3s ease; }
 .benefit-card:hover .benefit-title { color: var(--accent); }
 .benefit-desc { color: #8b949e; font-size: 0.88rem; margin: 0; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
@@ -611,7 +611,7 @@
   color: var(--text);
   transition: transform 0.2s, border-color 0.3s, box-shadow 0.3s;
 }
-.badge-item:hover { transform: scale(1.05); box-shadow: 0 4px 14px rgba(88,166,255,0.1); border-color: rgba(88,166,255,0.3); }
+.badge-item:hover { transform: scale(1.05); box-shadow: 0 4px 14px rgba(88,166,255,0.15); border-color: rgba(88,166,255,0.3); color: #fff; }
 .badge-item:hover .badge-icon { animation: badgePop .4s ease; }
 @keyframes badgePop { 0%{transform:scale(1)} 40%{transform:scale(1.3) rotate(-8deg)} 70%{transform:scale(0.95) rotate(4deg)} 100%{transform:scale(1) rotate(0)} }
 .badge-item .badge-icon { font-size: 1.4rem; }
