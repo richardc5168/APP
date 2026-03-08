@@ -1,6 +1,6 @@
 # Monetization Validation MVP — 專案盤點
 
-> 產生日期：2026-03-08 | 目標：90 天內驗證「台灣國小五六年級數學補弱」能否穩定收費
+> 更新日期：2026-03-09 | 目標：90 天內驗證「台灣國小五六年級數學補弱」能否穩定收費
 
 ---
 
@@ -56,6 +56,8 @@
 |------|------|
 | 首頁 | index.html |
 | 定價 | pricing/ |
+| KPI 儀表板 | kpi/ |
+| 明星題組 | star-pack/ |
 | 關於 | about/ |
 | 隱私 | privacy/ |
 | 條款 | terms/ |
@@ -69,7 +71,12 @@
 - 方式：暱稱 + 家長密碼（4-6 位數字）
 - 儲存：`localStorage` key `aimath_student_auth_v1`
 - 欄位：`{ version, name, pin, created_at }`
-- **缺少**：plan_type, plan_status, trial_start, expire_at
+- 訂閱狀態另外存於 `aimath_subscription_v1`
+
+### 訂閱狀態（subscription.js）
+- 儲存：`localStorage` key `aimath_subscription_v1`
+- 欄位：`plan_type`, `plan_status`, `trial_start`, `paid_start`, `expire_at`, `mock_mode`
+- 狀態流：`free -> trial -> checkout_pending -> paid_active -> expired`
 
 ### 雲端同步（GitHub Gist）
 - Gist registry: `{ entries: { NAME: { pin, data, cloud_ts } } }`
@@ -80,16 +87,17 @@
 - 儲存：`ai_math_attempts_v1::<user_id>`
 - 欄位：ts, question_id, ok, time_ms, max_hint, unit_id, topic_id, kind, error_type
 - 上限：5000 筆 / 學生
+- 已橋接 analytics：`question_submit`, `question_correct`, `hint_open`
+
+### 事件追蹤（analytics.js）
+- 儲存：`localStorage` key `aimath_analytics_v1`
+- 欄位：`event`, `ts`, `user_id`, `role`, `session_id`, `page`, `data`
+- 提供：`track`, `query`, `computeKPIs`, `exportJSON`
 
 ### 每日限制（daily_limit.js）
 - 儲存：`aimath_daily_limit_v1`
 - 免費 10 題/天
-- 到限後顯示升級 CTA
-
-### 升級提醒（upgrade_banner.js + completion_upsell.js）
-- 底部 banner：5 次點擊或 2 分鐘後
-- 完成 upsell：作答結束後
-- 都指向 pricing/ 或 mailto
+- 付費用戶繞過限制
 
 ---
 
@@ -97,60 +105,99 @@
 
 ### 定價頁（pricing/）
 - 免費版 NT$0：考前衝刺 + 基礎偵測 + 三層提示 + 本地週報
-- 標準版 NT$299/月：2,900+ 題 + 大滿貫 + 帝國 + 遠端週報 + 每日挑戰
-- 進階版 NT$499/月：必殺技 + 進階題 + 國中先修 + 四層提示
-- 年繳 8 折
+- 標準版 NT$299/月：完整題庫、明星場景、遠端家長報告
+- 家庭版 NT$499/月：進階練習、更多功能與家庭導向方案
+- 月繳 / 年繳切換 UI 已存在
 
 ### 付款方式
-- **目前**：mailto 聯繫 → 人工開通
-- **後端**：server.py 有 subscriptions 資料表（account_id, status, plan, seats）
-- **Stripe**：程式碼有 TODO 註解但尚未串接
-- **前端**：daily_limit.js 做軟性限制，無硬性訂閱驗證
+- **目前**：前端 mock payment flow 已上線
+- **狀態流轉**：`free -> trial -> checkout_pending -> paid_active -> expired`
+- **實作檔**：`docs/shared/subscription.js`
+- **正式金流**：尚未串 Stripe / 綠界等 provider
+
+### 升級入口
+- 首頁 CTA
+- 定價頁試用按鈕
+- 題後升級 CTA
+- 家長週報 gating
+- 明星題組 gating
 
 ---
 
-## 4. MVP 缺口分析
+## 4. 已完成 MVP 功能狀態
+
+| 階段 | 狀態 | 內容 |
+|------|------|------|
+| 收費閉環 | 已完成 | pricing、mock payment、subscription storage、feature gating、upgrade CTA |
+| 事件追蹤與 KPI | 已完成 | analytics logger、KPI dashboard、漏斗與事件分佈 |
+| 明星場景內容包 | 已完成 | star-pack 頁、四大主題入口、免費/付費 gating |
+| 家長週報 V2 | 已完成 | 概念雷達、補救排序、週報 gating、推薦題組連結 |
+| Landing Page 改版 | 已完成 | Hero、痛點、使用情境、方案預覽、CTA 追蹤 |
+| A/B Testing | 已完成 | 5 個測試設定、variant assignment、conversion tracking、KPI A/B dashboard |
+
+---
+
+## 5. 目前關鍵實作
+
+### 收費閉環
+- `docs/shared/subscription.js`
+- `docs/pricing/index.html`
+- `docs/shared/daily_limit.js`
+
+### 事件追蹤與 KPI
+- `docs/shared/analytics.js`
+- `docs/shared/attempt_telemetry.js`
+- `docs/kpi/index.html`
+
+### 明星場景
+- `docs/star-pack/index.html`
+
+### 家長週報 V2
+- `docs/parent-report/index.html`
+
+### Landing Page
+- `docs/index.html`
+
+### A/B Testing
+- `docs/shared/abtest.js`
+- `docs/index.html`
+- `docs/pricing/index.html`
+- `docs/kpi/index.html`
+
+---
+
+## 6. 剩餘缺口分析
 
 | 缺口 | 嚴重度 | 說明 |
 |------|--------|------|
-| 無前端訂閱狀態 | 🔴 高 | student profile 沒有 plan_type 欄位 |
-| 無自助付款流程 | 🔴 高 | 只有 mailto，無法自動開通 |
-| 每日限制可繞過 | 🟡 中 | 清 localStorage 就重設 |
-| 無事件追蹤系統 | 🟡 中 | 只有 attempt 追蹤，無漏斗事件 |
-| 週報無付費差異 | 🟡 中 | 免費/付費看到一樣的報告 |
-| 無補救建議引擎 | 🟡 中 | 有弱點排序但無推薦題組 |
-| 首頁無明確轉換漏斗 | 🟡 中 | CTA 不夠聚焦 |
-| 無 A/B 測試機制 | 🟢 低 | 後續再加 |
+| 金流仍為 mock | 🔴 高 | 尚未串正式 payment provider / webhook |
+| 訂閱資料未回寫到雲端 profile | 🟡 中 | 目前仍以前端 localStorage 為主 |
+| 7/30 日留存尚未完整計算 | 🟡 中 | dashboard 已有基礎事件，但 cohort retention 還可加強 |
+| recommendation engine 仍為規則式 | 🟡 中 | 尚未做更深的個人化優化 |
+| A/B 測試覆蓋面仍偏小 | 🟢 低 | 目前主要掛在首頁與 pricing |
 
 ---
 
-## 5. 90 天路線圖
+## 7. 後續 90 天重點
 
 ### Week 1-2：收費閉環
-- 建立前端訂閱狀態（localStorage + Gist 同步）
-- Mock payment flow（free → checkout → paid → expired）
-- Feature gating（免費版限制）
-- 至少 3 個升級入口
+- 串正式 payment provider
+- 建立 webhook / server-side subscription reconcile
+- 降低 localStorage 可繞過風險
 
 ### Week 3-4：事件追蹤與 KPI
-- 定義 16 個核心事件
-- Event logger（localStorage + 批次上傳 Gist）
-- 開發者 KPI 儀表板頁面
+- 補 cohort retention
+- 補主題完成率與弱點分布趨勢
 
 ### Week 5-6：明星場景內容包
-- Star Pack 機制（分數/小數/百分率/生活應用）
-- 題型標籤 + 難度 + 常見錯誤分類
-- 家長端主題包摘要
+- 擴充每題 metadata 與主題完成摘要
+- 讓家長端直接看到 pack 成效摘要
 
 ### Week 7-8：家長週報 V2
-- 四區重新設計（表現、雷達、診斷、建議）
-- 規則式補救建議引擎
-- 付費 gating（完整報告 = 付費功能）
+- 加入上週比較、行動建議排序、點擊回流追蹤
 
 ### Week 9-10：Landing Page 改版
-- Hero/痛點/解法/場景/方案/FAQ
-- 每個 CTA 掛追蹤事件
+- 依 A/B 結果調整文案與 CTA 位置
 
 ### Week 11-12：A/B Testing + 優化
-- 5 個可配置測試項
-- variant 追蹤 + 轉換差異統計
+- 擴充更多測試位點，保留最小可行迭代節奏
