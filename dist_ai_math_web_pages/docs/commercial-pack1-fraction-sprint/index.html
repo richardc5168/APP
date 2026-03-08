@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>���ƽĨ�]�UAI �ƾǮa��</title>
-  <meta property="og:title" content="���ƽĨ�]�UAI �ƾǮa��">
-  <meta property="og:description" content="���ƽĨ�]�G200 �D���ƱM���m�ߡA�ֳt���ɤ��ƭp���O">
-  <meta property="og:image" content="../icons/icon-512.png">
+  <title>分數衝刺包｜AI 數學家教</title>
+  <meta property="og:title" content="分數衝刺包｜AI 數學家教">
+  <meta property="og:description" content="分數衝刺包：200 題分數專項練習，快速提升分數計算能力">
   <meta property="og:type" content="website">
-  <meta name="description" content="�p�����������D�Ĩ�]�A����X��U�C���� 10 �D�U�g�����a���ݡU���u�i�Ρ]PWA�^" />
+  <meta property="og:image" content="../icons/icon-512.png">
+  <meta name="description" content="小五分數應用題衝刺包，解鎖碼制｜每日任務 10 題｜週報給家長看｜離線可用（PWA）" />
   <link rel="manifest" href="./manifest.json" />
   <style>
     :root{
@@ -54,7 +54,7 @@
     .hintBox{display:none; margin-top:10px; border:1px solid var(--line); border-radius:12px; padding:12px; background:rgba(0,0,0,.18)}
     .hintLine{font-family:var(--mono); font-size:13px; line-height:1.6; padding:6px 8px; border-left:3px solid rgba(88,166,255,.8); background:rgba(88,166,255,.06); border-radius:10px; margin:6px 0}
     .visualHintBox{display:none}
-    /* �w�w rich hint styles �w�w */
+    /* ── rich hint styles ── */
     .lvlHeader{font-size:14px;font-weight:700;margin:14px 0 6px;padding:7px 12px;border-radius:8px}
     .lvlHeader.l1{background:rgba(88,166,255,.12);border-left:4px solid #58a6ff}
     .lvlHeader.l2{background:rgba(251,191,36,.12);border-left:4px solid #fbbf24}
@@ -112,26 +112,26 @@
 </head>
 <body>
 <nav style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:#0d1117;border-bottom:1px solid #21262d;position:sticky;top:0;z-index:999">
-  <a href="../" style="font-weight:700;font-size:1.1rem;color:#58a6ff;text-decoration:none">?? AI �ƾǮa��</a>
+  <a href="../" style="font-weight:700;font-size:1.1rem;color:#58a6ff;text-decoration:none">🧒 AI 數學家教</a>
   <div style="display:flex;gap:12px;font-size:.85rem">
-    <a href="../" style="color:#c9d1d9;text-decoration:none">����</a>
-    <a href="../pricing/" style="color:#c9d1d9;text-decoration:none">���</a>
-    <a href="../#reports" style="color:#c9d1d9;text-decoration:none">�a���g��</a>
-    <a href="../about/" style="color:#c9d1d9;text-decoration:none">����ڭ�</a>
+    <a href="../" style="color:#c9d1d9;text-decoration:none">首頁</a>
+    <a href="../pricing/" style="color:#c9d1d9;text-decoration:none">方案</a>
+    <a href="../#reports" style="color:#c9d1d9;text-decoration:none">家長週報</a>
+    <a href="../about/" style="color:#c9d1d9;text-decoration:none">關於我們</a>
   </div>
 </nav>
-<div id="breadcrumb-bar" style="padding:6px 16px;font-size:.82rem;color:#8b949e;background:#0b1020;border-bottom:1px solid #21262d"><a href="../" style="color:#58a6ff;text-decoration:none">����</a> <span style="margin:0 4px;color:#484f58">?</span> <span style="color:#e6edf3">���ƽĨ�]</span></div>
+<div id="breadcrumb-bar" style="padding:6px 16px;font-size:.82rem;color:#8b949e;background:#0b1020;border-bottom:1px solid #21262d"><a href="../" style="color:#58a6ff;text-decoration:none">首頁</a> <span style="margin:0 4px;color:#484f58">›</span> <span style="color:#e6edf3">分數衝刺包</span></div>
 
 <header>
-  <div class="title">���ƽĨ�]�UAI �ƾǮa��</div>
+  <div class="title">分數衝刺包｜AI 數學家教</div>
   <div class="sub">
-    ����X��]Redeem Code�^�U�C���� 10 �D�U�g���]�z�I/�i�B���u�^�U���u�i�Ρ]PWA�^
+    解鎖碼制（Redeem Code）｜每日任務 10 題｜週報（弱點/進步曲線）｜離線可用（PWA）
   </div>
   <div class="row" style="margin-top:10px">
-    <a class="btn ghost" href="../">�� �^����</a>
-    <span id="unlockBadge" class="badge warn">?? ������G�i�լ� 3 �D</span>
-    <span id="pwaBadge" class="badge">PWA: �ˬd���K</span>
-    <button id="btnParent" class="btn" style="margin-left:auto">�a���]�w / ����</button>
+    <a class="btn ghost" href="../">← 回首頁</a>
+    <span id="unlockBadge" class="badge warn">🔒 未解鎖：可試看 3 題</span>
+    <span id="pwaBadge" class="badge">PWA: 檢查中…</span>
+    <button id="btnParent" class="btn" style="margin-left:auto">家長設定 / 解鎖</button>
   </div>
   <div id="studentAuthBar" style="margin-top:10px"></div>
 </header>
@@ -139,98 +139,98 @@
 <main>
   <div class="grid">
     <section class="card">
-      <h2 style="margin:0 0 6px 0">������</h2>
-      <div class="small">�T�w�`���G������ �� �d��~���괣�� �� �����ߨ�u�P�� 3 �D�v�d�T�C</div>
+      <h2 style="margin:0 0 6px 0">今日任務</h2>
+      <div class="small">固定節奏：先嘗試 → 卡住才解鎖提示 → 做完立刻「同型 3 題」鞏固。</div>
 
       <div class="row">
-        <label class="small">�Ĥl Profile</label>
+        <label class="small">孩子 Profile</label>
         <select id="profile">
-          <option value="kidA">�Ĥl A</option>
-          <option value="kidB">�Ĥl B</option>
-          <option value="kidC">�Ĥl C</option>
+          <option value="kidA">孩子 A</option>
+          <option value="kidB">孩子 B</option>
+          <option value="kidC">孩子 C</option>
         </select>
-        <span class="badge" id="streakBadge">�s��ѼơG0</span>
-        <button class="btn" id="btnNewDay">���s���ͤ�����</button>
+        <span class="badge" id="streakBadge">連續天數：0</span>
+        <button class="btn" id="btnNewDay">重新產生今日任務</button>
       </div>
 
       <div class="row" style="margin-top:0">
         <div style="flex:1">
-          <div class="small">�i�סG<span id="dayProgress">0/10</span>�@<span class="small">�]���ܥΨ�̰��G<span id="dayMaxHint">0</span>�^</span></div>
+          <div class="small">進度：<span id="dayProgress">0/10</span>　<span class="small">（提示用到最高：<span id="dayMaxHint">0</span>）</span></div>
           <div class="progress"><div id="bar"></div></div>
         </div>
         <span class="badge" id="timer">00:00</span>
       </div>
 
-      <div class="eq" id="q">�]�Х�����A�Ϋ��լݶ}�l�^</div>
+      <div class="eq" id="q">（請先解鎖，或按試看開始）</div>
 
       <div class="row" style="margin-top:0">
-        <label class="small">�D��</label>
+        <label class="small">題型</label>
         <select id="kindFilter">
-          <option value="all">����</option>
+          <option value="all">全部</option>
         </select>
-        <button class="btn" id="btnNewQ">�X�s�D</button>
-        <button class="btn ghost" id="btnClear">�M��</button>
+        <button class="btn" id="btnNewQ">出新題</button>
+        <button class="btn ghost" id="btnClear">清空</button>
       </div>
 
       <div class="row">
-        <label class="small">�A������</label>
-        <input id="ans" placeholder="�Ҧp�G7 �� 3/5" />
-        <button class="btn primary" id="btnSubmit">�e�X</button>
-        <button class="btn" id="btnSkip">���L</button>
+        <label class="small">你的答案</label>
+        <input id="ans" placeholder="例如：7 或 3/5" />
+        <button class="btn primary" id="btnSubmit">送出</button>
+        <button class="btn" id="btnSkip">跳過</button>
       </div>
 
-      <div class="banner muted" id="banner">���ܡG���ۤv�պ�@���F�d��N������ 1��2��3�]�[�����C���������^�A�̫�A�ݧ���B�J�C</div>
+      <div class="banner muted" id="banner">提示：先自己試算一輪；卡住就按提示 1→2→3（觀念→列式→策略），最後再看完整步驟。</div>
 
       <div class="row" id="hintRow">
-        <label class="small">���ܼh��</label>
+        <label class="small">提示層級</label>
         <select id="hintLevelSel">
-          <option value="1">Level 1�]�P�_�D���^</option>
-          <option value="2">Level 2�]�e�Ϥ����^</option>
-          <option value="3">Level 3�]�⦡�^</option>
-          <option value="4">Level 4�]�X�z���ˬd�^</option>
+          <option value="1">Level 1（判斷題型）</option>
+          <option value="2">Level 2（畫圖切分）</option>
+          <option value="3">Level 3（算式）</option>
+          <option value="4">Level 4（合理性檢查）</option>
         </select>
-        <button class="btn" id="btnHint1">�ݴ���</button>
-        <button class="btn" id="btnHint2">²�u���ܡG��</button>
-        <button class="btn" id="btnFull">�ݧ�����D</button>
-        <button class="btn" id="btnHint3" style="display:none">�O�d</button>
+        <button class="btn" id="btnHint1">看提示</button>
+        <button class="btn" id="btnHint2">簡短提示：關</button>
+        <button class="btn" id="btnFull">看完整解題</button>
+        <button class="btn" id="btnHint3" style="display:none">保留</button>
       </div>
 
-      <div class="small" id="hintState">�|����ܴ��ܡC</div>
+      <div class="small" id="hintState">尚未顯示提示。</div>
 
       <div class="hintBox" id="hintBox"></div>
       <div class="visualHintBox" id="visualHintBox"></div>
 
       <div class="row" style="margin-top:14px">
-        <button class="btn" id="btnReinforce" disabled>�P�� 3 �D�]�d�T�^</button>
-        <span class="small" id="reinforceNote">�������� 10 �D�����C</span>
+        <button class="btn" id="btnReinforce" disabled>同型 3 題（鞏固）</button>
+        <span class="small" id="reinforceNote">完成今日 10 題後解鎖。</span>
       </div>
     </section>
 
     <aside class="card">
-      <h2 style="margin:0 0 6px 0">�g���]�i�檺���G�^</h2>
-      <div class="small">�̪� 7 �ѡG���T�v�B�ӮɡB�d�b���@�����̦ܳh�B�z�I TOP 3�]�W�h���ˡ^�C</div>
+      <h2 style="margin:0 0 6px 0">週報（可賣的成果）</h2>
+      <div class="small">最近 7 天：正確率、耗時、卡在哪一階提示最多、弱點 TOP 3（規則推薦）。</div>
 
       <div class="row">
-        <button class="btn" id="btnRefreshReport">��s�g��</button>
-        <button class="btn" id="btnCopyReport">�ƻs�g��</button>
+        <button class="btn" id="btnRefreshReport">更新週報</button>
+        <button class="btn" id="btnCopyReport">複製週報</button>
       </div>
 
-      <div id="report" class="banner muted">�|�L��ơC���������ȫ�|�ͦ��C</div>
+      <div id="report" class="banner muted">尚無資料。完成今日任務後會生成。</div>
 
-      <h3 style="margin:14px 0 6px 0">�`�����~�X�]²���^</h3>
+      <h3 style="margin:14px 0 6px 0">常見錯誤碼（簡版）</h3>
       <div class="small">
-        <span class="pill">READ</span> Ū�D/��Ƕq�d���@
-        <span class="pill">CON</span> �[��/�C�����@
-        <span class="pill">CAL</span> �p����@
-        <span class="pill">CARE</span> �ʤ�/�|�g�@
-        <span class="pill">TIME</span> �W��/���
+        <span class="pill">READ</span> 讀題/基準量搞錯　
+        <span class="pill">CON</span> 觀念/列式錯　
+        <span class="pill">CAL</span> 計算錯　
+        <span class="pill">CARE</span> 粗心/漏寫　
+        <span class="pill">TIME</span> 超時/放棄
       </div>
 
       <hr style="border:0;border-top:1px solid rgba(255,255,255,.10); margin:14px 0;">
       <div class="small">
-        <b>���e�]�W��</b><br/>
-        <span class="k">pack_id</span>�G<span class="k" id="packId"></span><br/>
-        10 �椸 �� 20 �D�]�@ 200 �D�^�U�C�D 3 ������ + 4�V6 �B steps + common mistakes
+        <b>內容包規格</b><br/>
+        <span class="k">pack_id</span>：<span class="k" id="packId"></span><br/>
+        10 單元 × 20 題（共 200 題）｜每題 3 階提示 + 4–6 步 steps + common mistakes
       </div>
     </aside>
   </div>
@@ -240,37 +240,37 @@
 <div class="modalBackdrop" id="modalBackdrop" role="dialog" aria-modal="true">
   <div class="modal">
     <div class="row" style="margin:0 0 8px 0">
-      <h3 style="margin:0">�a���]�w / ����</h3>
-      <button class="btn" id="btnClose" style="margin-left:auto">����</button>
+      <h3 style="margin:0">家長設定 / 解鎖</h3>
+      <button class="btn" id="btnClose" style="margin-left:auto">關閉</button>
     </div>
 
     <div class="banner muted">
-      <b>�ְ̧ӷ~����G</b>�I�O���ꤺ�e�] �� �C���� �� �g�����a���� �� ��O�R�U�@�]�C
-      <div class="small" style="margin-top:6px">�����ġu��������X�v�]�p�C�`�N�G�«e�ݸ����ݩ󻴶q���b�]���O�j���s�^�C</div>
+      <b>最快商業閉環：</b>付費解鎖內容包 → 每日任務 → 週報給家長看 → 續費買下一包。
+      <div class="small" style="margin-top:6px">本頁採「本機解鎖碼」設計。注意：純前端解鎖屬於輕量防呆（不是強防盜）。</div>
     </div>
 
-    <h4 style="margin:12px 0 6px 0">(A) �a�� PIN�]�����^</h4>
+    <h4 style="margin:12px 0 6px 0">(A) 家長 PIN（本機）</h4>
     <div class="row" style="margin-top:0">
-      <input id="pin" placeholder="�]�w�ο�J PIN�]4-8 �X�^" />
-      <button class="btn" id="btnSetPin">�]�w/��s PIN</button>
-      <span id="pinStatus" class="badge">���]�w</span>
+      <input id="pin" placeholder="設定或輸入 PIN（4-8 碼）" />
+      <button class="btn" id="btnSetPin">設定/更新 PIN</button>
+      <span id="pinStatus" class="badge">未設定</span>
     </div>
 
-    <h4 style="margin:12px 0 6px 0">(B) ����X�]Redeem Code�^</h4>
+    <h4 style="margin:12px 0 6px 0">(B) 解鎖碼（Redeem Code）</h4>
     <div class="row" style="margin-top:0">
-      <input id="code" placeholder="�Ҧp�GDEMO-2026-001" />
-      <button class="btn primary" id="btnRedeem">�I������</button>
-      <button class="btn danger" id="btnLock">���s��W�]���եΡ^</button>
+      <input id="code" placeholder="例如：DEMO-2026-001" />
+      <button class="btn primary" id="btnRedeem">兌換解鎖</button>
+      <button class="btn danger" id="btnLock">重新鎖上（測試用）</button>
     </div>
-    <div class="small">�եνX�]Demo�^�G<span class="k">DEMO-2026-001</span>�]����i�����I�O�o�X�^</div>
+    <div class="small">試用碼（Demo）：<span class="k">DEMO-2026-001</span>（之後可換成付費發碼）</div>
 
-    <h4 style="margin:12px 0 6px 0">(C) ��� / �g��</h4>
+    <h4 style="margin:12px 0 6px 0">(C) 資料 / 週報</h4>
     <div class="row" style="margin-top:0">
-      <button class="btn" id="btnExport">�ץX�ǲ߸�ơ]JSON�^</button>
-      <button class="btn danger" id="btnReset">�M���������</button>
+      <button class="btn" id="btnExport">匯出學習資料（JSON）</button>
+      <button class="btn danger" id="btnReset">清除本機資料</button>
     </div>
 
-    <div id="parentMsg" class="banner muted">���ܡG�]�w PIN ��A���m��Ʒ|�n�D PIN�C</div>
+    <div id="parentMsg" class="banner muted">提示：設定 PIN 後，重置資料會要求 PIN。</div>
   </div>
 </div>
 
@@ -305,16 +305,16 @@
   }
 
   function expiredCtaHtml(expiresAtMs) {
-    const expText = expiresAtMs ? `�]����G${formatDateTime(expiresAtMs)}�^` : '';
+    const expText = expiresAtMs ? `（到期：${formatDateTime(expiresAtMs)}）` : '';
     const url = (isSafeUrl(CTA.buy) && CTA.buy) || (isSafeUrl(CTA.support) && CTA.support) || '';
     const btn = url
-      ? `<a class="btn primary" href="${escapeHtml(url)}" target="_blank" rel="noopener">��O / ���o�s 15 �Ѹ���X</a>`
+      ? `<a class="btn primary" href="${escapeHtml(url)}" target="_blank" rel="noopener">續費 / 取得新 15 天解鎖碼</a>`
       : '';
     const line2 = url
-      ? '�Q�~��m�ߡG����O���o�s 15 �Ѹ���X�C'
-      : '�Q�~��m�ߡG�ЦV�Ѯv/�ȪA�����s 15 �Ѹ���X�C';
+      ? '想繼續練習：請續費取得新 15 天解鎖碼。'
+      : '想繼續練習：請向老師/客服索取新 15 天解鎖碼。';
     return `
-      <div><b>��פw���</b>${escapeHtml(expText)}�G�w����X�D�F���i�d�ݥk���g���]���v�����^�C</div>
+      <div><b>方案已到期</b>${escapeHtml(expText)}：已停止出題；仍可查看右側週報（歷史紀錄）。</div>
       <div style="margin-top:6px">${escapeHtml(line2)}</div>
       ${btn ? `<div class="row" style="margin:10px 0 0 0">${btn}</div>` : ''}
     `;
@@ -513,16 +513,16 @@
       const access = loadAccess(els.profile.value);
       const exp = access?.expires_at_ms;
       els.unlockBadge.className = 'badge warn';
-      els.unlockBadge.innerText = exp ? `? �w����]${formatDateTime(exp)}�^�G����O���o�s�X` : '? �w����G����O���o�s�X';
+      els.unlockBadge.innerText = exp ? `⏳ 已到期（${formatDateTime(exp)}）：請續費取得新碼` : '⏳ 已到期：請續費取得新碼';
       return;
     }
 
     if (state.unlocked) {
       els.unlockBadge.className = 'badge ok';
-      els.unlockBadge.innerText = '? �w����G���� 200 �D';
+      els.unlockBadge.innerText = '✅ 已解鎖：完整 200 題';
     } else {
       els.unlockBadge.className = 'badge warn';
-      els.unlockBadge.innerText = '?? ������G�i�լ� 3 �D';
+      els.unlockBadge.innerText = '🔒 未解鎖：可試看 3 題';
     }
   }
 
@@ -599,7 +599,7 @@
     return clampPct((f.n / f.d) * 100);
   }
 
-  /* �w�w helper: LCM �w�w */
+  /* ── helper: LCM ── */
   function lcmOf(a, b) { return Math.abs(a * b) / gcd(a, b); }
   function roundNice(v) {
     if (!Number.isFinite(v)) return '?';
@@ -611,11 +611,11 @@
     if (n <= 12) return 6; if (n <= 20) return 5;
     return Math.min(10, Math.ceil(Math.sqrt(n)));
   }
-  function buildGridCells(total, segs) { /* legacy �V unused */ return ''; }
-  function buildBarChart(segs, caption) { /* legacy �V unused */ return ''; }
-  function buildLegend(items) { /* legacy �V unused */ return ''; }
-  function buildFractionStrip(t,s,l) { /* legacy �V unused */ return ''; }
-  function buildDrawSteps(a) { /* legacy �V unused */ return ''; }
+  function buildGridCells(total, segs) { /* legacy – unused */ return ''; }
+  function buildBarChart(segs, caption) { /* legacy – unused */ return ''; }
+  function buildLegend(items) { /* legacy – unused */ return ''; }
+  function buildFractionStrip(t,s,l) { /* legacy – unused */ return ''; }
+  function buildDrawSteps(a) { /* legacy – unused */ return ''; }
   function isCurrentThenOutPattern() { return false; }
 
   /* ========== SVG Bar Renderer (ported from fraction-word-g5) ========== */
@@ -706,7 +706,7 @@
     s += '<text x="'+(padX+W+6)+'" y="'+(y2+barH/2+13)+'" fill="'+(colors[b2.color]||colors.blue)+'" font-size="10" font-family="system-ui,sans-serif">= '+roundNice(cb.amt2)+'</text>';
     var diffY = y2 + barH + 4;
     s += '<text x="'+(padX+W/2)+'" y="'+(diffY+14)+'" text-anchor="middle" fill="'+colors.red+'" font-size="12" font-weight="bold" font-family="system-ui,sans-serif">'
-       + '�t = '+roundNice(Math.max(cb.amt1,cb.amt2))+' ? '+roundNice(Math.min(cb.amt1,cb.amt2))+' = '+roundNice(cb.diffAmt)+' '+escapeHtml(cb.tu||'')+'</text>';
+       + '差 = '+roundNice(Math.max(cb.amt1,cb.amt2))+' − '+roundNice(Math.min(cb.amt1,cb.amt2))+' = '+roundNice(cb.diffAmt)+' '+escapeHtml(cb.tu||'')+'</text>';
     s += '</svg>';
     return s;
   }
@@ -799,14 +799,14 @@
   /* Extract name + item from question for child-friendly context */
   function cpExtractContext(q){
     var t = String(q || '');
-    var nameM = t.match(/(�p��|�p��|�p��|����|�p�w|�p��|�p�@|����)/);
-    var itemM = t.match(/��(�}�G|�K��|�m�ⵧ|�n��|�氮|ī�G|��l|�]��|�u�]|��y)/);
-    /* extract comparison roles (e.g. �����P��, �S�e�F...���Ѯv) */
-    var roleM = t.match(/(?:����|�e��|��)(\S{1,3}).*?(?:����|�e��|�S.*?��)(\S{1,3})/);
+    var nameM = t.match(/(小明|小華|小芸|阿哲|小安|小倫|小婷|阿翔)/);
+    var itemM = t.match(/個(糖果|貼紙|彩色筆|積木|餅乾|蘋果|橘子|鉛筆|彈珠|氣球)/);
+    /* extract comparison roles (e.g. 分給同學, 又送了...給老師) */
+    var roleM = t.match(/(?:分給|送給|給)(\S{1,3}).*?(?:分給|送給|又.*?給)(\S{1,3})/);
     var roleA = roleM ? roleM[1] : '';
     var roleB = roleM ? roleM[2] : '';
     /* extract unit for continuous items */
-    var unitM = t.match(/(����|����|����|��|��)/);
+    var unitM = t.match(/(公尺|公升|公里|棵|本)/);
     return {
       name: nameM ? nameM[1] : '',
       item: itemM ? itemM[1] : '',
@@ -816,10 +816,10 @@
   }
   function cpThingUnit(ctx){
     if (ctx && ctx.unitStr) return ctx.unitStr;
-    return (ctx && ctx.item) ? '��' + ctx.item : '��';
+    return (ctx && ctx.item) ? '個' + ctx.item : '個';
   }
 
-  /* remain kind: �α� f1 �� �ѤU 1?f1 */
+  /* remain kind: 用掉 f1 → 剩下 1−f1 */
   function buildBarModel_REMAIN(f1, total, ansStr, ctx){
     if (!f1 || !total) return null;
     var d = f1.d, n = f1.n;
@@ -838,50 +838,50 @@
     return {
       parts: d,
       levels: [
-        { title: '?? Level 1�G�P�_�D��',
-          text: '?? �D�ػ��G' + (who?who:'�L') + '�� ' + total + ' ' + tu + '�A�α��F ' + cpFracStr(f1) + '\n' +
-                '�� �D�u�ٳѤU�h�֡v\n\n' +
-                '?? �f�Z�G�α��X�����X �� �ѤU = 1 ? ' + cpFracStr(f1) + ' = ' + remN + '/' + remD + '\n' +
-                '?? �ݨ�u���v�� �έ��k�I',
+        { title: '🔍 Level 1：判斷題型',
+          text: '📎 題目說：' + (who?who:'他') + '有 ' + total + ' ' + tu + '，用掉了 ' + cpFracStr(f1) + '\n' +
+                '→ 求「還剩下多少」\n\n' +
+                '🧠 口訣：用掉幾分之幾 → 剩下 = 1 − ' + cpFracStr(f1) + ' = ' + remN + '/' + remD + '\n' +
+                '📌 看到「的」→ 用乘法！',
           cells: empty_cells,
           cellLabels: unknownCL,
-          brackets: [{ start:0, count:d, label:'���� '+total+' '+tu, color:'white' }] },
-        { title: '?? Level 2�G�e�Ϥ����]' + d + ' �����^',
-          text: '�Q���� ' + total + ' ' + tu + ' �Ʀ��@�ơA�������� ' + d + ' ���G\n' +
-                '�C�� = ' + total + ' �� ' + d + ' = ' + perCell + ' ' + tu + '\n\n' +
-                '?? ���� = �α��� ' + cpFracStr(f1) + ' = ' + n + ' �� = ' + roundNice(usedAmt) + ' ' + tu + '\n' +
-                '?? �Ŧ� = �ѤU�� ' + remN + '/' + remD + (g0>1?' = '+remN/g0+'/'+remD/g0:'') + ' = ' + remN + ' �� = ' + roundNice(remAmt) + ' ' + tu,
+          brackets: [{ start:0, count:d, label:'全部 '+total+' '+tu, color:'white' }] },
+        { title: '📊 Level 2：畫圖切分（' + d + ' 等份）',
+          text: '想像把 ' + total + ' ' + tu + ' 排成一排，平均分成 ' + d + ' 份：\n' +
+                '每份 = ' + total + ' ÷ ' + d + ' = ' + perCell + ' ' + tu + '\n\n' +
+                '🟥 紅色 = 用掉的 ' + cpFracStr(f1) + ' = ' + n + ' 份 = ' + roundNice(usedAmt) + ' ' + tu + '\n' +
+                '🟦 藍色 = 剩下的 ' + remN + '/' + remD + (g0>1?' = '+remN/g0+'/'+remD/g0:'') + ' = ' + remN + ' 份 = ' + roundNice(remAmt) + ' ' + tu,
           cells: full_cells.slice(),
           cellLabels: valueCL,
           brackets: [
-            { start:0, count:n, label:'�α� '+roundNice(usedAmt), color:'red' },
-            { start:n, count:remN, label:'�� '+roundNice(remAmt), color:'blue' }
+            { start:0, count:n, label:'用掉 '+roundNice(usedAmt), color:'red' },
+            { start:n, count:remN, label:'剩 '+roundNice(remAmt), color:'blue' }
           ] },
-        { title: '?? Level 3�G�C���p��',
-          text: '?? ����α��h�֡A�A�Υ�����G\n\n' +
-                '? �α� = ' + total + ' �� ' + cpFracStr(f1) + ' = ' + roundNice(usedAmt) + '\n' +
-                '? �ѤU = ' + total + ' ? ' + roundNice(usedAmt) + ' = ' + roundNice(remAmt),
+        { title: '✏️ Level 3：列式計算',
+          text: '💡 先算用掉多少，再用全部減掉：\n\n' +
+                '① 用掉 = ' + total + ' × ' + cpFracStr(f1) + ' = ' + roundNice(usedAmt) + '\n' +
+                '② 剩下 = ' + total + ' − ' + roundNice(usedAmt) + ' = ' + roundNice(remAmt),
           cells: full_cells.slice(),
           cellLabels: valueCL,
           brackets: [
-            { start:0, count:n, label:'�α� '+roundNice(usedAmt), color:'red' },
-            { start:n, count:remN, label:'�� '+roundNice(remAmt), color:'blue' }
+            { start:0, count:n, label:'用掉 '+roundNice(usedAmt), color:'red' },
+            { start:n, count:remN, label:'剩 '+roundNice(remAmt), color:'blue' }
           ] },
-        { title: '?? Level 4�G��⡮�ˬd',
-          text: '?? ���G' + roundNice(usedAmt) + ' + ' + roundNice(remAmt) + ' = ' + total + '�H ? ���T�I\n' +
-                '? �ѤU ' + roundNice(remAmt) + ' < ���� ' + total + ' �� �X�z\n' +
-                '? �ѤU > 0 �� �X�z\n\n' +
-                '?? ���׬O ' + (ansStr||roundNice(remAmt)) + ' ' + tu + '�A�g�W�h�a�I',
+        { title: '🎯 Level 4：驗算＆檢查',
+          text: '🔄 驗算：' + roundNice(usedAmt) + ' + ' + roundNice(remAmt) + ' = ' + total + '？ ✓ 正確！\n' +
+                '✅ 剩下 ' + roundNice(remAmt) + ' < 全部 ' + total + ' → 合理\n' +
+                '✅ 剩下 > 0 → 合理\n\n' +
+                '🏁 答案是 ' + (ansStr||roundNice(remAmt)) + ' ' + tu + '，寫上去吧！',
           cells: full_cells.slice(),
           cellLabels: valueCL,
           brackets: [
-            { start:n, count:remN, label:'���� '+(ansStr||roundNice(remAmt)), color:'blue' }
+            { start:n, count:remN, label:'答案 '+(ansStr||roundNice(remAmt)), color:'blue' }
           ] }
       ]
     };
   }
 
-  /* original kind: �ϱ���q (���k) */
+  /* original kind: 反推原量 (除法) */
   function buildBarModel_ORIGINAL(f1, allInts, ansStr, ctx){
     if (!f1) return null;
     var d = f1.d, n = f1.n;
@@ -901,53 +901,53 @@
     return {
       parts: d,
       levels: [
-        { title: '?? Level 1�G�P�_�D��',
-          text: '?? �D�ػ��G' + (who?who:'�L') + '�α��F ' + cpFracStr(f1) + '�A��n�O ' + roundNice(knownAmt) + ' ' + tu + '\n' +
-                '�� �n�D�u��Ӧ��h�֡v\n\n' +
-                '?? �f�Z�G���D�����A�D���� �� ���H���ơI\n' +
-                '?? �u�� ���ơv= ������A�˹L�ӦA���]�� �˼ơ^',
+        { title: '🔍 Level 1：判斷題型',
+          text: '📎 題目說：' + (who?who:'他') + '用掉了 ' + cpFracStr(f1) + '，剛好是 ' + roundNice(knownAmt) + ' ' + tu + '\n' +
+                '→ 要求「原來有多少」\n\n' +
+                '🧠 口訣：知道部分，求全部 → 除以分數！\n' +
+                '📌 「÷ 分數」= 把分數顛倒過來再乘（× 倒數）',
           cells: cells_known.slice(),
           cellLabels: l1CL,
           brackets: [
-            { start:0, count:n, label:'�w�� '+roundNice(knownAmt)+' '+tu, color:'orange' },
-            { start:n, count:d-n, label:'�H', color:'white' }
+            { start:0, count:n, label:'已知 '+roundNice(knownAmt)+' '+tu, color:'orange' },
+            { start:n, count:d-n, label:'？', color:'white' }
           ] },
-        { title: '?? Level 2�G�e�Ϥ����]' + d + ' �����^',
-          text: '�Q����q�O�@����A���� ' + d + ' �����G\n' +
-                '?? ��� = �w���� ' + cpFracStr(f1) + ' = ' + n + ' �� = ' + roundNice(knownAmt) + ' ' + tu + '\n\n' +
-                '?? ' + n + ' �� = ' + roundNice(knownAmt) + '\n' +
-                '�� �C�� = ' + roundNice(knownAmt) + ' �� ' + n + ' = ' + roundNice(knownAmt/n) + '\n' +
-                '�� ���� ' + d + ' �� = ' + roundNice(knownAmt/n) + ' �� ' + d + ' = ' + total + ' ' + tu,
+        { title: '📊 Level 2：畫圖切分（' + d + ' 等份）',
+          text: '想像原量是一整條，切成 ' + d + ' 等份：\n' +
+                '🟧 橙色 = 已知的 ' + cpFracStr(f1) + ' = ' + n + ' 格 = ' + roundNice(knownAmt) + ' ' + tu + '\n\n' +
+                '💡 ' + n + ' 格 = ' + roundNice(knownAmt) + '\n' +
+                '→ 每格 = ' + roundNice(knownAmt) + ' ÷ ' + n + ' = ' + roundNice(knownAmt/n) + '\n' +
+                '→ 全部 ' + d + ' 格 = ' + roundNice(knownAmt/n) + ' × ' + d + ' = ' + total + ' ' + tu,
           cells: cells_full.slice(),
           cellLabels: fullCL,
           brackets: [
             { start:0, count:n, label:cpFracStr(f1)+' = '+roundNice(knownAmt), color:'orange' },
-            { start:0, count:d, label:'��q = '+total, color:'green' }
+            { start:0, count:d, label:'原量 = '+total, color:'green' }
           ] },
-        { title: '?? Level 3�G�C���p��',
-          text: '?? �u�� ���ơv�N�O�u�� �˼ơv�G����l����½�L�ӦA���I\n\n' +
-                '��q = ' + roundNice(knownAmt) + ' �� ' + cpFracStr(f1) + '\n' +
-                '     = ' + roundNice(knownAmt) + ' �� ' + d + '/' + n + '\n' +
+        { title: '✏️ Level 3：列式計算',
+          text: '💡 「÷ 分數」就是「× 倒數」：把分子分母翻過來再乘！\n\n' +
+                '原量 = ' + roundNice(knownAmt) + ' ÷ ' + cpFracStr(f1) + '\n' +
+                '     = ' + roundNice(knownAmt) + ' × ' + d + '/' + n + '\n' +
                 '     = ' + total,
           cells: cells_full.slice(),
           cellLabels: fullCL,
           brackets: [
-            { start:0, count:d, label:'��q = '+total, color:'green' }
+            { start:0, count:d, label:'原量 = '+total, color:'green' }
           ] },
-        { title: '?? Level 4�G��⡮�ˬd',
-          text: '?? ���G' + total + ' �� ' + cpFracStr(f1) + ' = ' + roundNice(knownAmt) + '�H ? ���T�I\n' +
-                '? ��q ' + total + ' > ���� ' + roundNice(knownAmt) + ' �� �X�z\n\n' +
-                '?? ���׬O ' + total + ' ' + tu + '�A�g�W�h�a�I',
+        { title: '🎯 Level 4：驗算＆檢查',
+          text: '🔄 驗算：' + total + ' × ' + cpFracStr(f1) + ' = ' + roundNice(knownAmt) + '？ ✓ 正確！\n' +
+                '✅ 原量 ' + total + ' > 部分 ' + roundNice(knownAmt) + ' → 合理\n\n' +
+                '🏁 答案是 ' + total + ' ' + tu + '，寫上去吧！',
           cells: cells_full.slice(),
           cellLabels: fullCL,
           brackets: [
-            { start:0, count:d, label:'���� '+total, color:'green' }
+            { start:0, count:d, label:'答案 '+total, color:'green' }
           ] }
       ]
     };
   }
 
-  /* part_to_total kind: ���� = �`�q �� f1 */
+  /* part_to_total kind: 部分 = 總量 × f1 */
   function buildBarModel_PART(f1, total, ansStr, ctx){
     if (!f1 || !total) return null;
     var d = f1.d, n = f1.n;
@@ -962,43 +962,43 @@
     return {
       parts: d,
       levels: [
-        { title: '?? Level 1�G�P�_�D��',
-          text: '?? �D�ػ��G' + (who?who:'�L') + '�� ' + total + ' ' + tu + '�A�䤤 ' + cpFracStr(f1) + ' �O�s��\n' +
-                '�� �D�u�s�����h�֭ӡv\n\n' +
-                '?? �f�Z�G�u���� �� �X�����X�v�� �έ��k�I\n' +
-                '?? ' + total + ' �� ' + cpFracStr(f1) + ' = �H',
+        { title: '🔍 Level 1：判斷題型',
+          text: '📎 題目說：' + (who?who:'他') + '有 ' + total + ' ' + tu + '，其中 ' + cpFracStr(f1) + ' 是新的\n' +
+                '→ 求「新的有多少個」\n\n' +
+                '🧠 口訣：「全部 的 幾分之幾」→ 用乘法！\n' +
+                '📌 ' + total + ' × ' + cpFracStr(f1) + ' = ？',
           cells: new Array(d).fill('empty'),
           cellLabels: unknownCL,
-          brackets: [{ start:0, count:d, label:'���� '+total+' '+tu, color:'white' }] },
-        { title: '?? Level 2�G�e�Ϥ����]' + d + ' �����^',
-          text: '�Q���� ' + total + ' ' + tu + ' �������� ' + d + ' ���G\n' +
-                '�C�� = ' + total + ' �� ' + d + ' = ' + perCell + ' ' + tu + '\n\n' +
-                '?? ��� = �ڭ̭n������ ' + cpFracStr(f1) + ' = ' + n + ' �� = ' + roundNice(partAmt) + ' ' + tu,
+          brackets: [{ start:0, count:d, label:'全部 '+total+' '+tu, color:'white' }] },
+        { title: '📊 Level 2：畫圖切分（' + d + ' 等份）',
+          text: '想像把 ' + total + ' ' + tu + ' 平均分成 ' + d + ' 份：\n' +
+                '每份 = ' + total + ' ÷ ' + d + ' = ' + perCell + ' ' + tu + '\n\n' +
+                '🟩 綠色 = 我們要的部分 ' + cpFracStr(f1) + ' = ' + n + ' 份 = ' + roundNice(partAmt) + ' ' + tu,
           cells: cells.slice(),
           cellLabels: valueCL,
           brackets: [{ start:0, count:n, label:roundNice(partAmt)+' '+tu, color:'green' }] },
-        { title: '?? Level 3�G�C���p��',
+        { title: '✏️ Level 3：列式計算',
           text: (function(){
             var g = gcd(total, d);
-            var intro = '?? �u���X�����X�v�N�O�u���H���Ӥ��ơv\n\n';
-            if (g > 1) return intro + total + ' �� ' + cpFracStr(f1) + '\n= (' + total + ' �� ' + g + ') �� ' + n + ' �� (' + d + ' �� ' + g + ')\n= ' + (total/g) + ' �� ' + n + ' �� ' + (d/g) + '\n= ' + roundNice(partAmt);
-            return intro + total + ' �� ' + cpFracStr(f1) + '\n= ' + (total*n) + ' �� ' + d + '\n= ' + roundNice(partAmt);
+            var intro = '💡 「的幾分之幾」就是「乘以那個分數」\n\n';
+            if (g > 1) return intro + total + ' × ' + cpFracStr(f1) + '\n= (' + total + ' ÷ ' + g + ') × ' + n + ' ÷ (' + d + ' ÷ ' + g + ')\n= ' + (total/g) + ' × ' + n + ' ÷ ' + (d/g) + '\n= ' + roundNice(partAmt);
+            return intro + total + ' × ' + cpFracStr(f1) + '\n= ' + (total*n) + ' ÷ ' + d + '\n= ' + roundNice(partAmt);
           })(),
           cells: cells.slice(),
           cellLabels: valueCL,
-          brackets: [{ start:0, count:n, label:'���� '+roundNice(partAmt), color:'green' }] },
-        { title: '?? Level 4�G��⡮�ˬd',
-          text: '?? ���G' + roundNice(partAmt) + ' �� ' + total + ' = ' + cpFracStr(f1) + '�H ? ���T�I\n' +
-                '? ���G ' + roundNice(partAmt) + ' < ���� ' + total + ' �� �X�z\n\n' +
-                '?? ���׬O ' + roundNice(partAmt) + ' ' + tu + '�A�g�W�h�a�I',
+          brackets: [{ start:0, count:n, label:'答案 '+roundNice(partAmt), color:'green' }] },
+        { title: '🎯 Level 4：驗算＆檢查',
+          text: '🔄 驗算：' + roundNice(partAmt) + ' ÷ ' + total + ' = ' + cpFracStr(f1) + '？ ✓ 正確！\n' +
+                '✅ 結果 ' + roundNice(partAmt) + ' < 全部 ' + total + ' → 合理\n\n' +
+                '🏁 答案是 ' + roundNice(partAmt) + ' ' + tu + '，寫上去吧！',
           cells: cells.slice(),
           cellLabels: valueCL,
-          brackets: [{ start:0, count:n, label:'���� '+roundNice(partAmt), color:'green' }] }
+          brackets: [{ start:0, count:n, label:'答案 '+roundNice(partAmt), color:'green' }] }
       ]
     };
   }
 
-  /* multi_remain: �P�@����s�� f1 + f2 (U9) �X bar with 3 segments */
+  /* multi_remain: 同一整體連續扣 f1 + f2 (U9) — bar with 3 segments */
   function buildBarModel_MULTI_REMAIN(f1, f2, total, ansStr, ctx){
     if (!f1 || !f2 || !total) return null;
     var d1 = f1.d, n1 = f1.n;
@@ -1082,7 +1082,7 @@
     };
   }
 
-  /* two_step remain: ���� f1, �ѤU���S�� f2 �� 2D grid (from g5 RTF) */
+  /* two_step remain: 先用 f1, 剩下的又用 f2 → 2D grid (from g5 RTF) */
   function buildBarModel_TWO_STEP(f1, f2, total, ansStr, ctx){
     if (!f1 || !f2 || !total) return null;
     var cols = f1.d;
@@ -1187,7 +1187,7 @@
     };
   }
 
-  /* compare kind: �����Ӥ��ƪ��t�]���ιϡ^ */
+  /* compare kind: 比較兩個分數的差（雙棒圖） */
   function buildBarModel_COMPARE(f1, f2, total, ansStr, ctx){
     if (!f1 || !f2 || !total) return null;
     var d1 = f1.d, n1 = f1.n;
@@ -1209,33 +1209,33 @@
     return {
       parts: 1,
       levels: [
-        { title: '?? Level 1�G�P�_�D��',
-          text: '?? �D�ػ��G' + (who?who:'�L') + '�� ' + total + ' ' + tu + ' �����ⳡ��\n' +
-                '�� ' + labelA + ' ' + cpFracStr(f1) + '�B' + labelB + ' ' + cpFracStr(f2) + '\n' +
-                '�� �D�u�ۮt�h�֡v\n\n' +
-                '?? �f�Z�G��j�p �� ����U�ۦh�֡A�A�j��p�I',
+        { title: '🔍 Level 1：判斷題型',
+          text: '📎 題目說：' + (who?who:'他') + '把 ' + total + ' ' + tu + ' 分成兩部分\n' +
+                '→ ' + labelA + ' ' + cpFracStr(f1) + '、' + labelB + ' ' + cpFracStr(f2) + '\n' +
+                '→ 求「相差多少」\n\n' +
+                '🧠 口訣：比大小 → 先算各自多少，再大減小！',
           parts: 1,
           cells: ['empty'],
           cellLabels: [String(total)],
-          brackets: [{ start:0, count:1, label:'���� '+total+' '+tu, color:'white' }] },
-        { title: '?? Level 2�G�e�Ϥ���]�U�ۤ����^',
-          text: '�� ' + total + ' ' + tu + ' ���O������ص����G\n\n' +
-                '?? ' + labelA + ' ' + cpFracStr(f1) + '�G�� ' + d1 + ' ���A�C�� = ' + perCell1 + '\n' +
-                '    �� ' + n1 + ' �� �� ' + labelA + ' = ' + roundNice(amt1) + ' ' + tu + '\n\n' +
-                '?? ' + labelB + ' ' + cpFracStr(f2) + '�G�� ' + d2 + ' ���A�C�� = ' + perCell2 + '\n' +
-                '    �� ' + n2 + ' �� �� ' + labelB + ' = ' + roundNice(amt2) + ' ' + tu,
+          brackets: [{ start:0, count:1, label:'全部 '+total+' '+tu, color:'white' }] },
+        { title: '📊 Level 2：畫圖比較（各自切分）',
+          text: '把 ' + total + ' ' + tu + ' 分別切成兩種等份：\n\n' +
+                '🟧 ' + labelA + ' ' + cpFracStr(f1) + '：切 ' + d1 + ' 份，每份 = ' + perCell1 + '\n' +
+                '    塗 ' + n1 + ' 份 → ' + labelA + ' = ' + roundNice(amt1) + ' ' + tu + '\n\n' +
+                '🟦 ' + labelB + ' ' + cpFracStr(f2) + '：切 ' + d2 + ' 份，每份 = ' + perCell2 + '\n' +
+                '    塗 ' + n2 + ' 份 → ' + labelB + ' = ' + roundNice(amt2) + ' ' + tu,
           compareBars: cbData },
-        { title: '?? Level 3�G�C���p��',
-          text: '?? ����U�ۦh�֡A�A�۴�G\n\n' +
-                '? ' + labelA + ' = ' + total + ' �� ' + cpFracStr(f1) + ' = ' + roundNice(amt1) + '\n' +
-                '? ' + labelB + ' = ' + total + ' �� ' + cpFracStr(f2) + ' = ' + roundNice(amt2) + '\n' +
-                '? �t = ' + roundNice(Math.max(amt1,amt2)) + ' ? ' + roundNice(Math.min(amt1,amt2)) + ' = ' + roundNice(diffAmt),
+        { title: '✏️ Level 3：列式計算',
+          text: '💡 先算各自多少，再相減：\n\n' +
+                '① ' + labelA + ' = ' + total + ' × ' + cpFracStr(f1) + ' = ' + roundNice(amt1) + '\n' +
+                '② ' + labelB + ' = ' + total + ' × ' + cpFracStr(f2) + ' = ' + roundNice(amt2) + '\n' +
+                '③ 差 = ' + roundNice(Math.max(amt1,amt2)) + ' − ' + roundNice(Math.min(amt1,amt2)) + ' = ' + roundNice(diffAmt),
           compareBars: cbData },
-        { title: '?? Level 4�G��⡮�ˬd',
-          text: '?? ���G' + roundNice(Math.min(amt1,amt2)) + ' + ' + roundNice(diffAmt) + ' = ' + roundNice(Math.max(amt1,amt2)) + '�H ? ���T�I\n' +
-                '? �t ' + roundNice(diffAmt) + ' < ���� ' + total + ' �� �X�z\n' +
-                '? �t ? 0 �� �X�z\n\n' +
-                '?? ���׬O ' + (ansStr||roundNice(diffAmt)) + ' ' + tu + '�A�g�W�h�a�I',
+        { title: '🎯 Level 4：驗算＆檢查',
+          text: '🔄 驗算：' + roundNice(Math.min(amt1,amt2)) + ' + ' + roundNice(diffAmt) + ' = ' + roundNice(Math.max(amt1,amt2)) + '？ ✓ 正確！\n' +
+                '✅ 差 ' + roundNice(diffAmt) + ' < 全部 ' + total + ' → 合理\n' +
+                '✅ 差 ≥ 0 → 合理\n\n' +
+                '🏁 答案是 ' + (ansStr||roundNice(diffAmt)) + ' ' + tu + '，寫上去吧！',
           compareBars: cbData }
       ]
     };
@@ -1256,7 +1256,7 @@
     if (!f1) return null;
     if (item.kind === 'remain_multi' && f2) return buildBarModel_MULTI_REMAIN(f1, f2, total, ansStr, ctx);
     if (item.kind === 'remain') {
-      if (f2 && String(item.question||'').match(/�ѤU���S/)) return buildBarModel_TWO_STEP(f1, f2, total, ansStr, ctx);
+      if (f2 && String(item.question||'').match(/剩下的又/)) return buildBarModel_TWO_STEP(f1, f2, total, ansStr, ctx);
       return buildBarModel_REMAIN(f1, total, ansStr, ctx);
     }
     if (item.kind === 'original') return buildBarModel_ORIGINAL(f1, ints, ansStr, ctx);
@@ -1271,29 +1271,29 @@
     var steps = item.steps || [];
     var ansStr = item.answer || '';
     var html = '';
-    if (maxLevel >= 1 && hints[0]) html += '<div class="hint-visual"><div class="hv-title">?? Level 1�G�P�_�D��</div><div class="hv-text">' + escapeHtml(hints[0]) + '</div></div>';
-    if (maxLevel >= 2 && hints[1]) html += '<div class="hint-visual"><div class="hv-title">?? Level 2�G�e�Ϥ���</div><div class="hv-text">' + escapeHtml(hints[1]) + '</div></div>';
-    if (maxLevel >= 3 && hints[2]) html += '<div class="hint-visual"><div class="hv-title">?? Level 3�G�⦡</div><div class="hv-text">' + escapeHtml(hints[2]) + '</div></div>';
+    if (maxLevel >= 1 && hints[0]) html += '<div class="hint-visual"><div class="hv-title">🔍 Level 1：判斷題型</div><div class="hv-text">' + escapeHtml(hints[0]) + '</div></div>';
+    if (maxLevel >= 2 && hints[1]) html += '<div class="hint-visual"><div class="hv-title">📊 Level 2：畫圖切分</div><div class="hv-text">' + escapeHtml(hints[1]) + '</div></div>';
+    if (maxLevel >= 3 && hints[2]) html += '<div class="hint-visual"><div class="hv-title">✏️ Level 3：算式</div><div class="hv-text">' + escapeHtml(hints[2]) + '</div></div>';
     if (maxLevel >= 4){
-      var circ = ['?','?','?','?','?','?'];
+      var circ = ['①','②','③','④','⑤','⑥'];
       var stepsHtml = '';
-      for (var si = 0; si < steps.length; si++) stepsHtml += (circ[si]||(si+1)+'�^') + ' ' + steps[si] + '\n';
-      stepsHtml += '\n���סG' + ansStr + '\n? ���G�X�z�ܡH\n\n?? �⵪�׶�W�h�a�I';
-      html += '<div class="hint-visual"><div class="hv-title">?? Level 4�G�X�z���ˬd</div><div class="hv-text">' + escapeHtml(stepsHtml) + '</div></div>';
+      for (var si = 0; si < steps.length; si++) stepsHtml += (circ[si]||(si+1)+'）') + ' ' + steps[si] + '\n';
+      stepsHtml += '\n答案：' + ansStr + '\n✅ 結果合理嗎？\n\n🏁 把答案填上去吧！';
+      html += '<div class="hint-visual"><div class="hv-title">🎯 Level 4：合理性檢查</div><div class="hv-text">' + escapeHtml(stepsHtml) + '</div></div>';
     }
     return html;
   }
 
-  /* �w�w compressHintText (from fraction-word-g5 ��8) �w�w */
+  /* ── compressHintText (from fraction-word-g5 §8) ── */
   function compressHintText(text){
     var raw = String(text || '').trim();
-    if (!raw) return '�]���h���ܵL���e�^';
+    if (!raw) return '（此層提示無內容）';
     var lines = raw.split(/\n+/).map(function(s){return s.trim();}).filter(Boolean);
     if (!lines.length) return raw;
     var selected = [];
     for (var i = 0; i < lines.length; i++){
       var line = lines[i];
-      if (/^(?|?|??|??)/.test(line)) continue;
+      if (/^(✅|❌|🏁|📌)/.test(line)) continue;
       selected.push(line);
       if (selected.length >= 2) break;
     }
@@ -1301,7 +1301,7 @@
     return selected.join('\n');
   }
 
-  /* �w�w renderBarHintLevel (from fraction-word-g5 ��8): single-level DOM element �w�w */
+  /* ── renderBarHintLevel (from fraction-word-g5 §8): single-level DOM element ── */
   function renderBarHintLevel(model, levelIdx, opts){
     var level = model.levels[levelIdx];
     if (!level) return null;
@@ -1322,7 +1322,7 @@
     return div;
   }
 
-  /* �w�w main rich-hint renderer (SVG system) �w�w */
+  /* ── main rich-hint renderer (SVG system) ── */
   function renderAllLevelsHtml(item, maxLevel, short) {
     if (!item) return '';
     var model = buildFractionBarModel(item);
@@ -1371,11 +1371,11 @@
   }
 
   function kindLabel(kind) {
-    return kind === 'original' ? '���q' :
-      kind === 'remain' ? '��ѤU' :
-      kind === 'remain_multi' ? '�s��' :
-      kind === 'part_to_total' ? '�䳡��' :
-      kind === 'compare' ? '����t�Z' : String(kind || '�����D��');
+    return kind === 'original' ? '找原量' :
+      kind === 'remain' ? '找剩下' :
+      kind === 'remain_multi' ? '連續扣' :
+      kind === 'part_to_total' ? '找部分' :
+      kind === 'compare' ? '比較差距' : String(kind || '未知題型');
   }
 
   function currentHintLevel() {
@@ -1384,7 +1384,7 @@
   }
 
   function updateShortHintBtn() {
-    els.btnHint2.innerText = `²�u���ܡG${state.shortHint ? '�}' : '��'}`;
+    els.btnHint2.innerText = `簡短提示：${state.shortHint ? '開' : '關'}`;
   }
 
   function showHint(level) {
@@ -1394,7 +1394,7 @@
 
     if (level === 4 && !state.allowFull) {
       els.banner.className = 'banner muted';
-      els.banner.innerText = '����B�J�ݭn������]���e�X�θ��L�^�C';
+      els.banner.innerText = '完整步驟需要先交卷（先送出或跳過）。';
       return;
     }
 
@@ -1408,9 +1408,9 @@
     els.visualHintBox.innerHTML = '';
 
     if (maxLayer >= 4) {
-      els.hintState.innerText = '�w��ܥ����ϸѴ��ܡ]�@ 4 �h�^�A�i���u�ݧ�����D�v�ݵ��סC';
+      els.hintState.innerText = '已顯示全部圖解提示（共 4 層），可按「看完整解題」看答案。';
     } else {
-      els.hintState.innerText = `�w��ܨ� Level ${maxLayer}�C`;
+      els.hintState.innerText = `已顯示到 Level ${maxLayer}。`;
     }
   }
 
@@ -1426,7 +1426,7 @@
   function renderQuestion() {
     const item = state.todayList[state.idx];
     if (!item) {
-      els.q.innerText = '�]�����ȧ����^';
+      els.q.innerText = '（今日任務完成）';
       return;
     }
     window.AIMathHintEngine?.setCurrentQuestion(item);
@@ -1436,11 +1436,11 @@
     els.hintBox.innerHTML = '';
     els.visualHintBox.style.display = 'none';
     els.visualHintBox.innerHTML = '';
-    els.hintState.innerText = '�|����ܴ��ܡC';
+    els.hintState.innerText = '尚未顯示提示。';
     state.hintLevelUsed = 0;
     state.allowFull = false;
     els.banner.className = 'banner muted';
-    els.banner.innerText = `�D���G${kindLabel(item.kind)}�U���e�@���u�q�ϡA�A�C���F�d��A�}���ܡC`;
+    els.banner.innerText = `題型：${kindLabel(item.kind)}｜先畫一條線段圖，再列式；卡住再開提示。`;
 
     state.startTs = Date.now();
     if (state.tick) clearInterval(state.tick);
@@ -1465,10 +1465,10 @@
 
     if (done >= 10) {
       els.btnReinforce.disabled = false;
-      els.reinforceNote.innerText = '�����I��ĳ���P�� 3 �D�d�T�C';
+      els.reinforceNote.innerText = '完成！建議做同型 3 題鞏固。';
     } else {
       els.btnReinforce.disabled = true;
-      els.reinforceNote.innerText = '�������� 10 �D�����C';
+      els.reinforceNote.innerText = '完成今日 10 題後解鎖。';
     }
   }
 
@@ -1513,7 +1513,7 @@
     if (access.status === 'expired') {
       state.todayList = [];
       state.idx = 0;
-      els.streakBadge.innerText = `�s��ѼơG${computeStreak(profile)}`;
+      els.streakBadge.innerText = `連續天數：${computeStreak(profile)}`;
       renderDayProgress();
       els.banner.className = 'banner warn';
       els.banner.innerHTML = expiredCtaHtml(access?.access?.expires_at_ms);
@@ -1525,13 +1525,13 @@
     const seedStr = forceNewSeed ? `${PACK_ID}|${profile}|${state.todayKey}|${Date.now()}` : `${PACK_ID}|${profile}|${state.todayKey}`;
     let list = pickN(bank, 10, seedStr);
 
-    // ������G�u���լ� 3 �D
+    // 未解鎖：只讓試看 3 題
     if (!state.unlocked) list = list.slice(0, 3);
 
     state.todayList = list;
     state.idx = 0;
 
-    els.streakBadge.innerText = `�s��ѼơG${computeStreak(profile)}`;
+    els.streakBadge.innerText = `連續天數：${computeStreak(profile)}`;
 
     renderDayProgress();
     renderQuestion();
@@ -1588,13 +1588,13 @@
     renderDayProgress();
     if (state.idx >= state.todayList.length) {
       els.banner.className = 'banner ok';
-      els.banner.innerText = '�����ȧ����I�Ш�k���ݶg���C';
-      els.q.innerText = '�]�����ȧ����^';
+      els.banner.innerText = '今日任務完成！請到右側看週報。';
+      els.q.innerText = '（今日任務完成）';
       els.hintBox.style.display = 'none';
       els.hintBox.innerHTML = '';
       els.visualHintBox.style.display = 'none';
       els.visualHintBox.innerHTML = '';
-      els.hintState.innerText = '�����ȧ����C';
+      els.hintState.innerText = '今日任務完成。';
       clearInterval(state.tick);
       refreshReport();
       return;
@@ -1615,12 +1615,12 @@
 
     if (correct) {
       els.banner.className = 'banner ok';
-      els.banner.innerText = '? ���T�I�ܴΡI�U�@�D�C';
+      els.banner.innerText = '✅ 正確！很棒！下一題。';
       setTimeout(nextQuestion, 350);
     } else {
       els.banner.className = 'banner bad';
-      els.banner.innerText = skipped ? '?? �w���L�G��ĳ�������� 1��2��3 �A�^�ӡC' : '? �����T�G���ݴ��� 1��2��3�]�[�����C���������^�C�p��ɡG���k����e�����A���F���u���H���ơv�O�o���˼ơF�̫��������²�C���׮榡�Хξ�Ʃ� a/b�C';
-      // �۰ʤp���@�I�G�Ĥ@������������ 1
+      els.banner.innerText = skipped ? '⏭️ 已跳過：建議先按提示 1→2→3 再回來。' : '❌ 不正確：先看提示 1→2→3（觀念→列式→策略）。計算時：乘法先交叉約分再乘；有「除以分數」記得乘倒數；最後約分成最簡。答案格式請用整數或 a/b。';
+      // 自動小推一點：第一次錯先給提示 1
       if (!skipped && state.hintLevelUsed === 0) showHint(1);
     }
 
@@ -1651,7 +1651,7 @@
     const recent = (stats.attempts || []).filter(a => (a.ts || 0) >= cutoff);
     if (recent.length === 0) {
       els.report.className = 'banner muted';
-      els.report.innerText = '�|�L��ơC���������ȫ�|�ͦ��C';
+      els.report.innerText = '尚無資料。完成今日任務後會生成。';
       return;
     }
 
@@ -1677,23 +1677,23 @@
     const weakTop3 = computeWeaknessTop3(recent);
 
     const weakHtml = weakTop3.length ?
-      `<table><thead><tr><th>�z�I TOP</th><th>���D��</th><th>��ĳ</th></tr></thead><tbody>` +
+      `<table><thead><tr><th>弱點 TOP</th><th>錯題數</th><th>建議</th></tr></thead><tbody>` +
       weakTop3.map((w,i)=>{
-        const suggest = w.kind.includes('original') ? '����u��Ƕq�v�G�w��=��q�Ѥ��ơC' :
-                        w.kind.includes('remain') ? '����ѤU��ҡA�A���`�q�F��q�����}��C' :
-                        '���e�u�q�ϩΦC��G�w��/����/��Ƕq�C';
+        const suggest = w.kind.includes('original') ? '先找「基準量」：已知=原量×分數。' :
+                        w.kind.includes('remain') ? '先算剩下比例，再乘總量；兩段式分開算。' :
+                        '先畫線段圖或列表：已知/未知/基準量。';
         return `<tr><td>#${i+1} <span class="k">${escapeHtml(w.kind)}</span></td><td>${w.wrong}</td><td>${escapeHtml(suggest)}</td></tr>`;
       }).join('') +
       `</tbody></table>`
-      : `<div class="small">���g�z�I�G�ثe������]�ܴΡI�^�C</div>`;
+      : `<div class="small">本週弱點：目前不明顯（很棒！）。</div>`;
 
-    const codesText = topCodes.length ? topCodes.map(([c,n])=>`${c}��${n}`).join('�A') : '�]�L�^';
+    const codesText = topCodes.length ? topCodes.map(([c,n])=>`${c}×${n}`).join('，') : '（無）';
 
     els.report.className = 'banner ok';
     els.report.innerHTML =
-      `<b>�̪� 7 �Ѷg���]${profile}�^</b><br/>` +
-      `���T�v�G<b>${acc}%</b>�]${correct}/${done}�^�@�����ӮɡG<b>${avgSec}s</b>�@�̰����ܡG<b>${maxHint}</b><br/>` +
-      `�̱`�d����ܶ��G<b>${mostHint}</b>�@�`�����~�X�G<b>${escapeHtml(codesText)}</b>` +
+      `<b>最近 7 天週報（${profile}）</b><br/>` +
+      `正確率：<b>${acc}%</b>（${correct}/${done}）　平均耗時：<b>${avgSec}s</b>　最高提示：<b>${maxHint}</b><br/>` +
+      `最常卡住提示階：<b>${mostHint}</b>　常見錯誤碼：<b>${escapeHtml(codesText)}</b>` +
       `<div style="margin-top:10px">${weakHtml}</div>`;
   }
 
@@ -1701,10 +1701,10 @@
     const txt = els.report.innerText;
     navigator.clipboard.writeText(txt).then(() => {
       els.banner.className = 'banner ok';
-      els.banner.innerText = '�w�ƻs�g���A�i�K���a���C';
+      els.banner.innerText = '已複製週報，可貼給家長。';
     }).catch(() => {
       els.banner.className = 'banner bad';
-      els.banner.innerText = '�ƻs���ѡG�Ф�ʿ����r�C';
+      els.banner.innerText = '複製失敗：請手動選取文字。';
     });
   }
 
@@ -1769,7 +1769,7 @@
     const raw = String(els.code.value || '').trim();
     if (!raw) {
       els.parentMsg.className = 'banner bad';
-      els.parentMsg.innerText = '�п�J����X�C';
+      els.parentMsg.innerText = '請輸入解鎖碼。';
       return;
     }
     const h = await sha256Hex(raw);
@@ -1783,7 +1783,7 @@
     const expiresMs = parseUtcMs(expiresUtc);
     if (expiresMs && Date.now() > expiresMs) {
       els.parentMsg.className = 'banner bad';
-      els.parentMsg.innerText = '����X�w�L���C';
+      els.parentMsg.innerText = '解鎖碼已過期。';
       return;
     }
 
@@ -1795,13 +1795,13 @@
     const known = !!entry || FALLBACK_DEMO_HASHES.has(h);
     if (!known) {
       els.parentMsg.className = 'banner bad';
-      els.parentMsg.innerText = '����X�L�ġ]�Τ��ݩ󥻤��e�]�^�C';
+      els.parentMsg.innerText = '解鎖碼無效（或不屬於本內容包）。';
       return;
     }
 
     if ((rec.uses || 0) >= maxUses) {
       els.parentMsg.className = 'banner bad';
-      els.parentMsg.innerText = `������X�b���˸m�w�F�ϥΤW���]${maxUses} ���^�C`;
+      els.parentMsg.innerText = `此解鎖碼在本裝置已達使用上限（${maxUses} 次）。`;
       return;
     }
 
@@ -1831,7 +1831,7 @@
 
     setUnlocked(els.profile.value, true);
     els.parentMsg.className = 'banner ok';
-    els.parentMsg.innerText = expiresAtMs ? `���ꦨ�\�G���Ħ� ${formatDateTime(expiresAtMs)}�C` : '���ꦨ�\�G�w�i�ϥΧ��㤺�e�]�C';
+    els.parentMsg.innerText = expiresAtMs ? `解鎖成功：有效至 ${formatDateTime(expiresAtMs)}。` : '解鎖成功：已可使用完整內容包。';
   }
 
   function pinIsSet() {
@@ -1841,10 +1841,10 @@
   function renderPinStatus() {
     if (pinIsSet()) {
       els.pinStatus.className = 'badge ok';
-      els.pinStatus.innerText = '�w�]�w';
+      els.pinStatus.innerText = '已設定';
     } else {
       els.pinStatus.className = 'badge warn';
-      els.pinStatus.innerText = '���]�w';
+      els.pinStatus.innerText = '未設定';
     }
   }
 
@@ -1852,20 +1852,20 @@
     const raw = String(els.pin.value || '').trim();
     if (raw.length < 4 || raw.length > 8) {
       els.parentMsg.className = 'banner bad';
-      els.parentMsg.innerText = 'PIN �г]�w 4-8 �X�C';
+      els.parentMsg.innerText = 'PIN 請設定 4-8 碼。';
       return;
     }
     const h = await sha256Hex(raw);
     localStorage.setItem(LS.pin, h);
     els.parentMsg.className = 'banner ok';
-    els.parentMsg.innerText = 'PIN �w�]�w�C';
+    els.parentMsg.innerText = 'PIN 已設定。';
     renderPinStatus();
   }
 
   async function requirePin() {
     const saved = localStorage.getItem(LS.pin);
     if (!saved) return true;
-    const raw = prompt('�п�J�a�� PIN �~��ާ@�G');
+    const raw = prompt('請輸入家長 PIN 才能操作：');
     if (raw === null) return false;
     const h = await sha256Hex(String(raw).trim());
     return h === saved;
@@ -1875,7 +1875,7 @@
     const ok = await requirePin();
     if (!ok) {
       els.parentMsg.className = 'banner bad';
-      els.parentMsg.innerText = 'PIN ���~�A�w�����C';
+      els.parentMsg.innerText = 'PIN 錯誤，已取消。';
       return;
     }
     const keys = [];
@@ -1885,7 +1885,7 @@
     }
     keys.forEach(k => localStorage.removeItem(k));
     els.parentMsg.className = 'banner ok';
-    els.parentMsg.innerText = '�w�M��������ơC';
+    els.parentMsg.innerText = '已清除本機資料。';
     state.unlocked = false;
     renderPinStatus();
     buildToday(true);
@@ -1904,10 +1904,10 @@
     const txt = JSON.stringify(obj);
     navigator.clipboard.writeText(txt).then(() => {
       els.parentMsg.className = 'banner ok';
-      els.parentMsg.innerText = '�w�ƻs JSON ��ŶKï�C';
+      els.parentMsg.innerText = '已複製 JSON 到剪貼簿。';
     }).catch(() => {
       els.parentMsg.className = 'banner bad';
-      els.parentMsg.innerText = '�ƻs���ѡG�Ч���s�����U���\��C';
+      els.parentMsg.innerText = '複製失敗：請改用瀏覽器下載功能。';
     });
   }
 
@@ -1916,7 +1916,7 @@
     saveAccess(p, null);
     setUnlocked(p, false);
     els.parentMsg.className = 'banner muted';
-    els.parentMsg.innerText = '�w���s��W�]���եΡ^�C';
+    els.parentMsg.innerText = '已重新鎖上（測試用）。';
   }
 
   function openModal() {
@@ -1932,14 +1932,14 @@
     const last = state.todayList[Math.min(state.todayList.length-1, 9)];
     const sameKind = state.bank.filter(x => x.kind === last.kind);
     state.reinforce = pickN(sameKind.length ? sameKind : state.bank, 3, `${PACK_ID}|reinforce|${els.profile.value}|${Date.now()}`);
-    alert('�P�� 3 �D�w�ǳƦn�]�� demo ���δ��ܶ��� + �g���Y�i�^�C');
+    alert('同型 3 題已準備好（本 demo 先用提示階梯 + 週報即可）。');
   }
 
   function initBank() {
     const bank = window[BANK_GLOBAL];
     if (!Array.isArray(bank) || bank.length < 10) {
       els.banner.className = 'banner bad';
-      els.banner.innerText = '�D�w���J���ѡG�нT�{ bank.js �s�b�C';
+      els.banner.innerText = '題庫載入失敗：請確認 bank.js 存在。';
       state.bank = [];
       return;
     }
@@ -1948,15 +1948,15 @@
 
   async function initPwa() {
     if (!('serviceWorker' in navigator)) {
-      els.pwaBadge.innerText = 'PWA: ���䴩';
+      els.pwaBadge.innerText = 'PWA: 不支援';
       return;
     }
     try {
       await navigator.serviceWorker.register('./sw.js');
-      els.pwaBadge.innerText = 'PWA: �w�ҥ����u�֨�';
+      els.pwaBadge.innerText = 'PWA: 已啟用離線快取';
       els.pwaBadge.className = 'badge ok';
     } catch {
-      els.pwaBadge.innerText = 'PWA: ���U����';
+      els.pwaBadge.innerText = 'PWA: 註冊失敗';
       els.pwaBadge.className = 'badge warn';
     }
   }
@@ -2005,7 +2005,7 @@
     els.hintBox.innerHTML = '';
     els.visualHintBox.style.display = 'none';
     els.visualHintBox.innerHTML = '';
-    els.hintState.innerText = '�w�M�ťثe�@���P���ܡC';
+    els.hintState.innerText = '已清空目前作答與提示。';
   };
 
   // init
@@ -2023,19 +2023,21 @@
 </script>
 <footer style="border-top:1px solid #30363d;padding:24px 16px;text-align:center;margin-top:32px">
   <div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-bottom:10px;font-size:.85rem">
-    <a href="../" style="color:#8b949e;text-decoration:none">����</a>
-    <a href="../pricing/" style="color:#8b949e;text-decoration:none">��׻P����</a>
-    <a href="../about/" style="color:#8b949e;text-decoration:none">����ڭ�</a>
-    <a href="../privacy/" style="color:#8b949e;text-decoration:none">��p�v�F��</a>
-    <a href="../terms/" style="color:#8b949e;text-decoration:none">�A�ȱ���</a>
-    <a href="mailto:learnotaiwan@gmail.com" style="color:#8b949e;text-decoration:none">?? �pô�ڭ�</a>
+    <a href="../" style="color:#8b949e;text-decoration:none">首頁</a>
+    <a href="../pricing/" style="color:#8b949e;text-decoration:none">方案與價格</a>
+    <a href="../about/" style="color:#8b949e;text-decoration:none">關於我們</a>
+    <a href="../privacy/" style="color:#8b949e;text-decoration:none">隱私權政策</a>
+    <a href="../terms/" style="color:#8b949e;text-decoration:none">服務條款</a>
+    <a href="mailto:learnotaiwan@gmail.com" style="color:#8b949e;text-decoration:none">✉️ 聯繫我們</a>
   </div>
-  <div style="color:#484f58;font-size:.78rem">&copy; 2025-2026 AI �ƾǮa��. All rights reserved.</div>
+  <div style="color:#484f58;font-size:.78rem">&copy; 2025-2026 AI 數學家教. All rights reserved.</div>
 </footer>
 <script src="../shared/page_loader.js"></script>
 <script src="../shared/cookie_consent.js"></script>
 <script src="../shared/breadcrumb_jsonld.js"></script>
 <script src="../shared/skip_to_content.js"></script>
 <script defer src="../shared/module_progress.js"></script>
-<script src="../shared/kbd_hints.js" defer></script><script src="../shared/celebration.js" defer></script></body>
+<script defer src="../shared/kbd_hints.js"></script>
+<script defer src="../shared/celebration.js"></script>
+</body>
 </html>

@@ -1,24 +1,10 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>家長?�報（�?�?7 天�?</title>
-  <meta name="description" content="AI ?�學家�?家長?�報，檢視孩子�?�?7 天�?練�?統�??�正確�?趨勢?�弱點�??��?>
-  <meta property="og:title" content="家長?�報（�?�?7 天�?">
-  <meta property="og:description" content="檢�?孩�??��?7 天�?練�?統�??�正確�?趨勢?�弱點�??��?>
-  <meta property="og:type" content="website">
   <meta property="og:image" content="../icons/icon-512.png">
-  <link rel="canonical" href="./">
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    "name": "家長?�報（�?�?7 天�?｜AI ?�學家�?",
-    "description": "AI ?�學家�?家長?�報，檢視孩子�?�?7 天�?練�?統�??�正確�??�弱點�??��?,
-    "isPartOf": { "@type": "WebApplication", "name": "AI ?�學家�?" }
-  }
-  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>家長週報（最近 7 天）</title>
   <style>
     :root{
       --bg:#0d1117; --card:#161b22; --border:#30363d; --text:#c9d1d9; --muted:#8b949e;
@@ -67,32 +53,31 @@
     .replay-box .rq-concept .rq-concept-title{font-weight:700;color:var(--accent);margin-bottom:4px;font-size:14px}
     .replay-box .rq-concept .rq-concept-body{font-size:13px;line-height:1.7}
   </style>
-  <link rel="canonical" href="./">
 </head>
 <body>
   <div class="wrap">
-    <h1>家長?�報（�?�?7 天�?</h1>
-    <div class="small">?�話中�??�本：�?�?N 天�??�設 7 天�?作�?統�? + ?�示?��? + 弱�? TOP3（�??�推?��???/div>
+    <h1>家長週報（最近 7 天）</h1>
+    <div class="small">白話中文版本：最近 N 天（預設 7 天）作答統計 + 提示卡關 + 弱點 TOP3（規則推薦）。</div>
 
     <div class="card" style="margin-top:12px">
       <div class="row">
         <div>
-          <div class="small">使用??ID（�? Coach Mode�?/div>
+          <div class="small">使用者 ID（同 Coach Mode）</div>
           <div id="txtUid" class="mono">guest</div>
         </div>
         <div>
-          <div class="small">?��?範�?</div>
+          <div class="small">時間範圍</div>
           <select id="selRange">
-            <option value="7">?��?7 �?/option>
-            <option value="14">?��?14 �?/option>
-            <option value="30">?��?30 �?/option>
-            <option value="99999">?�部</option>
+            <option value="7">最近 7 天</option>
+            <option value="14">最近 14 天</option>
+            <option value="30">最近 30 天</option>
+            <option value="99999">全部</option>
           </select>
         </div>
         <div style="margin-left:auto" class="row">
-          <button id="btnRefresh">?�新?��?</button>
-          <button id="btnExport" class="ghost">?�出 Attempts JSON</button>
-          <button id="btnClear" class="ghost">清除?��?紀??/button>
+          <button id="btnRefresh">重新整理</button>
+          <button id="btnExport" class="ghost">匯出 Attempts JSON</button>
+          <button id="btnClear" class="ghost">清除本機紀錄</button>
         </div>
       </div>
     </div>
@@ -100,18 +85,18 @@
     <div class="card" style="margin-top:12px">
       <div class="row" style="justify-content:space-between; align-items:flex-start">
         <div>
-          <div style="font-weight:900; font-size:16px">?��?<span id="txtRangeDays">7</span> 天�?點�?�?/div>
+          <div style="font-weight:900; font-size:16px">最近 <span id="txtRangeDays">7</span> 天重點摘要</div>
           <div id="txtRangeDates" class="small" style="margin-top:4px"></div>
         </div>
         <div class="row" style="gap:8px">
-          <span id="pillUnit" class="tag pill">?��?：全??/span>
-          <span id="pillStuck" class="tag pill warn">?��??�示?��???/span>
-          <span id="pillWeak" class="tag pill warn">弱�?：�?/span>
+          <span id="pillUnit" class="tag pill">單元：全部</span>
+          <span id="pillStuck" class="tag pill warn">卡關提示階：—</span>
+          <span id="pillWeak" class="tag pill warn">弱點：—</span>
         </div>
       </div>
       <div id="summaryBox" style="margin-top:10px"></div>
       <div style="margin-top:10px">
-        <div style="font-weight:800">家長建議（本??3 ?��?點�?</div>
+        <div style="font-weight:800">家長建議（本週 3 個重點）</div>
         <div id="summaryAdvice" class="small" style="margin-top:6px"></div>
       </div>
     </div>
@@ -119,13 +104,13 @@
     <div class="card" style="margin-top:12px">
       <div class="row" style="justify-content:space-between; align-items:flex-start">
         <div>
-          <div style="font-weight:900; font-size:16px">?�??24 小�??��??��?（獨立�?</div>
-          <div class="small" style="margin-top:4px">?��??��?�?24 小�?，�??��???7/14/30 天�??�影?��?/div>
+          <div style="font-weight:900; font-size:16px">最新 24 小時做題分析（獨立）</div>
+          <div class="small" style="margin-top:4px">固定看最近 24 小時，不受上方 7/14/30 天切換影響。</div>
         </div>
         <div class="row" style="gap:8px; align-items:center">
-          <span id="pill24h" class="tag pill">24h：�?/span>
-          <button id="btn24hRetryTop" class="ghost" style="padding:6px 10px; font-size:12px">一?��?練�?24h ?��?�?/button>
-          <button id="btn24hRetryTop3" class="ghost" style="padding:6px 10px; font-size:12px">一?��?練�?TOP3�?/button>
+          <span id="pill24h" class="tag pill">24h：—</span>
+          <button id="btn24hRetryTop" class="ghost" style="padding:6px 10px; font-size:12px">一鍵重練（24h 錯題）</button>
+          <button id="btn24hRetryTop3" class="ghost" style="padding:6px 10px; font-size:12px">一鍵重練（TOP3）</button>
         </div>
       </div>
       <div id="box24hKpi" style="margin-top:10px"></div>
@@ -134,128 +119,94 @@
       <div id="box24hRetrySession" style="margin-top:10px"></div>
     </div>
 
-    <!-- ?�?� ?��?3 天獨立�????�?� -->
-    <div class="card" style="margin-top:12px">
-      <div style="font-weight:900; font-size:16px">?��?3 天�?題�??��??��?�?/div>
-      <div class="small" style="margin-top:4px">?��??��?�?72 小�?，�??��???72 小�?對�?趨勢??/div>
-      <span id="pill3d" class="tag pill" style="margin-top:6px">3天�???/span>
-      <div id="box3dKpi" style="margin-top:10px"></div>
-      <div id="box3dDelta" style="margin-top:10px"></div>
-      <div id="box3dRemedy" style="margin-top:10px"></div>
-    </div>
-
     <div class="grid">
       <div class="card">
-        <div class="small">總�???/div>
+        <div class="small">總題數</div>
         <div id="kpiTotal" class="kpi">0</div>
       </div>
       <div class="card">
-        <div class="small">�?��??/div>
+        <div class="small">正確率</div>
         <div id="kpiAcc" class="kpi">0%</div>
       </div>
       <div class="card">
-        <div class="small">?��?�???��?A�?/div>
+        <div class="small">獨立解題率（A）</div>
         <div id="kpiInd" class="kpi">0%</div>
       </div>
       <div class="card">
-        <div class="small">?�示依賴?��?B+C�?/div>
+        <div class="small">提示依賴率（B+C）</div>
         <div id="kpiHint" class="kpi">0%</div>
       </div>
       <div class="card">
-        <div class="small">首次�?��??/div>
+        <div class="small">首次正確率</div>
         <div id="kpiFirst" class="kpi">0%</div>
       </div>
       <div class="card">
-        <div class="small">平�?每�??��?</div>
+        <div class="small">平均每題時間</div>
         <div id="kpiTime" class="kpi">0s</div>
       </div>
     </div>
 
     <div class="card" style="margin-top:12px">
-      <div class="section-title">家長?�報（基礎數學檢測�?</div>
-      <div class="small">?��?小學?��??�學檢測?�統�?建議/?�象?��?表�?不影?��?題�??��?示�?程�?/div>
+      <div class="section-title">家長週報（math-offline 版整合）</div>
+      <div class="small">整合 parent_report 的統計/建議/四象限圖表，不影響原題型與提示流程。</div>
       <div id="offlineCards" class="grid" style="margin-top:10px"></div>
       <div class="subgrid">
         <div class="card">
-          <div style="font-weight:700">?�象?��?A/B/C/D�?/div>
+          <div style="font-weight:700">四象限（A/B/C/D）</div>
           <div id="offlineQuadrant" style="margin-top:6px"></div>
         </div>
         <div class="card">
-          <div style="font-weight:700">每日趨勢（正確�?�?/div>
+          <div style="font-weight:700">每日趨勢（正確率）</div>
           <div id="offlineTrend" style="margin-top:6px"></div>
         </div>
       </div>
       <div class="card" style="margin-top:10px">
-        <div style="font-weight:700">?�週建�?/div>
+        <div style="font-weight:700">本週建議</div>
         <div id="offlineRecommend" class="small" style="margin-top:6px"></div>
       </div>
       <div class="card" style="margin-top:10px">
-        <div style="font-weight:700">�?檢測結�? ??補�?觀念�??��?建議</div>
-        <div class="small">依�?小學?��??�學檢測?��?答�??��??�出?�要�??��?觀念�?建議練�??��?，幫?�家?�快?��??�孩子�?學�?弱�???/div>
-        <div id="offlineRemedy" style="margin-top:6px"></div>
-      </div>
-      <div class="card" style="margin-top:10px">
-        <div style="font-weight:700">��??統�?�????��?7 �?/div>
-        <div class="small">?�近�?天內?��?答統計�??��?/題�?/標籤）�?�?��?��???80% ?��??��?顯示觀念�??��?補�?建議??/div>
+        <div style="font-weight:700">📊 統計表 — 最近 7 天</div>
+        <div class="small">最近七天內的作答統計（單元/題型/標籤），正確率低於 80% 的題型會顯示觀念提醒與補救建議。</div>
         <div id="offlineTable" style="margin-top:6px"></div>
       </div>
       <div class="card" style="margin-top:10px">
-        <div style="font-weight:700">?? 統�?�????�早歷史紀?��?七天?��?</div>
-        <div class="small">七天以�??��??�歷?��?答統計�??��?追蹤?��??�步趨勢??/div>
+        <div style="font-weight:700">📜 統計表 — 更早歷史紀錄（七天前）</div>
+        <div class="small">七天以前的所有歷史作答統計，用來追蹤長期進步趨勢。</div>
         <div id="offlineTableHistory" style="margin-top:6px"></div>
       </div>
     </div>
 
     <div class="card" style="margin-top:12px">
-      <div style="font-weight:900; font-size:16px">?? 學�??�步追蹤（本??vs 上週�?</div>
-      <div class="small" style="margin-top:4px">比�??��?7 天�???7 天�?表現差異，�?家長一?��??�進步?��?要�?強�??�方??/div>
-      <div id="progressCompare" style="margin-top:10px"></div>
-      <div id="progressAdvice" style="margin-top:10px"></div>
-    </div>
-
-    <div class="card" style="margin-top:12px">
-      <div style="font-weight:900; font-size:16px">?? 學�?習慣觀�?/div>
-      <div class="small" style="margin-top:4px">?��?孩�??��?題�?段、頻?��??��??��?幫助家長安�??�佳學習�??��?/div>
-      <div id="studyHabits" style="margin-top:10px"></div>
-    </div>
-
-    <div class="card" style="margin-top:12px">
-      <div style="font-weight:900; font-size:16px">?�� ?�週�??�建議�?給家?��? 3 件�?�?/div>
-      <div class="small" style="margin-top:4px">?��?孩�??��?答數?��??��??�?��??�執行�??�週�??��??��?/div>
-      <div id="actionPlan" style="margin-top:10px"></div>
-    </div>
-
-    <div class="card" style="margin-top:12px">
-      <div style="font-weight:800">作�?趨勢（�?�?30 題�?</div>
-      <div class="small">綠色=答�?，�???答錯；�?線代表�?�?30 題�?�?��?��??��?/div>
+      <div style="font-weight:800">作答趨勢（最近 30 題）</div>
+      <div class="small">綠色=答對，紅色=答錯；折線代表最近 30 題的正確率變化。</div>
       <div id="trendBox" style="margin-top:10px"></div>
     </div>
 
     <div class="card" style="margin-top:12px">
-      <div style="font-weight:800">對錯趨勢（長條�??��?30 題�?</div>
-      <div class="small">每�?條代表�?題�?�?答�??��?=答錯??/div>
+      <div style="font-weight:800">對錯趨勢（長條｜最近 30 題）</div>
+      <div class="small">每一條代表一題，綠=答對、紅=答錯。</div>
       <div id="barTrend" style="margin-top:10px"></div>
     </div>
 
     <div class="card" style="margin-top:12px">
-      <div style="font-weight:800">作�?/作錯題目?��?（�?�?30 題�?</div>
-      <div class="small">?�出題目?�耗�??��?示次?��??�便快速�?顧�?/div>
+      <div style="font-weight:800">作對/作錯題目摘要（最近 30 題）</div>
+      <div class="small">列出題目、耗時、提示次數，方便快速回顧。</div>
       <div id="questionSummary" style="margin-top:10px"></div>
     </div>
 
     <div class="card" style="margin-top:12px">
-      <div style="font-weight:800">?�近�?答�?細�??��??��?/?�示次數�?/div>
-      <div class="small">每�?題�?記�?作�??��??��?示層級、是?�正確�?/div>
+      <div style="font-weight:800">最近作答明細（可看耗時/提示次數）</div>
+      <div class="small">每一題會記錄作答時間、提示層級、是否正確。</div>
       <table>
         <thead>
           <tr>
-            <th>?��?</th>
-            <th>?��?</th>
-            <th>題�?</th>
-            <th>�?��</th>
-            <th>?��?</th>
-            <th>?�示層�?</th>
-            <th>?�示次數</th>
+            <th>時間</th>
+            <th>單元</th>
+            <th>題型</th>
+            <th>正確</th>
+            <th>耗時</th>
+            <th>提示層級</th>
+            <th>提示次數</th>
           </tr>
         </thead>
         <tbody id="tbAttempts"></tbody>
@@ -263,20 +214,20 @@
     </div>
 
     <div class="card" style="margin-top:12px">
-      <div style="font-weight:800">題�?統�?（�??��???kind�?/div>
-      <div class="small">A：無?�示且�?次就對�?B：�??�示後�?對�?C：�??�示仍�??��?D：無?�示仍�??��?/div>
+      <div style="font-weight:800">題型統計（每列一個 kind）</div>
+      <div class="small">A：無提示且一次就對；B：看提示後答對；C：看提示仍答錯；D：無提示仍答錯。</div>
       <table>
         <thead>
           <tr>
             <th>kind</th>
             <th>題數</th>
-            <th>�?��</th>
+            <th>正確</th>
             <th>A</th>
             <th>B</th>
             <th>C</th>
             <th>D</th>
-            <th>?�示深度（none/L1/L2/L3/�??�?/th>
-            <th>?�??/th>
+            <th>提示深度（none/L1/L2/L3/解答）</th>
+            <th>狀態</th>
           </tr>
         </thead>
         <tbody id="tbKinds"></tbody>
@@ -284,49 +235,49 @@
     </div>
 
     <div class="card" style="margin-top:12px">
-      <div style="font-weight:800">已�?答�??�總覽�??�部?��???kind�?/div>
-      <div class="small">?�出?�?��??��?題�??�正確�?，方便家?�快?��??�學習面?��?/div>
+      <div style="font-weight:800">已作答題型總覽（全部做過的 kind）</div>
+      <div class="small">列出所有做過的題型與正確率，方便家長快速掌握學習面向。</div>
       <div id="allKindsBox" style="margin-top:10px"></div>
     </div>
 
     <div class="card" style="margin-top:12px">
-      <div style="font-weight:800">學�?建議（�?題�?�?/div>
-      <div class="small">依�?答�??�產?�簡?��??�方?��?不影?��?題庫）�?/div>
+      <div style="font-weight:800">學習建議（按題型）</div>
+      <div class="small">依作答結果產生簡短補救方向（不影響原題庫）。</div>
       <div id="kindAdviceBox" style="margin-top:10px"></div>
     </div>
 
     <div class="card" style="margin-top:12px">
-      <div style="font-weight:800">TOP3 弱�?（unit + kind）�?下�?步練習�?10 題�?</div>
-      <div class="small">?�用?�穩�??��?：只??unit_id + kind，�?依賴題庫標籤；�??��??��??��??�「�?近�??��??��???/div>
+      <div style="font-weight:800">TOP3 弱點（unit + kind）與下一步練習（10 題）</div>
+      <div class="small">先用最穩的做法：只看 unit_id + kind，不依賴題庫標籤；題目清單會盡量挑「最近沒做過」的。</div>
       <div id="weakBox" style="margin-top:10px"></div>
     </div>
 
     <div class="card" style="margin-top:12px">
-      <div style="font-weight:800">?��??��? + 補�??�學</div>
-      <div class="small">?�錯?��??�可展�??�新作�?，�?上錯誤�??�、�??��?學建議、�?念�??��?以�?完整�??步�???/div>
+      <div style="font-weight:800">錯題重做 + 補救教學</div>
+      <div class="small">做錯的題目可展開重新作答，附上錯誤分析、補救教學建議、觀念提醒，以及完整解題步驟。</div>
       <div id="wrongDiagBox" style="margin-top:10px"></div>
     </div>
 
     <div class="card" style="margin-top:12px">
-      <div style="font-weight:800">?? 觀念�??��??��??��?建議</div>
-      <div class="small">依�?作�?紀?��??�出每個�??��??��?觀念�??��?建議練�??��?，幫?�家?��??�孩子�?要�?強�?觀念�?/div>
+      <div style="font-weight:800">📘 觀念提醒與出題方向建議</div>
+      <div class="small">依據作答紀錄，列出每個題型的核心觀念提醒與建議練習方向，幫助家長掌握孩子需要加強的觀念。</div>
       <div id="conceptDirectionBox" style="margin-top:10px"></div>
     </div>
 
     <div class="card" style="margin-top:12px">
-      <div style="font-weight:800">家長?��??��?（�??��?｜詳細�?</div>
-      <div class="small">?�本機�?答�??��?Attempts telemetry）整?��?完整?��??�報：�??��??�統計、�?�??��??�以?��??��?細�??��?示深度�? A/B/C/D）�?/div>
+      <div style="font-weight:800">家長本機報告（純文字｜詳細）</div>
+      <div class="small">把本機作答紀錄（Attempts telemetry）整理成完整文字週報：包含題型統計、提示/耗時、以及答錯明細（含提示深度與 A/B/C/D）。</div>
       <div class="row" style="margin-top:10px">
-        <button id="btnPlainRefresh" class="ghost">?�新?��?純�?字報??/button>
-        <button id="btnPlainDownload" class="ghost">下�? TXT</button>
+        <button id="btnPlainRefresh" class="ghost">重新產生純文字報告</button>
+        <button id="btnPlainDownload" class="ghost">下載 TXT</button>
       </div>
       <textarea id="txtPlainReport" spellcheck="false" style="min-height:320px; margin-top:10px"></textarea>
-      <div class="small" style="margin-top:8px">?�註：若?��??��??��??��??�內�?答�?，�?細�?�?question_id 顯示（�?影響統�?）�?/div>
+      <div class="small" style="margin-top:8px">備註：若某些單元未記錄題目內容/答案，明細會以 question_id 顯示（不影響統計）。</div>
     </div>
 
     <div class="card" style="margin-top:12px">
-      <div style="font-weight:800">?�出（JSON�?/div>
-      <div class="small">?�份 JSON ?�直?�拿?��??��??�週報/弱�??��???/div>
+      <div style="font-weight:800">匯出（JSON）</div>
+      <div class="small">這份 JSON 可直接拿去做更完整週報/弱點分析。</div>
       <textarea id="txtOut" spellcheck="false"></textarea>
     </div>
   </div>
@@ -441,8 +392,8 @@
     function min1(ms){
       const v = Math.max(0, Number(ms || 0));
       const m = v / 60000;
-      if (m < 1) return '不到 1 ??;
-      return Math.round(m) + ' ??;
+      if (m < 1) return '不到 1 分';
+      return Math.round(m) + ' 分';
     }
 
     function sumDurationMs(attempts){
@@ -490,140 +441,137 @@
     }
 
     function statusTag(row){
-      // 很白話�?三色?��??��?調整�?
+      // 很白話的三色燈（可再調整）
       const n = row.n || 0;
-      if (!n) return { cls: 'warn', text: '資�?不足' };
+      if (!n) return { cls: 'warn', text: '資料不足' };
 
       const hintWrongRate = n ? (row.hint_wrong / n) : 0;
       const noHintWrongRate = n ? (row.nohint_wrong / n) : 0;
 
-      if (hintWrongRate >= 0.35) return { cls: 'bad', text: '高風?��??�示?�錯' };
-      if (noHintWrongRate >= 0.35) return { cls: 'warn', text: '?�補強：無?�示?��?�? };
-      return { cls: 'ok', text: '穩�?' };
+      if (hintWrongRate >= 0.35) return { cls: 'bad', text: '高風險：提示還錯' };
+      if (noHintWrongRate >= 0.35) return { cls: 'warn', text: '需補強：無提示錯較多' };
+      return { cls: 'ok', text: '穩定' };
     }
 
     function unitName(unitId){
       const u = String(unitId || '');
-      if (u === 'fraction') return '?�數';
+      if (u === 'fraction') return '分數';
       if (u === 'decimal') return '小數';
-      if (u === 'ratio') return '比�??��???;
-      if (u === 'life') return '?�活?�用';
-      if (u === 'fraction-word') return '?�數?�用�?;
-      if (u === 'volume') return '體�?';
-      if (u === 'exam-sprint') return '?��?衝刺';
+      if (u === 'ratio') return '比率百分率';
+      if (u === 'life') return '生活應用';
+      if (u === 'fraction-word') return '分數應用題';
+      if (u === 'volume') return '體積';
+      if (u === 'exam-sprint') return '考前衝刺';
       if (u === 'g5-grand-slam') return '五年級大滿貫';
-      if (u === 'interactive-g56-core-foundation') return 'G5-6 ?��?';
-      if (u === 'interactive-g5-life-pack2-empire') return 'G5 ?�活帝�?（�??��?';
-      if (u === 'interactive-g5-empire') return 'G5 帝�?模�?';
-      if (u === 'interactive-g5-life-pack1-empire') return 'G5 ?�活帝�?（�??��?';
-      if (u === 'interactive-g5-life-pack1plus-empire') return 'G5 ?�活帝�?（�???�?;
-      if (u === 'interactive-g5-life-pack2plus-empire') return 'G5 ?�活帝�?（�???�?;
-      if (u === 'fraction-g5') return 'G5 ?�數?��?';
-      if (u === 'decimal-unit4') return '小數乘除（第?�單?��?';
-      if (u === 'interactive-decimal-g5') return 'G5 小數互�?';
-      if (u === 'volume-g5') return 'G5 體�?';
-      if (u === 'ratio-percent-g5') return 'G5 比�??��???;
-      if (u === 'life-applications-g5') return 'G5 ?�活?�用';
-      if (u === 'fraction-word-g5') return 'G5 ?�數?�用�?;
-      if (u === 'commercial-pack1-fraction-sprint') return '?�用???�數衝刺';
-      if (u === 'mixed-multiply') return '?�數混�?乘�?';
-      if (u === 'national-bank-g5') return 'G5 ?�家題庫';
-      if (u === 'offline-math') return '?��?練�?';
+      if (u === 'interactive-g56-core-foundation') return 'G5-6 核心';
+      if (u === 'interactive-g5-life-pack2-empire') return 'G5 生活帝國（二包）';
+      if (u === 'interactive-g5-empire') return 'G5 帝國模式';
+      if (u === 'interactive-g5-life-pack1-empire') return 'G5 生活帝國（一包）';
+      if (u === 'interactive-g5-life-pack1plus-empire') return 'G5 生活帝國（一包+）';
+      if (u === 'interactive-g5-life-pack2plus-empire') return 'G5 生活帝國（二包+）';
+      if (u === 'fraction-g5') return 'G5 分數基礎';
+      if (u === 'decimal-unit4') return '小數乘除（第四單元）';
+      if (u === 'interactive-decimal-g5') return 'G5 小數互動';
+      if (u === 'volume-g5') return 'G5 體積';
+      if (u === 'ratio-percent-g5') return 'G5 比率百分率';
+      if (u === 'life-applications-g5') return 'G5 生活應用';
+      if (u === 'fraction-word-g5') return 'G5 分數應用題';
+      if (u === 'commercial-pack1-fraction-sprint') return '商用包-分數衝刺';
       return u || '(unknown unit)';
     }
 
     function kindNameZh(kind){
       const k = String(kind || '');
-      if (!k) return '（未?��?題�?�?;
+      if (!k) return '（未分類題型）';
       const map = {
-        // ??fraction_g5（�??�基礎�???
-        'simplify':'約�?（�?簡�??��?','equivalent':'等值�???,
-        'add_like':'?��?母�??��?�?,'sub_like':'?��?母�??��?�?,
-        'add_unlike':'?��?母�??��?法�??��?�?,'sub_unlike':'?��?母�??��?法�??��?�?,
-        'mul':'?�數乘�?','mul_int':'?�數??�數','mixed_convert':'帶�??��??�數互�?',
-        // ??decimal_unit4 / interactive_decimal（�??��???
-        'd_mul_int':'小數??�數','int_mul_d':'?�數?小數','d_mul_d':'小數?小數',
-        'd_div_int':'小數÷?�數','int_div_int_to_decimal':'?�數÷?�數＝�???,
-        'x10_shift':'?10/÷10 位數移�?',
-        // ??volume_g5（�?積�???
-        'cube_cm3':'�?��體�?積�?cm³�?,'cube_find_edge':'�?��體�??��???,
-        'composite3':'組�?體�?積�?三部?��?','rect_cm3':'?�方體�?積�?cm³�?,
-        'rect_find_height':'?�方體�??��?','base_area_h':'底面積×�?',
-        'm3_to_cm3':'立方?�尺?��??�公??,'cm3_to_m3':'立方?��??��??�公�?,
-        'composite':'組�?體�?�?,'mixed_units':'混�??��?體�?','decimal_dims':'小數?�長體�?',
-        // ??ratio_percent_g5（�??�百?��?）�?
-        'ratio_part_total':'比�?：部?��??��?','ratio_remaining':'比�?：剩餘�?',
-        'ratio_unit_rate':'比�?：單位�?','ratio_missing_to_1':'比值為1?�缺??,
-        'ratio_add_decimal':'比�??��?（含小數�?,'ratio_sub_decimal':'比�?減�?（含小數�?,
-        'percent_meaning':'?��??��?�?,'percent_to_decimal':'?��??��?小數',
-        'decimal_to_percent':'小數?�百?��?','fraction_to_percent':'?�數?�百?��?',
-        'percent_find_percent':'求百?��?','percent_find_part':'?��??��??��???,
-        'percent_find_whole':'?��??��??��???,'percent_discount':'?��??��??��??��?',
-        'percent_increase_decrease':'?��??��?增�???,'percent_tax_service':'?��??��?稅�??��?�?,
-        'percent_interest':'?��??��??�息',
-        // ??life_applications_g5（�?活�??��???
-        'buy_many':'大�?購買計�?','discount':'?�扣計�?','unit_price':'?�價計�?',
-        'time_add':'?��??��?','unit_convert':'?��??��?',
-        'fraction_remaining':'?�數?��???,'make_change':'?�零計�?',
-        'shopping_two_step':'購物?�步�?,'table_stats':'表格統�?',
-        'area_tiling':'?��??�貼','proportional_split':'比�??��?',
-        'perimeter_fence':'?�長?�籬','volume_fill':'體�?填�?',
-        'temperature_change':'溫度變�?',
-        // ??interactive_g5_empire（�??�模式�???
-        'decimal_mul':'小數乘�?','decimal_div':'小數?��?',
-        'fraction_addsub':'?�數?��?','fraction_mul':'?�數乘�?',
-        'percent_of':'?��??��???,'volume_rect_prism':'?�方體�?�?,
-        // ??life_pack 系�? ??
-        'u1_avg_fraction':'平�??��?（�??��?','u2_frac_addsub_life':'?�數?��?（�?活�?境�?',
-        'u3_frac_times_int':'?�數??�數（�?活�?境�?','u4_money_decimal_addsub':'小數?��?（�??��?境�?',
-        'u5_decimal_muldiv_price':'小數乘除（單??平�?�?,'u6_frac_dec_convert':'?�數小數互�?',
-        'u7_discount_percent':'?�扣?��???,'u8_ratio_recipe':'比�?（�?譜�??��?',
-        'u9_unit_convert_decimal':'?��??��?（含小數�?,'u10_rate_time_distance':'?��??��?路�?',
-        // ??g5_grand_slam（大滿貫 46 種�???
-        'place_value_truncate':'概數：無條件?�去?��?定�?',
-        'place_value_digit':'位值�??��?位置?�數�?,
-        'place_value_yi_wan':'?�萬表示：�??�整??,
-        'prime_or_composite':'質數?��??�判??,
-        'gcd_word':'GCD：剪緞帶/?�段?�??,'lcm_word':'LCM：�??�出?��?�?,
-        'fraction_add_unlike':'?�數?��?：異?��??��?',
-        'fraction_sub_mixed':'?�數減�?：帶?�數/?��???,
-        'area_triangle':'?��?：�?角形','area_parallelogram':'?��?：平行�??�形',
-        'area_trapezoid':'?��?：梯�?,'area_congruent_tile':'?��?：全等拼貼�?對�?�?,
-        'int_times_fraction':'?�數??�數（可?��??��?',
-        'remaining_by_fraction':'?��??��?1?��??��??總�?',
-        'sector_central_angle':'?�形：�?心�?計�?','clock_angle':'?��?：�??��??�夾�?,
-        'decimal_times_integer':'小數??�數（�??�移?��?',
-        'decimal_times_decimal':'小數?小數（�??��??�相?��?',
-        'fraction_times_fraction':'?�數??�數（交?��??��?',
-        'reciprocal':'?�數（�?子�?母交?��?',
-        'fraction_of_fraction':'?�數?��??��????�?,
-        'displacement':'?�水法�?終�??�起�?,
-        'cm3_to_ml':'?��?：cm³ ??mL','liter_to_ml':'?��?：L ??mL',
-        'time_add_cross_day':'跨日：�??��?�?,'time_sub_cross_day':'跨日：�??��?�?,
-        'time_multiply':'?��?：�?段×段??,
-        'km2_to_ha':'平方?��? ???��?','ha_to_m2':'?��? ??平方?�尺',
-        'are_to_m2':'?��? ??平方?�尺',
-        'cheng_increase':'?�數：�?幾�?','percent_to_ppm':'延伸�? ??ppm',
-        'find_percent':'?��??��?已知?��?/?��?',
-        'surface_area_cube':'表面積�?�?���?6a²',
-        'surface_area_rect_prism':'表面積�??�方�?2(lw+lh+wh)',
-        'surface_area_contact_removed':'表面積�??�觸?�扣??,
-        'symmetry_axes':'對稱軸數??,
-        'perp_bisector_property':'?�直平�?線性質：�??�相�?,
-        'perp_bisector_converse':'?�直平�?線�?距離?��??�推',
-        'solve_x_plus_a':'�?��程�?x + a = b','solve_ax':'�?��程�?ax = b',
-        'solve_x_div_d':'�?��程�?x ÷ d = b',
-        'line_trend':'?��??��?趨勢?�斷','line_max_month':'?��??��??�高�??�份',
-        'line_omit_rule':'?��??��??�略符�?/規�?補�?,
-        // ??fraction-word-g5（�??��??��?）�?
-        'remain_then_fraction':'?�剩?��??�數','remaining_after_fraction':'?��??��??��?',
-        'average_division':'平�??��?','generic_fraction_word':'?�數綜�??�用',
-        'fraction_of_quantity':'?��??�幾?��?�?,'reverse_fraction':'?�推?��?（已?��??��?',
-        // ??commercial-pack1 ??
-        'original':'?��?題�?','remain':'?��???,
-        'part_to_total':'?��??�全�?,'compare':'比�?大�?',
-        // ??exam sprint ??
-        'mixed':'綜�?題�?',
+        // — fraction_g5（分數基礎）—
+        'simplify':'約分（最簡分數）','equivalent':'等值分數',
+        'add_like':'同分母分數加法','sub_like':'同分母分數減法',
+        'add_unlike':'異分母分數加法（通分）','sub_unlike':'異分母分數減法（通分）',
+        'mul':'分數乘法','mul_int':'分數×整數','mixed_convert':'帶分數假分數互換',
+        // — decimal_unit4 / interactive_decimal（小數）—
+        'd_mul_int':'小數×整數','int_mul_d':'整數×小數','d_mul_d':'小數×小數',
+        'd_div_int':'小數÷整數','int_div_int_to_decimal':'整數÷整數＝小數',
+        'x10_shift':'×10/÷10 位數移動',
+        // — volume_g5（體積）—
+        'cube_cm3':'正方體體積（cm³）','cube_find_edge':'正方體反推邊長',
+        'composite3':'組合體體積（三部分）','rect_cm3':'長方體體積（cm³）',
+        'rect_find_height':'長方體反推高','base_area_h':'底面積×高',
+        'm3_to_cm3':'立方公尺→立方公分','cm3_to_m3':'立方公分→立方公尺',
+        'composite':'組合體體積','mixed_units':'混合單位體積','decimal_dims':'小數邊長體積',
+        // — ratio_percent_g5（比率百分率）—
+        'ratio_part_total':'比例：部分與全體','ratio_remaining':'比例：剩餘量',
+        'ratio_unit_rate':'比例：單位量','ratio_missing_to_1':'比值為1的缺項',
+        'ratio_add_decimal':'比例加法（含小數）','ratio_sub_decimal':'比例減法（含小數）',
+        'percent_meaning':'百分率意義','percent_to_decimal':'百分率→小數',
+        'decimal_to_percent':'小數→百分率','fraction_to_percent':'分數→百分率',
+        'percent_find_percent':'求百分率','percent_find_part':'百分率求部分量',
+        'percent_find_whole':'百分率求全體量','percent_discount':'百分率應用：打折',
+        'percent_increase_decrease':'百分率：增減率','percent_tax_service':'百分率：稅金服務費',
+        'percent_interest':'百分率：利息',
+        // — life_applications_g5（生活應用）—
+        'buy_many':'大量購買計算','discount':'折扣計算','unit_price':'單價計算',
+        'time_add':'時間加法','unit_convert':'單位換算',
+        'fraction_remaining':'分數剩餘量','make_change':'找零計算',
+        'shopping_two_step':'購物兩步驟','table_stats':'表格統計',
+        'area_tiling':'面積拼貼','proportional_split':'比例分配',
+        'perimeter_fence':'周長圍籬','volume_fill':'體積填充',
+        'temperature_change':'溫度變化',
+        // — interactive_g5_empire（帝國模式）—
+        'decimal_mul':'小數乘法','decimal_div':'小數除法',
+        'fraction_addsub':'分數加減','fraction_mul':'分數乘法',
+        'percent_of':'百分率求值','volume_rect_prism':'長方體體積',
+        // — life_pack 系列 —
+        'u1_avg_fraction':'平均分配（分數）','u2_frac_addsub_life':'分數加減（生活情境）',
+        'u3_frac_times_int':'分數×整數（生活情境）','u4_money_decimal_addsub':'小數加減（金錢情境）',
+        'u5_decimal_muldiv_price':'小數乘除（單價/平均）','u6_frac_dec_convert':'分數小數互換',
+        'u7_discount_percent':'折扣百分率','u8_ratio_recipe':'比例（食譜配方）',
+        'u9_unit_convert_decimal':'單位換算（含小數）','u10_rate_time_distance':'速率時間路程',
+        // — g5_grand_slam（大滿貫 46 種）—
+        'place_value_truncate':'概數：無條件捨去到指定位',
+        'place_value_digit':'位值：指定位置的數字',
+        'place_value_yi_wan':'億萬表示：換成整數',
+        'prime_or_composite':'質數與合數判斷',
+        'gcd_word':'GCD：剪緞帶/分段最長','lcm_word':'LCM：同時出現問題',
+        'fraction_add_unlike':'分數加法：異分母通分',
+        'fraction_sub_mixed':'分數減法：帶分數/假分數',
+        'area_triangle':'面積：三角形','area_parallelogram':'面積：平行四邊形',
+        'area_trapezoid':'面積：梯形','area_congruent_tile':'面積：全等拼貼（對半）',
+        'int_times_fraction':'整數×分數（可先約分）',
+        'remaining_by_fraction':'剩餘量（1−分數）×總量',
+        'sector_central_angle':'扇形：圓心角計算','clock_angle':'時鐘：時針分針夾角',
+        'decimal_times_integer':'小數×整數（位數移動）',
+        'decimal_times_decimal':'小數×小數（小數位數相加）',
+        'fraction_times_fraction':'分數×分數（交叉約分）',
+        'reciprocal':'倒數（分子分母交換）',
+        'fraction_of_fraction':'分數的分數（連乘）',
+        'displacement':'排水法：終點−起點',
+        'cm3_to_ml':'換算：cm³ ↔ mL','liter_to_ml':'換算：L → mL',
+        'time_add_cross_day':'跨日：時間加法','time_sub_cross_day':'跨日：時間減法',
+        'time_multiply':'時間：每段×段數',
+        'km2_to_ha':'平方公里 → 公頃','ha_to_m2':'公頃 → 平方公尺',
+        'are_to_m2':'公畝 → 平方公尺',
+        'cheng_increase':'成數：加幾成','percent_to_ppm':'延伸：% → ppm',
+        'find_percent':'百分率：已知部分/全體',
+        'surface_area_cube':'表面積：正方體 6a²',
+        'surface_area_rect_prism':'表面積：長方體 2(lw+lh+wh)',
+        'surface_area_contact_removed':'表面積：接觸面扣除',
+        'symmetry_axes':'對稱軸數量',
+        'perp_bisector_property':'垂直平分線性質：距離相等',
+        'perp_bisector_converse':'垂直平分線：距離相等反推',
+        'solve_x_plus_a':'解方程：x + a = b','solve_ax':'解方程：ax = b',
+        'solve_x_div_d':'解方程：x ÷ d = b',
+        'line_trend':'折線圖：趨勢判斷','line_max_month':'折線圖：最高點月份',
+        'line_omit_rule':'折線圖：省略符號/規律補值',
+        // — fraction-word-g5（分數應用題）—
+        'remain_then_fraction':'先剩再取分數','remaining_after_fraction':'取分數後剩餘',
+        'average_division':'平均分配','generic_fraction_word':'分數綜合應用',
+        'fraction_of_quantity':'某量的幾分之幾','reverse_fraction':'反推原量（已知分數）',
+        // — commercial-pack1 —
+        'original':'原始題型','remain':'剩餘量',
+        'part_to_total':'部分與全體','compare':'比較大小',
+        // — exam sprint —
+        'mixed':'綜合題型',
       };
       return map[k] || k;
     }
@@ -631,195 +579,195 @@
     function errorTypeZh(t){
       const key = String(t || 'other');
       const map = {
-        calculation_error: '計�??�誤',
-        concept_error: '觀念錯�?,
-        unit_error: '?��??�誤',
-        sign_error: '�???�錯�?,
-        rounding_error: '?�捨五入?�誤',
-        misunderstanding: '題�?誤解',
-        other: '?��?',
+        calculation_error: '計算錯誤',
+        concept_error: '觀念錯誤',
+        unit_error: '單位錯誤',
+        sign_error: '正負號錯誤',
+        rounding_error: '四捨五入錯誤',
+        misunderstanding: '題意誤解',
+        other: '其他',
       };
-      return map[key] || '?��?';
+      return map[key] || '其他';
     }
 
     function errorTypeAdviceZh(t){
       const key = String(t || 'other');
-      if (key === 'calculation_error') return '?��?每�?步�?式寫?��?，�?要�?算�?算�??��?算檢?��?;
-      if (key === 'concept_error') return '?�用一?�話說「這�?要用?�個�?算」�??��?式�?算�?;
-      if (key === 'unit_error') return '?�統一?��??��?，�?後�??��?題目要�??��???;
-      if (key === 'sign_error') return '每�?步�??��?減�?，特?�注?��??��?後是?��?對�?;
-      if (key === 'rounding_error') return '?��?完整?��??�後�?步�??��??��??��?;
-      if (key === 'misunderstanding') return '?��??�鍵字�?平�?/?��?/每�?，確認�??��?麼�??��???;
-      return '?��??��??��?寫出算�??�單位�??��?步�?步�???;
+      if (key === 'calculation_error') return '先把每一步算式寫出來，不要心算，算完做反算檢查。';
+      if (key === 'concept_error') return '先用一句話說「這題要用哪個運算」，再列式計算。';
+      if (key === 'unit_error') return '先統一單位再算，最後再換回題目要求單位。';
+      if (key === 'sign_error') return '每一步先看加減號，特別注意減號前後是否抄對。';
+      if (key === 'rounding_error') return '先算完整值，最後一步才做四捨五入。';
+      if (key === 'misunderstanding') return '先圈關鍵字（平均/剩下/每），確認要找什麼再動筆。';
+      return '先回到題意，寫出算式與單位，再一步一步算。';
     }
 
     function conceptReminderZh(kind){
       const k = String(kind || '').toLowerCase();
       const r = [];
-      // ?�?� 大滿貫�?位�?概數 ?�?�
+      // ── 大滿貫：位值/概數 ──
       if (/place_value|概數/.test(k)) {
-        r.push('?? 位值�??��??��??�…�??��?位�?0');
-        r.push('?? ?��?件捨?��??��?位以下全歸零');
-        r.push('?? ?�萬表示：�??��??��??��?');
+        r.push('🔑 位值：個十百千萬…每進一位×10');
+        r.push('🔑 無條件捨去：指定位以下全歸零');
+        r.push('🔑 億萬表示：先數位數再換算');
       }
-      // ?�?� 質數?�數 ?�?�
-      if (/prime|composite|質數|?�數/.test(k)) {
-        r.push('?? 質數：只??1 ?�自己兩?��???);
-        r.push('?? ?�數：除�?1 ?�自己�??�其他�???);
-        r.push('?? 1 ?��??�質?��?不是?�數');
+      // ── 質數合數 ──
+      if (/prime|composite|質數|合數/.test(k)) {
+        r.push('🔑 質數：只有 1 和自己兩個因數');
+        r.push('🔑 合數：除了 1 和自己還有其他因數');
+        r.push('🔑 1 既不是質數也不是合數');
       }
-      // ?�?� GCD / LCM ?�?�
-      if (/gcd|lcm|?��?|?��?.test(k)) {
-        r.push('?? GCD：兩?�共?��??�大�??��??�除法�?');
-        r.push('?? LCM：短?��??�部?�數?��?');
-        r.push('?? a ? b = GCD ? LCM');
+      // ── GCD / LCM ──
+      if (/gcd|lcm|公因|公倍/.test(k)) {
+        r.push('🔑 GCD：兩數共有的最大因數（短除法）');
+        r.push('🔑 LCM：短除法全部因數相乘');
+        r.push('🔑 a × b = GCD × LCM');
       }
-      // ?�?� ?��??��??��? ?�?�
-      if (/?��?|order|bracket|?��?|乘除|arithmetic/.test(k)) {
-        r.push('?? ?��??��?：�??��? ???��??????�後�?減�??��??�左?�右�?);
-        r.push('?? ?�到?��?中�??��?，�??�?�層?��?�?);
+      // ── 四則運算順序 ──
+      if (/四則|order|bracket|括號|乘除|arithmetic/.test(k)) {
+        r.push('🔑 運算順序：先括號 → 再乘除 → 最後加減（同級由左到右）');
+        r.push('🔑 遇到括號中有括號，從最內層開始算');
       }
-      // ?�?� ?��? ?�?�
-      if (/?��?|common_denom|add_unlike|sub_unlike|fraction_add_unlike/.test(k)) {
-        r.push('?? ?��?：�??��?母�??�小公?�數（LCM）�??��??��??��??��?');
-        r.push('?? ?��?後�??��??��?，�?母�??�直?�相??);
+      // ── 通分 ──
+      if (/通分|common_denom|add_unlike|sub_unlike|fraction_add_unlike/.test(k)) {
+        r.push('🔑 通分：先找分母的最小公倍數（LCM），再把分子分母同乘');
+        r.push('🔑 通分後才能做加減，分母不能直接相加');
       }
-      // ?�?� 約�? ?�?�
-      if (/約�?|simplif|reduce/.test(k)) {
-        r.push('?? 約�?：找?��??��??��?大公?�數（GCD）�??�除?��?�?);
+      // ── 約分 ──
+      if (/約分|simplif|reduce/.test(k)) {
+        r.push('🔑 約分：找分子分母的最大公因數（GCD），同除到最簡');
       }
-      // ?�?� ?�數?��? ?�?�
-      if (/?�數?��?|frac.*add|frac.*sub|add_like|sub_like|fraction_addsub/.test(k)) {
-        r.push('?? ?��?母直?��?子�?減�??��?母�??��?');
-        r.push('?? 算�?要�??�到?��?);
+      // ── 分數加減 ──
+      if (/分數加減|frac.*add|frac.*sub|add_like|sub_like|fraction_addsub/.test(k)) {
+        r.push('🔑 同分母直接分子加減；異分母先通分');
+        r.push('🔑 算完要約分到最簡');
       }
-      // ?�?� 帶�??��??�數 ?�?�
-      if (/帶�??�|mixed|fraction_sub_mixed/.test(k)) {
-        r.push('?? 帶�???= ?�數 + ?��??��?計�??��??��??��???);
-        r.push('?? ?�後�?得�??��??��??�帶?�數');
+      // ── 帶分數假分數 ──
+      if (/帶分數|mixed|fraction_sub_mixed/.test(k)) {
+        r.push('🔑 帶分數 = 整數 + 真分數，計算可先化成假分數');
+        r.push('🔑 最後記得把假分數換回帶分數');
       }
-      // ?�?� ?�數乘�? ?�?�
+      // ── 分數乘法 ──
       if (/int_times_fraction|fraction_times|frac.*times|mul_int|mul$|fraction_mul|fraction_of/.test(k)) {
-        r.push('?? ?�數??�數：�?子×�?子、�?母×�?�?);
-        r.push('?? ?��?交�?約�??��?，�??�更�?);
-        r.push('?? ?�數??�數：整?�寫??n/1 ?��?');
+        r.push('🔑 分數×分數：分子×分子、分母×分母');
+        r.push('🔑 可先交叉約分再乘，結果更簡');
+        r.push('🔑 整數×分數：整數寫成 n/1 再乘');
       }
-      // ?�?� ?�數 ?�?�
-      if (/reciprocal|?�數/.test(k)) {
-        r.push('?? ?�數：�?子�?母�?調�?a/b ??b/a�?);
-        r.push('?? 一?�數?它�??�數 = 1');
+      // ── 倒數 ──
+      if (/reciprocal|倒數/.test(k)) {
+        r.push('🔑 倒數：分子分母對調（a/b → b/a）');
+        r.push('🔑 一個數×它的倒數 = 1');
       }
-      // ?�?� ?��????�?�
-      if (/remaining|remain|?��?/.test(k)) {
-        r.push('?? ?��???= ?��? ? (1 ??已用?�數)');
-        r.push('?? ?��??��??��??��??�用 1 ?��?');
+      // ── 剩餘量 ──
+      if (/remaining|remain|剩餘/.test(k)) {
+        r.push('🔑 剩餘量 = 全量 × (1 − 已用分數)');
+        r.push('🔑 先算用掉的分數，再用 1 去減');
       }
-      // ?�?� 小數 ?�?�
+      // ── 小數 ──
       if (/小數|decimal|d_mul|d_div|money|x10_shift/.test(k)) {
-        r.push('?? 小數?��?要�?齊�??��?');
-        r.push('?? 小數乘�?：�?算數字�??��??��??�相??);
-        r.push('?? 小數?��?：除?��?變整?��?被除?��?步移小數點�?');
+        r.push('🔑 小數加減要對齊小數點');
+        r.push('🔑 小數乘法：先算數字再數小數位數相加');
+        r.push('🔑 小數除法：除數先變整數（被除數同步移小數點）');
       }
-      // ?�?� 互�? ?�?�
-      if (/互�?|convert|frac.*dec|equivalent/.test(k)) {
-        r.push('?? ?�數?��??��??��?÷?��?');
-        r.push('?? 小數?��??��?�?0.25 = 25/100 = 1/4');
+      // ── 互換 ──
+      if (/互換|convert|frac.*dec|equivalent/.test(k)) {
+        r.push('🔑 分數→小數：分子÷分母');
+        r.push('🔑 小數→分數：如 0.25 = 25/100 = 1/4');
       }
-      // ?�?� ?��????�?�
-      if (/?��?|percent|discount|?�扣|cheng_increase|find_percent|ppm/.test(k)) {
-        r.push('?? ?��???= ?��?÷?�部?100%');
-        r.push('?? ?�八??= ?0.8；�?�?= ?�價 - ?�價');
-        r.push('?? ?�數：�?三�? = ?1.3');
+      // ── 百分率 ──
+      if (/百分|percent|discount|折扣|cheng_increase|find_percent|ppm/.test(k)) {
+        r.push('🔑 百分率 = 部分÷全部×100%');
+        r.push('🔑 打八折 = ×0.8；折讓 = 原價 - 售價');
+        r.push('🔑 成數：加三成 = ×1.3');
       }
-      // ?�?� 比�? ?�?�
-      if (/比�?|ratio|份數/.test(k)) {
-        r.push('?? ?�簡比�???GCD ?�除');
-        r.push('?? 比�?= a÷b');
-        r.push('?? 份數?��?：�?�?= ?�部÷總份??);
+      // ── 比例 ──
+      if (/比例|ratio|份數/.test(k)) {
+        r.push('🔑 化簡比：找 GCD 同除');
+        r.push('🔑 比值 = a÷b');
+        r.push('🔑 份數問題：每份 = 全部÷總份數');
       }
-      // ?�?� ?��??��? ?�?�
-      if (/?��?|unit_convert|?��?|?�尺|?��?|km2|ha_to|are_to|cm3_to|liter_to|m3_to/.test(k)) {
-        r.push('?? ?�度�?m=100cm；�??��?1kg=1000g');
-        r.push('?? 容�?�?L=1000mL=1000cm³');
-        r.push('?? ?��?�?km²=100?��?, 1?��?=10000m², 1?��?=100m²');
+      // ── 單位換算 ──
+      if (/單位|unit_convert|公分|公尺|公升|km2|ha_to|are_to|cm3_to|liter_to|m3_to/.test(k)) {
+        r.push('🔑 長度：1m=100cm；重量：1kg=1000g');
+        r.push('🔑 容量：1L=1000mL=1000cm³');
+        r.push('🔑 面積：1km²=100公頃, 1公頃=10000m², 1公畝=100m²');
       }
-      // ?�?� ?��? ?�?�
-      if (/?��?|rate|speed|distance|路�?/.test(k)) {
-        r.push('?? ?��???��?=距離');
-        r.push('?? ?��?要統一（km/h ??km ??h�?);
+      // ── 速率 ──
+      if (/速率|rate|speed|distance|路程/.test(k)) {
+        r.push('🔑 速率×時間=距離');
+        r.push('🔑 單位要統一（km/h 配 km 和 h）');
       }
-      // ?�?� ?��? ?�?�
-      if (/?��?|area|congruent_tile/.test(k)) {
-        r.push('?? ?�方�?= ?�×寬；�?角形 = 底×�?÷2');
-        r.push('?? 平�??��?�?= 底×�?；梯�?= (上�?+下�?)?高�?');
-        r.push('?? 組�??�形：�??�基?��?形�??��?');
+      // ── 面積 ──
+      if (/面積|area|congruent_tile/.test(k)) {
+        r.push('🔑 長方形 = 長×寬；三角形 = 底×高÷2');
+        r.push('🔑 平行四邊形 = 底×高；梯形 = (上底+下底)×高÷2');
+        r.push('🔑 組合圖形：拆成基本圖形再相加');
       }
-      // ?�?� 表面�??�?�
-      if (/surface_area|表面�?.test(k)) {
-        r.push('?? �?��體表?��? = 6 ? ?�長²');
-        r.push('?? ?�方體表?��? = 2(?�×寬 + ?�×�? + 寬×�?)');
-        r.push('?? ?�觸?�扣?��?每個接觸面要扣 2 ?��?上�??��??��?');
+      // ── 表面積 ──
+      if (/surface_area|表面積/.test(k)) {
+        r.push('🔑 正方體表面積 = 6 × 邊長²');
+        r.push('🔑 長方體表面積 = 2(長×寬 + 長×高 + 寬×高)');
+        r.push('🔑 接觸面扣除：每個接觸面要扣 2 倍（上下各一面）');
       }
-      // ?�?� 體�?容�? ?�?�
-      if (/體�?|volume|cube|rect_cm3|base_area|displacement|composite/.test(k)) {
-        r.push('?? ?�方�?= ?�×寬?高�?�?���?= ?�長³');
-        r.push('?? 容�? = 容器?�部體�?（扣壁�?�?);
-        r.push('?? 1L = 1000cm³');
+      // ── 體積容積 ──
+      if (/體積|volume|cube|rect_cm3|base_area|displacement|composite/.test(k)) {
+        r.push('🔑 長方體 = 長×寬×高；正方體 = 邊長³');
+        r.push('🔑 容積 = 容器內部體積（扣壁厚）');
+        r.push('🔑 1L = 1000cm³');
       }
-      // ?�?� ?�形/?��?角度 ?�?�
-      if (/sector|clock_angle|?�形|角度/.test(k)) {
-        r.push('?? ?�形?��?�?= 佔�?比�? ? 360°');
-        r.push('?? ?��?：�?小�??��?�?30°，�??��??��?�?6°');
+      // ── 扇形/時鐘角度 ──
+      if (/sector|clock_angle|扇形|角度/.test(k)) {
+        r.push('🔑 扇形圓心角 = 佔圓比例 × 360°');
+        r.push('🔑 時鐘：每小時時針走 30°，每分鐘分針走 6°');
       }
-      // ?�?� ?�水�??�?�
-      if (/displacement|?�水/.test(k)) {
-        r.push('?? ?�水法�?終�?水�? ??起�?水�? = ?��?體�?');
+      // ── 排水法 ──
+      if (/displacement|排水/.test(k)) {
+        r.push('🔑 排水法：終點水位 − 起點水位 = 物體體積');
       }
-      // ?�?� ?��?計�? ?�?�
-      if (/time_add|time_sub|time_multiply|跨日|?��?/.test(k)) {
-        r.push('?? 1小�? = 60?��?；�???24:00 轉�???);
-        r.push('?? ?��?減�?不�?減�???60 ?��???24 小�?');
+      // ── 時間計算 ──
+      if (/time_add|time_sub|time_multiply|跨日|時間/.test(k)) {
+        r.push('🔑 1小時 = 60分鐘；超過 24:00 轉隔日');
+        r.push('🔑 時間減法不夠減時借 60 分鐘或 24 小時');
       }
-      // ?�?� 對稱�??�?�
+      // ── 對稱軸 ──
       if (/symmetry|對稱/.test(k)) {
-        r.push('?? 對稱軸�?沿軸對�?完全?��??��?');
-        r.push('?? �?��形�? 4 條�?稱軸；正三�?形�? 3 �?);
+        r.push('🔑 對稱軸：沿軸對折完全重合的線');
+        r.push('🔑 正方形有 4 條對稱軸；正三角形有 3 條');
       }
-      // ?�?� ?�直平�?�??�?�
-      if (/perp_bisector|?�直平�?/.test(k)) {
-        r.push('?? ?�直平�?線�??�任何�?點到線段?�端點�?�?);
-        r.push('?? ?��?來�??�到?�端等�?，�?該�??��??�平?��?�?);
+      // ── 垂直平分線 ──
+      if (/perp_bisector|垂直平分/.test(k)) {
+        r.push('🔑 垂直平分線上的任何一點到線段兩端點等距');
+        r.push('🔑 反過來：若到兩端等距，則該點在垂直平分線上');
       }
-      // ?�?� �?���??�?�
-      if (/solve_x|?��?|equation|linear|quadratic/.test(k)) {
-        r.push('?? 等�??��??��??��??��??�除');
-        r.push('?? 移�?要�??��??��?減、�??�除�?);
-        r.push('?? �??�???��?驗�?');
+      // ── 解方程 ──
+      if (/solve_x|方程|equation|linear|quadratic/.test(k)) {
+        r.push('🔑 等號兩邊同加同減同乘同除');
+        r.push('🔑 移項要變號（加↔減、乘↔除）');
+        r.push('🔑 解完代回原式驗算');
       }
-      // ?�?� ?��????�?�
-      if (/line_trend|line_max|line_omit|?��?/.test(k)) {
-        r.push('?? ?��??��?趨勢：�???增�??��???減�?');
-        r.push('?? ?�略符�?：表示中?�刻度被跳�?，�??�用?��?');
-        r.push('?? ?��?�??�低�?對�?橫軸?��?份�?年份');
+      // ── 折線圖 ──
+      if (/line_trend|line_max|line_omit|折線/.test(k)) {
+        r.push('🔑 折線圖看趨勢：上升=增加、下降=減少');
+        r.push('🔑 省略符號：表示中間刻度被跳過，不能用內插');
+        r.push('🔑 找最高/最低點對應橫軸的月份或年份');
       }
-      // ?�?� ?�用題通用 ?�?�
-      if (/?�用|word|life|buy|shopping|make_change|table_stats|temperature|?��?/.test(k)) {
-        r.push('?? ?�找?�鍵字�??�共?�「剩下」「�??�「平?��?);
-        r.push('?? ?�幾?��?幾」用乘�?；「平?��??�用?��?');
-        r.push('?? ?��?算�??��?算�??�後檢?�單�?);
+      // ── 應用題通用 ──
+      if (/應用|word|life|buy|shopping|make_change|table_stats|temperature|文字/.test(k)) {
+        r.push('🔑 先找關鍵字：「共」「剩下」「每」「平均」');
+        r.push('🔑 「幾分之幾」用乘法；「平均分」用除法');
+        r.push('🔑 先列算式再計算，最後檢查單位');
       }
-      // ?�?� 平�? ?�?�
-      if (/平�?|avg|average/.test(k)) {
-        r.push('?? 平�? = 總�?÷?�數');
+      // ── 平均 ──
+      if (/平均|avg|average/.test(k)) {
+        r.push('🔑 平均 = 總和÷個數');
       }
-      // ?�?� ?�長 ?�?�
-      if (/perimeter|?�長/.test(k)) {
-        r.push('?? ?�方形周??= 2?(??�?');
-        r.push('?? ?�籬?��?：注?��??��?不用??);
+      // ── 周長 ──
+      if (/perimeter|周長/.test(k)) {
+        r.push('🔑 長方形周長 = 2×(長+寬)');
+        r.push('🔑 圍籬問題：注意靠牆邊不用圍');
       }
       if (!r.length) {
-        r.push('?? ?��??��??��??��?算�?，�?後�?算並檢查');
-        r.push('?? 每�?步寫?��?，�?跳步');
+        r.push('🔑 先看懂題意，再列算式，最後計算並檢查');
+        r.push('🔑 每一步寫出來，不跳步');
       }
       return r;
     }
@@ -829,40 +777,40 @@
       const et = String(errorType || '');
       const d = [];
       if (et === 'calculation_error') {
-        d.push('?? ?��??��?：�?練�?計�?題�?�?2 步�??��?，穩了�??�到 3?? �?);
-        d.push('?? ?��??��?：�?步寫?�中?��??��?算�??�逆�?算檢??);
+        d.push('📝 出題方向：多練純計算題，從 2 步驟開始，穩了再加到 3–4 步');
+        d.push('📝 做題方式：每步寫出中間結果，算完用逆運算檢查');
       } else if (et === 'concept_error') {
-        d.push('?? ?��??��?：�??�「判?�用什麼�?算」�??��?題�?穩�??��?計�?�?);
-        d.push('?? ?��??��?：�?題�???��說「這�?要用??�?�??�」�??��?');
+        d.push('📝 出題方向：先做「判斷用什麼運算」的選擇題，穩了再做計算題');
+        d.push('📝 做題方式：每題先口頭說「這題要用加/減/乘/除」再動筆');
       } else if (et === 'unit_error') {
-        d.push('?? ?��??��?：�?練「單位�?算」�?組�??��??��??��??��?混�?');
-        d.push('?? ?��??��?：�??��?統�??��?，�?案�?上單位�??��?');
+        d.push('📝 出題方向：專練「單位換算」題組，先做單一換算再做混合');
+        d.push('📝 做題方式：算前先統一單位，答案附上單位再核對');
       } else if (et === 'sign_error') {
-        d.push('?? ?��??��?：�?練含負數?��?法�?題�??�別?�「�???��??��?減混?��?);
-        d.push('?? ?��??��?：�??��?減�?標出來�?移�??�確認�???);
+        d.push('📝 出題方向：多練含負數和減法的題，特別是「連減」和「加減混合」');
+        d.push('📝 做題方式：每個加減號標出來，移動時確認變號');
       } else if (et === 'misunderstanding') {
-        d.push('?? ?��??��?：�??�「�??�鍵字�??��?式」�??�解練�?');
-        d.push('?? ?��??��?：�?完�??�用?�己?�話說「這�?要�?什麼�?);
+        d.push('📝 出題方向：先做「圈關鍵字→列算式」的拆解練習');
+        d.push('📝 做題方式：讀完題先用自己的話說「這題要求什麼」');
       } else {
-        d.push('?? ?��??��?：�??�本題�?始�?穩�??�練?��?�?);
-        d.push('?? ?��??��?：寫?��?一步�?跳步，�?完檢??);
+        d.push('📝 出題方向：從基本題開始，穩了再練進階題');
+        d.push('📝 做題方式：寫出每一步不跳步，算完檢查');
       }
-      if (/?�數|fraction|frac|mul_int|add_like|sub_like|add_unlike|sub_unlike|simplify|equivalent|mixed_convert|reciprocal|remain/.test(k)) d.push('?? 題�??�強：�?練通�?約�? ???�數?��? ??乘�? ???�用�?);
-      if (/小數|decimal|d_mul|d_div|x10_shift|money/.test(k)) d.push('?? 題�??�強：�?練�?齊�?�???乘除 ???10/÷10 移�?');
-      if (/solve_x|?��?|equation|linear/.test(k)) d.push('?? 題�??�強：�?練�?步移?????�步 ???��?題�??��?');
-      if (/?��?|area|congruent/.test(k)) d.push('?? 題�??�強：�?練單一?�形?��?（�?�?平�?/梯形）�? 組�??�解');
-      if (/surface_area|表面�?.test(k)) d.push('?? 題�??�強：�?練正?��? ???�方�????�觸?�扣??);
-      if (/體�?|volume|cube|rect_cm3|composite|base_area|displacement/.test(k)) d.push('?? 題�??�強：�?練正?��?/?�方�???組�?�????�水�?);
-      if (/?�用|word|life|buy|shopping|make_change|temperature/.test(k)) d.push('?? 題�??�強：�?練�?題�??�鍵�????��? ??完整計�?');
-      if (/gcd|lcm|prime|?��?|?��?.test(k)) d.push('?? 題�??�強：�?練短?��? ???�練?�用題�??��?�??��?磚�?');
-      if (/place_value|概數|位�?.test(k)) d.push('?? 題�??�強：�?練�??�辨�????��?件捨???�捨五入 ???�萬?��?');
-      if (/?��?|percent|discount|cheng_increase|find_percent|ppm/.test(k)) d.push('?? 題�??�強：�?練百?��??�義 ???��?/增�? ???�息/稅�?');
-      if (/比�?|ratio/.test(k)) d.push('?? 題�??�強：�?練�?簡�? ??比�???份數?��?');
-      if (/time_add|time_sub|time_multiply|跨日/.test(k)) d.push('?? 題�??�強：�?練�??��?�???跨日?��? ???��?乘�?');
-      if (/km2|ha_to|are_to|cm3_to|liter_to|m3_to|unit_convert/.test(k)) d.push('?? 題�??�強：�?練單一?��? ???��?/體�?混�??��?');
-      if (/perp_bisector|symmetry|對稱/.test(k)) d.push('?? 題�??�強：�??��??��?稱軸/?�直平�?�????��?計�?�?);
-      if (/line_trend|line_max|line_omit|?��?/.test(k)) d.push('?? 題�??�強：�?練�??????�趨???�高�? ???�略符�?規�?');
-      if (/sector|clock_angle|?�形/.test(k)) d.push('?? 題�??�強：�?練�?心�?概念 ???��?角度 ???�形?��?');
+      if (/分數|fraction|frac|mul_int|add_like|sub_like|add_unlike|sub_unlike|simplify|equivalent|mixed_convert|reciprocal|remain/.test(k)) d.push('📝 題型加強：先練通分約分 → 分數加減 → 乘法 → 應用題');
+      if (/小數|decimal|d_mul|d_div|x10_shift|money/.test(k)) d.push('📝 題型加強：先練對齊加減 → 乘除 → ×10/÷10 移位');
+      if (/solve_x|方程|equation|linear/.test(k)) d.push('📝 題型加強：先練一步移項 → 兩步 → 文字題列方程');
+      if (/面積|area|congruent/.test(k)) d.push('📝 題型加強：先練單一圖形公式（三角/平行/梯形）→ 組合拆解');
+      if (/surface_area|表面積/.test(k)) d.push('📝 題型加強：先練正方體 → 長方體 → 接觸面扣除');
+      if (/體積|volume|cube|rect_cm3|composite|base_area|displacement/.test(k)) d.push('📝 題型加強：先練正方體/長方體 → 組合體 → 排水法');
+      if (/應用|word|life|buy|shopping|make_change|temperature/.test(k)) d.push('📝 題型加強：先練讀題圈關鍵字 → 列式 → 完整計算');
+      if (/gcd|lcm|prime|公因|公倍/.test(k)) d.push('📝 題型加強：先練短除法 → 再練應用題（剪緞帶/鋪磁磚）');
+      if (/place_value|概數|位值/.test(k)) d.push('📝 題型加強：先練位值辨識 → 無條件捨去/四捨五入 → 億萬換算');
+      if (/百分|percent|discount|cheng_increase|find_percent|ppm/.test(k)) d.push('📝 題型加強：先練百分率意義 → 打折/增減 → 利息/稅金');
+      if (/比例|ratio/.test(k)) d.push('📝 題型加強：先練化簡比 → 比值 → 份數分配');
+      if (/time_add|time_sub|time_multiply|跨日/.test(k)) d.push('📝 題型加強：先練同日加減 → 跨日加減 → 時間乘法');
+      if (/km2|ha_to|are_to|cm3_to|liter_to|m3_to|unit_convert/.test(k)) d.push('📝 題型加強：先練單一換算 → 面積/體積混合換算');
+      if (/perp_bisector|symmetry|對稱/.test(k)) d.push('📝 題型加強：先畫圖找對稱軸/垂直平分線 → 再做計算題');
+      if (/line_trend|line_max|line_omit|折線/.test(k)) d.push('📝 題型加強：先練讀圖 → 找趨勢/最高點 → 省略符號規則');
+      if (/sector|clock_angle|扇形/.test(k)) d.push('📝 題型加強：先練圓心角概念 → 時鐘角度 → 扇形面積');
       return d;
     }
 
@@ -873,19 +821,19 @@
       const correctAns = String(evt?.correct_answer || '');
       const parts = [];
       const desc = {
-        calculation_error: '計�??��??�誤，可?�是?��?步�?減�??��??��??�借�??��?題�?,
-        concept_error: '�???��??�差，可?�用?��?算方法�??��?套用?�誤??,
-        unit_error: '?��??��??��?題�??�能忘�??��??��?算中?�單位�?混�?,
-        sign_error: '�???��??��?誤�??�能移�?忘�?變�??��?法�?算�?負�???,
-        rounding_error: '?��??��?誤�??�能中�?步�?就�?了�?似而�??�後�??��?,
-        misunderstanding: '題�??�解?�差，可?��??�到?�鍵字�??�混?��?什麼」�?,
+        calculation_error: '計算過程有誤，可能是某一步加減乘除算錯或進借位出問題。',
+        concept_error: '解題方向偏差，可能用錯運算方法或公式套用有誤。',
+        unit_error: '單位處理有問題，可能忘了換算或計算中把單位搞混。',
+        sign_error: '正負號處理有誤，可能移項忘了變號或減法運算漏負號。',
+        rounding_error: '取概數有誤，可能中間步驟就做了近似而非最後才取。',
+        misunderstanding: '題意理解偏差，可能沒抓到關鍵字或搞混「求什麼」。',
       };
-      parts.push(desc[et] || '?�要�??�檢?�解題�?程�?);
-      if (studentAns && correctAns) parts.push('學�?�?' + studentAns + '，正確�?案是 ' + correctAns + '??);
-      if (/?�數|fraction/.test(kind) && et === 'calculation_error') parts.push('?��?：通�?後�?子�??��?，�?母�??��??��?減�?);
-      if (/小數|decimal/.test(kind) && et === 'calculation_error') parts.push('?��?：�?減�?小數點�?對�?；�?法�?算數字�??��??��??��?);
-      if (/?��?|bracket|乘除/.test(kind)) parts.push('?��?：�??��??��??��??��?，�?層由左到?��?);
-      if (/?��?|equation/.test(kind)) parts.push('?��?：移?��?變�?，解完代?��?算�?);
+      parts.push(desc[et] || '需要重新檢查解題過程。');
+      if (studentAns && correctAns) parts.push('學生答 ' + studentAns + '，正確答案是 ' + correctAns + '。');
+      if (/分數|fraction/.test(kind) && et === 'calculation_error') parts.push('提醒：通分後分子做運算，分母不能跟著加減。');
+      if (/小數|decimal/.test(kind) && et === 'calculation_error') parts.push('提醒：加減時小數點要對齊；乘法先算數字再數小數位數。');
+      if (/四則|bracket|乘除/.test(kind)) parts.push('提醒：先括號→乘除→加減，同層由左到右。');
+      if (/方程|equation/.test(kind)) parts.push('提醒：移項要變號，解完代回驗算。');
       return parts.join(' ');
     }
 
@@ -901,9 +849,9 @@
 
     function hintLabel(evt){
       const levels = Array.isArray(evt?.hint?.shown_levels) ? evt.hint.shown_levels : [];
-      if (!levels.length && !evt?.steps?.shown_solution) return '??;
+      if (!levels.length && !evt?.steps?.shown_solution) return '無';
       const maxLv = levels.length ? Math.max.apply(null, levels.map(n => Number(n)||0)) : 0;
-      if (evt?.steps?.shown_solution) return '�??';
+      if (evt?.steps?.shown_solution) return '解答';
       return `L${maxLv || 1}`;
     }
 
@@ -912,7 +860,7 @@
       if (!el) return;
       const items = Array.isArray(attempts) ? attempts.slice(-30) : [];
       if (!items.length){
-        el.innerHTML = '<div class="small">（�??��?答�??��?</div>';
+        el.innerHTML = '<div class="small">（尚無作答紀錄）</div>';
         return;
       }
 
@@ -953,7 +901,7 @@
       if (!el) return;
       const items = Array.isArray(attempts) ? attempts.slice(-30) : [];
       if (!items.length){
-        el.innerHTML = '<div class="small">（�??��?答�??��?</div>';
+        el.innerHTML = '<div class="small">（尚無作答紀錄）</div>';
         return;
       }
 
@@ -973,7 +921,7 @@
       if (!el) return;
       const items = Array.isArray(attempts) ? attempts.slice(-30).reverse() : [];
       if (!items.length){
-        el.innerHTML = '<div class="small">（�??��?答�??��?</div>';
+        el.innerHTML = '<div class="small">（尚無作答紀錄）</div>';
         return;
       }
 
@@ -987,19 +935,19 @@
         const qText = safeStr(evt?.extra?.question || evt?.question || evt?.question_id || '(題目)');
         const errType = !ok ? errorTypeZh(inferErrorType(evt)) : '';
         const errDetail = !ok ? safeStr(String(evt?.error_detail || '')) : '';
-        const line = `<li><span class="tag ${ok ? 'ok':'bad'}">${ok ? '�?:'??}</span> ${qText} <span class="small">｜耗�? ${sec(cost)}｜�?�?${hints}${ok ? '' : `｜錯??${errType}`}</span>${ok ? '' : `${errDetail ? `<div class="small">?��?�?{errDetail}</div>` : ''}`}</li>`;
+        const line = `<li><span class="tag ${ok ? 'ok':'bad'}">${ok ? '對':'錯'}</span> ${qText} <span class="small">｜耗時 ${sec(cost)}｜提示 ${hints}${ok ? '' : `｜錯因 ${errType}`}</span>${ok ? '' : `${errDetail ? `<div class="small">原因：${errDetail}</div>` : ''}`}</li>`;
         (ok ? okList : badList).push(line);
       }
 
       el.innerHTML = `
         <div class="row" style="gap:16px;align-items:flex-start">
           <div style="flex:1">
-            <div style="font-weight:700">作�?題目</div>
-            <ol style="margin:6px 0 0 18px; padding:0">${okList.slice(0, 10).join('') || '<li class="small">??/li>'}</ol>
+            <div style="font-weight:700">作對題目</div>
+            <ol style="margin:6px 0 0 18px; padding:0">${okList.slice(0, 10).join('') || '<li class="small">—</li>'}</ol>
           </div>
           <div style="flex:1">
             <div style="font-weight:700">作錯題目</div>
-            <ol style="margin:6px 0 0 18px; padding:0">${badList.slice(0, 10).join('') || '<li class="small">??/li>'}</ol>
+            <ol style="margin:6px 0 0 18px; padding:0">${badList.slice(0, 10).join('') || '<li class="small">—</li>'}</ol>
           </div>
         </div>
       `;
@@ -1023,18 +971,18 @@
       _latest24hTopTarget = null;
       _latest24hTopTargets = [];
 
-      pill.textContent = `24h�?{total} 題�?�?�� ${correct}｜錯�?${wrongN}`;
+      pill.textContent = `24h：${total} 題｜正確 ${correct}｜錯誤 ${wrongN}`;
 
       if (!total){
         if (retryBtn) {
           retryBtn.disabled = true;
-          retryBtn.title = '?��?24 小�?沒�?作�?紀??;
+          retryBtn.title = '最近 24 小時沒有作答紀錄';
         }
         if (retryTop3Btn) {
           retryTop3Btn.disabled = true;
-          retryTop3Btn.title = '?��?24 小�?沒�?作�?紀??;
+          retryTop3Btn.title = '最近 24 小時沒有作答紀錄';
         }
-        kpiBox.innerHTML = '<div class="small">（�?�?24 小�?沒�?作�?紀?��?</div>';
+        kpiBox.innerHTML = '<div class="small">（最近 24 小時沒有作答紀錄）</div>';
         wrongBox.innerHTML = '';
         remedyBox.innerHTML = '';
         return;
@@ -1070,9 +1018,9 @@
       kpiBox.innerHTML = `
         <div class="row" style="gap:8px; flex-wrap:wrap">
           <span class="tag pill ok">24h 題數 ${total}</span>
-          <span class="tag pill ${acc >= 0.8 ? 'ok' : (acc >= 0.6 ? 'warn' : 'bad')}">�?��??${pct(acc)}</span>
-          <span class="tag pill warn">平�? ${sec(avgMs)}/�?/span>
-          <span class="tag pill warn">?�示依賴 ${pct(hintDep)}</span>
+          <span class="tag pill ${acc >= 0.8 ? 'ok' : (acc >= 0.6 ? 'warn' : 'bad')}">正確率 ${pct(acc)}</span>
+          <span class="tag pill warn">平均 ${sec(avgMs)}/題</span>
+          <span class="tag pill warn">提示依賴 ${pct(hintDep)}</span>
         </div>
       `;
 
@@ -1080,13 +1028,13 @@
       if (!topWrong.length){
         if (retryBtn) {
           retryBtn.disabled = true;
-          retryBtn.title = '?��?24 小�?沒�??��?';
+          retryBtn.title = '最近 24 小時沒有錯題';
         }
         if (retryTop3Btn) {
           retryTop3Btn.disabled = true;
-          retryTop3Btn.title = '?��?24 小�?沒�??��?';
+          retryTop3Btn.title = '最近 24 小時沒有錯題';
         }
-        wrongBox.innerHTML = '<div class="small">?? ?��?24 小�?沒�??��?，建議維?�短?��?複�?（�?�?10 題�???/div>';
+        wrongBox.innerHTML = '<div class="small">🎉 最近 24 小時沒有錯題，建議維持短回合複習（每次 10 題）。</div>';
         remedyBox.innerHTML = '';
         return;
       }
@@ -1112,14 +1060,14 @@
       if (retryBtn) {
         retryBtn.disabled = !_latest24hTopTarget;
         retryBtn.title = _latest24hTopTarget
-          ? `?��? ${unitName(topTarget.unit_id)} / ${kindNameZh(topTarget.kind)} ?�練`
-          : '此�??�目?�無對�?練�???;
+          ? `前往 ${unitName(topTarget.unit_id)} / ${kindNameZh(topTarget.kind)} 重練`
+          : '此題型目前無對應練習頁';
       }
       if (retryTop3Btn) {
         retryTop3Btn.disabled = !_latest24hTopTargets.length;
         retryTop3Btn.title = _latest24hTopTargets.length
-          ? `依�??��? ${_latest24hTopTargets.length} ?�弱點�??�練習�?`
-          : '?��?沒�??�跳轉�? TOP3 ?��?';
+          ? `依序開啟 ${_latest24hTopTargets.length} 個弱點題型練習頁`
+          : '目前沒有可跳轉的 TOP3 目標';
       }
 
       const wrongByQuestionMap = new Map();
@@ -1132,7 +1080,7 @@
           unit_id: unitId,
           kind,
           question_id: questionId,
-          question_text: safeStr(evt?.extra?.question || evt?.question || '(題目?��?缺失)'),
+          question_text: safeStr(evt?.extra?.question || evt?.question || '(題目文字缺失)'),
           wrong: 0,
           last_ts: 0,
           errType: new Map(),
@@ -1149,7 +1097,7 @@
       });
 
       wrongBox.innerHTML = `
-        <div style="font-weight:700">24 小�??��??��?（TOP ${topWrong.length}�?/div>
+        <div style="font-weight:700">24 小時錯題重點（TOP ${topWrong.length}）</div>
         <ol style="margin:8px 0 0 18px; padding:0">
           ${topWrong.map(r => {
             const typeRows = Array.from(r.errType.entries()).sort((a,b)=>b[1]-a[1]);
@@ -1157,28 +1105,28 @@
             const accRate = r.total ? (r.correct / r.total) : 0;
             return `<li>
               ${safeStr(unitName(r.unit_id))} / ${safeStr(kindNameZh(r.kind))}
-              <span class="small">｜錯 ${r.wrong}/${r.total}｜正確�? ${pct(accRate)}｜主要錯?��?${safeStr(errorTypeZh(topType))}</span>
+              <span class="small">｜錯 ${r.wrong}/${r.total}｜正確率 ${pct(accRate)}｜主要錯因：${safeStr(errorTypeZh(topType))}</span>
             </li>`;
           }).join('')}
         </ol>
-        <div style="font-weight:700; margin-top:10px">?��?清單（�? question_id ?��?�?/div>
-        <div class="small" style="margin-top:4px">每�?顯示?��?24 小�??�誤次數，可一?��??��?題�??�似題�?/div>
+        <div style="font-weight:700; margin-top:10px">錯題清單（依 question_id 分組）</div>
+        <div class="small" style="margin-top:4px">每題顯示最近 24 小時錯誤次數，可一鍵重出同題型相似題。</div>
         <ol style="margin:8px 0 0 18px; padding:0">
           ${wrongByQuestion.slice(0, 20).map(r => {
             const typeRows = Array.from(r.errType.entries()).sort((a,b)=>b[1]-a[1]);
             const topType = typeRows[0] ? typeRows[0][0] : 'other';
-            const qid = r.question_id ? safeStr(r.question_id) : '（無 question_id�?;
+            const qid = r.question_id ? safeStr(r.question_id) : '（無 question_id）';
             return `<li style="margin-bottom:8px">
               <div>
                 <span class="mono">${qid}</span>
-                <span class="small">�?{safeStr(unitName(r.unit_id))} / ${safeStr(kindNameZh(r.kind))}｜錯 ${r.wrong} 次�?主�??��?�?{safeStr(errorTypeZh(topType))}</span>
+                <span class="small">｜${safeStr(unitName(r.unit_id))} / ${safeStr(kindNameZh(r.kind))}｜錯 ${r.wrong} 次｜主要錯因：${safeStr(errorTypeZh(topType))}</span>
               </div>
               <div class="small" style="margin-top:2px">${safeStr(r.question_text)}</div>
               <div class="row" style="gap:6px; margin-top:4px">
-                <button class="ghost js24hRetryOne" data-unit-id="${safeStr(r.unit_id)}" data-kind="${safeStr(r.kind)}" data-question-id="${safeStr(r.question_id)}" style="padding:4px 8px; font-size:12px">?�出?�似�?/button>
+                <button class="ghost js24hRetryOne" data-unit-id="${safeStr(r.unit_id)}" data-kind="${safeStr(r.kind)}" data-question-id="${safeStr(r.question_id)}" style="padding:4px 8px; font-size:12px">重出相似題</button>
               </div>
             </li>`;
-          }).join('') || '<li class="small">（�?�?24 小�?沒�?�?question_id ?�錯題�??��?</li>'}
+          }).join('') || '<li class="small">（最近 24 小時沒有帶 question_id 的錯題紀錄）</li>'}
         </ol>
       `;
 
@@ -1189,7 +1137,7 @@
           const questionId = String(btn.getAttribute('data-question-id') || '');
           const urlBase = unitPageUrl(unitId);
           if (!urlBase){
-            alert('此�??�目?��??��??��?練�??��?);
+            alert('此題目目前沒有對應的練習頁。');
             return;
           }
           const uid2 = window.AIMathCoachLog?.getOrCreateUserId?.() || 'guest';
@@ -1215,139 +1163,29 @@
           <div class="card" style="margin-top:10px">
             <div class="row" style="justify-content:space-between; align-items:flex-start">
               <div>
-                <div style="font-weight:800">補�?建議�?{safeStr(unitName(r.unit_id))} / ${safeStr(kindNameZh(r.kind))}</div>
+                <div style="font-weight:800">補救建議：${safeStr(unitName(r.unit_id))} / ${safeStr(kindNameZh(r.kind))}</div>
                 <div class="small mono">${safeStr(r.kind)}</div>
               </div>
-              <span class="tag bad">24h 補�?</span>
+              <span class="tag bad">24h 補救</span>
             </div>
-            <div class="small" style="margin-top:8px">主�??��?�?{safeStr(errorTypeZh(topType))}</div>
+            <div class="small" style="margin-top:8px">主要錯因：${safeStr(errorTypeZh(topType))}</div>
             <div style="margin-top:8px">
-              <div style="font-weight:700">補�??��?</div>
+              <div style="font-weight:700">補救做法</div>
               <div class="small">- ${remedies.map(safeStr).join('<br>- ')}</div>
             </div>
             <div style="margin-top:8px">
-              <div style="font-weight:700">觀念�???/div>
+              <div style="font-weight:700">觀念提醒</div>
               <div class="small">- ${concepts.map(safeStr).join('<br>- ')}</div>
             </div>
             <div style="margin-top:8px">
-              <div style="font-weight:700">?�新?�相似�?練�?（建�?5 題�?</div>
+              <div style="font-weight:700">重新出相似題練習（建議 5 題）</div>
               <ol style="margin:6px 0 0 18px; padding:0">
-                ${qs.map(q => `<li><span class="mono">${safeStr(String(q?.id || ''))}</span>�?{safeStr(qText(q))}</li>`).join('') || '<li class="small">（找不到對�?題目�?/li>'}
+                ${qs.map(q => `<li><span class="mono">${safeStr(String(q?.id || ''))}</span>：${safeStr(qText(q))}</li>`).join('') || '<li class="small">（找不到對應題目）</li>'}
               </ol>
             </div>
           </div>
         `;
       }).join('');
-    }
-
-    // ?�?� 3-day window functions ?�?�
-
-    function computeWindowMetrics(items) {
-      const n = items.length;
-      const correct = items.filter(e => e?.is_correct === true).length;
-      const hinted = items.filter(e => {
-        const h = e?.hint_count || e?.hints_used || 0;
-        return Number(h) > 0;
-      }).length;
-      const times = items.map(e => {
-        const dur = Number(e?.duration_ms || e?.time_spent_ms || 0);
-        return dur > 0 ? dur : 0;
-      }).filter(t => t > 0);
-      const avgTime = times.length ? (times.reduce((a, b) => a + b, 0) / times.length) : 0;
-      return {
-        total: n,
-        accuracy: n ? (correct / n) : 0,
-        avg_time_ms: Math.round(avgTime),
-        hint_dependency: n ? (hinted / n) : 0,
-      };
-    }
-
-    function computeWindowDelta(curr, prev) {
-      if (window.AIMathReportAggregate?.compareWindow) {
-        return window.AIMathReportAggregate.compareWindow(curr, prev);
-      }
-      // Inline fallback
-      return {
-        delta_total: (curr?.total || 0) - (prev?.total || 0),
-        delta_accuracy: (curr?.accuracy || 0) - (prev?.accuracy || 0),
-        delta_avg_time_ms: (curr?.avg_time_ms || 0) - (prev?.avg_time_ms || 0),
-        delta_hint_dependency: (curr?.hint_dependency || 0) - (prev?.hint_dependency || 0),
-      };
-    }
-
-    function renderLatest3d(uid, attempts3d, prev3d) {
-      const pill = $('pill3d');
-      const kpiBox = $('box3dKpi');
-      const deltaBox = $('box3dDelta');
-      const remedyBox = $('box3dRemedy');
-      if (!pill || !kpiBox) return;
-
-      const curr = computeWindowMetrics(attempts3d);
-      const prev = computeWindowMetrics(prev3d);
-      const delta = computeWindowDelta(curr, prev);
-
-      pill.textContent = `3天�?${curr.total} 題�?�?��??${pct(curr.accuracy)}`;
-
-      if (!curr.total) {
-        kpiBox.innerHTML = '<div class="small">?��?3 天�??��?答�??��?/div>';
-        if (deltaBox) deltaBox.innerHTML = '';
-        if (remedyBox) remedyBox.innerHTML = '';
-        return;
-      }
-
-      // KPI card
-      kpiBox.innerHTML = `
-        <div class="row" style="gap:12px; flex-wrap:wrap">
-          <div><span class="small">題數</span><div class="kpi" style="font-size:18px">${curr.total}</div></div>
-          <div><span class="small">�?��??/span><div class="kpi" style="font-size:18px">${pct(curr.accuracy)}</div></div>
-          <div><span class="small">平�??��?</span><div class="kpi" style="font-size:18px">${sec(curr.avg_time_ms)}</div></div>
-          <div><span class="small">?�示依賴??/span><div class="kpi" style="font-size:18px">${pct(curr.hint_dependency)}</div></div>
-        </div>
-      `;
-
-      // Delta card
-      if (deltaBox) {
-        const accArrow = delta.delta_accuracy > 0.01 ? '?? : delta.delta_accuracy < -0.01 ? '?? : '??;
-        const accClass = delta.delta_accuracy > 0.01 ? 'good' : delta.delta_accuracy < -0.01 ? 'bad' : '';
-        const hintArrow = delta.delta_hint_dependency < -0.01 ? '???��?' : delta.delta_hint_dependency > 0.01 ? '???�注�?' : '???�平';
-        const hintClass = delta.delta_hint_dependency < -0.01 ? 'good' : delta.delta_hint_dependency > 0.01 ? 'bad' : '';
-        deltaBox.innerHTML = `
-          <div style="font-weight:700; margin-bottom:6px">vs ??3 �?? 變�?</div>
-          <div class="row" style="gap:12px; flex-wrap:wrap">
-            <span class="tag ${accClass}">�?��??${accArrow} ${(delta.delta_accuracy * 100).toFixed(1)}%</span>
-            <span class="tag">題數 ${delta.delta_total >= 0 ? '+' : ''}${delta.delta_total}</span>
-            <span class="tag ${hintClass}">?�示依賴 ${hintArrow}</span>
-            <span class="tag">?��? ${delta.delta_avg_time_ms >= 0 ? '+' : ''}${(delta.delta_avg_time_ms / 1000).toFixed(1)}s</span>
-          </div>
-        `;
-      }
-
-      // Top wrong categories + remedy
-      if (remedyBox) {
-        const wrong3d = attempts3d.filter(e => e?.is_correct === false);
-        const kindCounts = {};
-        for (const e of wrong3d) {
-          const k = e?.kind || e?.topic || 'unknown';
-          kindCounts[k] = (kindCounts[k] || 0) + 1;
-        }
-        const topKinds = Object.entries(kindCounts).sort((a, b) => b[1] - a[1]).slice(0, 3);
-        if (topKinds.length) {
-          const kindList = topKinds.map(([k, c]) => `<li>${safeStr(kindNameZh(k))}�?{c} ?��?</li>`).join('');
-          const advice = curr.accuracy < 0.6
-            ? '建議?��?顧基礎�?念�??��? 5 題�?類練習�?
-            : curr.accuracy < 0.8
-              ? '?�步中�??�中練�?弱�?題�???3 題即?��?
-              : '表現不錯，維?��?天�??�練習�??�即?��?;
-          remedyBox.innerHTML = `
-            <div style="font-weight:700">Top ?��?類別</div>
-            <ol style="margin:4px 0 0 18px; padding:0">${kindList}</ol>
-            <div style="margin-top:8px; font-weight:700">補�?建議</div>
-            <div class="small">${advice}</div>
-          `;
-        } else {
-          remedyBox.innerHTML = '<div class="small">3 天內?�錯題�?太�?了�???</div>';
-        }
-      }
     }
 
     function updateRetrySessionStatus(allAttempts){
@@ -1372,7 +1210,7 @@
         const done = delta >= goal;
         if (done) doneN += 1;
         const cls = done ? 'ok' : 'warn';
-        return `<li><span class="tag ${cls}">${done ? '完�?' : '?��?�?}</span> ${safeStr(t.unit_zh || unitName(t.unit_id))} / ${safeStr(t.kind_zh || kindNameZh(t.kind))} <span class="small">（進度 ${delta}/${goal}�?/span></li>`;
+        return `<li><span class="tag ${cls}">${done ? '完成' : '進行中'}</span> ${safeStr(t.unit_zh || unitName(t.unit_id))} / ${safeStr(t.kind_zh || kindNameZh(t.kind))} <span class="small">（進度 ${delta}/${goal}）</span></li>`;
       }).join('');
 
       const allDone = doneN >= (session.targets || []).length;
@@ -1386,15 +1224,15 @@
         <div class="card" style="margin-top:6px">
           <div class="row" style="justify-content:space-between; align-items:flex-start">
             <div>
-              <div style="font-weight:700">?�練任�?追蹤（自?�刷?��?</div>
-              <div class="small">?�到?�個週報?��??��??�自?�刷??24h ?��???/div>
+              <div style="font-weight:700">重練任務追蹤（自動刷新）</div>
+              <div class="small">回到這個週報分頁時，會自動刷新 24h 成效。</div>
             </div>
-            <span class="tag ${allDone ? 'ok' : 'warn'}">${allDone ? '已�??? : '?��?�?}</span>
+            <span class="tag ${allDone ? 'ok' : 'warn'}">${allDone ? '已完成' : '進行中'}</span>
           </div>
-          <ol style="margin:8px 0 0 18px; padding:0">${itemsHtml || '<li class="small">（無任�??��?�?/li>'}</ol>
+          <ol style="margin:8px 0 0 18px; padding:0">${itemsHtml || '<li class="small">（無任務目標）</li>'}</ol>
           <div class="row" style="margin-top:8px; gap:8px">
-            <button id="btnRetrySessionRefresh" class="ghost" style="padding:6px 10px; font-size:12px">立即?�新?��?</button>
-            <button id="btnRetrySessionClear" class="ghost" style="padding:6px 10px; font-size:12px">清除任�?</button>
+            <button id="btnRetrySessionRefresh" class="ghost" style="padding:6px 10px; font-size:12px">立即刷新成效</button>
+            <button id="btnRetrySessionClear" class="ghost" style="padding:6px 10px; font-size:12px">清除任務</button>
           </div>
         </div>
       `;
@@ -1410,17 +1248,17 @@
       const box = $('offlineCards');
       if (!box) return;
       if (!stats){
-        box.innerHTML = '<div class="small">（�??��?答�??��?</div>';
+        box.innerHTML = '<div class="small">（尚無作答紀錄）</div>';
         return;
       }
       const overall = stats.overall || { n: 0 };
       const cards = [
-        { label: '總�???, value: String(overall.n || 0) },
-        { label: '�?��??, value: pct(overall.accuracy || 0) },
-        { label: '?��?�????, value: pct(overall.independent_rate || 0) },
-        { label: '?�示依賴??, value: pct(overall.hint_dependency || 0) },
-        { label: '平�??��?', value: sec(overall.avg_time_ms || 0) },
-        { label: '?�後�?�?, value: fmtDate(stats.last_attempt_ts || 0) },
+        { label: '總題數', value: String(overall.n || 0) },
+        { label: '正確率', value: pct(overall.accuracy || 0) },
+        { label: '獨立解題率', value: pct(overall.independent_rate || 0) },
+        { label: '提示依賴率', value: pct(overall.hint_dependency || 0) },
+        { label: '平均時間', value: sec(overall.avg_time_ms || 0) },
+        { label: '最後作答', value: fmtDate(stats.last_attempt_ts || 0) },
       ];
       box.innerHTML = cards.map(c => `
         <div class="card">
@@ -1436,7 +1274,7 @@
       const q = stats?.quadrants || { A: 0, B: 0, C: 0, D: 0, total: 0 };
       const total = Math.max(0, Number(q.total || 0));
       if (!total){
-        el.innerHTML = '<div class="small">（�??��?答�??��?</div>';
+        el.innerHTML = '<div class="small">（尚無作答紀錄）</div>';
         return;
       }
 
@@ -1454,7 +1292,7 @@
       function label(k){
         const n = Number(q[k] || 0);
         const r = total ? Math.round((n / total) * 100) : 0;
-        return `${k} ${n}�?{r}%`;
+        return `${k} ${n}｜${r}%`;
       }
 
       const svg = `
@@ -1469,10 +1307,10 @@
           <text x="180" y="180" fill="#c9d1d9" font-size="12" text-anchor="middle">${label('C')}</text>
           <text x="60" y="180" fill="#c9d1d9" font-size="12" text-anchor="middle">${label('D')}</text>
 
-          <text x="60" y="18" fill="#8b949e" font-size="10" text-anchor="middle">�?��＋無?�示</text>
-          <text x="180" y="18" fill="#8b949e" font-size="10" text-anchor="middle">�?��＋�??�示</text>
-          <text x="60" y="232" fill="#8b949e" font-size="10" text-anchor="middle">?�誤＋無?�示</text>
-          <text x="180" y="232" fill="#8b949e" font-size="10" text-anchor="middle">?�誤＋�??�示</text>
+          <text x="60" y="18" fill="#8b949e" font-size="10" text-anchor="middle">正確＋無提示</text>
+          <text x="180" y="18" fill="#8b949e" font-size="10" text-anchor="middle">正確＋有提示</text>
+          <text x="60" y="232" fill="#8b949e" font-size="10" text-anchor="middle">錯誤＋無提示</text>
+          <text x="180" y="232" fill="#8b949e" font-size="10" text-anchor="middle">錯誤＋有提示</text>
         </svg>
       `;
       el.innerHTML = svg;
@@ -1483,7 +1321,7 @@
       if (!el) return;
       const items = Array.isArray(stats?.series_by_day) ? stats.series_by_day : [];
       if (!items.length){
-        el.innerHTML = '<div class="small">（�??��?答�??��?</div>';
+        el.innerHTML = '<div class="small">（尚無作答紀錄）</div>';
         return;
       }
 
@@ -1524,83 +1362,83 @@
 
       function kindDescZh(kind){
         const d = {
-          'simplify':'?��?子�?母�?大公?�數?�除','equivalent':'?��??��??��?/?�除',
-          'add_like':'?��??��??�接?��??��?','sub_like':'?��??��??�接?��??��?',
-          'add_unlike':'?�通�??��?子相??,'sub_unlike':'?�通�??��?子相�?,
-          'mul':'?��???��??��?母×�?�?,'mul_int':'?�數??�數（�?約�??�快�?,
-          'mixed_convert':'帶�??��??��??��???,
-          'd_mul_int':'小數??�數（數小數位數�?,'int_mul_d':'?�數?小數（�?上�?',
-          'd_mul_d':'小數?小數（�??��?總�?','d_div_int':'小數÷?�數（�?齊�??��?�?,
-          'int_div_int_to_decimal':'?�數÷?�數結�??��???,'x10_shift':'乘除10?�次?�移小數�?,
-          'cube_cm3':'?�長³ 求正?��?體�?','cube_find_edge':'已知體�??��?次方?�推?�長',
-          'rect_cm3':'?�×寬?�?,'rect_find_height':'已知體�??��??��?�?,
-          'base_area_h':'底面積×�? 求�?�?,'composite':'?�個長?��??�併/?�空',
-          'composite3':'三個長?��?組�?','mixed_units':'?�尺?��?混搭?�統一',
-          'm3_to_cm3':'1m³ = 1000000cm³','cm3_to_m3':'?��??��?',
-          'decimal_dims':'?�長?��??��?體�?',
-          'place_value_truncate':'?��?件捨?�到?��?位數',
-          'place_value_digit':'?�出?�個�??��??�數�?,
-          'place_value_yi_wan':'大數轉�??��??�表�?,
-          'prime_or_composite':'?��?1?�自己是?�數＝質??,
-          'gcd_word':'?�除法�??�大公?�數（�?活�?境�?',
-          'lcm_word':'?�除法�??�小公?�數（�?活�?境�?',
-          'fraction_add_unlike':'?��?母�??��??��?','fraction_sub_mixed':'帶�??��??�為?��??��?�?,
-          'area_triangle':'底×�?÷2','area_parallelogram':'底×�?',
-          'area_trapezoid':'(上�?+下�?)?高�?','area_congruent_tile':'?��??�形?��?對�?',
-          'int_times_fraction':'?�數??�數（可?��??��?',
-          'remaining_by_fraction':'(1?��????總�? 求剩�?,
-          'sector_central_angle':'佔�??��?例�?60°',
-          'clock_angle':'?��??��?角度�?,
-          'decimal_times_integer':'小數??�數位數移�?','decimal_times_decimal':'位數?�總移�??��?',
-          'fraction_times_fraction':'交�?約�??��?','reciprocal':'?��??��?對調',
-          'fraction_of_fraction':'????�個�???,'displacement':'終�?水�??�起點水�?,
+          'simplify':'找分子分母最大公因數同除','equivalent':'分子分母同乘/同除',
+          'add_like':'分母相同直接分子相加','sub_like':'分母相同直接分子相減',
+          'add_unlike':'先通分再分子相加','sub_unlike':'先通分再分子相減',
+          'mul':'分子×分子、分母×分母','mul_int':'整數×分數（先約分更快）',
+          'mixed_convert':'帶分數⇄假分數互換',
+          'd_mul_int':'小數×整數（數小數位數）','int_mul_d':'整數×小數（同上）',
+          'd_mul_d':'小數×小數（位數加總）','d_div_int':'小數÷整數（對齊小數點）',
+          'int_div_int_to_decimal':'整數÷整數結果為小數','x10_shift':'乘除10的次方移小數點',
+          'cube_cm3':'邊長³ 求正方體體積','cube_find_edge':'已知體積開三次方反推邊長',
+          'rect_cm3':'長×寬×高','rect_find_height':'已知體積與底面求高',
+          'base_area_h':'底面積×高 求體積','composite':'兩個長方體合併/挖空',
+          'composite3':'三個長方體組合','mixed_units':'公尺公分混搭先統一',
+          'm3_to_cm3':'1m³ = 1000000cm³','cm3_to_m3':'反向換算',
+          'decimal_dims':'邊長含小數的體積',
+          'place_value_truncate':'無條件捨去到指定位數',
+          'place_value_digit':'找出某個位值上的數字',
+          'place_value_yi_wan':'大數轉換成億萬表示',
+          'prime_or_composite':'只有1和自己是因數＝質數',
+          'gcd_word':'短除法求最大公因數（生活情境）',
+          'lcm_word':'短除法求最小公倍數（生活情境）',
+          'fraction_add_unlike':'異分母先通分再加','fraction_sub_mixed':'帶分數先化為假分數再減',
+          'area_triangle':'底×高÷2','area_parallelogram':'底×高',
+          'area_trapezoid':'(上底+下底)×高÷2','area_congruent_tile':'全等圖形面積對半',
+          'int_times_fraction':'整數×分數（可先約分）',
+          'remaining_by_fraction':'(1−分數)×總量 求剩餘',
+          'sector_central_angle':'佔圓的比例×360°',
+          'clock_angle':'時針分針角度差',
+          'decimal_times_integer':'小數×整數位數移動','decimal_times_decimal':'位數加總移小數點',
+          'fraction_times_fraction':'交叉約分再乘','reciprocal':'分子分母對調',
+          'fraction_of_fraction':'連乘兩個分數','displacement':'終點水位−起點水位',
           'cm3_to_ml':'1cm³ = 1mL','liter_to_ml':'1L = 1000mL',
-          'time_add_cross_day':'超�?24:00轉�???,'time_sub_cross_day':'??4小�??��?',
-          'time_multiply':'每段?��??段數','km2_to_ha':'1km² = 100?��?',
-          'ha_to_m2':'1?��? = 10000m²','are_to_m2':'1?��? = 100m²',
-          'percent_discount':'?��? = ?�價??�數÷10',
-          'cheng_increase':'?�幾??= ?��??(1+?�數÷10)',
-          'percent_to_ppm':'1% = 10000ppm','find_percent':'?��?÷?��??100%',
-          'surface_area_cube':'6??�長²','surface_area_rect_prism':'2(lw+lh+wh)',
-          'surface_area_contact_removed':'總面積扣?�接觸面?2',
-          'symmetry_axes':'?�出?�?��?稱軸?��?',
-          'perp_bisector_property':'?�直平�?線�??��??�兩端�?�?,
-          'perp_bisector_converse':'?�兩端�?距�?點在?�直平�?線�?',
-          'solve_x_plus_a':'?��??��? a','solve_ax':'?��??�除 a',
-          'solve_x_div_d':'?��??��? d',
-          'line_trend':'?��?線�???下�??�斷趨勢',
-          'line_max_month':'?��?高�?對�??��?�?,
-          'line_omit_rule':'?�略符�?表示跳�??��??�度',
-          'ratio_part_total':'?��?÷?��?','ratio_remaining':'?��??�已?��??��?',
-          'ratio_unit_rate':'總�?÷份數＝�?�?,'ratio_missing_to_1':'缺�? = ?��??�其�?,
-          'percent_meaning':'?��????��??�全體�??��?�?,
-          'percent_to_decimal':'?��?%?�以100','decimal_to_percent':'?100??',
-          'fraction_to_percent':'?��?÷?��??100%',
-          'percent_find_percent':'求百?��?','percent_find_part':'?��???��???,
-          'percent_find_whole':'?��?÷?��???,'percent_increase_decrease':'增�?÷?��??100%',
-          'percent_tax_service':'?�價?(1+稅�?)','percent_interest':'?��???��???�數',
-          'buy_many':'?�價??��?','discount':'?�價??�扣??,
-          'unit_price':'總價÷?��?','time_add':'?��?累�?（注?�進�?60�?,
-          'unit_convert':'?�制?��?互�?','fraction_remaining':'?��??��??��???,
-          'make_change':'付款?�總??,'shopping_two_step':'?�步驟購?��?�?,
-          'table_stats':'從表?��??��?統�?','area_tiling':'?�貼?��?計�?',
-          'proportional_split':'?��?例�???,'perimeter_fence':'?�籬＝周??,
-          'volume_fill':'容器填�?體�?','temperature_change':'溫差計�?',
-          'decimal_mul':'小數乘�?','decimal_div':'小數?��?',
-          'fraction_addsub':'?�數?��?混�?','fraction_mul':'?�數乘�?',
-          'percent_of':'?��??��???,'volume_rect_prism':'?�方體�?�?,
-          'remain_then_fraction':'?��??��??��??�數',
-          'remaining_after_fraction':'?��??��?算剩�?,
-          'average_division':'平�??��?','generic_fraction_word':'?�數綜�??�用',
-          'fraction_of_quantity':'?��???�數','reverse_fraction':'已知?�數?�推?��?',
-          'u1_avg_fraction':'平�??��??��?','u2_frac_addsub_life':'?�活?��??�數?��?',
-          'u3_frac_times_int':'?�活?��??�數??�數','u4_money_decimal_addsub':'?�錢小數?��?',
-          'u5_decimal_muldiv_price':'?�價/平�?小數乘除','u6_frac_dec_convert':'?�數?��??��???,
-          'u7_discount_percent':'?��?計�?','u8_ratio_recipe':'?��?例調??,
-          'u9_unit_convert_decimal':'?��??��??��??��?','u10_rate_time_distance':'?��?=距離÷?��?',
-          'original':'?��?題�?','remain':'?��???,'part_to_total':'?��??�全�?,
-          'compare':'比�?大�?','mixed':'綜�?題�?',
-          'ratio_add_decimal':'?��??��?比�??��?','ratio_sub_decimal':'?��??��?比�?減�?',
+          'time_add_cross_day':'超過24:00轉隔日','time_sub_cross_day':'借24小時再減',
+          'time_multiply':'每段時間×段數','km2_to_ha':'1km² = 100公頃',
+          'ha_to_m2':'1公頃 = 10000m²','are_to_m2':'1公畝 = 100m²',
+          'percent_discount':'打折 = 原價×折數÷10',
+          'cheng_increase':'加幾成 = 原量×(1+成數÷10)',
+          'percent_to_ppm':'1% = 10000ppm','find_percent':'部分÷全體×100%',
+          'surface_area_cube':'6×邊長²','surface_area_rect_prism':'2(lw+lh+wh)',
+          'surface_area_contact_removed':'總面積扣掉接觸面×2',
+          'symmetry_axes':'數出所有對稱軸數量',
+          'perp_bisector_property':'垂直平分線上的點到兩端等距',
+          'perp_bisector_converse':'到兩端等距的點在垂直平分線上',
+          'solve_x_plus_a':'兩邊同減 a','solve_ax':'兩邊同除 a',
+          'solve_x_div_d':'兩邊同乘 d',
+          'line_trend':'看折線上升/下降判斷趨勢',
+          'line_max_month':'找最高點對應的月份',
+          'line_omit_rule':'省略符號表示跳過部分刻度',
+          'ratio_part_total':'部分÷全體','ratio_remaining':'全體−已知求剩餘',
+          'ratio_unit_rate':'總量÷份數＝每份','ratio_missing_to_1':'缺項 = 全體−其他',
+          'percent_meaning':'百分率=部分占全體的百分比',
+          'percent_to_decimal':'去掉%除以100','decimal_to_percent':'×100加%',
+          'fraction_to_percent':'分子÷分母×100%',
+          'percent_find_percent':'求百分比','percent_find_part':'全體×百分率',
+          'percent_find_whole':'部分÷百分率','percent_increase_decrease':'增量÷原量×100%',
+          'percent_tax_service':'原價×(1+稅率)','percent_interest':'本金×利率×期數',
+          'buy_many':'單價×數量','discount':'原價×折扣率',
+          'unit_price':'總價÷數量','time_add':'時間累加（注意進位60）',
+          'unit_convert':'公制單位互換','fraction_remaining':'用分數算剩餘量',
+          'make_change':'付款−總價','shopping_two_step':'兩步驟購物計算',
+          'table_stats':'從表格讀數做統計','area_tiling':'拼貼面積計算',
+          'proportional_split':'按比例分配','perimeter_fence':'圍籬＝周長',
+          'volume_fill':'容器填充體積','temperature_change':'溫差計算',
+          'decimal_mul':'小數乘法','decimal_div':'小數除法',
+          'fraction_addsub':'分數加減混合','fraction_mul':'分數乘法',
+          'percent_of':'百分率求值','volume_rect_prism':'長方體體積',
+          'remain_then_fraction':'先算剩餘再取分數',
+          'remaining_after_fraction':'取分數後算剩餘',
+          'average_division':'平均分配','generic_fraction_word':'分數綜合應用',
+          'fraction_of_quantity':'全量×分數','reverse_fraction':'已知分數反推原量',
+          'u1_avg_fraction':'平均分配情境','u2_frac_addsub_life':'生活情境分數加減',
+          'u3_frac_times_int':'生活情境分數×整數','u4_money_decimal_addsub':'金錢小數加減',
+          'u5_decimal_muldiv_price':'單價/平均小數乘除','u6_frac_dec_convert':'分數⇄小數互換',
+          'u7_discount_percent':'打折計算','u8_ratio_recipe':'按比例調配',
+          'u9_unit_convert_decimal':'含小數的單位換算','u10_rate_time_distance':'速率=距離÷時間',
+          'original':'原始題型','remain':'剩餘量','part_to_total':'部分與全體',
+          'compare':'比較大小','mixed':'綜合題型',
+          'ratio_add_decimal':'含小數的比例加法','ratio_sub_decimal':'含小數的比例減法',
         };
         return d[String(kind||'')] || '';
       }
@@ -1615,14 +1453,14 @@
         let remedyHtml = '';
         if (needRemedy) {
           const parts = [];
-          if (desc) parts.push(`<span style="color:#8b949e">?? ${safeStr(desc)}</span>`);
+          if (desc) parts.push(`<span style="color:#8b949e">📖 ${safeStr(desc)}</span>`);
           for (const c of cpts.slice(0,2)) parts.push(safeStr(c));
           for (const d of dirs.slice(0,2)) parts.push(safeStr(d));
           remedyHtml = `<tr><td colspan="6" style="padding:2px 10px 8px 24px;font-size:12px;color:#d29922;border-bottom:1px solid #21262d">${parts.join('<br>')}</td></tr>`;
         }
         return `
           <tr>
-            <td><span class="tag ${accClass}" style="font-size:11px;margin-right:4px">${acc < 0.5 ? '?��?' : (acc < 0.8 ? '?? : '??)}</span>${safeStr(name)}${desc && !needRemedy ? `<div class="small" style="margin-top:2px">?? ${safeStr(desc)}</div>` : ''}</td>
+            <td><span class="tag ${accClass}" style="font-size:11px;margin-right:4px">${acc < 0.5 ? '⚠️' : (acc < 0.8 ? '△' : '✓')}</span>${safeStr(name)}${desc && !needRemedy ? `<div class="small" style="margin-top:2px">📖 ${safeStr(desc)}</div>` : ''}</td>
             <td>${row.n || 0}</td>
             <td>${fmtRate(row.accuracy || 0)}</td>
             <td>${fmtRate(row.independent_rate || 0)}</td>
@@ -1646,19 +1484,19 @@
         <table>
           <thead>
             <tr>
-              <th>?�稱</th>
+              <th>名稱</th>
               <th>題數</th>
-              <th>�?��??/th>
-              <th>?��???/th>
-              <th>?�示依賴</th>
-              <th>平�??��?</th>
+              <th>正確率</th>
+              <th>獨立率</th>
+              <th>提示依賴</th>
+              <th>平均時間</th>
             </tr>
           </thead>
           <tbody>
-            ${section('?? ?��?', rowsUnit, r => unitName(r.kind), null)}
-            ${section('?? 題�?', rowsKind, r => kindNameZh(r.kind), r => r.kind)}
-            ${section('???? ?��? + 題�?', rowsUnitKind, r => `${unitName(r.unit_id)} / ${kindNameZh(r.kind)}`, r => r.kind)}
-            ${section('?���?標籤', rowsTag, r => kindNameZh(r.kind), r => r.kind)}
+            ${section('📚 單元', rowsUnit, r => unitName(r.kind), null)}
+            ${section('📝 題型', rowsKind, r => kindNameZh(r.kind), r => r.kind)}
+            ${section('📚📝 單元 + 題型', rowsUnitKind, r => `${unitName(r.unit_id)} / ${kindNameZh(r.kind)}`, r => r.kind)}
+            ${section('🏷️ 標籤', rowsTag, r => kindNameZh(r.kind), r => r.kind)}
           </tbody>
         </table>
       `;
@@ -1671,81 +1509,11 @@
       if (!el) return;
       const rec = window.AIMathReportAggregate?.recommend?.(stats || {}) || { summary: [] };
       if (!rec.summary?.length){
-        el.innerHTML = '（�??��?答�??��?';
+        el.innerHTML = '（尚無作答紀錄）';
         return;
       }
       const focus = rec.focus?.length ? `<div style="margin-top:6px">${rec.focus.join('<br>')}</div>` : '';
       el.innerHTML = `- ${rec.summary.join('<br>- ')}${focus}`;
-    }
-
-    function renderOfflineRemedy(attempts){
-      const el = $('offlineRemedy');
-      if (!el) return;
-      const items = Array.isArray(attempts) ? attempts : [];
-      if (!items.length){
-        el.innerHTML = '<div class="small">（�??��?答�??��?完�?檢測後自?�顯示�??�建議�?</div>';
-        return;
-      }
-      // group by kind
-      const kindMap = new Map();
-      for (const evt of items){
-        const kind = String(evt?.kind || 'unknown');
-        const unitId = String(evt?.unit_id || '');
-        const key = `${unitId}::${kind}`;
-        if (!kindMap.has(key)) kindMap.set(key, { unit_id: unitId, kind, total: 0, wrong: 0, hintUsed: 0, topError: '' });
-        const g = kindMap.get(key);
-        g.total++;
-        if (evt?.is_correct === false){
-          g.wrong++;
-          if (!g.topError) g.topError = inferErrorType(evt);
-        }
-        const hc = Number(evt?.hint?.shown_count || 0);
-        if (hc > 0) g.hintUsed++;
-      }
-      // sort: most wrong first, then most hint-dependent
-      const sorted = Array.from(kindMap.values()).sort((a,b) => {
-        const accA = a.total ? (a.wrong / a.total) : 0;
-        const accB = b.total ? (b.wrong / b.total) : 0;
-        if (accB !== accA) return accB - accA;
-        return (b.hintUsed / (b.total||1)) - (a.hintUsed / (a.total||1));
-      });
-      const weakKinds = sorted.filter(g => {
-        const acc = g.total ? (1 - g.wrong / g.total) : 1;
-        const hintRate = g.total ? (g.hintUsed / g.total) : 0;
-        return acc < 0.8 || hintRate >= 0.5;
-      });
-      if (!weakKinds.length){
-        el.innerHTML = '<div class="small" style="color:var(--ok)">???�?��??�正確�?????80% 且�?示�?賴�?，目?�無?�額�?補�??�建議維?��??�短?��?練�???/div>';
-        return;
-      }
-      let html = '';
-      for (const g of weakKinds.slice(0, 6)){
-        const acc = g.total ? Math.round(100 * (1 - g.wrong / g.total)) : 100;
-        const hintRate = g.total ? Math.round(100 * g.hintUsed / g.total) : 0;
-        const tagCls = acc >= 80 ? 'ok' : (acc >= 60 ? 'warn' : 'bad');
-        const concepts = conceptReminderZh(g.kind);
-        const dirs = practiceDirectionZh(g.kind, g.topError || 'calculation_error');
-        html += `<div class="card" style="margin-top:8px;padding:10px">
-          <div style="font-weight:700">${safeStr(kindNameZh(g.kind))} <span class="mono small">(${safeStr(g.kind)})</span>
-            <span class="tag ${tagCls}" style="margin-left:6px">�?��??${acc}%</span>
-            ${hintRate >= 50 ? `<span class="tag warn" style="margin-left:4px">?�示依賴 ${hintRate}%</span>` : ''}
-          </div>
-          <div style="margin-top:6px">
-            <div class="small" style="font-weight:600">?? ?�補強觀念�?</div>
-            <ul style="margin:4px 0 0 18px;padding:0;color:#dbeafe;font-size:13px">
-              ${concepts.map(c => `<li>${safeStr(c)}</li>`).join('')}
-            </ul>
-          </div>
-          <div style="margin-top:6px">
-            <div class="small" style="font-weight:600">?? ?��??�練習建議�?</div>
-            <ul style="margin:4px 0 0 18px;padding:0;color:#dbeafe;font-size:13px">
-              ${dirs.map(d => `<li>${safeStr(d)}</li>`).join('')}
-            </ul>
-          </div>
-          <div class="small" style="margin-top:4px;color:var(--muted)">作�? ${g.total} 題�???${g.wrong} 題�?使用?�示 ${g.hintUsed} �?/div>
-        </div>`;
-      }
-      el.innerHTML = html;
     }
 
     function renderAttemptTable(attempts){
@@ -1755,7 +1523,7 @@
       tb.innerHTML = '';
       if (!items.length){
         const tr = document.createElement('tr');
-        tr.innerHTML = '<td colspan="7" class="small">（�??��?答�??��?</td>';
+        tr.innerHTML = '<td colspan="7" class="small">（尚無作答紀錄）</td>';
         tb.appendChild(tr);
         return;
       }
@@ -1767,7 +1535,7 @@
           <td class="mono">${fmtTime(evt?.ts_end)}</td>
           <td>${unitName(evt?.unit_id)}</td>
           <td><div>${safeStr(kindNameZh(evt?.kind || ''))}</div><div class="small mono">${safeStr(evt?.kind || '')}</div></td>
-          <td><span class="tag ${ok ? 'ok':'bad'}">${ok ? '�?:'??}</span></td>
+          <td><span class="tag ${ok ? 'ok':'bad'}">${ok ? '對':'錯'}</span></td>
           <td>${sec(cost)}</td>
           <td>${hintLabel(evt)}</td>
           <td>${Math.max(0, Number(evt?.hint?.shown_count || 0))}</td>
@@ -1847,42 +1615,42 @@
       const correctAns = String(evt?.correct_answer || '');
       const lines = [];
       // 1. State what the error likely was
-      lines.push('?? ?�誤?��?�?);
-      if (et === 'calculation_error') lines.push('  你�?計�??��??��??��??�可?�是?��?步�?減�??��??��??�通�?/約�??�出?��?);
-      else if (et === 'concept_error') lines.push('  �???��??�差?�—可?�用?��??��?，�?如該?��?法卻?��?減�???);
-      else if (et === 'unit_error') lines.push('  ?��??��??�錯?�—可?��?了�?算單位�??�混了單位�?);
-      else if (et === 'sign_error') lines.push('  �???�出?�——檢?�移?�是?��??�、�?法是?��?對�?);
-      else if (et === 'misunderstanding') lines.push('  題�??�解?�差?�—可?��??�到?�鍵字�??�混了「�?什麼」�?);
-      else lines.push('  ?�要�??�檢?�解題�?程�?);
+      lines.push('🔍 錯誤分析：');
+      if (et === 'calculation_error') lines.push('  你的計算過程出了問題。可能是某一步加減乘除算錯，或通分/約分時出錯。');
+      else if (et === 'concept_error') lines.push('  解題方向偏差——可能用錯了運算，例如該用乘法卻用了減法。');
+      else if (et === 'unit_error') lines.push('  單位處理出錯——可能忘了換算單位或搞混了單位。');
+      else if (et === 'sign_error') lines.push('  正負號出錯——檢查移項是否變號、減法是否抄對。');
+      else if (et === 'misunderstanding') lines.push('  題意理解偏差——可能沒抓到關鍵字，搞混了「求什麼」。');
+      else lines.push('  需要重新檢查解題流程。');
       lines.push('');
       // 2. Show correct approach if we have bank question steps
       if (bankQ && Array.isArray(bankQ.steps) && bankQ.steps.length) {
-        lines.push('?��? �?���??（�?步�?步�?）�?');
-        bankQ.steps.forEach((s, i) => lines.push('  步�? ' + (i+1) + '�? + s));
+        lines.push('✏️ 正確解法（一步一步來）：');
+        bankQ.steps.forEach((s, i) => lines.push('  步驟 ' + (i+1) + '：' + s));
         lines.push('');
       }
       // 3. Comparison
       if (studentAns && correctAns) {
-        lines.push('?? 對�?�?);
-        lines.push('  你�?答�?�? + studentAns);
-        lines.push('  �?��答�?�? + correctAns);
+        lines.push('📋 對比：');
+        lines.push('  你的答案：' + studentAns);
+        lines.push('  正確答案：' + correctAns);
         lines.push('');
       }
       // 4. Kind-specific tip
-      if (/fraction_of_quantity|?��?/.test(kind)) lines.push('?�� ?�巧�??�到?��?幾�?之幾?�就?�到?��?法」。�??�出總�??��??��??��??��???);
-      if (/remaining_after_fraction|?��?後剩/.test(kind)) lines.push('?�� ?�巧�??�用??a/b?��? ?��? = 1 ??a/b，�?乘以總�??�注?�第二次?��??�能變�?');
-      if (/remain_then_fraction|?�段/.test(kind)) lines.push('?�� ?�巧�??��??�第一次剩下�?少」�??��??��??�當作第二次?�基準。基準�??�是?�常�??�陷?��?');
-      if (/fraction_of_fraction|?�數?��???.test(kind)) lines.push('?�� ?�巧�??�到?�其中�??�」就?��???? ?�數?��?子×�?子、�?母×�?母�??��??��?約�???);
-      if (/reverse_fraction|?�推/.test(kind)) lines.push('?�� ?�巧�?已知?��??��??��?�????��? = ?��???÷ ?��?比�???);
-      if (/average_division|平�???.test(kind)) lines.push('?�� ?�巧�?平�??��? N �????�數 ÷ N = ?��?乘以 N??);
-      if (/simplify|約�?/.test(kind)) lines.push('?�� ?�巧�??��?子�??��??��?大公?�數 (GCD)，�??�除�?GCD??);
-      if (/add_unlike|sub_unlike|?��?/.test(kind)) lines.push('?�� ?�巧�??�找?�小公?�數 (LCM) ?��?，�?子�??��?，�?母�?變�?);
-      if (/mul_int|?�數.*?�數/.test(kind)) lines.push('?�� ?�巧�??�數??�數＝�?子×整?�÷�?母�??��?約�?就�?約�?);
-      if (/d_mul|小數.*�?.test(kind)) lines.push('?�� ?�巧�??�當?�數乘�??�數?�個�??��?小數位數?��?，�??��?點�??��?);
-      if (/d_div|小數.*??.test(kind)) lines.push('?�� ?�巧�??��??�數?��??�數（�??��??�移）�?被除?��?跟�?移�?);
-      if (/volume|體�?/.test(kind)) lines.push('?�� ?�巧�?體�?＝長?寬×�?，�??��?就�??�幾塊�?算�??�起來�?);
-      if (/percent|?��?/.test(kind)) lines.push('?�� ?�巧�??��???= ?��? ÷ ?��? ? 100%，�??�就?��???? ?�數??);
-      if (/equation|?��?/.test(kind)) lines.push('?�� ?�巧�?移�?要�??��?�??�???��?驗�???);
+      if (/fraction_of_quantity|某量/.test(kind)) lines.push('💡 技巧：看到「的幾分之幾」就想到「乘法」。先圈出總量和分數，列式再算。');
+      if (/remaining_after_fraction|用掉後剩/.test(kind)) lines.push('💡 技巧：「用掉 a/b」→ 剩下 = 1 − a/b，再乘以總量。注意第二次基準可能變！');
+      if (/remain_then_fraction|兩段/.test(kind)) lines.push('💡 技巧：先算「第一次剩下多少」，再把剩下的當作第二次的基準。基準不同是最常見的陷阱！');
+      if (/fraction_of_fraction|分數的分數/.test(kind)) lines.push('💡 技巧：看到「其中的…」就是分數 × 分數。分子×分子、分母×分母，能約分先約分。');
+      if (/reverse_fraction|反推/.test(kind)) lines.push('💡 技巧：已知剩下的量和比例 → 原量 = 剩下量 ÷ 剩下比例。');
+      if (/average_division|平均分/.test(kind)) lines.push('💡 技巧：平均分成 N 份 → 分數 ÷ N = 分母乘以 N。');
+      if (/simplify|約分/.test(kind)) lines.push('💡 技巧：找分子和分母的最大公因數 (GCD)，同時除以 GCD。');
+      if (/add_unlike|sub_unlike|通分/.test(kind)) lines.push('💡 技巧：先找最小公倍數 (LCM) 通分，分子做運算，分母不變。');
+      if (/mul_int|分數.*整數/.test(kind)) lines.push('💡 技巧：分數×整數＝分子×整數÷分母，能先約分就先約。');
+      if (/d_mul|小數.*乘/.test(kind)) lines.push('💡 技巧：先當整數乘，再數兩個因數的小數位數合計，從右邊點上去。');
+      if (/d_div|小數.*除/.test(kind)) lines.push('💡 技巧：先把除數化成整數（小數點右移），被除數也跟著移。');
+      if (/volume|體積/.test(kind)) lines.push('💡 技巧：體積＝長×寬×高，組合體就切成幾塊各算再加起來。');
+      if (/percent|百分/.test(kind)) lines.push('💡 技巧：百分率 = 部分 ÷ 全體 × 100%，打折就是原價 × 折數。');
+      if (/equation|方程/.test(kind)) lines.push('💡 技巧：移項要變號，解完代回原式驗算。');
       return lines.join('\n');
     }
 
@@ -1902,29 +1670,29 @@
 
       // Steps from bank for the hint section
       const stepsHtml = (bankQ && Array.isArray(bankQ.steps) && bankQ.steps.length)
-        ? bankQ.steps.map((s,i) => '<div style="margin-top:2px">步�? '+(i+1)+'�?+safeStr(s)+'</div>').join('')
-        : '<div>（此題無?�步�??資�?�?/div>';
+        ? bankQ.steps.map((s,i) => '<div style="margin-top:2px">步驟 '+(i+1)+'：'+safeStr(s)+'</div>').join('')
+        : '<div>（此題無分步解題資料）</div>';
 
       return `<div class="replay-box" id="replay_${idx}" data-correct="${safeStr(correctAns)}" data-kind="${safeStr(kind)}" data-unit="${safeStr(unitId)}" data-qid="${safeStr(questionId)}">
-        <div class="rq-text">${qText || '（�??��?字未記�?�?}</div>
+        <div class="rq-text">${qText || '（題目文字未記錄）'}</div>
         <div class="rq-row">
-          <input id="rq_input_${idx}" placeholder="?�新作�?（�?�?/4 ??12�? onkeydown="if(event.key==='Enter')checkReplay(${idx})" />
-          <button class="rq-btn rq-btn-check" onclick="checkReplay(${idx})">?�出檢查</button>
-          ${pageUrl ? '<a class="rq-btn rq-btn-open" href="'+pageUrl+'" target="_blank">???�練習�?</a>' : ''}
+          <input id="rq_input_${idx}" placeholder="重新作答（例：3/4 或 12）" onkeydown="if(event.key==='Enter')checkReplay(${idx})" />
+          <button class="rq-btn rq-btn-check" onclick="checkReplay(${idx})">送出檢查</button>
+          ${pageUrl ? '<a class="rq-btn rq-btn-open" href="'+pageUrl+'" target="_blank">↗ 去練習頁</a>' : ''}
         </div>
         <div id="rq_result_${idx}"></div>
         <details style="margin-top:8px">
-          <summary style="cursor:pointer;color:var(--accent);font-size:13px">?? ?��?補�??�學?��?念�???/summary>
+          <summary style="cursor:pointer;color:var(--accent);font-size:13px">📖 查看補救教學與觀念提醒</summary>
           <div class="rq-teaching">
-            <div class="rq-teach-title">?? 補�??�學</div>
+            <div class="rq-teach-title">📝 補救教學</div>
             <div class="rq-teach-body">${safeStr(teaching)}</div>
           </div>
           <div class="rq-concept">
-            <div class="rq-concept-title">?? 觀念�???/div>
+            <div class="rq-concept-title">🔑 觀念提醒</div>
             <div class="rq-concept-body">${concepts.map(c => '<div>'+safeStr(c)+'</div>').join('')}</div>
           </div>
           <details style="margin-top:6px">
-            <summary style="cursor:pointer;color:var(--muted);font-size:12px">?? 完整�??步�?</summary>
+            <summary style="cursor:pointer;color:var(--muted);font-size:12px">📋 完整解題步驟</summary>
             <div style="margin-top:4px;padding:8px;background:#08102a;border-radius:6px;font-size:12px;line-height:1.7">${stepsHtml}</div>
           </details>
         </details>
@@ -1975,10 +1743,10 @@
       const reason = String(evt?.extra?.reason || '').toLowerCase();
       const kind = String(evt?.kind || '').toLowerCase();
       const q = String(evt?.extra?.question || '').toLowerCase();
-      if (/unit|convert|?��?/.test(reason) || /unit_convert|?��?|?�尺|毫�?|?��?/.test(kind + ' ' + q)) return 'unit_error';
-      if (/sign|負|�?.test(reason)) return 'sign_error';
-      if (/round|?�捨五入/.test(reason)) return 'rounding_error';
-      if (/avg|average|平�?|ratio|比�?|percent|?�扣/.test(kind + ' ' + q)) return 'concept_error';
+      if (/unit|convert|單位/.test(reason) || /unit_convert|公分|公尺|毫升|公升/.test(kind + ' ' + q)) return 'unit_error';
+      if (/sign|負|正/.test(reason)) return 'sign_error';
+      if (/round|四捨五入/.test(reason)) return 'rounding_error';
+      if (/avg|average|平均|ratio|比例|percent|折扣/.test(kind + ' ' + q)) return 'concept_error';
       if (reason.includes('error')) return 'misunderstanding';
       return 'calculation_error';
     }
@@ -1990,7 +1758,7 @@
 
       const wrong = (Array.isArray(attempts) ? attempts : []).filter(e => e && e.is_correct === false);
       if (!wrong.length){
-        box.innerHTML = '<div class="small">（�?近�??��??�錯題�?太好了�??�維??10 題短?��?複�??��?</div>';
+        box.innerHTML = '<div class="small">（最近區間沒有錯題，太好了！可維持 10 題短回合複習。）</div>';
         return [];
       }
 
@@ -2011,8 +1779,8 @@
       for (const row of rows){
         const typeList = Array.from(row.byType.entries()).sort((a,b)=>b[1]-a[1]);
         const topType = typeList[0] ? typeList[0][0] : 'other';
-        const typeText = typeList.map(([t,n]) => `${errorTypeZh(t)} ${n} 次`).join('??);
-        const reasonText = `主�??��??��???{errorTypeZh(topType)}?��?${errorTypeAdviceZh(topType)}`;
+        const typeText = typeList.map(([t,n]) => `${errorTypeZh(t)} ${n} 次`).join('、');
+        const reasonText = `主要錯因偏向「${errorTypeZh(topType)}」：${errorTypeAdviceZh(topType)}`;
 
         const qs = pickPracticeQuestions(uid, row.unit_id, row.kind, attempts, 6);
         const latest5 = row.latest.slice(-5).reverse();
@@ -2026,17 +1794,17 @@
         card.innerHTML = `
           <div class="row" style="justify-content:space-between; align-items:flex-start">
             <div>
-              <div style="font-weight:800">${unitName(row.unit_id)} / ${safeStr(kindNameZh(row.kind))}${pageUrl ? ' <a href="'+pageUrl+'" target="_blank" style="font-size:12px;color:var(--accent);text-decoration:none">???�練習�?</a>' : ''}</div>
-              <div class="small mono">${safeStr(row.kind)}｜錯�?${row.n} �?/div>
+              <div style="font-weight:800">${unitName(row.unit_id)} / ${safeStr(kindNameZh(row.kind))}${pageUrl ? ' <a href="'+pageUrl+'" target="_blank" style="font-size:12px;color:var(--accent);text-decoration:none">↗ 去練習頁</a>' : ''}</div>
+              <div class="small mono">${safeStr(row.kind)}｜錯題 ${row.n} 題</div>
             </div>
-            <span class="tag bad">?�補�?</span>
+            <span class="tag bad">需補救</span>
           </div>
-          <div style="margin-top:8px" class="small">?�誤?��?�?{safeStr(typeText || '（無�?)}</div>
-          <div style="margin-top:6px" class="small">?��?說�?�?{safeStr(reasonText)}</div>
-          <div style="margin-top:8px" class="small">補�?建議�?{safeStr(errorTypeAdviceZh(topType))}</div>
+          <div style="margin-top:8px" class="small">錯誤分類：${safeStr(typeText || '（無）')}</div>
+          <div style="margin-top:6px" class="small">原因說明：${safeStr(reasonText)}</div>
+          <div style="margin-top:8px" class="small">補救建議：${safeStr(errorTypeAdviceZh(topType))}</div>
           <div style="margin-top:12px">
-            <div style="font-weight:700">?? ?��??��?（�??��??��??��?一次�?</div>
-            <div class="small" style="margin-top:4px;color:var(--muted)">每�??��??�直?��??��?答、查?��??��?學�?觀念�??��?/div>
+            <div style="font-weight:700">📋 錯題重做（點擊展開，再做一次）</div>
+            <div class="small" style="margin-top:4px;color:var(--muted)">每道錯題可直接重新作答、查看補救教學與觀念提醒。</div>
             ${latest5.map(e => {
               const qTxt = safeStr(String(e?.extra?.question || e?.question_id || '(題目)'));
               const stuAns = safeStr(e?.student_answer || e?.student_answer_raw || '');
@@ -2044,24 +1812,24 @@
               return `<details style="margin-top:8px">
                 <summary style="cursor:pointer;padding:8px;background:#0b1220;border-radius:6px;border-left:3px solid #f85149">
                   <strong>${qTxt}</strong>
-                  <span class="small" style="margin-left:8px">上次答�?${stuAns}｜正確�?${corAns}</span>
+                  <span class="small" style="margin-left:8px">上次答：${stuAns}｜正確：${corAns}</span>
                 </summary>
                 ${buildReplayWidget(e)}
               </details>`;
-            }).join('') || '<div class="small">（無�?/div>'}
+            }).join('') || '<div class="small">（無）</div>'}
           </div>
           <div style="margin-top:10px; padding:10px; background:rgba(88,166,255,0.08); border-radius:8px">
-            <div style="font-weight:700; color:#58a6ff">?? 觀念�???/div>
+            <div style="font-weight:700; color:#58a6ff">🔑 觀念提醒</div>
             <div class="small" style="margin-top:4px">${concepts.map(c => '<div style="margin-top:3px">' + safeStr(c) + '</div>').join('')}</div>
           </div>
           <div style="margin-top:10px; padding:10px; background:rgba(210,153,34,0.08); border-radius:8px">
-            <div style="font-weight:700; color:#d29922">?? 建議?��??��??��?題方�?/div>
+            <div style="font-weight:700; color:#d29922">📝 建議出題方向與做題方式</div>
             <div class="small" style="margin-top:4px">${directions.map(d => '<div style="margin-top:3px">' + safeStr(d) + '</div>').join('')}</div>
           </div>
           <div style="margin-top:10px">
-            <div style="font-weight:700">?��?題目練�?（�??��?</div>
+            <div style="font-weight:700">相近題目練習（補救）</div>
             <ol style="margin:6px 0 0 18px; padding:0">
-              ${qs.map(q => `<li><span class="mono">${safeStr(String(q?.id || ''))}</span>�?{safeStr(qText(q))}</li>`).join('') || '<li class="small">（找不到對�?題目�?/li>'}
+              ${qs.map(q => `<li><span class="mono">${safeStr(String(q?.id || ''))}</span>：${safeStr(qText(q))}</li>`).join('') || '<li class="small">（找不到對應題目）</li>'}
             </ol>
           </div>
         `;
@@ -2076,7 +1844,7 @@
       box.innerHTML = '';
       const items = Array.isArray(attempts) ? attempts : [];
       if (!items.length){
-        box.innerHTML = '<div class="small">（�??��?答�??��?</div>';
+        box.innerHTML = '<div class="small">（尚無作答紀錄）</div>';
         return;
       }
       const kindMap = new Map();
@@ -2098,7 +1866,7 @@
         const dirs = practiceDirectionZh(g.kind, g.topError || 'calculation_error');
         const acc = g.total ? Math.round(100 * (1 - g.wrong / g.total)) : 100;
         const tagCls = acc >= 85 ? 'ok' : (acc >= 60 ? 'warn' : 'bad');
-        const tagText = acc >= 85 ? '穩�?' : (acc >= 60 ? '?�?�強' : '高風??);
+        const tagText = acc >= 85 ? '穩定' : (acc >= 60 ? '需加強' : '高風險');
         const card = document.createElement('div');
         card.className = 'card';
         card.style.marginTop = '10px';
@@ -2106,16 +1874,16 @@
           <div class="row" style="justify-content:space-between; align-items:flex-start">
             <div>
               <div style="font-weight:800">${unitName(g.unit_id)} / ${safeStr(kindNameZh(g.kind))}</div>
-              <div class="small">?��? ${g.total} 題�?�?��??${acc}%${g.wrong ? '｜�???' + g.wrong + ' �? : ''}</div>
+              <div class="small">做過 ${g.total} 題｜正確率 ${acc}%${g.wrong ? '｜答錯 ' + g.wrong + ' 題' : ''}</div>
             </div>
             <span class="tag ${tagCls}">${tagText}</span>
           </div>
           <div style="margin-top:10px; padding:10px; background:rgba(88,166,255,0.08); border-radius:8px">
-            <div style="font-weight:700; color:#58a6ff">?? 觀念�???/div>
+            <div style="font-weight:700; color:#58a6ff">🔑 觀念提醒</div>
             <div class="small" style="margin-top:4px">${concepts.map(c => '<div style="margin-top:3px">' + safeStr(c) + '</div>').join('')}</div>
           </div>
           <div style="margin-top:10px; padding:10px; background:rgba(210,153,34,0.08); border-radius:8px">
-            <div style="font-weight:700; color:#d29922">?? 建議?��??��??��?題方�?/div>
+            <div style="font-weight:700; color:#d29922">📝 建議出題方向與做題方式</div>
             <div class="small" style="margin-top:4px">${dirs.map(dd => '<div style="margin-top:3px">' + safeStr(dd) + '</div>').join('')}</div>
           </div>
         `;
@@ -2131,33 +1899,33 @@
       const top = window.AIMathReportAggregate?.pickTopWeaknesses?.(rows, 3) || [];
 
       if (!top.length){
-        box.innerHTML = '<div class="small">?��??��??�足夠�??�產?�弱點�?練�?建議??/div>';
+        box.innerHTML = '<div class="small">目前還沒有足夠資料產生弱點與練習建議。</div>';
         return { rows, top, plans: [] };
       }
 
       const plans = [];
       for (const r of top){
         const n = Number(r.n || 0) || 0;
-        const label = window.AIMathReportAggregate?.remedyLabel?.(r) || { level: 'warn', title: '?�補強' };
+        const label = window.AIMathReportAggregate?.remedyLabel?.(r) || { level: 'warn', title: '需補強' };
         const cRate = n ? (Number(r.C || 0) / n) : 0;
         const dRate = n ? (Number(r.D || 0) / n) : 0;
         const bRate = n ? (Number(r.B || 0) / n) : 0;
 
         const reasons = [];
-        if (cRate >= 0.30) reasons.push('?��?了�?示�?常常?�」�? 觀�?步�??�要�???);
-        if (dRate >= 0.30) reasons.push('?��??��?示就容�??�」�? ?��??�練度�?�?);
-        if (bRate >= 0.45) reasons.push('?��?賴�?示�?答�??��? ?�以練�??�自己寫?��?式�??��?�?);
-        if (!reasons.length) reasons.push('資�?顯示仍�?一些�?穩�?，�?一輪強?��??�穩??);
+        if (cRate >= 0.30) reasons.push('「看了提示還常常錯」→ 觀念/步驟需要重整');
+        if (dRate >= 0.30) reasons.push('「不看提示就容易錯」→ 基礎熟練度不足');
+        if (bRate >= 0.45) reasons.push('「依賴提示才答對」→ 可以練習先自己寫出算式再看提示');
+        if (!reasons.length) reasons.push('資料顯示仍有一些不穩定，做一輪強化會更穩。');
 
         const advice = [];
-        if (cRate >= 0.30) advice.push('?�示?��??��??��??��? 3 題「示範�??��??�步驟寫?��?步寫完就檢查，�??��??��?似�???);
-        if (dRate >= 0.30) advice.push('?��?示錯較�?：建議用?�短?��??�練習�?一�?10 題�?，�?題都寫出算�?，�?要跳步�?);
-        if (bRate >= 0.45) advice.push('?�示?��?：�???��說出?��?一步�?算�?麼」�??��?；�??�卡住�???L1??);
-        if (/?��??��?|?��?|乘除/.test(String(r.kind || ''))) advice.push('觀念�??��??��??��?，�?算�??��??�後�?減�?);
-        if (/?��?|?�數/.test(String(r.kind || '')) || String(r.unit_id || '') === 'fraction') advice.push('觀念�??��??�找?�小公?�數，�?一起通�???);
-        if (/?��?/.test(String(r.kind || ''))) advice.push('觀念�??��??�確認單位�??��?，�??�塊�?就�??��??�相?��?);
-        if (/?��?題|?�用�?.test(String(r.kind || '')) || String(r.unit_id || '') === 'life') advice.push('觀念�??��??��?題目?��??��?算�?，�?計�???);
-        if (!advice.length) advice.push('建議：�???3 題示範�??�步驟寫）�? ?��? 10 題�?強�?);
+        if (cRate >= 0.30) advice.push('提示用了還會錯：先做 3 題「示範題」，照步驟寫、每步寫完就檢查，再回來做類似題。');
+        if (dRate >= 0.30) advice.push('無提示錯較多：建議用「短回合」練習（一次 10 題），每題都寫出算式，不要跳步。');
+        if (bRate >= 0.45) advice.push('提示偏多：先口頭說出「下一步要算什麼」再動筆；真的卡住再看 L1。');
+        if (/四則運算|括號|乘除/.test(String(r.kind || ''))) advice.push('觀念提醒：先算括號，再算乘除，最後加減。');
+        if (/通分|分數/.test(String(r.kind || '')) || String(r.unit_id || '') === 'fraction') advice.push('觀念提醒：先找最小公倍數，再一起通分。');
+        if (/面積/.test(String(r.kind || ''))) advice.push('觀念提醒：先確認單位與公式，分區塊的就先切開再相加。');
+        if (/文字題|應用題/.test(String(r.kind || '')) || String(r.unit_id || '') === 'life') advice.push('觀念提醒：先把題目句子改成算式，再計算。');
+        if (!advice.length) advice.push('建議：先做 3 題示範（照步驟寫）→ 再做 10 題加強。');
 
         const qs = pickPracticeQuestions(uid, r.unit_id, r.kind, attempts, 10);
         plans.push({ unit_id: r.unit_id, kind: r.kind, questions: qs.map(q => ({ id: String(q?.id || ''), text: qText(q) })) });
@@ -2170,22 +1938,22 @@
             <div>
               <div style="font-weight:800">${unitName(r.unit_id)} / ${safeStr(kindNameZh(r.kind))}</div>
               <div class="small mono">${safeStr(String(r.kind || 'unknown'))}</div>
-              <div class="small">題數�?{n} �?A/B/C/D�?{r.A||0}/${r.B||0}/${r.C||0}/${r.D||0} �?風險?�數�?{(Number(r.weakness_score||0)).toFixed(2)}</div>
+              <div class="small">題數：${n} ｜ A/B/C/D：${r.A||0}/${r.B||0}/${r.C||0}/${r.D||0} ｜ 風險分數：${(Number(r.weakness_score||0)).toFixed(2)}</div>
             </div>
             <div><span class="tag ${label.level}">${label.title}</span></div>
           </div>
           <div style="margin-top:8px">
-            <div style="font-weight:700">?��?麼�??�弱�?/div>
+            <div style="font-weight:700">為什麼列為弱點</div>
             <div class="small">- ${reasons.join('<br>- ')}</div>
           </div>
           <div style="margin-top:10px">
-            <div style="font-weight:700">題�??�強建議</div>
+            <div style="font-weight:700">題型加強建議</div>
             <div class="small">- ${advice.join('<br>- ')}</div>
           </div>
           <div style="margin-top:10px">
-            <div style="font-weight:700">下�?步練??10 題�?建議�?/div>
+            <div style="font-weight:700">下一步練哪 10 題（建議）</div>
             <ol style="margin:8px 0 0 18px; padding:0">
-              ${qs.map(q => `<li><span class="mono">${String(q?.id || '')}</span>�?{qText(q)}</li>`).join('') || '<li class="small">（找不到對�?題目，�??�累積更多�??��?確�?題庫已�??��?</li>'}
+              ${qs.map(q => `<li><span class="mono">${String(q?.id || '')}</span>：${qText(q)}</li>`).join('') || '<li class="small">（找不到對應題目，請先累積更多資料或確認題庫已載入）</li>'}
             </ol>
           </div>
         `;
@@ -2222,13 +1990,13 @@
       if (!el) return;
       const items = Array.isArray(rows) ? rows : [];
       if (!items.length){
-        el.innerHTML = '<div class="small">（�??��?答�??��?</div>';
+        el.innerHTML = '<div class="small">（尚無作答紀錄）</div>';
         return;
       }
       const pills = items.map(r => {
         const n = Number(r.n || 0);
         const acc = n ? Math.round(100 * (Number(r.correct || 0) / n)) : 0;
-        return `<span class="tag pill">${safeStr(kindNameZh(r.kind))}�?{n} 題�?${acc}%</span>`;
+        return `<span class="tag pill">${safeStr(kindNameZh(r.kind))}｜${n} 題｜${acc}%</span>`;
       }).join(' ');
       el.innerHTML = `<div class="row" style="gap:8px; flex-wrap:wrap">${pills}</div>`;
     }
@@ -2238,9 +2006,9 @@
       if (!n) return null;
       const acc = n ? (Number(row.correct || 0) / n) : 0;
       const hintDep = n ? ((Number(row.hint_correct || 0) + Number(row.hint_wrong || 0)) / n) : 0;
-      if (acc < 0.6) return '�?��?��?低�??��? 3 題示範�?，寫?��?式�?每�?步�?;
-      if (hintDep >= 0.5) return '?�示依賴?��?：�???��說出?��?一步」�??��?，卡住�???L1??;
-      return '表現穩�?：維?��??�短?��?練�??�可??;
+      if (acc < 0.6) return '正確率偏低：先做 3 題示範題，寫出算式與每一步。';
+      if (hintDep >= 0.5) return '提示依賴偏高：先口頭說出「下一步」再動筆，卡住再看 L1。';
+      return '表現穩定：維持每週短回合練習即可。';
     }
 
     function renderKindAdvice(rows){
@@ -2248,12 +2016,12 @@
       if (!el) return;
       const items = Array.isArray(rows) ? rows : [];
       if (!items.length){
-        el.innerHTML = '<div class="small">（�??��?答�??��?</div>';
+        el.innerHTML = '<div class="small">（尚無作答紀錄）</div>';
         return;
       }
       const list = items.map(r => {
         const advice = kindAdvice(r);
-        return `<li>${safeStr(kindNameZh(r.kind))} <span class="small mono">(${safeStr(r.kind)})</span>�?{advice}</li>`;
+        return `<li>${safeStr(kindNameZh(r.kind))} <span class="small mono">(${safeStr(r.kind)})</span>：${advice}</li>`;
       }).join('');
       el.innerHTML = `<ol style="margin:6px 0 0 18px; padding:0">${list}</ol>`;
     }
@@ -2273,9 +2041,9 @@
         if (s < 60) return `${Math.round(s)} 秒`;
         const m = Math.floor(s / 60);
         const r = Math.round(s - m * 60);
-        return `${m} ??${r} 秒`;
+        return `${m} 分 ${r} 秒`;
       } catch {
-        return '0 �?;
+        return '0 秒';
       }
     }
 
@@ -2291,9 +2059,9 @@
     function _normRecord(r){
       const ts = (r && (r.ts || r.ts_start)) ? (r.ts || r.ts_start) : '';
       const topicKey = (r && (r.topic_key || r.topicKey)) ? (r.topic_key || r.topicKey) : '';
-      const topic = (r && r.topic ? String(r.topic) : '').trim() || '（未標註�?;
+      const topic = (r && r.topic ? String(r.topic) : '').trim() || '（未標註）';
       const status = String((r && r.status) || '').trim() || '(unknown)';
-      const question = String((r && r.question) || '').trim() || '（�??�內容缺失�?';
+      const question = String((r && r.question) || '').trim() || '（題目內容缺失）';
       const correct = String((r && r.correct_answer) || '').trim();
       const finalAns = String((r && r.final_answer) || '').trim();
       const hintsViewed = Number((r && r.hints_viewed) || 0) || 0;
@@ -2404,54 +2172,54 @@
         const timeoutN = tr.timeout || 0;
 
         if (answeredN2 === 0 && totalN > 0) {
-          out.push('?�能?��?：大多是跳�?/?��??��??��??��??��???+ ?�步驟」�?始�?);
+          out.push('可能卡關：大多是跳過/未完成，先從「看懂題目 + 拆步驟」開始。');
         } else {
-          if (tr.acc < 0.7) out.push('?�能?��?：正確�??��?，建議�??�基?��?念�?計�??��???);
-          else if (tr.acc < 0.9) out.push('?�要�?強�??�爾?�錯，�?點是穩�?度�?檢查??);
-          else out.push('表現很好：可以練?�速度 + ??��說步驟」�??�穩??);
+          if (tr.acc < 0.7) out.push('可能卡關：正確率偏低，建議回到基本觀念與計算順序。');
+          else if (tr.acc < 0.9) out.push('需要加強：偶爾出錯，重點是穩定度與檢查。');
+          else out.push('表現很好：可以練「速度 + 口頭說步驟」來更穩。');
         }
 
         if (skippedN / Math.max(1, totalN) >= 0.25 || timeoutN / Math.max(1, totalN) >= 0.2) {
-          out.push('?��?策略：�?寫出下�?步�?算�?/?��?/?��?）�?算�??��??�太久�?);
+          out.push('時間策略：先寫出下一步（算式/通分/公式）再算，避免卡太久。');
         }
         if ((tr.avgHint || 0) >= 1.0) {
-          out.push('?�示?��?：代表�?念�?夠�?，建議�???3 題示範�??�步驟寫）�??��? 10 題短?��???);
+          out.push('提示偏多：代表觀念不夠熟，建議先做 3 題示範（照步驟寫），再做 10 題短回合。');
         }
         if (wrongN > 0) {
           const denom = Math.max(1, wrongN);
           const cRate = (tr.C || 0) / denom;
           const bRate = (tr.B || 0) / Math.max(1, wrongN);
-          if (cRate >= 0.35) out.push('?��??��?：�??�示仍常?��?C ?��?）�?建議每�?步都寫出來�?每步寫�?就檢?��?);
-          else if (bRate >= 0.35) out.push('?��??��?：常?�?�示?��?（B ?��?）�?建議?�口?�說?��?一步」�??��?，卡住�???L1??);
-          else out.push('?��??��?：�??�獨立出?��?D ?��?）�??��??�「慢 3 �?+ 檢查符�?/?��?/小數點」�?);
+          if (cRate >= 0.35) out.push('錯題型態：看提示仍常錯（C 偏多），建議每一步都寫出來，每步寫完就檢查。');
+          else if (bRate >= 0.35) out.push('錯題型態：常需提示才對（B 偏多），建議先口頭說「下一步」再動筆，卡住再看 L1。');
+          else out.push('錯題型態：多為獨立出錯（D 偏多），重點做「慢 3 秒 + 檢查符號/單位/小數點」。');
         }
         return out;
       }
 
       const lines = [];
-      lines.push('給家???�師?��?練�??��?（本機離線�??��?\n');
+      lines.push('給家長/老師看的練習報告（本機離線紀錄）\n');
       lines.push('==================================================\n\n');
-      if (start || end) lines.push(`?��?範�?�?{start || '(?�知)'} �?${end || '(?�知)'}\n`);
-      lines.push(`總�??��?${total}\n`);
-      lines.push(`作�?�?{answeredN}（�?�?${correct.length}，�???${wrong.length}）\n`);
-      lines.push(`超�?/跳�?�?{skipped.length}（其中�???${timeouts.length}）\n\n`);
-      lines.push(`�?��?��??��??��?答�?�?{(accAnswered*100).toFixed(1)}%\n`);
-      lines.push(`�?��?��??��???跳�?）�?${(accOverall*100).toFixed(1)}%\n`);
-      lines.push(`總花費�??��?�?${_fmtSec(totalSec)}\n`);
-      lines.push(`平�?每�?：�? ${_fmtSec(avgSec)}\n`);
-      lines.push(`?�示使用：共 ${totalHints} 次�?平�?每�? ${avgHints.toFixed(1)} 次\n\n`);
+      if (start || end) lines.push(`時間範圍：${start || '(未知)'} ～ ${end || '(未知)'}\n`);
+      lines.push(`總題數：${total}\n`);
+      lines.push(`作答：${answeredN}（答對 ${correct.length}，答錯 ${wrong.length}）\n`);
+      lines.push(`超時/跳過：${skipped.length}（其中超時 ${timeouts.length}）\n\n`);
+      lines.push(`正確率（只算有作答）：${(accAnswered*100).toFixed(1)}%\n`);
+      lines.push(`正確率（含超時/跳過）：${(accOverall*100).toFixed(1)}%\n`);
+      lines.push(`總花費時間：約 ${_fmtSec(totalSec)}\n`);
+      lines.push(`平均每題：約 ${_fmtSec(avgSec)}\n`);
+      lines.push(`提示使用：共 ${totalHints} 次，平均每題 ${avgHints.toFixed(1)} 次\n\n`);
 
-      lines.push('?��??�總覽】�??��??��?段�?\n');
+      lines.push('【題型總覽】（先看這一段）\n');
       for (const tr of perRows){
         lines.push(
-          `- ${tr.k}：總 ${tr.total}，�?�?${tr.answered}（�? ${tr.correct}/??${tr.wrong}）�?` +
-          `跳�? ${tr.skippedN}（�???${tr.timeout}）�?�?��??${(tr.acc*100).toFixed(1)}%，平??${_fmtSec(tr.avg)}，�?�?${tr.hints} 次` +
+          `- ${tr.k}：總 ${tr.total}，作答 ${tr.answered}（對 ${tr.correct}/錯 ${tr.wrong}），` +
+          `跳過 ${tr.skippedN}（超時 ${tr.timeout}），正確率 ${(tr.acc*100).toFixed(1)}%，平均 ${_fmtSec(tr.avg)}，提示 ${tr.hints} 次` +
           `${(tr.B||0)||(tr.C||0) ? `（B=${tr.B||0}, C=${tr.C||0}）` : ''}\n`
         );
       }
       lines.push('\n');
 
-      lines.push('?��??��?強建議】�?每�???2?? ?��?\n');
+      lines.push('【題型加強建議】（每題型 2–4 句）\n');
       for (const tr of perRows){
         const adv = _topicAdvice(tr);
         lines.push(`- ${tr.k}\n`);
@@ -2471,35 +2239,35 @@
       }
 
       const wrongKindRows = Array.from(wrongByKind.values()).sort((a,b)=>b.n-a.n);
-      lines.push('?�錯題�?類�?中�?）�??��?＋�??�】\n');
+      lines.push('【錯題分類（中文）＋原因＋補救】\n');
       if (!wrongKindRows.length){
-        lines.push('- ?��?沒�??��??��?資�??�\n\n');
+        lines.push('- 目前沒有錯題分類資料。\n\n');
       } else {
         for (const g of wrongKindRows.slice(0, 8)){
           const typeRows = Array.from(g.byType.entries()).sort((a,b)=>b[1]-a[1]);
           const topType = typeRows[0] ? typeRows[0][0] : 'other';
-          const typeText = typeRows.map(([t,n]) => `${errorTypeZh(t)} ${n} 次`).join('??);
+          const typeText = typeRows.map(([t,n]) => `${errorTypeZh(t)} ${n} 次`).join('、');
           const latest = g.latest.slice(-1)[0] || {};
           const detail = String(latest.error_detail || '').trim() || errorTypeAdviceZh(topType);
 
-          lines.push(`- ${unitName(g.unit_id)} / ${kindNameZh(g.kind)}�?{g.kind || 'unknown'}）\n`);
-          lines.push(`  - ?��??��?${g.n}\n`);
-          lines.push(`  - ?�誤?��?�?{typeText}\n`);
-          lines.push(`  - ?�能?��?�?{detail}\n`);
-          lines.push(`  - 補�?建議�?{errorTypeAdviceZh(topType)}\n`);
+          lines.push(`- ${unitName(g.unit_id)} / ${kindNameZh(g.kind)}（${g.kind || 'unknown'}）\n`);
+          lines.push(`  - 錯題數：${g.n}\n`);
+          lines.push(`  - 錯誤分類：${typeText}\n`);
+          lines.push(`  - 可能原因：${detail}\n`);
+          lines.push(`  - 補救建議：${errorTypeAdviceZh(topType)}\n`);
 
           const qs = pickPracticeQuestions(reportUid, g.unit_id, g.kind, attemptsRaw, 5);
           if (qs.length){
-            lines.push('  - ?��?題目（建議�???3?? 題�?：\n');
+            lines.push('  - 相近題目（建議先做 3–5 題）：\n');
             for (const q of qs){
-              lines.push(`    - ${String(q?.id || '')}�?{qText(q)}\n`);
+              lines.push(`    - ${String(q?.id || '')}：${qText(q)}\n`);
             }
           }
         }
         lines.push('\n');
       }
 
-      lines.push('?��?念�??��??��??��?建議?�\n');
+      lines.push('【觀念提醒與出題方向建議】\n');
       const attemptedKinds = new Map();
       for (const r of recs){
         const kk = `${r.unit_id || ''}::${r.kind || ''}`;
@@ -2513,71 +2281,71 @@
         const cpts = conceptReminderZh(gg.kind);
         const dirs = practiceDirectionZh(gg.kind, gg.topError || 'calculation_error');
         const accK = gg.total ? Math.round(100 * (1 - gg.wrong / gg.total)) : 100;
-        lines.push(`- ${unitName(gg.unit_id)} / ${kindNameZh(gg.kind)}（�? ${gg.total} 題�?�?��??${accK}%）\n`);
-        lines.push('  觀念�??��?\n');
+        lines.push(`- ${unitName(gg.unit_id)} / ${kindNameZh(gg.kind)}（做 ${gg.total} 題，正確率 ${accK}%）\n`);
+        lines.push('  觀念提醒：\n');
         for (const cc of cpts) lines.push(`    ${cc}\n`);
-        lines.push('  ?��??��??��?：\n');
+        lines.push('  出題做題方向：\n');
         for (const dd of dirs) lines.push(`    ${dd}\n`);
         lines.push('\n');
       }
       lines.push('\n');
 
-      lines.push(`一?�錯誤�??��?細�??�多�? ${MAX_LIST} 題�?\n`);
+      lines.push(`一、錯誤題目明細（最多列 ${MAX_LIST} 題）\n`);
       if (!wrong.length){
-        lines.push('- ?��?沒�?答錯題目?�\n\n');
+        lines.push('- 目前沒有答錯題目。\n\n');
       } else {
         const list = wrong.slice().sort((a,b) => (b.time_spent_sec||0) - (a.time_spent_sec||0));
         for (const it of list.slice(0, MAX_LIST)){
           lines.push(`- [${it.topicKey}] ${it.topic}\n`);
-          lines.push(`  題目�?{it.question}\n`);
-          if (it.question_id) lines.push(`  question_id�?{it.question_id}\n`);
-          if (it.quadrant) lines.push(`  象�?�?{it.quadrant}\n`);
-          if (it.hint_depth) lines.push(`  ?�示深度�?{it.hint_depth}\n`);
-          if (it.final_answer) lines.push(`  你�?答�?�?{it.final_answer}\n`);
-          if (it.correct_answer) lines.push(`  �?��答�?�?{it.correct_answer}\n`);
-          if (it.attempts && it.attempts.length) lines.push(`  ?�試?��?${it.attempts.join(' ??')}\n`);
-          lines.push(`  ?�費?��?�?{_fmtSec(it.time_spent_sec)}；�?示�?${it.hints_viewed} 次\n\n`);
+          lines.push(`  題目：${it.question}\n`);
+          if (it.question_id) lines.push(`  question_id：${it.question_id}\n`);
+          if (it.quadrant) lines.push(`  象限：${it.quadrant}\n`);
+          if (it.hint_depth) lines.push(`  提示深度：${it.hint_depth}\n`);
+          if (it.final_answer) lines.push(`  你的答案：${it.final_answer}\n`);
+          if (it.correct_answer) lines.push(`  正確答案：${it.correct_answer}\n`);
+          if (it.attempts && it.attempts.length) lines.push(`  嘗試過：${it.attempts.join(' → ')}\n`);
+          lines.push(`  花費時間：${_fmtSec(it.time_spent_sec)}；提示：${it.hints_viewed} 次\n\n`);
         }
         if (wrong.length > MAX_LIST){
-          lines.push(`（�???${wrong.length - MAX_LIST} 題未?�出；為?��??�面?�慢）\n\n`);
+          lines.push(`（省略 ${wrong.length - MAX_LIST} 題未列出；為避免頁面過慢）\n\n`);
         }
       }
 
-      lines.push(`二、正確�??��?細�??�多�? ${MAX_LIST} 題�?\n`);
+      lines.push(`二、正確題目明細（最多列 ${MAX_LIST} 題）\n`);
       if (!correct.length){
-        lines.push('- ?��?沒�?答�?題目?�\n\n');
+        lines.push('- 目前沒有答對題目。\n\n');
       } else {
         const list = correct.slice().sort((a,b) => (b.time_spent_sec||0) - (a.time_spent_sec||0));
         for (const it of list.slice(0, MAX_LIST)){
           lines.push(`- [${it.topicKey}] ${it.topic}\n`);
-          lines.push(`  題目�?{it.question}\n`);
-          if (it.question_id) lines.push(`  question_id�?{it.question_id}\n`);
-          if (it.quadrant) lines.push(`  象�?�?{it.quadrant}\n`);
-          if (it.hint_depth) lines.push(`  ?�示深度�?{it.hint_depth}\n`);
-          if (it.final_answer) lines.push(`  你�?答�?�?{it.final_answer}\n`);
-          lines.push(`  ?�費?��?�?{_fmtSec(it.time_spent_sec)}；�?示�?${it.hints_viewed} 次\n\n`);
+          lines.push(`  題目：${it.question}\n`);
+          if (it.question_id) lines.push(`  question_id：${it.question_id}\n`);
+          if (it.quadrant) lines.push(`  象限：${it.quadrant}\n`);
+          if (it.hint_depth) lines.push(`  提示深度：${it.hint_depth}\n`);
+          if (it.final_answer) lines.push(`  你的答案：${it.final_answer}\n`);
+          lines.push(`  花費時間：${_fmtSec(it.time_spent_sec)}；提示：${it.hints_viewed} 次\n\n`);
         }
         if (correct.length > MAX_LIST){
-          lines.push(`（�???${correct.length - MAX_LIST} 題未?�出；為?��??�面?�慢）\n\n`);
+          lines.push(`（省略 ${correct.length - MAX_LIST} 題未列出；為避免頁面過慢）\n\n`);
         }
       }
 
-      lines.push(`三、�???跳�?題目（�?多�? ${MAX_LIST} 題�?\n`);
+      lines.push(`三、超時/跳過題目（最多列 ${MAX_LIST} 題）\n`);
       if (!skipped.length){
-        lines.push('- ?��?沒�?超�?/跳�?題目?�\n\n');
+        lines.push('- 目前沒有超時/跳過題目。\n\n');
       } else {
         const list = skipped.slice().sort((a,b) => (b.time_spent_sec||0) - (a.time_spent_sec||0));
         for (const it of list.slice(0, MAX_LIST)){
-          lines.push(`- [${it.topicKey}] ${it.topic}�?{it.status}）\n`);
-          lines.push(`  題目�?{it.question}\n`);
-          if (it.question_id) lines.push(`  question_id�?{it.question_id}\n`);
-          if (it.quadrant) lines.push(`  象�?�?{it.quadrant}\n`);
-          if (it.hint_depth) lines.push(`  ?�示深度�?{it.hint_depth}\n`);
-          lines.push(`  ?�費?��?�?{_fmtSec(it.time_spent_sec)}；�?示�?${it.hints_viewed} 次\n\n`);
+          lines.push(`- [${it.topicKey}] ${it.topic}（${it.status}）\n`);
+          lines.push(`  題目：${it.question}\n`);
+          if (it.question_id) lines.push(`  question_id：${it.question_id}\n`);
+          if (it.quadrant) lines.push(`  象限：${it.quadrant}\n`);
+          if (it.hint_depth) lines.push(`  提示深度：${it.hint_depth}\n`);
+          lines.push(`  花費時間：${_fmtSec(it.time_spent_sec)}；提示：${it.hints_viewed} 次\n\n`);
         }
       }
 
-      lines.push('（本?��??�本機�?答�??�自?�整?��?\n');
+      lines.push('（本報告由本機作答紀錄自動整理）\n');
       return lines.join('');
     }
 
@@ -2611,7 +2379,7 @@
         extraType ? `type=${extraType}` : '',
         extraReason ? `reason=${extraReason}` : '',
       ].filter(Boolean).join(' / ');
-      const question = meta ? `${topicLabel}�?{meta}）` : `${topicLabel}${qid ? `�?${qid}）` : ''}`;
+      const question = meta ? `${topicLabel}（${meta}）` : `${topicLabel}${qid ? `（#${qid}）` : ''}`;
 
       let hintDepth = '';
       let quadrant = '';
@@ -2676,291 +2444,6 @@
       box.value = text;
     }
 
-    /** ?�?� 學�??�步追蹤：本??vs 上�??�?� */
-    function renderProgressCompare(thisWeekAttempts, lastWeekAttempts){
-      const el = $('progressCompare');
-      const advEl = $('progressAdvice');
-      if (!el) return;
-
-      function calcMetrics(arr){
-        const items = Array.isArray(arr) ? arr : [];
-        const n = items.length;
-        if (!n) return { n:0, accuracy:0, independent:0, hintDep:0, avgTime:0 };
-        let correct = 0, independent = 0, hinted = 0, totalMs = 0;
-        for (const e of items){
-          if (e?.is_correct) correct++;
-          const hc = Number(e?.hint?.shown_count || 0);
-          if (e?.is_correct && hc === 0) independent++;
-          if (hc > 0) hinted++;
-          totalMs += Math.max(0, Number(e?.ts_end || 0) - Number(e?.ts_start || 0));
-        }
-        return {
-          n, accuracy: correct / n, independent: independent / n,
-          hintDep: hinted / n, avgTime: totalMs / n
-        };
-      }
-
-      const tw = calcMetrics(thisWeekAttempts);
-      const lw = calcMetrics(lastWeekAttempts);
-
-      if (!tw.n && !lw.n){
-        el.innerHTML = '<div class="small">（�??�足夠�??�進�?比�?�?/div>';
-        if (advEl) advEl.innerHTML = '';
-        return;
-      }
-
-      function arrow(curr, prev, higherIsBetter){
-        if (!prev) return '<span style="color:var(--muted)">??/span>';
-        const diff = curr - prev;
-        if (Math.abs(diff) < 0.005) return '<span style="color:var(--muted)">???�平</span>';
-        const up = diff > 0;
-        const good = higherIsBetter ? up : !up;
-        const color = good ? 'var(--ok)' : 'var(--bad)';
-        const icon = up ? '?? : '??;
-        return `<span style="color:${color};font-weight:700">${icon} ${Math.abs(Math.round(diff*100))}%</span>`;
-      }
-
-      const rows = [
-        { label:'題數', tw: String(tw.n), lw: String(lw.n), change: tw.n > lw.n ? `<span style="color:var(--ok)">??${tw.n - lw.n}</span>` : (tw.n < lw.n ? `<span style="color:var(--warn)">??${lw.n - tw.n}</span>` : '<span style="color:var(--muted)">???�平</span>') },
-        { label:'�?��??, tw: pct(tw.accuracy), lw: lw.n ? pct(lw.accuracy) : '??, change: arrow(tw.accuracy, lw.n ? lw.accuracy : null, true) },
-        { label:'?��?�????, tw: pct(tw.independent), lw: lw.n ? pct(lw.independent) : '??, change: arrow(tw.independent, lw.n ? lw.independent : null, true) },
-        { label:'?�示依賴??, tw: pct(tw.hintDep), lw: lw.n ? pct(lw.hintDep) : '??, change: arrow(tw.hintDep, lw.n ? lw.hintDep : null, false) },
-        { label:'平�??��?', tw: sec(tw.avgTime), lw: lw.n ? sec(lw.avgTime) : '??, change: arrow(tw.avgTime/1000, lw.n ? lw.avgTime/1000 : null, false) },
-      ];
-
-      el.innerHTML = `
-        <table>
-          <thead><tr><th>?��?</th><th>?��?/th><th>上�?/th><th>變�?</th></tr></thead>
-          <tbody>
-            ${rows.map(r => `<tr><td style="font-weight:600">${r.label}</td><td>${r.tw}</td><td>${r.lw}</td><td>${r.change}</td></tr>`).join('')}
-          </tbody>
-        </table>
-      `;
-
-      // Generate progress advice
-      if (!advEl) return;
-      const tips = [];
-      if (tw.n === 0) {
-        tips.push('?��? ?�週�??��?題�?建議每週至少�???10-20 題維?��??��?);
-      } else if (lw.n > 0) {
-        const accDiff = tw.accuracy - lw.accuracy;
-        const indDiff = tw.independent - lw.independent;
-        const hintDiff = tw.hintDep - lw.hintDep;
-        if (accDiff >= 0.05) tips.push('?? �?��?��??�步！繼續�??��??�逐步?�戰?�難?��??��?);
-        else if (accDiff <= -0.1) tips.push('?��? �?��?��??��??�能?�到?��??�難概念?�建議�??�頭練�?之�??��??��??��??�信心�?);
-        if (indDiff >= 0.05) tips.push('?? ?��?�???��?增強了�?表示觀念逐漸穩固??);
-        if (hintDiff <= -0.05) tips.push('???�示依賴?��?，代表孩子在?��?試自己想?�這件事�??�進步??);
-        else if (hintDiff >= 0.1) tips.push('?�� ?�示使用增�?，可?�正?�學?��?念。�??��?續�???2 ?�都高�?賴�?建議?�到上�??��?段�?練�?);
-        if (tw.n < lw.n * 0.5) tips.push('?? ?��??��?顯�?少�?建議維�??��?練�??��?（�???3 次、�?�?10 題�???);
-        else if (tw.n > lw.n * 1.5) tips.push('?? ?��??��??��?很�?！注?��?要為了�??�而跳?�思考�??�質比數?��?要�?);
-      } else {
-        tips.push('?? 上週�??��??��??��?比�??��?續�??��?答�??��??�進步趨勢�?);
-      }
-      if (!tips.length) tips.push('?? 表現穩�?，繼續�??�目?��?學�?節奏即?��?);
-      advEl.innerHTML = `<div style="padding:10px;background:rgba(88,166,255,0.06);border-radius:8px;font-size:13px;line-height:1.8">${tips.map(t => `<div>${t}</div>`).join('')}</div>`;
-    }
-
-    /** ?�?� 學�?習慣觀�??�?� */
-    function renderStudyHabits(allAttempts){
-      const el = $('studyHabits');
-      if (!el) return;
-      const items = Array.isArray(allAttempts) ? allAttempts : [];
-      if (items.length < 3){
-        el.innerHTML = '<div class="small">（�??��? 3 筆�?答�??��??��??�學習�????</div>';
-        return;
-      }
-
-      // 1. Time-of-day distribution
-      const hourBuckets = new Array(24).fill(0);
-      const dayBuckets = new Array(7).fill(0); // 0=Sun..6=Sat
-      const dailyDates = new Set();
-      let totalSessions = 0;
-      let lastSessionEnd = 0;
-      const SESSION_GAP = 30 * 60 * 1000; // 30 min gap = new session
-
-      for (const e of items){
-        const ts = Number(e?.ts_start || e?.ts_end || 0);
-        if (!ts) continue;
-        const d = new Date(ts);
-        hourBuckets[d.getHours()]++;
-        dayBuckets[d.getDay()]++;
-        dailyDates.add(`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`);
-        if (ts - lastSessionEnd > SESSION_GAP) totalSessions++;
-        lastSessionEnd = Number(e?.ts_end || ts);
-      }
-
-      // Find peak hours
-      const maxHour = Math.max(...hourBuckets);
-      const peakHours = [];
-      for (let h = 0; h < 24; h++){
-        if (hourBuckets[h] >= maxHour * 0.7 && hourBuckets[h] > 0) peakHours.push(h);
-      }
-
-      // Time period label
-      function timePeriodZh(hours){
-        const minH = Math.min(...hours);
-        const maxH = Math.max(...hours);
-        if (minH >= 6 && maxH <= 11) return '上�?';
-        if (minH >= 12 && maxH <= 17) return '下�?';
-        if (minH >= 18 && maxH <= 22) return '?��?';
-        if ((minH >= 15 && maxH <= 20)) return '?�學�?;
-        return `${minH}:00�?{maxH + 1}:00`;
-      }
-
-      const dayNames = ['??,'一','�?,'�?,'??,'�?,'??];
-      const activeDays = dayBuckets.map((n,i) => ({day:i, n})).filter(x => x.n > 0).sort((a,b) => b.n - a.n);
-      const topDays = activeDays.slice(0, 3).map(x => `??{dayNames[x.day]}`);
-
-      const totalDays = dailyDates.size;
-      const avgPerDay = totalDays ? (items.length / totalDays).toFixed(1) : '0';
-      const avgPerSession = totalSessions ? Math.round(items.length / totalSessions) : items.length;
-
-      // Hour chart (simple bar)
-      const hourChartBars = hourBuckets.map((n, h) => {
-        const pct = maxHour > 0 ? Math.round(n / maxHour * 100) : 0;
-        const isPeak = peakHours.includes(h);
-        return `<div style="display:flex;flex-direction:column;align-items:center;flex:1;min-width:14px">
-          <div style="width:10px;background:${isPeak ? 'var(--accent)' : 'rgba(88,166,255,0.25)'};height:${Math.max(2, pct * 0.6)}px;border-radius:2px;transition:height 0.3s"></div>
-          <div style="font-size:9px;color:var(--muted);margin-top:2px">${h % 3 === 0 ? h : ''}</div>
-        </div>`;
-      }).join('');
-
-      const habitItems = [];
-      habitItems.push(`<div class="card" style="padding:10px"><div style="font-weight:700">?? 常用?��??�段</div>
-        <div style="margin-top:6px;font-size:14px;color:var(--accent);font-weight:800">${peakHours.length ? timePeriodZh(peakHours) : '??}</div>
-        <div class="small" style="margin-top:4px">尖峰?�段�?{peakHours.map(h => h + ':00').join('??) || '??}</div>
-        <div style="display:flex;align-items:flex-end;gap:1px;height:50px;margin-top:8px;padding:4px 0">${hourChartBars}</div>
-        <div class="small" style="margin-top:4px">??24 小�??��??��?（�?�?= ?�常�?題�??�段�?/div>
-      </div>`);
-
-      habitItems.push(`<div class="card" style="padding:10px"><div style="font-weight:700">?? ?��??��?</div>
-        <div style="margin-top:8px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
-          <div><div class="small">活�?天數</div><div style="font-size:20px;font-weight:800;color:var(--accent)">${totalDays} �?/div></div>
-          <div><div class="small">總場�?/div><div style="font-size:20px;font-weight:800">${totalSessions}</div></div>
-          <div><div class="small">平�?每天</div><div style="font-size:20px;font-weight:800">${avgPerDay} �?/div></div>
-          <div><div class="small">平�?每次</div><div style="font-size:20px;font-weight:800">${avgPerSession} �?/div></div>
-        </div>
-        <div class="small" style="margin-top:8px">?�常�?題�??��?�?{topDays.join('??) || '??}</div>
-      </div>`);
-
-      // Study consistency advice
-      const consistencyTips = [];
-      if (totalDays <= 1) consistencyTips.push('建議增�??��?天數，�???��習�??�中一天�??�更好�??��?學�??��?）�?);
-      else if (totalDays >= 5) consistencyTips.push('?��?天數很穩定�??��?保�?，這是?�?��??�學習�?奏�?');
-      if (avgPerSession > 25) consistencyTips.push('?�次?��??��?多�?建議每次 10??5 題即?��?專注?��??��?影響�?��?��?);
-      else if (avgPerSession <= 5 && avgPerSession > 0) consistencyTips.push('每次?��??��?少�?建議每次完�? 10 題左?��?完整?��???);
-      if (peakHours.length && (peakHours.some(h => h >= 22) || peakHours.some(h => h <= 5))) consistencyTips.push('?��??��??��?，建議調?�到?�學後�??��?，精神更好、�??�更高�?);
-
-      if (consistencyTips.length){
-        habitItems.push(`<div class="card" style="padding:10px;grid-column:1/-1"><div style="font-weight:700">?�� 習慣建議</div>
-          <div style="margin-top:6px;font-size:13px;line-height:1.8">${consistencyTips.map(t => `<div>??${t}</div>`).join('')}</div>
-        </div>`);
-      }
-
-      el.innerHTML = `<div class="subgrid">${habitItems.join('')}</div>`;
-    }
-
-    /** ?�?� ?�週�??�建議�?給家?��? 3 件�?）�??� */
-    function renderActionPlan(thisWeekAttempts, lastWeekAttempts, weakKinds){
-      const el = $('actionPlan');
-      if (!el) return;
-      const tw = Array.isArray(thisWeekAttempts) ? thisWeekAttempts : [];
-      const lw = Array.isArray(lastWeekAttempts) ? lastWeekAttempts : [];
-      const weak = Array.isArray(weakKinds) ? weakKinds : [];
-
-      if (!tw.length && !lw.length){
-        el.innerHTML = '<div class="small">（�??�第一輪�?答�?，系統�??��??��?行�?建議�?/div>';
-        return;
-      }
-
-      const actions = [];
-
-      // Action 1: Practice focus
-      if (weak.length > 0){
-        const topWeak = weak.slice(0, 2).map(w => kindNameZh(w.kind)).join('??);
-        const pageUrl = weak[0] ? unitPageUrl(weak[0].unit_id) : null;
-        actions.push({
-          icon: '??', title: '?��?練�?',
-          desc: `?�週�??�?�強�?strong>${safeStr(topWeak)}</strong>`,
-          detail: `建議每天??5 題相?��??��??��?簡單?��?始�?穩�??��???��?�`,
-          link: pageUrl ? `<a href="${pageUrl}" target="_blank" style="color:var(--accent);text-decoration:none;font-size:12px">???�練�?/a>` : '',
-        });
-      } else {
-        actions.push({
-          icon: '??', title: '維�?練�?',
-          desc: '?��?沒�??�顯弱�?�?strong>保�?每週短?��?練�?</strong>?�可??,
-          detail: '建議每�?2-3 次、�?�?10 題�?混�?練�?，維?��??��?,
-          link: '',
-        });
-      }
-
-      // Action 2: Study habit
-      const twCorrect = tw.filter(e => e?.is_correct).length;
-      const twHinted = tw.filter(e => Number(e?.hint?.shown_count || 0) > 0).length;
-      const hintRate = tw.length ? twHinted / tw.length : 0;
-      if (hintRate >= 0.5){
-        actions.push({
-          icon: '??', title: '減�??�示依賴',
-          desc: `?�示使用??<strong>${Math.round(hintRate * 100)}%</strong>，�?高`,
-          detail: '?�週�?試�??�到題目?�自己想 30 秒�?寫出算�?，�?不出來�???L1 ?�示?�目標是?��??��??�」�?,
-          link: '',
-        });
-      } else if (tw.length && twCorrect / tw.length < 0.6){
-        actions.push({
-          icon: '??', title: '?�頭?�固?��?',
-          desc: `�?��??<strong>${Math.round(twCorrect / tw.length * 100)}%</strong>，建議�?練�??�本題`,
-          detail: '?��??��?題�?，累積信心�??��??�新題�??��?題寫?��??��?式、�?跳步??,
-          link: '',
-        });
-      } else {
-        actions.push({
-          icon: '??', title: '?��??��??��?,
-          desc: '表現不錯！可以�?�?strong>減�??��?示�?次數</strong>',
-          detail: '?�戰?�零?�示完�? 5 題」�??�慢?��??��?�???�自信�???,
-          link: '',
-        });
-      }
-
-      // Action 3: Encouragement / next step
-      const lwN = lw.length;
-      const twN = tw.length;
-      if (twN > lwN && twN > 0){
-        actions.push({
-          icon: '??', title: '?��??��?',
-          desc: `?�週�?�?<strong>${twN}</strong> 題�?比�??��? <strong>${twN - lwN}</strong> 題�?`,
-          detail: '請�?得�?孩�?說「�??�週�??�練習�?很�??�。正?��??��??�出?�誤?�能維�?學�??��???,
-          link: '',
-        });
-      } else if (twN === 0){
-        actions.push({
-          icon: '??, title: '安�??��??��?',
-          desc: '?�週�?沒�?始�?�?,
-          detail: '建議跟孩子�?好「�?天放學�??��??�睡?�」固�?10 ?��??�數學�?養�?習慣?�?��???,
-          link: '',
-        });
-      } else {
-        actions.push({
-          icon: '?��', title: '設�?小目�?,
-          desc: `?�週已完�? <strong>${twN}</strong> 題`,
-          detail: '跟孩子�?起設定「�??�目標」�?例�??�正確�??��? 5%?��??��?? 3 天都?��?題」。�??��??�更?��??��?,
-          link: '',
-        });
-      }
-
-      el.innerHTML = actions.map((a, i) => `
-        <div class="card" style="margin-top:${i ? 8 : 0}px;padding:12px;border-left:3px solid var(--accent)">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start">
-            <div>
-              <div style="font-weight:800;font-size:15px">${a.icon} 行�? ${i+1}�?{safeStr(a.title)}</div>
-              <div style="margin-top:6px;font-size:14px;line-height:1.6">${a.desc}</div>
-              <div style="margin-top:4px;font-size:13px;color:var(--muted);line-height:1.6">${safeStr(a.detail)}</div>
-            </div>
-            ${a.link ? `<div style="margin-left:10px">${a.link}</div>` : ''}
-          </div>
-        </div>
-      `).join('');
-    }
-
     function refresh(){
       const uid = window.AIMathCoachLog?.getOrCreateUserId?.() || 'guest';
       $('txtUid').textContent = uid;
@@ -2980,16 +2463,16 @@
       const agg = window.AIMathReportAggregate?.aggregate?.(attempts) || { overall: {n:0}, by_kind: [], kpi: {} };
       const offlineStats = window.AIMathReportAggregate?.computeStats?.(attempts) || null;
 
-      $('pillUnit').textContent = unitFilter ? `?��?�?{unitName(unitFilter)}` : '?��?：全??;
+      $('pillUnit').textContent = unitFilter ? `單元：${unitName(unitFilter)}` : '單元：全部';
 
       $('txtRangeDays').textContent = String(days);
       if (sinceMs != null){
         const start = new Date(sinceMs);
         const end = new Date();
         const fmt = (d) => `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;
-        $('txtRangeDates').textContent = `?��?�?{fmt(start)} �?${fmt(end)}`;
+        $('txtRangeDates').textContent = `期間：${fmt(start)} ～ ${fmt(end)}`;
       } else {
-        $('txtRangeDates').textContent = '?��?：全?��???;
+        $('txtRangeDates').textContent = '期間：全部紀錄';
       }
 
       $('kpiTotal').textContent = String(agg.kpi.total || 0);
@@ -3003,9 +2486,8 @@
       renderOfflineQuadrant(offlineStats);
       renderOfflineTrend(offlineStats);
       renderOfflineRecommend(offlineStats);
-      renderOfflineRemedy(attempts);
 
-      // ?�?� ?��?7 �?vs ?�早歷史紀???�?�
+      // ── 最近 7 天 vs 更早歷史紀錄 ──
       const sevenDayMs = Date.now() - 7 * 24 * 60 * 60 * 1000;
       const allAttempts = window.AIMathAttemptTelemetry?.listAttempts?.(uid, {}) || [];
       let allFiltered = unitFilter
@@ -3031,33 +2513,11 @@
         renderOfflineTable(olderStats, 'offlineTableHistory');
       } else {
         const hEl = $('offlineTableHistory');
-        if (hEl) hEl.innerHTML = '<div class="small">（�?天以?��??��?答�??��?</div>';
+        if (hEl) hEl.innerHTML = '<div class="small">（七天以前沒有作答紀錄）</div>';
       }
       renderLatest24h(uid, attempts24h);
 
-      // ?�?� ?��?3 �?vs ??3 �??�?�
-      const threeDayMs = Date.now() - 3 * 24 * 60 * 60 * 1000;
-      const sixDayMs = Date.now() - 6 * 24 * 60 * 60 * 1000;
-      const attempts3d = allFiltered.filter(a => {
-        const t = Number(a?.ts_end || a?.ts_start || 0);
-        return t >= threeDayMs;
-      });
-      const prev3d = allFiltered.filter(a => {
-        const t = Number(a?.ts_end || a?.ts_start || 0);
-        return t >= sixDayMs && t < threeDayMs;
-      });
-      renderLatest3d(uid, attempts3d, prev3d);
-
-      // ?�?� ?��?vs 上�?比�? ?�?�
-      const fourteenDayMs = Date.now() - 14 * 24 * 60 * 60 * 1000;
-      const lastWeekAttempts = allFiltered.filter(a => {
-        const t = Number(a?.ts_end || a?.ts_start || 0);
-        return t >= fourteenDayMs && t < sevenDayMs;
-      });
-      renderProgressCompare(recentAttempts, lastWeekAttempts);
-      renderStudyHabits(allFiltered);
-
-      // Sellable summary (?��?N �?
+      // Sellable summary (最近 N 天)
       const totalTimeMs = sumDurationMs(attempts);
       const totalHintMs = sumHintMs(attempts);
       const qHist = { A: 0, B: 0, C: 0, D: 0 };
@@ -3074,27 +2534,27 @@
       const wrongHintN = (wrongHintHist.L1 || 0) + (wrongHintHist.L2 || 0) + (wrongHintHist.L3 || 0) + (wrongHintHist.solution || 0);
       const stuck1 = argmaxHist(helpHist, ['L1','L2','L3','solution']);
       const stuck2 = argmaxHist(wrongHintHist, ['L1','L2','L3','solution']);
-      const stuckKey = (stuck1.v > 0 ? stuck1.k : '??);
+      const stuckKey = (stuck1.v > 0 ? stuck1.k : '—');
 
       const summaryLines = [];
-      summaryLines.push(`<span class="tag pill ok">總�???${agg.kpi.total || 0}</span>`);
-      summaryLines.push(`<span class="tag pill ok">�?��??${pct(agg.kpi.accuracy || 0)}</span>`);
-      summaryLines.push(`<span class="tag pill warn">總耗�? ${min1(totalTimeMs)}</span>`);
-      summaryLines.push(`<span class="tag pill warn">平�? ${sec(agg.kpi.avg_time_ms || 0)}/�?/span>`);
-      summaryLines.push(`<span class="tag pill warn">?�示依賴 ${pct(agg.kpi.hint_dependency || 0)}</span>`);
-      summaryLines.push(`<span class="tag pill warn">?�示總耗�? ${min1(totalHintMs)}</span>`);
+      summaryLines.push(`<span class="tag pill ok">總題數 ${agg.kpi.total || 0}</span>`);
+      summaryLines.push(`<span class="tag pill ok">正確率 ${pct(agg.kpi.accuracy || 0)}</span>`);
+      summaryLines.push(`<span class="tag pill warn">總耗時 ${min1(totalTimeMs)}</span>`);
+      summaryLines.push(`<span class="tag pill warn">平均 ${sec(agg.kpi.avg_time_ms || 0)}/題</span>`);
+      summaryLines.push(`<span class="tag pill warn">提示依賴 ${pct(agg.kpi.hint_dependency || 0)}</span>`);
+      summaryLines.push(`<span class="tag pill warn">提示總耗時 ${min1(totalHintMs)}</span>`);
 
       $('summaryBox').innerHTML = `
         <div class="row" style="gap:8px; margin-top:6px; flex-wrap:wrap">${summaryLines.join('')}</div>
         <div class="small" style="margin-top:10px">
-          ?�週�?象�?：A ${qHist.A||0}｜B ${qHist.B||0}｜C ${qHist.C||0}｜D ${qHist.D||0}
-          <span class="mono" style="margin-left:10px">?�示深度（B+C）�?L1 ${helpHist.L1||0}｜L2 ${helpHist.L2||0}｜L3 ${helpHist.L3||0}｜解�?${helpHist.solution||0}</span>
+          本週四象限：A ${qHist.A||0}｜B ${qHist.B||0}｜C ${qHist.C||0}｜D ${qHist.D||0}
+          <span class="mono" style="margin-left:10px">提示深度（B+C）：L1 ${helpHist.L1||0}｜L2 ${helpHist.L2||0}｜L3 ${helpHist.L3||0}｜解答 ${helpHist.solution||0}</span>
         </div>
       `;
 
       const pillStuck = (stuck1.v > 0)
-        ? `?��??�示?��?${stuckKey}�?{stuck1.v}/${hintedN || 0}）`
-        : '?��??�示?��???;
+        ? `卡關提示階：${stuckKey}（${stuck1.v}/${hintedN || 0}）`
+        : '卡關提示階：—';
       $('pillStuck').textContent = pillStuck;
 
       const advice = [];
@@ -3104,24 +2564,24 @@
       const hintDep = Number(agg.kpi.hint_dependency || 0);
 
       if (totalN < 10){
-        advice.push('?�週樣?��?少�?題數?��?）�?建議?�累�?10??0 題�?統�??�更準�?);
+        advice.push('本週樣本較少（題數偏少），建議再累積 10–20 題，統計會更準。');
       }
       if (hintDep >= 0.45){
-        advice.push('?�示?��?：代表�?念�?不�??��?建議?��? 3 題示範�??�步驟寫）�??��?一�?10 題�?);
-        advice.push('?�到題目?�口?�說?�「�?一步�?算�?麼」�??��?；�??�卡住�???L1??);
+        advice.push('提示偏多：代表觀念還不夠熟，建議先做 3 題示範（照步驟寫），再做一輪 10 題。');
+        advice.push('看到題目先口頭說出「下一步要算什麼」再動筆；真的卡住再看 L1。');
       }
       if (cRate >= 0.30){
-        advice.push('?��?示�?常錯：�??��?一步都寫出來�?每步寫�?就檢?��??�常�??��??��?小步?��?寫�???);
+        advice.push('看提示仍常錯：請把每一步都寫出來，每步寫完就檢查（最常見是算錯一小步或漏寫）。');
       }
       if (dRate >= 0.30){
-        advice.push('不�??�示就容?�錯：建議用?��??�刷題�?一�?10 題�?，�?題都?�寫算�??��?跳步??);
+        advice.push('不看提示就容易錯：建議用短回合刷題（一次 10 題），每題都先寫算式、不跳步。');
       }
       if (stuckKey === 'L2' || stuckKey === 'L3' || stuckKey === 'solution'){
-        advice.push(`?��?多在 ${stuckKey}：代表�?一?��?L1）�?沒穩，建議�??�「寫算�? + 寫出每�?步」�?不�??��?答�??�`);
+        advice.push(`卡關多在 ${stuckKey}：代表前一階（L1）還沒穩，建議回到「寫算式 + 寫出每一步」，不要只看答案。`);
       }
       if (!advice.length){
-        advice.push('?��?表現穩�?：�??��???2?? 次、�?�?10 題�?小練習�??��??�好�?);
-        advice.push('?��??��?：�?次�? 2 題「�??��?題」當作示範�?，�?求�??�步驟�?);
+        advice.push('整體表現穩定：保持每週 2–3 次、每次 10 題的小練習，效果最好。');
+        advice.push('進階做法：每次挑 2 題「最慢的題」當作示範題，要求完整步驟。');
       }
       $('summaryAdvice').innerHTML = `- ${advice.slice(0, 3).join('<br>- ')}`;
 
@@ -3132,12 +2592,11 @@
       const remedy = renderWeaknesses(uid, attempts);
       const wrongDiagRows = renderWrongDiagnosis(uid, attempts);
       renderConceptAndDirection(uid, attempts);
-      renderActionPlan(recentAttempts, lastWeekAttempts, remedy.top || []);
 
       const top1 = (remedy.top || [])[0];
       $('pillWeak').textContent = top1
-        ? `弱�?�?{unitName(top1.unit_id)} / ${kindNameZh(top1.kind || 'unknown')}`
-        : '弱�?：�?;
+        ? `弱點：${unitName(top1.unit_id)} / ${kindNameZh(top1.kind || 'unknown')}`
+        : '弱點：—';
 
       $('txtOut').value = JSON.stringify({
         generated_at_ms: Date.now(),
@@ -3153,7 +2612,7 @@
           hint_depth_hist_wrong_with_hint: wrongHintHist,
           stuck_hint_level: stuckKey,
           stuck_hint_level_count: Math.max(0, Number(stuck1.v || 0)),
-          stuck_hint_level_wrong_with_hint: (stuck2.v > 0 ? stuck2.k : '??),
+          stuck_hint_level_wrong_with_hint: (stuck2.v > 0 ? stuck2.k : '—'),
           stuck_hint_level_wrong_with_hint_count: Math.max(0, Number(stuck2.v || 0)),
         },
         remedy_top3: (remedy.top || []).map(x => ({ unit_id: x.unit_id, kind: x.kind, n: x.n, A:x.A, B:x.B, C:x.C, D:x.D, weakness_score: x.weakness_score })),
@@ -3205,13 +2664,13 @@
       var rawVal = String(input.value || '').trim()
         .replace(/\u2212/g,'-').replace(/\uff0f/g,'/').replace(/\uff1d/g,'=').replace(/\u3001/g,',');
       if (!rawVal){
-        resultEl.innerHTML = '<div class="rq-result bad">請輸?��?案�??�出??/div>';
+        resultEl.innerHTML = '<div class="rq-result bad">請輸入答案再送出。</div>';
         return;
       }
       // Flexible comparison (trim, normalize fraction)
       function normFrac(s){
         var t = String(s||'').trim().replace(/\s+/g,' ');
-        // mixed: "2 1/3" ??improper "7/3"
+        // mixed: "2 1/3" → improper "7/3"
         var mm = t.match(/^(-?\d+)\s+(\d+)\/(\d+)$/);
         if (mm){
           var w=parseInt(mm[1],10), n=parseInt(mm[2],10), d=parseInt(mm[3],10);
@@ -3236,10 +2695,10 @@
       // also check direct string match
       if (!isCorrect) isCorrect = rawVal === String(correctAns||'').trim();
       if (isCorrect){
-        resultEl.innerHTML = '<div class="rq-result ok">??答�?了�??��?好�??�次?�握了正確解法�?/div>';
+        resultEl.innerHTML = '<div class="rq-result ok">✅ 答對了！做得好！這次掌握了正確解法。</div>';
         input.style.borderColor = 'rgba(46,160,67,0.6)';
       } else {
-        resultEl.innerHTML = '<div class="rq-result bad">???��?對�?你�?答�???' + rawVal + '，正確�?案是 <strong>' + correctAns + '</strong>??br>請�??��??�「�??��?學�?觀念�??�」�?細閱讀，然後�?試�?次�?/div>';
+        resultEl.innerHTML = '<div class="rq-result bad">❌ 還不對，你的答案是 ' + rawVal + '，正確答案是 <strong>' + correctAns + '</strong>。<br>請展開下方「補救教學與觀念提醒」仔細閱讀，然後再試一次。</div>';
         input.style.borderColor = 'rgba(248,81,73,0.6)';
         // auto-open the teaching details
         var det = replayBox.querySelector('details');
@@ -3253,7 +2712,7 @@
     $('selRange').addEventListener('change', refresh);
     $('btn24hRetryTop')?.addEventListener('click', () => {
       if (!_latest24hTopTarget || !_latest24hTopTarget.url){
-        alert('?��?沒�??�跳轉�? 24h ?��??�練?��???);
+        alert('目前沒有可跳轉的 24h 錯題重練目標。');
         return;
       }
       const uid = window.AIMathCoachLog?.getOrCreateUserId?.() || 'guest';
@@ -3264,7 +2723,7 @@
     });
     $('btn24hRetryTop3')?.addEventListener('click', () => {
       if (!_latest24hTopTargets || !_latest24hTopTargets.length){
-        alert('?��?沒�??�跳轉�? TOP3 ?�練?��???);
+        alert('目前沒有可跳轉的 TOP3 重練目標。');
         return;
       }
       const uid = window.AIMathCoachLog?.getOrCreateUserId?.() || 'guest';
@@ -3299,8 +2758,8 @@
     refresh();
   })();
   </script>
-<script src="../shared/cookie_consent.js"></script>
 <script src="../shared/breadcrumb_jsonld.js"></script>
+<script src="../shared/cookie_consent.js"></script>
 <script src="../shared/skip_to_content.js"></script>
 </body>
 </html>

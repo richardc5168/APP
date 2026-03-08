@@ -1,12 +1,12 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>G5 作業�???�練（Coach Mode�?/title>
-  <meta name="description" content="?��?五年級�?業解題�?練�?AI ?�步引�?�??，�??�接給�?案。支?��??�、�??�、�?積、�??��?，離線可?��?>
-  <meta property="og:title" content="G5 作業�???�練（Coach Mode�?>
-  <meta property="og:description" content="AI ?�步引�?�??，�??�接給�?案。支?��??�、�??�、�?積、�??��?，離線可?��?>
+  <title>G5 作業解題教練（Coach Mode）</title>
+  <meta name="description" content="國小五年級作業解題教練，AI 逐步引導解題，不直接給答案。支援分數、小數、體積、應用題，離線可用。">
+  <meta property="og:title" content="G5 作業解題教練（Coach Mode）">
+  <meta property="og:description" content="AI 逐步引導解題，不直接給答案。支援分數、小數、體積、應用題，離線可用。">
   <meta property="og:type" content="website">
   <meta property="og:image" content="../icons/icon-512.png">
   <link rel="canonical" href="./">
@@ -14,9 +14,9 @@
   {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    "name": "G5 作業�???�練（Coach Mode）�?AI ?�學家�?",
-    "description": "?��?五年級�?業解題�?練�?AI ?�步引�?�??，�??�接給�?案�?,
-    "isPartOf": { "@type": "WebApplication", "name": "AI ?�學家�?" }
+    "name": "G5 作業解題教練（Coach Mode）｜AI 數學家教",
+    "description": "國小五年級作業解題教練，AI 逐步引導解題，不直接給答案。",
+    "isPartOf": { "@type": "WebApplication", "name": "AI 數學家教" }
   }
   </script>
   <style>
@@ -50,9 +50,9 @@
 </head>
 <body>
   <div class="wrap">
-    <h1>G5 作業�???�練（Coach Mode�?/h1>
+    <h1>G5 作業解題教練（Coach Mode）</h1>
     <div class="small">
-      ?��?：任何�?案都?�以繼�?下�?題�?不影?��??��?題庫?�面）�?
+      目標：任何答案都可以繼續下一題（不影響原本各題庫頁面）。
     </div>
 
     <div class="card">
@@ -60,47 +60,47 @@
         <div>
           <label>題庫</label><br />
           <select id="selBank">
-            <option value="fraction">?�數（fraction-g5�?/option>
-            <option value="decimal">小數（decimal-unit4�?/option>
-            <option value="ratio">比�??��??��?ratio-percent-g5�?/option>
-            <option value="life">?�活?�用（life-applications-g5�?/option>
+            <option value="fraction">分數（fraction-g5）</option>
+            <option value="decimal">小數（decimal-unit4）</option>
+            <option value="ratio">比率百分率（ratio-percent-g5）</option>
+            <option value="life">生活應用（life-applications-g5）</option>
           </select>
         </div>
         <div>
-          <label>使用??ID（localStorage�?/label><br />
+          <label>使用者 ID（localStorage）</label><br />
           <span id="txtUid" class="mono">-</span>
         </div>
         <div>
-          <label>事件??/label><br />
+          <label>事件數</label><br />
           <span id="txtCount" class="mono">0</span>
         </div>
         <div style="margin-left:auto">
-          <button id="btnStart" class="btn2">?��? / 下�?�?/button>
-          <button id="btnClear" class="btnGhost">清除紀??/button>
+          <button id="btnStart" class="btn2">開始 / 下一題</button>
+          <button id="btnClear" class="btnGhost">清除紀錄</button>
         </div>
       </div>
     </div>
 
     <div class="card">
-      <div class="q" id="qText">?�「�?�?/ 下�?題」出題�?/div>
+      <div class="q" id="qText">按「開始 / 下一題」出題。</div>
       <div class="hint" id="qMeta"></div>
 
       <div class="row" style="margin-top:12px">
         <div>
-          <label>你�?答�?（任?�格式都?��?交�?</label><br />
-          <input id="inpAns" placeholder="例�?�?/4?? 2/3??.75??5%..." />
+          <label>你的答案（任意格式都可提交）</label><br />
+          <input id="inpAns" placeholder="例如：3/4、1 2/3、0.75、25%..." />
         </div>
         <div style="align-self:flex-end">
-          <button id="btnSubmit" class="btn">?�交（可?�接下�?題�?</button>
+          <button id="btnSubmit" class="btn">提交（可直接下一題）</button>
         </div>
       </div>
 
       <div id="banner" class="banner warn" style="display:none"></div>
 
       <div class="row" style="margin-top:12px">
-        <button id="btnHint" class="btnGhost">?�示 +1（L1?�L3�?/button>
-        <button id="btnNextStep" class="btnGhost">下�?�?/button>
-        <button id="btnSolution" class="btnGhost">完整�??</button>
+        <button id="btnHint" class="btnGhost">提示 +1（L1→L3）</button>
+        <button id="btnNextStep" class="btnGhost">下一步</button>
+        <button id="btnSolution" class="btnGhost">完整解答</button>
         <span id="txtHelpStat" class="small"></span>
       </div>
       <div id="helpBox" class="banner warn" style="display:none"></div>
@@ -109,10 +109,10 @@
     <div class="card">
       <div class="row" style="justify-content:space-between; align-items:flex-end">
         <div>
-          <div style="font-weight:700">事件?�出（JSON�?/div>
-          <div class="small">?�於後�??�報?�弱點�??��?/div>
+          <div style="font-weight:700">事件匯出（JSON）</div>
+          <div class="small">用於後續週報與弱點分析。</div>
         </div>
-        <button id="btnExport" class="btnGhost">?�新?��??�出</button>
+        <button id="btnExport" class="btnGhost">重新整理匯出</button>
       </div>
       <textarea id="txtExport" spellcheck="false"></textarea>
     </div>
@@ -221,12 +221,12 @@
       const ms = liveHelpMs();
       const s = Math.round(ms / 1000);
       const parts = [];
-      parts.push(`已�??�示�?{levels || '??}`);
-      parts.push(`點�?�?{String(help.shownCount || 0)}`);
-      parts.push(`?�示?��?�?{String(s)}s`);
-      if (help.usedNextStep) parts.push('已用?��?一步�?);
-      if (help.shownSolution) parts.push('已�??��??�解答�?);
-      el.textContent = parts.join(' �?');
+      parts.push(`已看提示：${levels || '無'}`);
+      parts.push(`點擊：${String(help.shownCount || 0)}`);
+      parts.push(`提示時間：${String(s)}s`);
+      if (help.usedNextStep) parts.push('已用「下一步」');
+      if (help.shownSolution) parts.push('已看「完整解答」');
+      el.textContent = parts.join(' ｜ ');
     }
 
     function showHelpBox(kind, title, body){
@@ -305,29 +305,29 @@
       const meta = qid ? coachMetaByQuestionId.get(String(qid)) : null;
       if (meta && Array.isArray(meta.hint_ladder)){
         const found = meta.hint_ladder.find(x => Number(x && x.level) === Number(level));
-        if (found) return { title: found.title || `L${level} ?�示`, body: found.body || '' };
+        if (found) return { title: found.title || `L${level} 提示`, body: found.body || '' };
       }
       const hints = cur.q && Array.isArray(cur.q.hints) ? cur.q.hints : null;
       if (hints && hints[level - 1]){
-        return { title: `L${level} ?�示`, body: String(hints[level - 1]) };
+        return { title: `L${level} 提示`, body: String(hints[level - 1]) };
       }
       // fallback templates by unit
       if (cur.unit === 'fraction'){
-        if (level === 1) return { title: 'L1 ?�示｜�??��?�?, body: '?�確認�?母是?�相?��??��?母�??��?子�? };
-        if (level === 2) return { title: 'L2 ?�示｜�?式�?約�?', body: '?��?式寫?�「�?子�?�?/ ?��?母」�??�後�?得�??�到?�簡�? };
-        return { title: 'L3 ?�示｜檢??, body: '檢查：�?母是?��??��?結�??�否?�簡�??�否?��?（�???0 ??1 ?�大??1）�?' };
+        if (level === 1) return { title: 'L1 提示｜先看分母', body: '先確認分母是否相同；同分母先加分子。' };
+        if (level === 2) return { title: 'L2 提示｜列式再約分', body: '把算式寫成「分子運算 / 原分母」，最後記得約分到最簡。' };
+        return { title: 'L3 提示｜檢查', body: '檢查：分母是否保持？結果是否最簡？是否合理（介於 0 和 1 或大於 1）？' };
       }
       if (cur.unit === 'decimal'){
-        if (level === 1) return { title: 'L1 ?�示｜�??�斷變大變�?', body: '?��?乘除?�數 >1 ??<1，判?��?案大概�?大�?變�??? };
-        if (level === 2) return { title: 'L2 ?�示｜�??��?規�?', body: '乘以 10/100/1000 ??0.1/0.01/0.001 ?��?小數點左?�移?��??�格?��? };
-        return { title: 'L3 ?�示｜估算檢??, body: '?�估算檢?��??��?位置?�否?��?（�?如大約是?�數?�幾?��??? };
+        if (level === 1) return { title: 'L1 提示｜先判斷變大變小', body: '先看乘除的數 >1 或 <1，判斷答案大概變大或變小。' };
+        if (level === 2) return { title: 'L2 提示｜小數點規則', body: '乘以 10/100/1000 或 0.1/0.01/0.001 時，小數點左右移動對應格數。' };
+        return { title: 'L3 提示｜估算檢查', body: '用估算檢查小數點位置是否合理（例如大約是原數的幾倍）。' };
       }
       if (cur.unit === 'ratio'){
-        if (level === 1) return { title: 'L1 ?�示｜�??�部???��?', body: '?��??�「部?�」�??�全體」�??�決定是要�?比�??�是?��??��? };
-        if (level === 2) return { title: 'L2 ?�示｜公�?, body: '比�? = ?��? ÷ ?��?；百?��? = 比�? ? 100%?? };
-        return { title: 'L3 ?�示｜檢??, body: '檢查：部??< ?��? ??比�? < 1；百?��??�常??0%~100%（除?��???1）�? };
+        if (level === 1) return { title: 'L1 提示｜先找部分/全體', body: '先標出「部分」和「全體」，再決定是要算比率還是百分率。' };
+        if (level === 2) return { title: 'L2 提示｜公式', body: '比率 = 部分 ÷ 全體；百分率 = 比率 × 100%。' };
+        return { title: 'L3 提示｜檢查', body: '檢查：部分 < 全體 → 比率 < 1；百分率通常在 0%~100%（除非超過 1）。' };
       }
-      return { title: `L${level} ?�示`, body: '?��?題目條件?��??��?楚�?算�?，�??�估算檢?��?案�??�性�? };
+      return { title: `L${level} 提示`, body: '先把題目條件整理成清楚的算式，再用估算檢查答案合理性。' };
     }
 
     function recordHintShown(level){
@@ -435,7 +435,7 @@
       updateHelpStat();
 
       if (!q){
-        $('qText').textContent = '題庫?�空?��??��??��?;
+        $('qText').textContent = '題庫為空或尚未載入。';
         $('qMeta').textContent = '';
         return;
       }
@@ -460,7 +460,7 @@
     function submit(){
       clearBanner();
       if (!cur.q){
-        showBanner('warn', '請�??�「�?�?/ 下�?題」出題�?);
+        showBanner('warn', '請先按「開始 / 下一題」出題。');
         return;
       }
 
@@ -494,8 +494,8 @@
 
       updateHelpStat();
       showBanner('ok', isCorrectNow
-        ? '?�次答�?了�?你�??�以?�接?�「�?�?/ 下�?題」繼續�?
-        : '已�?交�??��??��??��?對�??��??�以?�試一次�??�直?��??��?�?/ 下�?題」繼續�?
+        ? '這次答對了！你也可以直接按「開始 / 下一題」繼續。'
+        : '已提交（目前判定未答對）。你可以再試一次，或直接按「開始 / 下一題」繼續。'
       );
       refreshStats();
     }
@@ -503,7 +503,7 @@
     function onHintClick(){
       clearBanner();
       if (!cur.q){
-        showBanner('warn', '請�??�「�?�?/ 下�?題」出題�?);
+        showBanner('warn', '請先按「開始 / 下一題」出題。');
         return;
       }
       if (!help) help = newHelpState();
@@ -517,7 +517,7 @@
     function onNextStepClick(){
       clearBanner();
       if (!cur.q){
-        showBanner('warn', '請�??�「�?�?/ 下�?題」出題�?);
+        showBanner('warn', '請先按「開始 / 下一題」出題。');
         return;
       }
       if (!help) help = newHelpState();
@@ -526,21 +526,21 @@
 
       const steps = (cur.q && Array.isArray(cur.q.steps)) ? cur.q.steps : null;
       if (!steps || !steps.length){
-        showHelpBox('warn', '下�?�?, '?��??��?沒�??��??�步?�示（steps）。�??�以?�用?��?�?+1?��??��??�解答」�?);
+        showHelpBox('warn', '下一步', '這題目前沒有提供分步提示（steps）。你可以改用「提示 +1」或「完整解答」。');
         updateHelpStat();
         return;
       }
       const idx = Math.min(steps.length - 1, Math.max(0, Number(help.nextStepIndex || 0)));
       const stepText = String(steps[idx]);
       help.nextStepIndex = idx + 1;
-      showHelpBox('warn', `下�?步�?${idx + 1}/${steps.length}）`, stepText);
+      showHelpBox('warn', `下一步（${idx + 1}/${steps.length}）`, stepText);
       updateHelpStat();
     }
 
     function onSolutionClick(){
       clearBanner();
       if (!cur.q){
-        showBanner('warn', '請�??�「�?�?/ 下�?題」出題�?);
+        showBanner('warn', '請先按「開始 / 下一題」出題。');
         return;
       }
       if (!help) help = newHelpState();
@@ -548,9 +548,9 @@
       startHelpTimer();
       const expected = expectedAnswer();
       const steps = (cur.q && Array.isArray(cur.q.steps)) ? cur.q.steps : null;
-      const stepBlock = (steps && steps.length) ? `\n\n?�步：\n- ${steps.map(s => String(s)).join('\n- ')}` : '';
-      const body = expected ? `?�考�?案�?${expected}${stepBlock}` : `?�考�?案�?（�?庫未?��? answer�?{stepBlock}`;
-      showHelpBox('warn', '完整�??（�??��?', body);
+      const stepBlock = (steps && steps.length) ? `\n\n分步：\n- ${steps.map(s => String(s)).join('\n- ')}` : '';
+      const body = expected ? `參考答案：${expected}${stepBlock}` : `參考答案：（題庫未提供 answer）${stepBlock}`;
+      showHelpBox('warn', '完整解答（參考）', body);
       window.AIMathCoachLog?.appendEvent?.({
         type: window.AIMathCoachLog.EventType.HINT_SHOWN,
         unit: cur.unit,
@@ -570,7 +570,7 @@
       window.AIMathCoachLog?.clearEvents?.();
       refreshStats();
       exportJson();
-      showBanner('warn', '已�??�本�?Coach Mode 記�???);
+      showBanner('warn', '已清除本機 Coach Mode 記錄。');
     }
 
     $('btnStart').addEventListener('click', startNext);
@@ -587,8 +587,8 @@
     exportJson();
   })();
   </script>
-<script src="../shared/cookie_consent.js"></script>
 <script src="../shared/breadcrumb_jsonld.js"></script>
+<script src="../shared/cookie_consent.js"></script>
 <script src="../shared/skip_to_content.js"></script>
 </body>
 </html>

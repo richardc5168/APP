@@ -3,20 +3,20 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>�a�����ݳ��i�UAI �ƾǮa��</title>
-  <meta property="og:title" content="�a�����ݳ��i�UAI �ƾǮa��">
-  <meta property="og:description" content="�a�����ݳ��i�G�H�ɦb����d�ݫĤl���ǲ߶i�׻P�z�I���R">
+  <title>家長遠端報告｜AI 數學家教</title>
+  <meta property="og:title" content="家長遠端報告｜AI 數學家教">
+  <meta property="og:description" content="家長遠端報告：隨時在手機查看孩子的學習進度與弱點分析">
   <meta property="og:type" content="website">
   <meta property="og:image" content="../icons/icon-512.png">
-  <meta name="description" content="AI �ƾǮa�� �X �a�����ݳ��i�C�b����˸m�d�ݫĤl���ǲߦ��ġB�z�I���R�B���D�K�n�C" />
+  <meta name="description" content="AI 數學家教 — 家長遠端報告。在任何裝置查看孩子的學習成效、弱點分析、錯題摘要。" />
   <link rel="canonical" href="./">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    "name": "�a�����ݳ��i�UAI �ƾǮa��",
-    "description": "�a�����ݳ��i�G�H�ɦb����d�ݫĤl���ǲ߶i�׻P�z�I���R�C",
-    "isPartOf": { "@type": "WebApplication", "name": "AI �ƾǮa��" }
+    "name": "家長遠端報告｜AI 數學家教",
+    "description": "家長遠端報告：隨時在手機查看孩子的學習進度與弱點分析。",
+    "isPartOf": { "@type": "WebApplication", "name": "AI 數學家教" }
   }
   </script>
   <style>
@@ -66,135 +66,135 @@
 </head>
 <body>
 <nav style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--line);background:rgba(11,16,32,0.95);position:sticky;top:0;z-index:100">
-  <a href="../" style="font-size:1rem;font-weight:800;color:#fff;text-decoration:none">AI �ƾǮa��</a>
+  <a href="../" style="font-size:1rem;font-weight:800;color:#fff;text-decoration:none">AI 數學家教</a>
   <div style="display:flex;gap:14px;align-items:center">
-    <a href="../" style="color:var(--muted);text-decoration:none;font-size:0.85rem">����</a>
-    <a href="../pricing/" style="color:var(--muted);text-decoration:none;font-size:0.85rem">���</a>
-    <a href="../about/" style="color:var(--muted);text-decoration:none;font-size:0.85rem">����ڭ�</a>
+    <a href="../" style="color:var(--muted);text-decoration:none;font-size:0.85rem">首頁</a>
+    <a href="../pricing/" style="color:var(--muted);text-decoration:none;font-size:0.85rem">方案</a>
+    <a href="../about/" style="color:var(--muted);text-decoration:none;font-size:0.85rem">關於我們</a>
   </div>
 </nav>
-<div id="breadcrumb-bar" style="padding:6px 16px;font-size:.82rem;color:#8b949e;background:#0b1020;border-bottom:1px solid #21262d"><a href="../" style="color:#58a6ff;text-decoration:none">����</a> <span style="margin:0 4px;color:#484f58">?</span> <span style="color:#e6edf3">�a�����i</span></div>
+<div id="breadcrumb-bar" style="padding:6px 16px;font-size:.82rem;color:#8b949e;background:#0b1020;border-bottom:1px solid #21262d"><a href="../" style="color:#58a6ff;text-decoration:none">首頁</a> <span style="margin:0 4px;color:#484f58">›</span> <span style="color:#e6edf3">家長報告</span></div>
 
 <div class="wrap">
-  <h1>?? �a�����ݳ��i</h1>
-  <div class="small">�b����˸m��J�Ĥl�ʺ� + �a���K�X�Y�i�d�ݳ̷s���i�A���ݽƻs�s���C</div>
+  <h1>📊 家長遠端報告</h1>
+  <div class="small">在任何裝置輸入孩子暱稱 + 家長密碼即可查看最新報告，不需複製連結。</div>
 
-  <!-- ������ Login Gate ������ -->
+  <!-- ═══ Login Gate ═══ -->
   <div id="loginGate" class="card" style="border-color:var(--accent)">
-    <h2>?? �п�J�ǥͼʺ� + �a���K�X</h2>
+    <h2>🔒 請輸入學生暱稱 + 家長密碼</h2>
     <div class="small" style="margin-bottom:12px">
-      �Ĥl�b�ǲ߭����n�J�ᰵ�D�A��Ʒ|�۰ʦP�B�춳�ݡC<br>
-      �b����˸m��J�ʺ٩M�K�X�Y�i�d�ݳ̷s���i�C
+      孩子在學習頁面登入後做題，資料會自動同步到雲端。<br>
+      在任何裝置輸入暱稱和密碼即可查看最新報告。
     </div>
     <div style="display:flex;flex-direction:column;gap:8px;max-width:320px">
-      <input id="nameInput" type="text" placeholder="�ǥͼʺ١]�ҡG�p���^" autocomplete="off" />
-      <input id="pinInput" type="password" placeholder="�a���K�X�]4~6��Ʀr�^" maxlength="6" autocomplete="off" />
-      <button class="primary" id="btnUnlock" style="align-self:flex-start">?? ����d��</button>
+      <input id="nameInput" type="text" placeholder="學生暱稱（例：小明）" autocomplete="off" />
+      <input id="pinInput" type="password" placeholder="家長密碼（4~6位數字）" maxlength="6" autocomplete="off" />
+      <button class="primary" id="btnUnlock" style="align-self:flex-start">🔓 解鎖查看</button>
     </div>
     <div id="pinError" style="color:#f85149;font-size:13px;margin-top:8px;display:none"></div>
     <div id="statusMsg" class="banner muted" style="display:none"></div>
   </div>
 
-  <!-- ������ Report Dashboard ������ -->
+  <!-- ═══ Report Dashboard ═══ -->
   <div id="dashboard" class="hidden">
     <div class="card" style="border-color:var(--ok)">
       <div class="row">
         <div>
-          <div class="small">�ǥ�</div>
-          <div id="rptName" style="font-size:18px;font-weight:900">�X</div>
+          <div class="small">學生</div>
+          <div id="rptName" style="font-size:18px;font-weight:900">—</div>
         </div>
         <div style="margin-left:auto;text-align:right">
-          <div class="small">���i���ͮɶ�</div>
-          <div id="rptTime" class="small">�X</div>
+          <div class="small">報告產生時間</div>
+          <div id="rptTime" class="small">—</div>
         </div>
       </div>
       <div class="small" style="margin-top:6px">
-        �̪� <span id="rptDays">7</span> �ѧ@�����p�K�n
+        最近 <span id="rptDays">7</span> 天作答狀況摘要
       </div>
     </div>
 
     <!-- 24h snapshot -->
     <div id="h24Section" class="card" style="border-color:var(--accent)">
-      <div style="font-weight:800">?? �̪� 24 �p��</div>
+      <div style="font-weight:800">⏱️ 最近 24 小時</div>
       <div class="kpi" id="h24Kpi"></div>
       <div id="h24Modules" style="margin-top:10px"></div>
-      <div id="h24Empty" class="banner muted" style="display:none;margin-top:8px">�̪� 24 �p�ɨS���@������</div>
+      <div id="h24Empty" class="banner muted" style="display:none;margin-top:8px">最近 24 小時沒有作答紀錄</div>
     </div>
 
     <!-- KPI -->
     <div class="card">
-      <div style="font-weight:800">?? �̪� <span class="rptDaysInline">7</span> ���`��</div>
+      <div style="font-weight:800">📈 最近 <span class="rptDaysInline">7</span> 天總覽</div>
     </div>
     <div class="kpi" id="kpiGrid"></div>
 
     <!-- module breakdown -->
     <div class="card">
-      <div style="font-weight:800">�U�D���@������</div>
-      <div class="small">���Ҳ�/�D�D�����A��ܦU�D�����@���q�P���T�v</div>
+      <div style="font-weight:800">各題型作答分布</div>
+      <div class="small">按模組/主題分類，顯示各題型的作答量與正確率</div>
       <div id="moduleBreakdown"></div>
     </div>
 
     <!-- hint distribution -->
     <div class="card">
-      <div style="font-weight:800">���ܨϥΤ���</div>
-      <div class="small">Level 0 = ���ݴ��ܴN����ALevel 3 = �ݭn����B�J����</div>
+      <div style="font-weight:800">提示使用分布</div>
+      <div class="small">Level 0 = 不看提示就答對，Level 3 = 需要完整步驟提示</div>
       <div id="hintChart" class="chart-bar"></div>
       <div id="stuckLevel" class="banner muted" style="margin-top:12px"></div>
     </div>
 
     <!-- daily chart -->
     <div class="card">
-      <div style="font-weight:800">�C��@���q</div>
-      <div class="small">�C�Ѱ��F�X�D + ���T�v</div>
+      <div style="font-weight:800">每日作答量</div>
+      <div class="small">每天做了幾題 + 正確率</div>
       <div id="dailyChart" class="chart-bar"></div>
     </div>
 
     <!-- weakness -->
     <div class="card">
-      <div style="font-weight:800">�z�I TOP 5�]�ݸɱj�^</div>
-      <div class="small">�̿��D�� + ���ܨ̿�ױƧ�</div>
+      <div style="font-weight:800">弱點 TOP 5（需補強）</div>
+      <div class="small">依錯題數 + 提示依賴度排序</div>
       <div id="weakTable"></div>
     </div>
 
     <!-- recent wrong -->
     <div class="card">
-      <div style="font-weight:800">�̪���D�K�n�]�̦h 5 �D�^</div>
-      <div class="small">�t�ǥ͵��סB���ѡB���~����</div>
+      <div style="font-weight:800">最近錯題摘要（最多 5 題）</div>
+      <div class="small">含學生答案、正解、錯誤類型</div>
       <div id="wrongList"></div>
     </div>
 
     <div class="card" style="border-color:var(--warn)">
-      <div style="font-weight:800">?? �Բӿ��D���R�P�ɱj��ĳ</div>
-      <div class="small">�v�D���X�G�i��d�I�B�����[�������B�a��/�ɱХi�Ĩ����оǨB�J</div>
+      <div style="font-weight:800">🧠 詳細錯題分析與補強建議</div>
+      <div class="small">逐題給出：可能卡點、對應觀念提醒、家長/補教可採取的教學步驟</div>
       <div id="detailedAnalysis"></div>
     </div>
 
     <div class="card" style="border-color:var(--accent)">
-      <div style="font-weight:800">?? �����D�Y�ɦA�m</div>
-      <div class="small">�i�q���D�@�䲣�ͦP�����m���D�A�ǥͥi�����@���åߧY�ݵ��G</div>
-      <div id="practiceLab" class="banner muted" style="margin-top:8px">�Х��b�u�̪���D�K�n�v�I�u�A�m�@�D�v�C</div>
+      <div style="font-weight:800">📝 類似題即時再練</div>
+      <div class="small">可從錯題一鍵產生同類型練習題，學生可直接作答並立即看結果</div>
+      <div id="practiceLab" class="banner muted" style="margin-top:8px">請先在「最近錯題摘要」點「再練一題」。</div>
     </div>
 
     <div class="card" style="border-color:var(--ok)">
-      <div style="font-weight:800">?? ���g�A�m����</div>
-      <div class="small">�έp�̪� 7 �Ѧb�����u�A�m/�p����v���@������</div>
-      <div id="practiceSummary" class="banner muted" style="margin-top:8px">�|�L�A�m�����C</div>
+      <div style="font-weight:800">📚 本週再練成效</div>
+      <div class="small">統計最近 7 天在本頁「再練/小測驗」的作答成效</div>
+      <div id="practiceSummary" class="banner muted" style="margin-top:8px">尚無再練紀錄。</div>
       <div id="practiceByKind" style="margin-top:8px"></div>
     </div>
 
     <!-- advice -->
     <div class="card" style="border-color:var(--warn)">
-      <div style="font-weight:800">?? �a����ĳ</div>
+      <div style="font-weight:800">📋 家長建議</div>
       <div id="adviceBox" class="banner muted"></div>
     </div>
 
     <!-- actions -->
     <div class="card">
       <div class="row">
-        <button id="btnCopyText">?? �ƻs��r���i</button>
-        <a href="../" style="text-decoration:none"><button style="background:transparent;border-color:rgba(255,255,255,.18)">�� �^����</button></a>
+        <button id="btnCopyText">📋 複製文字報告</button>
+        <a href="../" style="text-decoration:none"><button style="background:transparent;border-color:rgba(255,255,255,.18)">← 回首頁</button></a>
       </div>
-      <div id="copyMsg" style="color:#2ea043;font-size:13px;margin-top:8px;display:none">? �w�ƻs��ŶKï</div>
+      <div id="copyMsg" style="color:#2ea043;font-size:13px;margin-top:8px;display:none">✅ 已複製到剪貼簿</div>
     </div>
   </div>
 </div>
@@ -209,8 +209,8 @@
   function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
   function fmtMs(ms){
     const s = Math.round(Number(ms||0)/1000);
-    if (s < 60) return s + '��';
-    return Math.floor(s/60) + '��' + String(s%60).padStart(2,'0') + '��';
+    if (s < 60) return s + '秒';
+    return Math.floor(s/60) + '分' + String(s%60).padStart(2,'0') + '秒';
   }
   function randInt(a, b){ return Math.floor(Math.random() * (b - a + 1)) + a; }
   function gcd(a, b){ a=Math.abs(a); b=Math.abs(b); while(b){ const t=a%b; a=b; b=t; } return a||1; }
@@ -223,84 +223,84 @@
     var kind = String(w.k || '').toLowerCase();
     var mod = String(w.t || '').toLowerCase();
     var errType = String(w.et || '').toLowerCase();
-    /* �w�w specific sub-type checks �w�w */
+    /* ── specific sub-type checks ── */
     if (kind === 'generic_fraction_word' || kind === 'fraction_of_quantity'){
       return {
-        cause: '���q�����D�e����u�X�����X�v����H�d�V�G�O���q���X�����X�H�٬O�Ѿl���H',
-        concept: '����X���q�A�A�C�⦡�u���q �� ���ơv�Ρu���q - ���q�Ѥ��ơv�C',
-        tutor: '�ɱЫ�ĳ�G�� 3 �D�P���c���Ʀr�D�A�n�D���e�u�q�ϼХX���q�A�C���C'
+        cause: '分量應用題容易把「幾分之幾」的對象搞混：是全量的幾分之幾？還是剩餘的？',
+        concept: '先找出全量，再列算式「全量 × 分數」或「全量 - 全量×分數」。',
+        tutor: '補教建議：做 3 題同結構換數字題，要求先畫線段圖標出全量再列式。'
       };
     }
     if (kind === 'reverse_fraction'){
       return {
-        cause: '�u�w���Ѿl�D��ӡv���ϦV����e���d���A�⭼�k�M���k��V�d�ϡC',
-        concept: '�� X ���N���ѤU�� (1 - �ᱼ����)�A��� = X �� �Ѿl��ҡC',
-        tutor: '�ɱЫ�ĳ�G���e�u�q�ϨüХX�u�ᱼ�v�P�u�ѤU�v�A�C���A�� 3 �D�ϦV�m�ߡC'
+        cause: '「已知剩餘求原來」的反向思維容易卡住，把乘法和除法方向搞反。',
+        concept: '剩 X 元代表剩下佔 (1 - 花掉分數)，原來 = X ÷ 剩餘比例。',
+        tutor: '補教建議：先畫線段圖並標出「花掉」與「剩下」再列式，做 3 題反向練習。'
       };
     }
     if (kind === 'fraction_of_fraction' || kind === 'remain_then_fraction' ||
         kind === 'remaining_after_fraction' || kind === 'fraction_remaining' || kind === 'remaining_by_fraction'){
       return {
-        cause: '��B�����D�]�����@�����A�A���ѤU���@�����^�e���b�u�ѤU�v���p��g���C',
-        concept: '�Ĥ@�B�G����X�Ѿl��� (1 - a/b)�C�ĤG�B�G�Ѿl �� c/d�C�ĤT�B�G�[�W�Ĥ@�B�C',
-        tutor: '�ɱЫ�ĳ�G�Φⵧ�b�u�q�ϤW����h���A�A�C��B�⦡�A�� 3 �D�P���c�D�C'
+        cause: '兩步分數題（先取一部分，再取剩下的一部分）容易在「剩下」的計算迷路。',
+        concept: '第一步：先算出剩餘比例 (1 - a/b)。第二步：剩餘 × c/d。第三步：加上第一步。',
+        tutor: '補教建議：用色筆在線段圖上分兩層塗色，再列兩步算式，做 3 題同結構題。'
       };
     }
     if (kind === 'cube_cm3' || kind === 'cube_find_edge' || kind === 'surface_area_cube'){
       return {
-        cause: '�������D�e��������d�V�A�Χ���n�B�����n�������ΡC',
-        concept: '��������n = ��� �� ��� �� ��� = ���3�F�����n = 6 �� ���2�C',
-        tutor: '�ɱЫ�ĳ�G���T�{�D�ذݪ��O�u��n�v�٬O�u�����n�v�A�A�e�ϼ�����C'
+        cause: '正方體題容易把邊長搞混，或把體積、表面積公式互用。',
+        concept: '正方體體積 = 邊長 × 邊長 × 邊長 = 邊長³；表面積 = 6 × 邊長²。',
+        tutor: '補教建議：先確認題目問的是「體積」還是「表面積」，再畫圖標邊長。'
       };
     }
     if (kind === 'rect_cm3' || kind === 'rect_find_height' || kind === 'volume_rect_prism' ||
         kind === 'base_area_h' || kind === 'volume_fill' || kind === 'decimal_dims'){
       return {
-        cause: '��������n�D�`���������B����|�A�Χ�����n�����~�Ψ���n�C',
-        concept: '��n = �� �� �e �� ���]�Ω����n �� ���^�C���׻ݫO�d�ߤ���C',
-        tutor: '�ɱЫ�ĳ�G���e����ܷN�üФT��A�A�� 5 �D�u�u���@������v����ӰV�m�C'
+        cause: '長方體體積題常把邊長對錯、單位遺漏，或把表面積公式誤用到體積。',
+        concept: '體積 = 長 × 寬 × 高（或底面積 × 高）。答案需保留立方單位。',
+        tutor: '補教建議：先畫立體示意並標三邊，再做 5 題「只換一個邊長」的對照訓練。'
       };
     }
-    /* �w�w module-level fallbacks �w�w */
+    /* ── module-level fallbacks ── */
     if (mod.includes('fraction-word') || mod === 'fraction-word'){
       return {
-        cause: '��r�D��⦡�ɡA�e���|�����Χ�������]�@�B�ѡB�S�^�������B��C',
-        concept: '����������A�A�g�u�w�����ݨD���⦡�v�T�B�J�F�P����������l�A���������q���C',
-        tutor: '�ɱЫ�ĳ�G���� 3 �D�P���c���Ʀr����r�D�A�n�D�C�D���f�z�⦡�z�ѡA�A�U���p��C'
+        cause: '文字題轉算式時，容易漏掉單位或把關鍵詞（共、剩、又）對應錯運算。',
+        concept: '先圈關鍵詞，再寫「已知→需求→算式」三步驟；同分母先算分子，異分母先通分。',
+        tutor: '補教建議：先做 3 題同結構換數字的文字題，要求每題先口述算式理由，再下筆計算。'
       };
     }
     if (mod.includes('fraction') || kind.includes('fraction')){
       return {
-        cause: '���ƭp��`�����b�q���ά����B�J�A�Χ�[����W�h�V�ΡC',
-        concept: '���ƥ[����q���A���k���l�����l�B�����������F�̫�@�w�ˬd�O�_�i�����C',
-        tutor: '�ɱЫ�ĳ�G�ϥΡu�q����u�k�v�m 10 �����A���I�V�m�̤p�����ƻP�����ˬd�C'
+        cause: '分數計算常見錯在通分或約分步驟，或把加減乘除規則混用。',
+        concept: '分數加減先通分，乘法分子乘分子、分母乘分母；最後一定檢查是否可約分。',
+        tutor: '補教建議：使用「通分格線法」練 10 分鐘，重點訓練最小公倍數與約分檢查。'
       };
     }
     if (mod.includes('volume') || kind.includes('volume') || kind.includes('area') || kind.includes('cm3')){
       return {
-        cause: '��n�����n�D�`���������B����|�A�Τ����~�ΡC',
-        concept: '��������n = ���Ѽe�Ѱ��A������ = ���3�C���׻ݫO�d���T���C',
-        tutor: '�ɱЫ�ĳ�G���e����ܷN�üФT��A�A�� 5 �D�u�u���@������v����ӰV�m�C'
+        cause: '體積／面積題常把邊長對錯、單位遺漏，或公式誤用。',
+        concept: '長方體體積 = 長×寬×高，正方體 = 邊長³。答案需保留正確單位。',
+        tutor: '補教建議：先畫立體示意並標三邊，再做 5 題「只換一個邊長」的對照訓練。'
       };
     }
     if (kind.includes('ratio') || kind.includes('percent') || mod.includes('ratio') || mod.includes('percent')){
       return {
-        cause: '��v�ʤ��v�D�e���b�u����/�����v�����W�A�ˡA��%�P�p���ഫ��í�C',
-        concept: '���w�q�����O�u�����v�A�A�ⳡ���F% ��p�ƭn���H 100�C',
-        tutor: '�ɱЫ�ĳ�G���u�y�y����Ҧ��v�f�Y�ֵ��m�ߡA�A�i�J�Ʀr�p��C'
+        cause: '比率百分率題容易在「部分/全部」對應上顛倒，或%與小數轉換不穩。',
+        concept: '先定義分母是「全部」，再算部分；% 轉小數要除以 100。',
+        tutor: '補教建議：做「語句→比例式」口頭快答練習，再進入數字計算。'
       };
     }
-    if (errType.includes('careless') || errType.includes('�ʤ�')){
+    if (errType.includes('careless') || errType.includes('粗心')){
       return {
-        cause: '�����j�P���T�A���p��Χۼg�L�{�X�{�p���C',
-        concept: '�إߨ�q���G������q�šA�A���ϦV�ˬd�]�N�^�ΰf�B��^�C',
-        tutor: '�ɱЫ�ĳ�G�C�D�T�w�d 15 �����u�Ÿ��B��ȡB���v�T�I�ˬd�C'
+        cause: '概念大致正確，但計算或抄寫過程出現小錯。',
+        concept: '建立兩段驗算：先估算量級，再做反向檢查（代回或逆運算）。',
+        tutor: '補教建議：每題固定留 15 秒做「符號、位值、單位」三點檢查。'
       };
     }
     return {
-      cause: '�i��b�D�N�z�ѩΨB�J��Ѷ��q�d���A�ɭP����p��s��X���C',
-      concept: '�����D�ة�u�w���B�����B���Y�v�A�C�@�B�u���@�Ӱʧ@�C',
-      tutor: '�ɱЫ�ĳ�G���ܽd�@�D�������A�A���ǥͥΦP�y�{�W�ߧ������D�C'
+      cause: '可能在題意理解或步驟拆解階段卡住，導致後續計算連鎖出錯。',
+      concept: '先把題目拆成「已知、未知、關係」，每一步只做一個動作。',
+      tutor: '補教建議：先示範一題完整思路，再讓學生用同流程獨立完成兩題。'
     };
   }
   /* helper: reduced fraction display text */
@@ -310,10 +310,10 @@
     var kind = String(w.k || '').toLowerCase();
     var mod = String(w.t || '').toLowerCase();
 
-    /* �w�w generic_fraction_word / fraction_of_quantity �w�w */
+    /* ── generic_fraction_word / fraction_of_quantity ── */
     if (kind === 'generic_fraction_word' || kind === 'fraction_of_quantity'){
-      var items = ['�����e�q','÷�l��','�̬��ˤF','�G�Ħ@'];
-      var units = ['����','����','����','�@��'];
+      var items = ['水桶容量','繩子長','米缸裝了','果汁共'];
+      var units = ['公升','公分','公斤','毫升'];
       var idx = randInt(0, items.length - 1);
       var den1 = [2,3,4,5,6][randInt(0,4)];
       var num1 = randInt(1, den1 - 1);
@@ -322,13 +322,13 @@
       var remain = total - used;
       var f1 = frac(num1, den1);
       return {
-        q: items[idx] + ' ' + total + ' ' + units[idx] + '�A�w�ΤF ' + fracText(f1.n, f1.d) + '�A�ٳѦh��' + units[idx] + '�H',
+        q: items[idx] + ' ' + total + ' ' + units[idx] + '，已用了 ' + fracText(f1.n, f1.d) + '，還剩多少' + units[idx] + '？',
         answer: String(remain),
-        hint: '����w�ζq = ���q �� ' + fracText(f1.n, f1.d) + '�A�A�Υ��q��h�w�ζq�C'
+        hint: '先算已用量 = 全量 × ' + fracText(f1.n, f1.d) + '，再用全量減去已用量。'
       };
     }
 
-    /* �w�w reverse_fraction �w�w */
+    /* ── reverse_fraction ── */
     if (kind === 'reverse_fraction'){
       var rDen = [3,4,5,6,8][randInt(0,4)];
       var rNum = randInt(1, rDen - 1);
@@ -338,23 +338,23 @@
       var leftover = origAmt - spent;
       var remF = frac(rDen - rNum, rDen);
       var scenarios = [
-        '�p���ᱼ�s�ο��� ' + fracText(rf1.n,rf1.d) + '�A�ٳ� ' + leftover + ' ���A��Ӧ��h�֤��H',
-        '�j�j�α��s�ڪ� ' + fracText(rf1.n,rf1.d) + '�A�ٳ� ' + leftover + ' ���A��Ӧs�F�h�֤��H',
-        '�ө��汼�w�s�� ' + fracText(rf1.n,rf1.d) + '�A�ٳ� ' + leftover + ' �ӡA��Ӧ��h�֭ӡH'
+        '小明花掉零用錢的 ' + fracText(rf1.n,rf1.d) + '，還剩 ' + leftover + ' 元，原來有多少元？',
+        '姐姐用掉存款的 ' + fracText(rf1.n,rf1.d) + '，還剩 ' + leftover + ' 元，原來存了多少元？',
+        '商店賣掉庫存的 ' + fracText(rf1.n,rf1.d) + '，還剩 ' + leftover + ' 個，原來有多少個？'
       ];
       return {
         q: scenarios[randInt(0, scenarios.length - 1)],
         answer: String(origAmt),
-        hint: '�ѤU�������� ' + fracText(remF.n, remF.d) + '�A�ҥH��� = ' + leftover + ' �� ' + fracText(remF.n, remF.d) + '�C'
+        hint: '剩下佔全部的 ' + fracText(remF.n, remF.d) + '，所以原來 = ' + leftover + ' ÷ ' + fracText(remF.n, remF.d) + '。'
       };
     }
 
-    /* �w�w fraction_of_fraction / remain_then_fraction / remaining �w�w */
+    /* ── fraction_of_fraction / remain_then_fraction / remaining ── */
     if (kind === 'fraction_of_fraction' || kind === 'remain_then_fraction' ||
         kind === 'remaining_after_fraction' || kind === 'fraction_remaining' || kind === 'remaining_by_fraction'){
       var d1 = [3,4,5,6][randInt(0,3)];
       var n1 = randInt(1, d1 - 1);
-      /* d2 must be >= 3 so n2/d2 is always a visible proper fraction (never 1/2 �� 1) */
+      /* d2 must be >= 3 so n2/d2 is always a visible proper fraction (never 1/2 → 1) */
       var d2 = [3,4,5][randInt(0,2)];
       var n2 = randInt(1, d2 - 2 < 1 ? 1 : d2 - 2);  /* ensure n2 < d2-1 for safety, at least 1 */
       /* Guarantee: n2 < d2, so the second fraction is strictly < 1 */
@@ -367,78 +367,78 @@
       var totalD = d1 * d2;
       var rfr = frac(totalN, totalD);
       var remF2 = frac(d1-n1, d1);
-      var containers = ['����','�o��','����'];
+      var containers = ['水池','油桶','水缸'];
       return {
-        q: containers[randInt(0,2)] + '���`���F ' + fracText(ff1.n,ff1.d) + '�A�A��ѤU���`���䤤�� ' + fracText(ff2.n,ff2.d) + '�A�{�b�@�e�����X�����X�H',
+        q: containers[randInt(0,2)] + '先注滿了 ' + fracText(ff1.n,ff1.d) + '，再把剩下的注滿其中的 ' + fracText(ff2.n,ff2.d) + '，現在共占全部幾分之幾？',
         answer: (rfr.d === 1) ? String(rfr.n) : fracText(rfr.n, rfr.d),
-        hint: '�Ѿl = 1 - ' + fracText(ff1.n,ff1.d) + ' = ' + fracText(remF2.n,remF2.d) + '�A�A�� ' + fracText(remF2.n,remF2.d) + ' �� ' + fracText(ff2.n,ff2.d) + '�A�̫�[�W�Ĥ@�����C'
+        hint: '剩餘 = 1 - ' + fracText(ff1.n,ff1.d) + ' = ' + fracText(remF2.n,remF2.d) + '，再算 ' + fracText(remF2.n,remF2.d) + ' × ' + fracText(ff2.n,ff2.d) + '，最後加上第一部分。'
       };
     }
 
-    /* �w�w cube_cm3 �w�w */
+    /* ── cube_cm3 ── */
     if (kind === 'cube_cm3'){
       var edge = randInt(2, 12);
       return {
-        q: '�]��������n�^��� ' + edge + ' ������������A��n�O�h�֥ߤ褽���H',
+        q: '（正方體體積）邊長 ' + edge + ' 公分的正方體，體積是多少立方公分？',
         answer: String(edge * edge * edge),
-        hint: '��������n = ��� �� ��� �� ��� = ' + edge + '3�C'
+        hint: '正方體體積 = 邊長 × 邊長 × 邊長 = ' + edge + '³。'
       };
     }
 
-    /* �w�w cube_find_edge �w�w */
+    /* ── cube_find_edge ── */
     if (kind === 'cube_find_edge'){
       var ce = randInt(2, 8);
       var cv = ce * ce * ce;
       return {
-        q: '�@�ӥ�������n�O ' + cv + ' �ߤ褽���A����O�h�֤����H',
+        q: '一個正方體體積是 ' + cv + ' 立方公分，邊長是多少公分？',
         answer: String(ce),
-        hint: '��� = 3����n�C�Q�Q���ӼƳs���T������ ' + cv + '�C'
+        hint: '邊長 = ³√體積。想想哪個數連乘三次等於 ' + cv + '。'
       };
     }
 
-    /* �w�w surface_area_cube �w�w */
+    /* ── surface_area_cube ── */
     if (kind === 'surface_area_cube'){
       var se = randInt(2, 10);
       return {
-        q: '��� ' + se + ' ������������A�����n�O�h�֥��褽���H',
+        q: '邊長 ' + se + ' 公分的正方體，表面積是多少平方公分？',
         answer: String(6 * se * se),
-        hint: '����������n = 6 �� ��� �� ����C'
+        hint: '正方體表面積 = 6 × 邊長 × 邊長。'
       };
     }
 
-    /* �w�w rect_cm3 / volume_rect_prism �w�w */
+    /* ── rect_cm3 / volume_rect_prism ── */
     if (kind === 'rect_cm3' || kind === 'volume_rect_prism' || kind === 'volume_calculation'){
       var rl = randInt(2, 12), rw = randInt(2, 10), rh = randInt(2, 9);
       return {
-        q: '�@�Ӫ������ ' + rl + ' �����B�e ' + rw + ' �����B�� ' + rh + ' �����A��n�O�h�֥ߤ褽���H',
+        q: '一個長方體長 ' + rl + ' 公分、寬 ' + rw + ' 公分、高 ' + rh + ' 公分，體積是多少立方公分？',
         answer: String(rl * rw * rh),
-        hint: '��n = �� �� �e �� ���C'
+        hint: '體積 = 長 × 寬 × 高。'
       };
     }
 
-    /* �w�w rect_find_height / base_area_h �w�w */
+    /* ── rect_find_height / base_area_h ── */
     if (kind === 'rect_find_height' || kind === 'base_area_h'){
       var fhl = randInt(2, 10), fhw = randInt(2, 8), fhh = randInt(2, 9);
       var fhv = fhl * fhw * fhh;
       return {
-        q: '��������n�O ' + fhv + ' �ߤ褽���A�� ' + fhl + ' �����B�e ' + fhw + ' �����A���O�h�֤����H',
+        q: '長方體體積是 ' + fhv + ' 立方公分，長 ' + fhl + ' 公分、寬 ' + fhw + ' 公分，高是多少公分？',
         answer: String(fhh),
-        hint: '�� = ��n �� (�� �� �e) = ' + fhv + ' �� ' + (fhl * fhw) + '�C'
+        hint: '高 = 體積 ÷ (長 × 寬) = ' + fhv + ' ÷ ' + (fhl * fhw) + '。'
       };
     }
 
-    /* �w�w surface_area_rect_prism �w�w */
+    /* ── surface_area_rect_prism ── */
     if (kind === 'surface_area_rect_prism'){
       var sal = randInt(2, 8), saw = randInt(2, 6), sah = randInt(2, 7);
       var sa = 2 * (sal*saw + sal*sah + saw*sah);
       return {
-        q: '������� ' + sal + '�B�e ' + saw + '�B�� ' + sah + ' �����A�����n�O�h�֥��褽���H',
+        q: '長方體長 ' + sal + '、寬 ' + saw + '、高 ' + sah + ' 公分，表面積是多少平方公分？',
         answer: String(sa),
-        hint: '�����n = 2��(���Ѽe + ���Ѱ� + �e�Ѱ�)�C'
+        hint: '表面積 = 2×(長×寬 + 長×高 + 寬×高)。'
       };
     }
 
-    /* �w�w fraction_mul / fraction_times_fraction �w�w */
+    /* ── fraction_mul / fraction_times_fraction ── */
     if (kind === 'fraction_mul' || kind === 'fraction_times_fraction' ||
         kind === 'int_times_fraction' || kind === 'u3_frac_times_int'){
       var mb = randInt(2, 8), md = randInt(2, 8);
@@ -446,37 +446,37 @@
       var mf1 = frac(ma, mb), mf2 = frac(mc, md);
       var mr = frac(ma * mc, mb * md);
       return {
-        q: '�p��G' + fracText(mf1.n,mf1.d) + ' �� ' + fracText(mf2.n,mf2.d) + ' = ?',
+        q: '計算：' + fracText(mf1.n,mf1.d) + ' × ' + fracText(mf2.n,mf2.d) + ' = ?',
         answer: fracText(mr.n, mr.d),
-        hint: '���ƭ��k�G���l�Ѥ��l�B�����Ѥ����A�̫�����C'
+        hint: '分數乘法：分子×分子、分母×分母，最後約分。'
       };
     }
 
-    /* �w�w fraction_to_percent �w�w */
+    /* ── fraction_to_percent ── */
     if (kind === 'fraction_to_percent'){
-      /* only use denominators that evenly divide 100 �� integer % answer */
+      /* only use denominators that evenly divide 100 → integer % answer */
       var fp = [2,4,5,10,20,25,50][randInt(0,6)];
       var fn = randInt(1, fp - 1);
       var fpf = frac(fn, fp);
       var pctAns = Math.round(fn / fp * 100);
       return {
-        q: fracText(fpf.n, fpf.d) + ' ����ʤ����h�֡H',
+        q: fracText(fpf.n, fpf.d) + ' 等於百分之多少？',
         answer: String(pctAns) + '%',
-        hint: '������ʤ��v�G���l �� ���� �� 100�C'
+        hint: '分數轉百分率：分子 ÷ 分母 × 100。'
       };
     }
 
-    /* �w�w module-level fallbacks �w�w */
+    /* ── module-level fallbacks ── */
     if (mod.includes('fraction-word')){
       var fd = randInt(4, 10);
       var fa = randInt(1, fd - 1);
-      var fb2 = randInt(1, fd - fa);  /* cap so sum ? fd �� proper fraction answer */
+      var fb2 = randInt(1, fd - fa);  /* cap so sum ≤ fd → proper fraction answer */
       var faf = frac(fa, fd), fbf = frac(fb2, fd);
       var fsum = frac(fa + fb2, fd);
       return {
-        q: '�p���Y�F ' + fracText(faf.n,faf.d) + ' �ө��ġA�p�ؤS�Y�F ' + fracText(fbf.n,fbf.d) + ' �ӡA��H�@�@�Y�F�h�֭ө��ġH',
+        q: '小明吃了 ' + fracText(faf.n,faf.d) + ' 個披薩，小華又吃了 ' + fracText(fbf.n,fbf.d) + ' 個，兩人一共吃了多少個披薩？',
         answer: fracText(fsum.n, fsum.d),
-        hint: '�P�������Ƭۥ[�G���l�ۥ[�A�������ܡA�̫�����C'
+        hint: '同分母分數相加：分子相加，分母不變，最後約分。'
       };
     }
     if (mod.includes('fraction') || kind.includes('fraction')){
@@ -487,39 +487,39 @@
       var xden = xb * xd;
       var xr = frac(xn, xden);
       return {
-        q: '�p��G' + fracText(xf1.n,xf1.d) + ' + ' + fracText(xf2.n,xf2.d) + ' = ?',
+        q: '計算：' + fracText(xf1.n,xf1.d) + ' + ' + fracText(xf2.n,xf2.d) + ' = ?',
         answer: fracText(xr.n, xr.d),
-        hint: '���q���A�A����l�ۥ[�A�̫�����C'
+        hint: '先通分，再把分子相加，最後約分。'
       };
     }
     if (mod.includes('volume') || kind.includes('volume') || kind.includes('cm3')){
       var vl = randInt(2, 12), vw = randInt(2, 10), vh = randInt(2, 9);
       return {
-        q: '�@�Ӫ������ ' + vl + ' �����B�e ' + vw + ' �����B�� ' + vh + ' �����A��n�O�h�֥ߤ褽���H',
+        q: '一個長方體長 ' + vl + ' 公分、寬 ' + vw + ' 公分、高 ' + vh + ' 公分，體積是多少立方公分？',
         answer: String(vl * vw * vh),
-        hint: '��n = �� �� �e �� ���C'
+        hint: '體積 = 長 × 寬 × 高。'
       };
     }
     if (kind.includes('ratio') || kind.includes('percent') || mod.includes('ratio') || mod.includes('percent')){
-      /* base = multiple of 20 �� guarantees integer answer for all % choices */
+      /* base = multiple of 20 → guarantees integer answer for all % choices */
       var rpBase = 20 * randInt(2, 9);
       var rp = [10, 15, 20, 25, 30, 40, 50][randInt(0,6)];
       return {
-        q: rpBase + ' �� ' + rp + '% �O�h�֡H',
+        q: rpBase + ' 的 ' + rp + '% 是多少？',
         answer: String(rpBase * rp / 100),
-        hint: '����ʤ��v��p�ơA�A���W�����q�C'
+        hint: '先把百分率轉小數，再乘上全部量。'
       };
     }
-    /* �w�w ultimate fallback �w�w */
+    /* ── ultimate fallback ── */
     var ux = randInt(20, 99), uy = randInt(10, 49);
     return {
-      q: '�p��G' + ux + ' - ' + uy + ' = ?',
+      q: '計算：' + ux + ' - ' + uy + ' = ?',
       answer: String(ux - uy),
-      hint: '�`�N��ȹ���A�����A�ϦV���C'
+      hint: '注意位值對齊，做完再反向驗算。'
     };
   }
 
-  /* �w�w�w decode URL data �w�w�w */
+  /* ─── decode URL data ─── */
   function decodeData(encoded){
     try {
       const json = decodeURIComponent(escape(atob(decodeURIComponent(encoded))));
@@ -527,7 +527,7 @@
     } catch(e) { return null; }
   }
 
-  /* �w�w�w helpers for status messages �w�w�w */
+  /* ─── helpers for status messages ─── */
   var statusEl = document.getElementById('statusMsg');
   var pinErrEl = document.getElementById('pinError');
   function showStatus(html, cls){
@@ -539,7 +539,7 @@
   function showPinErr(msg){ pinErrEl.textContent = msg; pinErrEl.style.display = 'block'; }
   function hidePinErr(){ pinErrEl.style.display = 'none'; }
 
-  /* �w�w�w determine mode �w�w�w */
+  /* ─── determine mode ─── */
   const params = new URLSearchParams(window.location.search);
   const encodedData = params.get('d');
   const urlBlobId = params.get('b');
@@ -552,30 +552,30 @@
       MODE = 'url';
       document.getElementById('nameInput').style.display = 'none';
     } else {
-      showStatus('?? ���i��Ʈ榡���~�A�����Ĥl���s���ͳs���C', 'muted');
+      showStatus('⚠️ 報告資料格式錯誤，請讓孩子重新產生連結。', 'muted');
       document.getElementById('pinInput').disabled = true;
       document.getElementById('btnUnlock').disabled = true;
       document.getElementById('nameInput').disabled = true;
       return;
     }
   } else if (urlBlobId) {
-    /* Legacy cloud blob URL �X redirect to name+PIN mode */
+    /* Legacy cloud blob URL — redirect to name+PIN mode */
     MODE = 'name';
-    showStatus('?? �ª��s���w���ΡC�Ъ�����J�ʺ� + �K�X�d�ݳ��i�C', 'warn');
+    showStatus('⚠️ 舊版連結已停用。請直接輸入暱稱 + 密碼查看報告。', 'warn');
   } else {
-    /* Default: name+PIN mode �X pre-fill name if local data available */
+    /* Default: name+PIN mode — pre-fill name if local data available */
     MODE = 'name';
     var hasAuth = window.AIMathStudentAuth && window.AIMathStudentAuth.isLoggedIn();
     if (hasAuth) {
       var localStudent = window.AIMathStudentAuth.getCurrentStudent();
       if (localStudent && localStudent.name) {
         document.getElementById('nameInput').value = localStudent.name;
-        showStatus('?? �����쥻���ǥ͸�ơ]' + esc(localStudent.name) + '�^�A��J�a���K�X�Y�i�d�ݡC', 'ok');
+        showStatus('📱 偵測到本機學生資料（' + esc(localStudent.name) + '），輸入家長密碼即可查看。', 'ok');
       }
     }
   }
 
-  /* �w�w�w unlock logic �w�w�w */
+  /* ─── unlock logic ─── */
   document.getElementById('btnUnlock').addEventListener('click', unlock);
   document.getElementById('pinInput').addEventListener('keydown', function(e) {
     if (e.key === 'Enter') unlock();
@@ -598,15 +598,15 @@
 
     if (MODE === 'url' || MODE === 'cloud'){
       if (data && data.pin && pin !== data.pin){
-        showPinErr('�K�X���~�A�Э���');
+        showPinErr('密碼錯誤，請重試');
         return;
       }
       showDashboard(data);
       return;
     }
 
-    /* �w�w�w name+PIN mode �w�w�w */
-    if (!pin){ showPinErr('�п�J�a���K�X'); return; }
+    /* ─── name+PIN mode ─── */
+    if (!pin){ showPinErr('請輸入家長密碼'); return; }
 
     /* 1. Try local data first (same device, fast) */
     var hasLocal = window.AIMathStudentAuth && window.AIMathStudentAuth.isLoggedIn();
@@ -615,7 +615,7 @@
       var localName = ls ? ls.name.trim() : '';
       if (!name || localName === name){
         if (!window.AIMathStudentAuth.verifyPin(pin)){
-          showPinErr('�K�X���~�A�Э���');
+          showPinErr('密碼錯誤，請重試');
           return;
         }
         data = window.AIMathStudentAuth.collectReportData(7);
@@ -630,25 +630,25 @@
     }
 
     /* 2. Cloud registry lookup */
-    if (!name){ showPinErr('�п�J�ǥͼʺ�'); return; }
+    if (!name){ showPinErr('請輸入學生暱稱'); return; }
 
     if (!window.AIMathStudentAuth || !window.AIMathStudentAuth.lookupStudentReport){
-      showStatus('?? �t�Τ�����J���ѡA�Э��s��z�����C', 'muted');
+      showStatus('⚠️ 系統元件載入失敗，請重新整理頁面。', 'muted');
       return;
     }
 
-    showStatus('?? ���b�d�ߡu' + esc(name) + '�v�����ݳ��i�K', 'ok');
+    showStatus('☁️ 正在查詢「' + esc(name) + '」的雲端報告…', 'ok');
     document.getElementById('btnUnlock').disabled = true;
 
     window.AIMathStudentAuth.lookupStudentReport(name)
       .then(function(entry){
         if (!entry || !entry.data || !entry.data.d){
-          showStatus('?? �䤣��u' + esc(name) + '�v�����i�C�нT�{�ʺٻP�Ĥl�n�J�ɧ����@�P�A�B�Ĥl�w���L�D�ءC', 'muted');
+          showStatus('⚠️ 找不到「' + esc(name) + '」的報告。請確認暱稱與孩子登入時完全一致，且孩子已做過題目。', 'muted');
           document.getElementById('btnUnlock').disabled = false;
           return;
         }
         if (entry.pin && pin !== entry.pin){
-          showPinErr('�K�X���~�A�Э���');
+          showPinErr('密碼錯誤，請重試');
           hideStatus();
           document.getElementById('btnUnlock').disabled = false;
           return;
@@ -658,12 +658,12 @@
         showDashboard(data);
       })
       .catch(function(){
-        showStatus('?? �L�k�s�����ݡA���ˬd������A�աC', 'muted');
+        showStatus('⚠️ 無法連接雲端，請檢查網路後再試。', 'muted');
         document.getElementById('btnUnlock').disabled = false;
       });
   }
 
-  /* �w�w�w render �w�w�w */
+  /* ─── render ─── */
   function renderDashboard(d){
     const r = d.d;
 
@@ -676,7 +676,7 @@
       var recent = events.filter(function(e){ return Number(e.ts || 0) >= since; });
       if (!recent.length){
         box.className = 'banner muted';
-        box.textContent = '�̪� 7 �ѩ|�L�A�m�����C';
+        box.textContent = '最近 7 天尚無再練紀錄。';
         if (byKindBox) byKindBox.innerHTML = '';
         return;
       }
@@ -684,19 +684,19 @@
       var correctQ = recent.reduce(function(s, e){ return s + Number(e.score || 0); }, 0);
       var acc = totalQ ? Math.round(correctQ / totalQ * 100) : 0;
       var latest = recent[recent.length - 1] || null;
-      var latestText = latest ? (new Date(latest.ts).toLocaleString('zh-TW') + '�U' + (latest.topic || '������') + ' / ' + (latest.kind || '�m��')) : '�X';
+      var latestText = latest ? (new Date(latest.ts).toLocaleString('zh-TW') + '｜' + (latest.topic || '未分類') + ' / ' + (latest.kind || '練習')) : '—';
       box.className = acc >= 80 ? 'banner ok' : acc >= 60 ? 'banner warn' : 'banner bad';
       box.innerHTML =
-        '�̪� 7 �ѦA�m�G<strong>' + recent.length + '</strong> ���@' +
-        '�`�D�ơG<strong>' + totalQ + '</strong>�@' +
-        '����G<strong>' + correctQ + '</strong>�@' +
-        '���T�v�G<strong>' + acc + '%</strong><br>' +
-        '<span class="small">�̪�@���G' + esc(latestText) + '</span>';
+        '最近 7 天再練：<strong>' + recent.length + '</strong> 次　' +
+        '總題數：<strong>' + totalQ + '</strong>　' +
+        '答對：<strong>' + correctQ + '</strong>　' +
+        '正確率：<strong>' + acc + '%</strong><br>' +
+        '<span class="small">最近一次：' + esc(latestText) + '</span>';
 
       if (byKindBox){
         var byKind = {};
         recent.forEach(function(e){
-          var key = String(e.kind || e.topic || '������').trim() || '������';
+          var key = String(e.kind || e.topic || '未分類').trim() || '未分類';
           if (!byKind[key]) byKind[key] = { total: 0, score: 0, n: 0 };
           byKind[key].total += Number(e.total || 0);
           byKind[key].score += Number(e.score || 0);
@@ -711,19 +711,19 @@
         if (!rows.length){
           byKindBox.innerHTML = '';
         } else {
-          var html = '<div class="small" style="font-weight:700;margin-bottom:4px">���D�����ա]�̪� 7 �ѡ^�G</div>';
+          var html = '<div class="small" style="font-weight:700;margin-bottom:4px">依題型分組（最近 7 天）：</div>';
           rows.forEach(function(row){
             var cls = row.acc >= 80 ? 'ok' : row.acc >= 60 ? 'warn' : 'bad';
             html += '<span class="pill ' + cls + '" style="margin:2px 4px">' +
-              esc(row.k) + ' ' + row.score + '/' + row.total + '�]' + row.acc + '%�^' +
+              esc(row.k) + ' ' + row.score + '/' + row.total + '（' + row.acc + '%）' +
               '</span>';
           });
           byKindBox.innerHTML = html;
         }
       }
     }
-    document.getElementById('rptName').textContent = d.name || '����';
-    document.getElementById('rptTime').textContent = d.ts ? new Date(d.ts).toLocaleString('zh-TW') : '�X';
+    document.getElementById('rptName').textContent = d.name || '未知';
+    document.getElementById('rptTime').textContent = d.ts ? new Date(d.ts).toLocaleString('zh-TW') : '—';
     document.getElementById('rptDays').textContent = String(d.days || 7);
     renderPracticeSummary();
 
@@ -732,20 +732,20 @@
     if (h24.total > 0){
       var h24Kpi = document.getElementById('h24Kpi');
       var h24kpis = [
-        { label: '�D��', value: String(h24.total) },
-        { label: '���T�v', value: h24.accuracy + '%' },
-        { label: '�����Ӯ�', value: fmtMs(h24.avgMs) },
-        { label: '����', value: String(h24.correct) },
+        { label: '題數', value: String(h24.total) },
+        { label: '正確率', value: h24.accuracy + '%' },
+        { label: '平均耗時', value: fmtMs(h24.avgMs) },
+        { label: '答對', value: String(h24.correct) },
       ];
       h24Kpi.innerHTML = h24kpis.map(function(k){
         return '<div class="box"><div class="label">' + esc(k.label) + '</div><div class="value">' + esc(k.value) + '</div></div>';
       }).join('');
       var h24mods = h24.modules || [];
       if (h24mods.length){
-        var mhtml24 = '<div class="small" style="font-weight:700;margin-bottom:4px">�D�������G</div>';
+        var mhtml24 = '<div class="small" style="font-weight:700;margin-bottom:4px">題型分布：</div>';
         h24mods.forEach(function(m){
           var cls = m.acc >= 80 ? 'ok' : m.acc >= 60 ? 'warn' : 'bad';
-          mhtml24 += '<span class="pill ' + cls + '" style="margin:2px 4px">' + esc(m.m) + ' ' + m.n + '�D ' + m.acc + '%</span>';
+          mhtml24 += '<span class="pill ' + cls + '" style="margin:2px 4px">' + esc(m.m) + ' ' + m.n + '題 ' + m.acc + '%</span>';
         });
         document.getElementById('h24Modules').innerHTML = mhtml24;
       }
@@ -759,10 +759,10 @@
     for (var di = 0; di < daysInline.length; di++) daysInline[di].textContent = String(d.days || 7);
     const kpiGrid = document.getElementById('kpiGrid');
     const kpis = [
-      { label: '�@���D��', value: String(r.total || 0) },
-      { label: '���T�v', value: r.total ? (r.accuracy + '%') : '�X' },
-      { label: '�����Ӯ�', value: r.total ? fmtMs(r.avgMs) : '�X' },
-      { label: '�����D��', value: String(r.correct || 0) },
+      { label: '作答題數', value: String(r.total || 0) },
+      { label: '正確率', value: r.total ? (r.accuracy + '%') : '—' },
+      { label: '平均耗時', value: r.total ? fmtMs(r.avgMs) : '—' },
+      { label: '答對題數', value: String(r.correct || 0) },
     ];
     kpiGrid.innerHTML = kpis.map(k =>
       `<div class="box"><div class="label">${esc(k.label)}</div><div class="value">${esc(k.value)}</div></div>`
@@ -772,7 +772,7 @@
     const modBox = document.getElementById('moduleBreakdown');
     const mods = r.modules || [];
     if (mods.length){
-      let mhtml = '<table><thead><tr><th>�D��/�D�D</th><th>�D��</th><th>���T</th><th>���T�v</th></tr></thead><tbody>';
+      let mhtml = '<table><thead><tr><th>題型/主題</th><th>題數</th><th>正確</th><th>正確率</th></tr></thead><tbody>';
       mods.forEach(m => {
         const cls = m.acc >= 80 ? 'ok' : m.acc >= 60 ? 'warn' : 'bad';
         mhtml += `<tr><td>${esc(m.m)}</td><td>${m.n}</td><td>${m.ok}</td><td><span class="pill ${cls}">${m.acc}%</span></td></tr>`;
@@ -780,14 +780,14 @@
       mhtml += '</tbody></table>';
       modBox.innerHTML = mhtml;
     } else {
-      modBox.innerHTML = '<div class="small" style="margin-top:8px">�|�L�Ҳդ������</div>';
+      modBox.innerHTML = '<div class="small" style="margin-top:8px">尚無模組分類資料</div>';
     }
 
     /* hint chart */
     const hintChart = document.getElementById('hintChart');
     const hd = r.hintDist || [0,0,0,0];
     const maxH = Math.max(1, ...hd);
-    const hintLabels = ['���ݴ���', 'Level 1', 'Level 2', 'Level 3'];
+    const hintLabels = ['不看提示', 'Level 1', 'Level 2', 'Level 3'];
     const hintColors = ['#2ea043','#58a6ff','#d29922','#f85149'];
     hintChart.innerHTML = hd.map((v, i) => {
       const pct = Math.max(4, v / maxH * 100);
@@ -803,11 +803,11 @@
     const stuckLv = stuckArr[0].c ? stuckArr[0].l : 0;
     if (stuckLv){
       stuckEl.className = 'banner warn';
-      stuckEl.innerHTML = `�d�����ܶ��G<strong>Level ${stuckLv}</strong>�]�̱`�b���h�~���D�^<br>
-        <span class="small">��ĳ�G${stuckLv >= 3 ? '�[����¦�ݥ[�j�A��ĳ�q��¦�D�m�_' : stuckLv >= 2 ? '�C����O�ݽm�ߡA��ĳ�h���u�C�����p��v�B�J' : '�[��OK�A���p����X���A��ĳ�m���ߺD'}</span>`;
+      stuckEl.innerHTML = `卡關提示階：<strong>Level ${stuckLv}</strong>（最常在此層才解題）<br>
+        <span class="small">建議：${stuckLv >= 3 ? '觀念基礎需加強，建議從基礎題練起' : stuckLv >= 2 ? '列式能力需練習，建議多做「列式→計算」步驟' : '觀念OK，但計算易出錯，建議練驗算習慣'}</span>`;
     } else {
       stuckEl.className = 'banner ok';
-      stuckEl.textContent = '�ثe�X�G���ݴ��ܴN�൪��A���{�u�q�I';
+      stuckEl.textContent = '目前幾乎不看提示就能答對，表現優秀！';
     }
 
     /* daily chart */
@@ -822,26 +822,26 @@
         const acc = dd.n ? Math.round(dd.ok / dd.n * 100) : 0;
         const color = acc >= 80 ? '#2ea043' : acc >= 60 ? '#d29922' : '#f85149';
         return `<div class="bar" style="height:${pct}%;background:${color}">
-          <span class="val">${dd.n}�D ${acc}%</span>
+          <span class="val">${dd.n}題 ${acc}%</span>
           <span class="lbl">${day.slice(5)}</span>
         </div>`;
       }).join('');
     } else {
-      dailyChart.innerHTML = '<div class="small">�|�L�C����</div>';
+      dailyChart.innerHTML = '<div class="small">尚無每日資料</div>';
     }
 
     /* weakness */
     const weakTable = document.getElementById('weakTable');
     const weak = r.weak || [];
     if (weak.length){
-      let html = '<table><thead><tr><th>#</th><th>�D�D</th><th>�D��</th><th>���D</th><th>����?2</th></tr></thead><tbody>';
+      let html = '<table><thead><tr><th>#</th><th>主題</th><th>題型</th><th>錯題</th><th>提示≥2</th></tr></thead><tbody>';
       weak.forEach((w, i) => {
         html += `<tr><td>${i+1}</td><td>${esc(w.t)}</td><td>${esc(w.k)}</td><td><span class="pill bad">${w.w}</span></td><td>${w.h2||0}</td></tr>`;
       });
       html += '</tbody></table>';
       weakTable.innerHTML = html;
     } else {
-      weakTable.innerHTML = '<div class="banner ok">�ثe�S������z�I�I�~��O�� ??</div>';
+      weakTable.innerHTML = '<div class="banner ok">目前沒有明顯弱點！繼續保持 🎉</div>';
     }
 
     /* wrong list */
@@ -854,13 +854,13 @@
           <div style="font-weight:700">${i+1}. ${esc(w.t)} / ${esc(w.k)}</div>
           <div class="small" style="margin-top:4px;color:#ffd2cf">${esc(w.q)}</div>
           <div style="margin-top:4px;font-size:13px">
-            �ǥ͵��סG<strong>${esc(w.sa)}</strong>�@���ѡG<strong>${esc(w.ca)}</strong>
-            ${w.et ? '�@���~�����G<span class="pill bad">' + esc(w.et) + '</span>' : ''}
+            學生答案：<strong>${esc(w.sa)}</strong>　正解：<strong>${esc(w.ca)}</strong>
+            ${w.et ? '　錯誤類型：<span class="pill bad">' + esc(w.et) + '</span>' : ''}
           </div>
-          ${w.ed ? '<div class="small" style="margin-top:4px;color:#ffe8bd">�E�_�G' + esc(w.ed) + '</div>' : ''}
+          ${w.ed ? '<div class="small" style="margin-top:4px;color:#ffe8bd">診斷：' + esc(w.ed) + '</div>' : ''}
           <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
-            <button type="button" class="btnPracticeFromWrong" data-idx="${i}">?? �A�m�@�D�]�P�����^</button>
-            <button type="button" class="btnQuizFromWrong" data-idx="${i}">?? �T�D�p����</button>
+            <button type="button" class="btnPracticeFromWrong" data-idx="${i}">📝 再練一題（同類型）</button>
+            <button type="button" class="btnQuizFromWrong" data-idx="${i}">🎯 三題小測驗</button>
           </div>
         </div>`;
       });
@@ -871,10 +871,10 @@
       wrongs.forEach((w, i) => {
         const dx = explainWrongDetail(w);
         aHtml += `<div class="banner warn" style="margin-top:${i?'8':'10'}px">
-          <div style="font-weight:800">�� ${i+1} �D�ɱj��סU${esc(w.t)} / ${esc(w.k)}</div>
-          <div style="margin-top:6px;font-size:13px"><strong>�i��d�I�G</strong>${esc(dx.cause)}</div>
-          <div style="margin-top:4px;font-size:13px"><strong>�[�������G</strong>${esc(dx.concept)}</div>
-          <div style="margin-top:4px;font-size:13px"><strong>�ɱбоǫ�ĳ�G</strong>${esc(dx.tutor)}</div>
+          <div style="font-weight:800">第 ${i+1} 題補強方案｜${esc(w.t)} / ${esc(w.k)}</div>
+          <div style="margin-top:6px;font-size:13px"><strong>可能卡點：</strong>${esc(dx.cause)}</div>
+          <div style="margin-top:4px;font-size:13px"><strong>觀念提醒：</strong>${esc(dx.concept)}</div>
+          <div style="margin-top:4px;font-size:13px"><strong>補教教學建議：</strong>${esc(dx.tutor)}</div>
         </div>`;
       });
       analysisEl.innerHTML = aHtml;
@@ -911,27 +911,27 @@
 
         function normAns(v){ return String(v || '').trim().replace(/\s+/g,'').toLowerCase(); }
         function renderCurrentCard(feedbackHtml){
-          var title = quizMode ? ('�T�D�p����]�� ' + quizIndex + '/' + quizTotal + ' �D�^') : '�����D�m��';
+          var title = quizMode ? ('三題小測驗（第 ' + quizIndex + '/' + quizTotal + ' 題）') : '類似題練習';
           var progress = quizMode
-            ? '<div class="small" style="margin-top:4px">�ثe�o���G' + quizScore + ' / ' + (quizIndex - 1) + '</div>'
+            ? '<div class="small" style="margin-top:4px">目前得分：' + quizScore + ' / ' + (quizIndex - 1) + '</div>'
             : '';
-          var actionLabel = quizMode ? '? �e�X���D' : '? �e�X����';
-          var nextLabel = quizMode ? '?? �U�@�D' : '?? �A�X�@�D';
-          var finishBtn = quizMode ? '<button id="practiceFinish" type="button">?? �����p��</button>' : '';
+          var actionLabel = quizMode ? '✅ 送出本題' : '✅ 送出答案';
+          var nextLabel = quizMode ? '➡️ 下一題' : '🔁 再出一題';
+          var finishBtn = quizMode ? '<button id="practiceFinish" type="button">🏁 結束小測</button>' : '';
           lab.className = 'banner';
           lab.innerHTML = `
             <div style="font-weight:800">${title}</div>
-            <div class="small" style="margin-top:4px">�����G${esc(w.t)} / ${esc(w.k)}</div>
+            <div class="small" style="margin-top:4px">對應：${esc(w.t)} / ${esc(w.k)}</div>
             ${progress}
             <div style="margin-top:8px">${esc(current.q)}</div>
             <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
-              <input id="practiceAnswer" placeholder="��J���ס]���ƥi��J 3/4�^" style="max-width:280px" />
+              <input id="practiceAnswer" placeholder="輸入答案（分數可輸入 3/4）" style="max-width:280px" />
               <button id="practiceCheck" type="button">${actionLabel}</button>
               <button id="practiceNext" type="button">${nextLabel}</button>
               ${finishBtn}
             </div>
             <div id="practiceFeedback" class="small" style="margin-top:8px">${feedbackHtml || ''}</div>
-            <div class="small" style="margin-top:6px;color:var(--muted)">���ܡG${esc(current.hint)}</div>
+            <div class="small" style="margin-top:6px;color:var(--muted)">提示：${esc(current.hint)}</div>
           `;
 
           const ansEl = document.getElementById('practiceAnswer');
@@ -943,19 +943,19 @@
             const user = normAns(ansEl.value);
             const corr = normAns(current.answer);
             if (!user){
-              fbEl.textContent = '�Х���J���סC';
+              fbEl.textContent = '請先輸入答案。';
               fbEl.style.color = '#d29922';
               return false;
             }
             checked = true;
             if (user === corr){
               isCorrect = true;
-              fbEl.textContent = '? ����F�I';
+              fbEl.textContent = '✅ 答對了！';
               fbEl.style.color = '#2ea043';
               return true;
             }
             isCorrect = false;
-            fbEl.textContent = '? �ٮt�@�B�A���T���סG' + current.answer + '�C���ݴ��ܦA�դ@���C';
+            fbEl.textContent = '❌ 還差一步，正確答案：' + current.answer + '。先看提示再試一次。';
             fbEl.style.color = '#f85149';
             return false;
           }
@@ -963,7 +963,7 @@
           function goNext(){
             if (quizMode){
               if (!checked){
-                fbEl.textContent = '�Х��e�X���D�A�i�J�U�@�D�C';
+                fbEl.textContent = '請先送出本題再進入下一題。';
                 fbEl.style.color = '#d29922';
                 return;
               }
@@ -971,7 +971,7 @@
               if (quizIndex >= quizTotal){
                 var acc = Math.round((quizScore / quizTotal) * 100);
                 persistPractice(quizScore, quizTotal);
-                renderCurrentCard('?? �p�������G' + quizScore + '/' + quizTotal + '�]' + acc + '%�^');
+                renderCurrentCard('🏁 小測完成：' + quizScore + '/' + quizTotal + '（' + acc + '%）');
                 document.getElementById('practiceAnswer').disabled = true;
                 document.getElementById('practiceCheck').disabled = true;
                 document.getElementById('practiceNext').disabled = true;
@@ -994,7 +994,7 @@
               var taken = Math.max(1, quizIndex - 1);
               persistPractice(quizScore, taken);
               var acc = Math.round((quizScore / taken) * 100);
-              renderCurrentCard('?? �w�����G�ثe ' + quizScore + '/' + taken + '�]' + acc + '%�^');
+              renderCurrentCard('🏁 已結束：目前 ' + quizScore + '/' + taken + '（' + acc + '%）');
               document.getElementById('practiceAnswer').disabled = true;
               document.getElementById('practiceCheck').disabled = true;
               document.getElementById('practiceNext').disabled = true;
@@ -1029,69 +1029,69 @@
         })(quizBtns[qi]);
       }
     } else {
-      wrongList.innerHTML = '<div class="banner ok">�̪�S�����D�O�� ?</div>';
-      document.getElementById('detailedAnalysis').innerHTML = '<div class="banner ok" style="margin-top:8px">�ثe�S���i���R�����D�A��ĳ�����C��m�߸`���C</div>';
-      document.getElementById('practiceLab').textContent = '�ثe�S�����D�i�ͦ��P���m���D�C';
+      wrongList.innerHTML = '<div class="banner ok">最近沒有錯題記錄 ✅</div>';
+      document.getElementById('detailedAnalysis').innerHTML = '<div class="banner ok" style="margin-top:8px">目前沒有可分析的錯題，建議維持每日練習節奏。</div>';
+      document.getElementById('practiceLab').textContent = '目前沒有錯題可生成同類練習題。';
       renderPracticeSummary();
     }
 
     /* advice */
     const adviceBox = document.getElementById('adviceBox');
     const advices = [];
-    if (r.total < 5) advices.push('�ثe�@���Ƹ��֡A��ĳ�C�Ѧܤְ� 5~10 �D�m�ߡC');
-    if (r.accuracy < 60) advices.push('���T�v���C�A��ĳ������¦�D�[�j�[���A���n��۰��i���D�C');
-    else if (r.accuracy < 80) advices.push('���T�v�٦��i�B�Ŷ��A��ĳ���D���L�X�ӭ����@���A�[���~�|í�T�C');
-    else advices.push('���T�v�����I�i�H���է�h�i�������D�D�ԡC');
-    if (stuckLv >= 3) advices.push('�Ĥl�`�ݭn����B�J���ܤ~����D�A��ĳ����D���u����B�J�v�ۤ@�M�A���P�� 2 �D�C');
-    else if (stuckLv >= 2) advices.push('�Ĥl�`�d�b�C�����q�A��ĳ�m�ߡu���D�N½���⦡�v���B�J�C');
-    if (weak.length) advices.push('�z�I�D�D�G' + weak.map(w => w.t).join('�B') + '�C��ĳ�w��o�ǥD�D�h�m 5~10 �D�C');
-    if (r.avgMs > 120000) advices.push('�����Ӯɰ����A�i��ݭn�[�j�򥻹B��t�סC');
+    if (r.total < 5) advices.push('目前作答數較少，建議每天至少做 5~10 題練習。');
+    if (r.accuracy < 60) advices.push('正確率偏低，建議先做基礎題加強觀念，不要急著做進階題。');
+    else if (r.accuracy < 80) advices.push('正確率還有進步空間，建議錯題先印出來重做一次，觀念才會穩固。');
+    else advices.push('正確率不錯！可以嘗試更多進階活用題挑戰。');
+    if (stuckLv >= 3) advices.push('孩子常需要完整步驟提示才能解題，建議把錯題的「完整步驟」抄一遍再做同型 2 題。');
+    else if (stuckLv >= 2) advices.push('孩子常卡在列式階段，建議練習「把題意翻成算式」的步驟。');
+    if (weak.length) advices.push('弱點主題：' + weak.map(w => w.t).join('、') + '。建議針對這些主題多練 5~10 題。');
+    if (r.avgMs > 120000) advices.push('平均耗時偏長，可能需要加強基本運算速度。');
     adviceBox.className = 'banner warn';
     adviceBox.innerHTML = advices.map((a, i) => `${i+1}. ${esc(a)}`).join('<br>');
 
     /* copy text */
     document.getElementById('btnCopyText').addEventListener('click', async () => {
       const lines = [];
-      lines.push(`�i�a�����ݳ��i�j${d.name || '����'}`);
-      lines.push(`���i�ɶ��G${d.ts ? new Date(d.ts).toLocaleString('zh-TW') : '�X'}`);
-      lines.push(`�����G�̪� ${d.days || 7} ��`);
+      lines.push(`【家長遠端報告】${d.name || '未知'}`);
+      lines.push(`報告時間：${d.ts ? new Date(d.ts).toLocaleString('zh-TW') : '—'}`);
+      lines.push(`期間：最近 ${d.days || 7} 天`);
       lines.push('');
-      lines.push('�i�̪� 24 �p�ɡj');
+      lines.push('【最近 24 小時】');
       if (h24.total > 0){
-        lines.push(`  �D�ơG${h24.total}�@���T�v�G${h24.accuracy}%�]${h24.correct}/${h24.total}�^�@�����ӮɡG${fmtMs(h24.avgMs)}`);
+        lines.push(`  題數：${h24.total}　正確率：${h24.accuracy}%（${h24.correct}/${h24.total}）　平均耗時：${fmtMs(h24.avgMs)}`);
         if ((h24.modules||[]).length){
-          lines.push('  �D���G' + h24.modules.map(function(m){ return m.m + ' ' + m.n + '�D ' + m.acc + '%'; }).join('�B'));
+          lines.push('  題型：' + h24.modules.map(function(m){ return m.m + ' ' + m.n + '題 ' + m.acc + '%'; }).join('、'));
         }
       } else {
-        lines.push('  �]�L�@�������^');
+        lines.push('  （無作答紀錄）');
       }
       lines.push('');
-      lines.push(`�i�̪� ${d.days || 7} ���`���j`);
-      lines.push(`�@���D�ơG${r.total || 0}`);
-      lines.push(`���T�v�G${r.total ? r.accuracy + '%�]' + r.correct + '/' + r.total + '�^' : '�X'}`);
-      lines.push(`�����ӮɡG${r.total ? fmtMs(r.avgMs) : '�X'}`);
-      lines.push(`�d�����ܶ��G${stuckLv ? 'Level ' + stuckLv : '�]�X�G���ݴ��ܡ^'}`);
-      lines.push(`���ܤ����G0:${hd[0]||0}  1:${hd[1]||0}  2:${hd[2]||0}  3:${hd[3]||0}`);
+      lines.push(`【最近 ${d.days || 7} 天總覽】`);
+      lines.push(`作答題數：${r.total || 0}`);
+      lines.push(`正確率：${r.total ? r.accuracy + '%（' + r.correct + '/' + r.total + '）' : '—'}`);
+      lines.push(`平均耗時：${r.total ? fmtMs(r.avgMs) : '—'}`);
+      lines.push(`卡關提示階：${stuckLv ? 'Level ' + stuckLv : '（幾乎不看提示）'}`);
+      lines.push(`提示分布：0:${hd[0]||0}  1:${hd[1]||0}  2:${hd[2]||0}  3:${hd[3]||0}`);
       if (mods.length){
         lines.push('');
-        lines.push('�U�D���G');
-        mods.forEach(m => lines.push(`  ${m.m}�G${m.n}�D ���T�v${m.acc}%`));
+        lines.push('各題型：');
+        mods.forEach(m => lines.push(`  ${m.m}：${m.n}題 正確率${m.acc}%`));
       }
       if (weak.length){
         lines.push('');
-        lines.push('�z�I TOP�G');
-        weak.forEach((w, i) => lines.push(`  ${i+1}) ${w.t} / ${w.k}�]��:${w.w}�^`));
+        lines.push('弱點 TOP：');
+        weak.forEach((w, i) => lines.push(`  ${i+1}) ${w.t} / ${w.k}（錯:${w.w}）`));
       }
       if (wrongs.length){
         lines.push('');
-        lines.push('�̪���D�G');
+        lines.push('最近錯題：');
         wrongs.forEach((w, i) => {
-          lines.push(`  ${i+1}) ${w.t}�G${w.q}`);
-          lines.push(`     �ǥ͵��G${w.sa}�@���ѡG${w.ca}`);
+          lines.push(`  ${i+1}) ${w.t}：${w.q}`);
+          lines.push(`     學生答：${w.sa}　正解：${w.ca}`);
         });
       }
       lines.push('');
-      lines.push('�a����ĳ�G');
+      lines.push('家長建議：');
       advices.forEach((a, i) => lines.push(`  ${i+1}. ${a}`));
 
       try {
@@ -1109,62 +1109,62 @@
 <div style="max-width:720px;margin:20px auto;padding:0 16px;">
   <div style="background:linear-gradient(135deg,rgba(137,87,229,0.12),rgba(88,166,255,0.08));border:1px solid rgba(137,87,229,0.3);border-radius:14px;padding:20px;text-align:center;">
     <div style="font-size:1.3rem;margin-bottom:6px;">&#x1F680;</div>
-    <div style="color:#fff;font-weight:700;font-size:1rem;margin-bottom:6px;">�ɯū�����h���i�\��</div>
-    <div style="color:#8b949e;font-size:0.85rem;margin-bottom:14px;">���ݬd�ݳ��i�B���v�Ͷդ��R�B�z�I�M����ĳ�B�C��ǲߴ���</div>
+    <div style="color:#fff;font-weight:700;font-size:1rem;margin-bottom:6px;">升級後解鎖更多報告功能</div>
+    <div style="color:#8b949e;font-size:0.85rem;margin-bottom:14px;">遠端查看報告、歷史趨勢分析、弱點專項建議、每日學習提醒</div>
     <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;">
-      <a href="../pricing/" style="display:inline-block;background:linear-gradient(135deg,#8957e5,#a371f7);color:#fff;padding:10px 24px;border-radius:8px;font-weight:700;text-decoration:none;font-size:0.9rem;">�d�ݤ��</a>
-      <a href="mailto:learnotaiwan@gmail.com" style="display:inline-block;border:1px solid #58a6ff;color:#58a6ff;padding:10px 24px;border-radius:8px;font-weight:700;text-decoration:none;font-size:0.9rem;">&#x2709;&#xFE0F; �Ըߤɯ�</a>
+      <a href="../pricing/" style="display:inline-block;background:linear-gradient(135deg,#8957e5,#a371f7);color:#fff;padding:10px 24px;border-radius:8px;font-weight:700;text-decoration:none;font-size:0.9rem;">查看方案</a>
+      <a href="mailto:learnotaiwan@gmail.com" style="display:inline-block;border:1px solid #58a6ff;color:#58a6ff;padding:10px 24px;border-radius:8px;font-weight:700;text-decoration:none;font-size:0.9rem;">&#x2709;&#xFE0F; 諮詢升級</a>
     </div>
   </div>
 </div>
 
-<!-- �w�w Upgrade Promotion Banner �w�w -->
+<!-- ── Upgrade Promotion Banner ── -->
 <div style="max-width:720px;margin:24px auto 0;padding:0 16px;">
   <div style="background:linear-gradient(135deg,rgba(137,87,229,0.12),rgba(88,166,255,0.08));border:1px solid rgba(137,87,229,0.3);border-radius:14px;padding:24px;text-align:center;">
-    <div style="font-size:1.5rem;margin-bottom:8px;">??</div>
-    <h3 style="color:#fff;font-size:1.1rem;margin:0 0 8px;">�ɯū�A���i�\��󧹾�</h3>
+    <div style="font-size:1.5rem;margin-bottom:8px;">📊</div>
+    <h3 style="color:#fff;font-size:1.1rem;margin:0 0 8px;">升級後，報告功能更完整</h3>
     <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:16px 0;text-align:left;">
       <div style="background:rgba(0,0,0,0.2);border-radius:8px;padding:10px;">
-        <div style="color:#3fb950;font-weight:700;font-size:0.85rem;">? �z�I�۰ʱM��</div>
-        <div style="color:#9aa4b2;font-size:0.78rem;">�t�ήھڿ��D�۰ʱ��˽m��</div>
+        <div style="color:#3fb950;font-weight:700;font-size:0.85rem;">✓ 弱點自動專攻</div>
+        <div style="color:#9aa4b2;font-size:0.78rem;">系統根據錯題自動推薦練習</div>
       </div>
       <div style="background:rgba(0,0,0,0.2);border-radius:8px;padding:10px;">
-        <div style="color:#3fb950;font-weight:700;font-size:0.85rem;">? �����D�ƽm��</div>
-        <div style="color:#9aa4b2;font-size:0.78rem;">�C�ѵL�W���Z�m 2900+ �D</div>
+        <div style="color:#3fb950;font-weight:700;font-size:0.85rem;">✓ 不限題數練習</div>
+        <div style="color:#9aa4b2;font-size:0.78rem;">每天無上限暢練 2900+ 題</div>
       </div>
       <div style="background:rgba(0,0,0,0.2);border-radius:8px;padding:10px;">
-        <div style="color:#3fb950;font-weight:700;font-size:0.85rem;">? ������v�Ͷ�</div>
-        <div style="color:#9aa4b2;font-size:0.78rem;">30 �Ѿǲߦ��u�P�i�B�T��</div>
+        <div style="color:#3fb950;font-weight:700;font-size:0.85rem;">✓ 完整歷史趨勢</div>
+        <div style="color:#9aa4b2;font-size:0.78rem;">30 天學習曲線與進步幅度</div>
       </div>
       <div style="background:rgba(0,0,0,0.2);border-radius:8px;padding:10px;">
-        <div style="color:#3fb950;font-weight:700;font-size:0.85rem;">? �u���s�D��</div>
-        <div style="color:#9aa4b2;font-size:0.78rem;">�m���ϥηs�\��P�s�D�w</div>
+        <div style="color:#3fb950;font-weight:700;font-size:0.85rem;">✓ 優先新題型</div>
+        <div style="color:#9aa4b2;font-size:0.78rem;">搶先使用新功能與新題庫</div>
       </div>
     </div>
     <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;">
-      <a href="../pricing/" style="display:inline-block;background:linear-gradient(135deg,#8957e5,#a371f7);color:#fff;padding:12px 28px;border-radius:8px;font-weight:700;text-decoration:none;font-size:0.95rem;">�d�ݤ��</a>
-      <a href="mailto:learnotaiwan@gmail.com?subject=AI%20%E6%95%B8%E5%AD%B8%E5%AE%B6%E6%95%99%20%E5%8D%87%E7%B4%9A%E8%AB%AE%E8%A9%A2" style="display:inline-block;border:1px solid #a371f7;color:#a371f7;padding:12px 28px;border-radius:8px;font-weight:700;text-decoration:none;font-size:0.95rem;">Email �Ը�</a>
+      <a href="../pricing/" style="display:inline-block;background:linear-gradient(135deg,#8957e5,#a371f7);color:#fff;padding:12px 28px;border-radius:8px;font-weight:700;text-decoration:none;font-size:0.95rem;">查看方案</a>
+      <a href="mailto:learnotaiwan@gmail.com?subject=AI%20%E6%95%B8%E5%AD%B8%E5%AE%B6%E6%95%99%20%E5%8D%87%E7%B4%9A%E8%AB%AE%E8%A9%A2" style="display:inline-block;border:1px solid #a371f7;color:#a371f7;padding:12px 28px;border-radius:8px;font-weight:700;text-decoration:none;font-size:0.95rem;">Email 諮詢</a>
     </div>
     <div style="margin-top:12px;color:#9aa4b2;font-size:0.78rem;">
-      <span style="color:#3fb950;">?</span> 7 �ѧK�O�ե� &nbsp;
-      <span style="color:#3fb950;">?</span> �����N���B�h�O
+      <span style="color:#3fb950;">✓</span> 7 天免費試用 &nbsp;
+      <span style="color:#3fb950;">✓</span> 不滿意全額退費
     </div>
   </div>
 </div>
 
 <footer style="border-top:1px solid #30363d;padding:24px 16px;text-align:center;margin-top:32px">
   <div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-bottom:10px;font-size:.85rem">
-    <a href="../" style="color:#8b949e;text-decoration:none">����</a>
-    <a href="../pricing/" style="color:#8b949e;text-decoration:none">��׻P����</a>
-    <a href="../about/" style="color:#8b949e;text-decoration:none">����ڭ�</a>
-    <a href="../privacy/" style="color:#8b949e;text-decoration:none">���p�v�F��</a>
-    <a href="../terms/" style="color:#8b949e;text-decoration:none">�A�ȱ���</a>
-    <a href="mailto:learnotaiwan@gmail.com" style="color:#8b949e;text-decoration:none">?? �pô�ڭ�</a>
+    <a href="../" style="color:#8b949e;text-decoration:none">首頁</a>
+    <a href="../pricing/" style="color:#8b949e;text-decoration:none">方案與價格</a>
+    <a href="../about/" style="color:#8b949e;text-decoration:none">關於我們</a>
+    <a href="../privacy/" style="color:#8b949e;text-decoration:none">隱私權政策</a>
+    <a href="../terms/" style="color:#8b949e;text-decoration:none">服務條款</a>
+    <a href="mailto:learnotaiwan@gmail.com" style="color:#8b949e;text-decoration:none">✉️ 聯繫我們</a>
   </div>
-  <div style="color:#484f58;font-size:.78rem">&copy; 2025-2026 AI �ƾǮa��. All rights reserved.</div>
+  <div style="color:#484f58;font-size:.78rem">&copy; 2025-2026 AI 數學家教. All rights reserved.</div>
 </footer>
-<script src="../shared/cookie_consent.js"></script>
 <script src="../shared/breadcrumb_jsonld.js"></script>
+<script src="../shared/cookie_consent.js"></script>
 <script src="../shared/skip_to_content.js"></script>
 </body>
 </html>
