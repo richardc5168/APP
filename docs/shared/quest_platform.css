@@ -258,7 +258,7 @@
 .benefit-icon { font-size: 2.2rem; margin-bottom: 14px; filter: drop-shadow(0 2px 6px rgba(88,166,255,0.2)); transition: filter 0.3s, transform 0.3s; }
 .benefit-card:hover .benefit-icon { filter: drop-shadow(0 4px 10px rgba(88,166,255,0.35)) brightness(1.2); transform: scale(1.12); }
 .benefit-title { color: #fff; font-size: 1.05rem; font-weight: 700; margin: 0 0 8px; transition: color 0.3s ease; }
-.benefit-card:hover .benefit-title { color: var(--accent); }
+.benefit-card:hover .benefit-title { color: var(--accent); text-shadow: 0 0 8px rgba(88,166,255,0.2); }
 .benefit-desc { color: #8b949e; font-size: 0.88rem; margin: 0; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; transition: color 0.3s ease; }
 .benefit-card:hover .benefit-desc { color: #c9d1d9; }
 
@@ -324,7 +324,7 @@
 }
 .mode-card:hover .mode-title { text-shadow: 0 0 10px rgba(255,255,255,0.25); }
 .mode-price { transition: text-shadow 0.3s ease; }
-.mode-card:hover .mode-price { text-shadow: 0 0 10px currentColor; }
+.mode-card:hover .mode-price { text-shadow: 0 0 12px currentColor; }
 .mode-card::before {
   content: '';
   position: absolute;

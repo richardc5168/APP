@@ -74,7 +74,7 @@
     .top-nav .nav-links { display: flex; gap: 18px; align-items: center; }
     .top-nav .nav-links a { color: var(--text); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; position: relative; }
     .top-nav .nav-links a:hover { color: #fff; }
-    .top-nav .nav-links a.hide-mobile::after { content:''; position:absolute; bottom:-4px; left:0; right:0; height:2px; background:var(--accent); border-radius:1px; transform:scaleX(0); transition:transform 0.25s ease; }
+    .top-nav .nav-links a.hide-mobile::after { content:''; position:absolute; bottom:-4px; left:0; right:0; height:2px; background:linear-gradient(90deg,var(--accent),#a371f7); border-radius:1px; transform:scaleX(0); transition:transform 0.25s ease; }
     .top-nav .nav-links a.hide-mobile:hover::after { transform:scaleX(1); }
     .top-nav .nav-cta { background: var(--btn-bg); color: #fff; padding: 6px 16px; border-radius: 6px; font-weight: 600; font-size: 0.85rem; text-decoration: none; transition: background 0.2s; }
     .top-nav .nav-cta:hover { background: var(--btn-hover); }
