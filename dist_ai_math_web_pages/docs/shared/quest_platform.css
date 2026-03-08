@@ -281,6 +281,7 @@
   transform: translateY(-3px);
   border-color: #a371f7;
   box-shadow: 0 4px 16px rgba(163,113,247,0.12);
+  background: rgba(163,113,247,0.03);
 }
 .parent-card::before {
   content: '';
