@@ -619,7 +619,7 @@
 .badge-item:hover { transform: scale(1.05); box-shadow: 0 4px 14px rgba(88,166,255,0.15); border-color: rgba(88,166,255,0.3); color: #fff; }
 .badge-item:hover .badge-icon { animation: badgePop .4s ease; }
 @keyframes badgePop { 0%{transform:scale(1)} 40%{transform:scale(1.3) rotate(-8deg)} 70%{transform:scale(0.95) rotate(4deg)} 100%{transform:scale(1) rotate(0)} }
-.badge-item .badge-icon { font-size: 1.4rem; }
+.badge-item .badge-icon { font-size: 1.5rem; transition: transform 0.3s ease; }
 .badge-item.badge-locked { opacity: 0.45; }
 .badge-next {
   border-color: rgba(251,191,36,0.3);
