@@ -199,7 +199,7 @@
   align-items: center;
   justify-content: center;
 }
-.quest-cta:hover { background: var(--btn-hover); }
+.quest-cta:hover { background: var(--btn-hover); box-shadow: 0 4px 14px rgba(35,134,54,0.3); }
 .quest-card:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
 .quest-cta:focus-visible { outline:2px solid #fff; outline-offset:2px; box-shadow:0 0 0 4px rgba(88,166,255,0.3); }
 .quest-card.quest-main .quest-cta {
