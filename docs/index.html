@@ -68,7 +68,8 @@
 
     /* ── Global Nav ── */
     .top-nav { display: flex; align-items: center; justify-content: space-between; padding: 12px 24px; border-bottom: 1px solid var(--border); background: rgba(13,17,23,0.95); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); transition: box-shadow 0.3s ease; }\n    .top-nav.scrolled { box-shadow: 0 2px 12px rgba(0,0,0,0.3); }
-    .top-nav .brand { font-size: 1.15rem; font-weight: 800; color: #fff; text-decoration: none; display: flex; align-items: center; gap: 8px; }
+    .top-nav .brand { font-size: 1.15rem; font-weight: 800; color: #fff; text-decoration: none; display: flex; align-items: center; gap: 8px; transition: filter 0.3s ease; }
+    .top-nav .brand:hover { filter: drop-shadow(0 0 6px rgba(88,166,255,0.4)); }
     .top-nav .brand img { width: 28px; height: 28px; border-radius: 6px; }
     .top-nav .nav-links { display: flex; gap: 18px; align-items: center; }
     .top-nav .nav-links a { color: var(--text); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; position: relative; }
