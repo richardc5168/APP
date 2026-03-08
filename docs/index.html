@@ -168,7 +168,8 @@
     .testimonial-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; max-width: 960px; margin: 0 auto; }
     .testimonial-card { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s; position:relative; overflow:hidden; }
     .testimonial-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,#fbbf24,#58a6ff,#a371f7); border-radius:12px 12px 0 0; }
-    .testimonial-card .stars { color: #fbbf24; font-size: 1rem; margin-bottom: 8px; letter-spacing: 2px; }
+    .testimonial-card .stars { color: #fbbf24; font-size: 1rem; margin-bottom: 8px; letter-spacing: 2px; transition: transform 0.2s ease; }
+    .testimonial-card:hover .stars { transform: scale(1.08); }
     .testimonial-card .quote { color: var(--text); font-size: 0.9rem; line-height: 1.6; margin-bottom: 12px; font-style: italic; transition: color 0.3s; }
     .testimonial-card:hover .quote { color: #c9d1d9; }
     .testimonial-card .author-row { display: flex; align-items: center; gap: 10px; }
