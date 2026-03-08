@@ -138,7 +138,8 @@
     .hero-hud-text { text-align: left; }
     .hero-hud-val { font-size: 1rem; font-weight: 800; color: #fff; transition: color 0.3s ease, text-shadow 0.3s ease; }
     .hero-hud-card:hover .hero-hud-val { color: var(--accent); text-shadow: 0 0 8px rgba(88,166,255,0.35); }
-    .hero-hud-lbl { font-size: 0.7rem; color: #8b949e; }
+    .hero-hud-lbl { font-size: 0.7rem; color: #8b949e; transition: color 0.3s ease; }
+    .hero-hud-card:hover .hero-hud-lbl { color: #c9d1d9; }
     @media (max-width: 640px) {
       .hero-hud { gap: 8px; }
       .hero-hud-card { flex: 1 1 calc(50% - 8px); padding: 8px 12px; }
@@ -200,6 +201,8 @@
     .faq-item[open] summary::before { content: '\2212'; transform:rotate(180deg); }
     .faq-item[open] { border-left: 3px solid #8957e5; padding-left: 13px; background: rgba(137,87,229,0.03); border-radius: 0 8px 8px 0; }
     .faq-item .faq-answer { color: #8b949e; font-size: 0.9rem; line-height: 1.7; padding: 10px 0 4px 28px; }
+    .faq-item .faq-answer a { color: #a371f7; transition: color 0.2s; }
+    .faq-item .faq-answer a:hover { color: #c9a0ff; }
 
     /* ── Footer ── */
     .site-footer { border-top: 1px solid var(--border); padding: 30px 24px; text-align: center; }

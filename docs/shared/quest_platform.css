@@ -666,7 +666,8 @@
 .onboard-step:hover .onboard-step-num { transform: scale(1.12); box-shadow: 0 0 18px rgba(88,166,255,0.3); }
 .onboard-step h4 { color: #fff; font-size: 0.95rem; margin: 0 0 6px; transition: color 0.3s ease; }
 .onboard-step:hover h4 { color: var(--accent); }
-.onboard-step p { color: #8b949e; font-size: 0.82rem; margin: 0; }
+.onboard-step p { color: #8b949e; font-size: 0.82rem; margin: 0; transition: color 0.3s ease; }
+.onboard-step:hover p { color: #c9d1d9; }
 
 /* ── Mode card gradient glow ── */
 .mode-card::after {
