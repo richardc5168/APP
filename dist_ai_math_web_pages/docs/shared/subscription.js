@@ -179,6 +179,15 @@
     return getEffectiveSub().plan_status === 'expired';
   }
 
+  function isFreePlan(){
+    return getEffectiveSub().plan_status === 'free';
+  }
+
+  function canStartTrial(){
+    var s = getEffectiveSub().plan_status;
+    return s === 'free' || s === 'expired';
+  }
+
   function getPlanInfo(){
     var sub = getEffectiveSub();
     var plan = PLANS[sub.plan_type] || PLANS.free;
@@ -219,6 +228,11 @@
       expire: sub.expire_at,
       trial_start: sub.trial_start
     }));
+    // A/B conversion: trial start is conversion for trial_btn_color + free_limit
+    if (window.AIMathABTest){
+      window.AIMathABTest.trackConversion('trial_btn_color', 'trial_start', { plan: plan });
+      window.AIMathABTest.trackConversion('free_limit', 'trial_start', { plan: plan });
+    }
     return sub;
   }
 
@@ -244,6 +258,11 @@
       expire: sub.expire_at,
       paid_start: sub.paid_start
     }));
+    // A/B conversion: checkout success
+    if (window.AIMathABTest){
+      window.AIMathABTest.trackConversion('trial_btn_color', 'checkout_success', { plan: sub.plan_type });
+      window.AIMathABTest.trackConversion('free_limit', 'checkout_success', { plan: sub.plan_type });
+    }
     return sub;
   }
 
@@ -344,6 +363,8 @@
     isPaid: isPaid,
     isTrial: isTrial,
     isExpired: isExpired,
+    isFreePlan: isFreePlan,
+    canStartTrial: canStartTrial,
     startTrial: startTrial,
     startCheckout: startCheckout,
     confirmPayment: confirmPayment,

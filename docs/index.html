@@ -1474,6 +1474,18 @@ onmouseover="this.style.color='#3ddb6a'" onmouseout="this.style.color='#06C755'"
       document.querySelectorAll(c.sel).forEach(function(el){
         el.addEventListener('click', function(){
           if(window.AIMathAnalytics) window.AIMathAnalytics.track(c.name, { href: el.href || '' });
+          // Subscription funnel: wire CTA clicks through trackUpgradeClick
+          if(window.AIMathSubscription && typeof window.AIMathSubscription.trackUpgradeClick === 'function'){
+            var ctaSources = {
+              'hero_cta_click': 'landing_hero_cta',
+              'cta_child_click': 'landing_child_cta',
+              'cta_parent_click': 'landing_parent_cta',
+              'mode_cta_click': 'landing_mode_cta',
+              'nav_cta_click': 'landing_nav_cta',
+              'star_pack_entry_click': 'landing_star_pack'
+            };
+            if(ctaSources[c.name]) window.AIMathSubscription.trackUpgradeClick('standard', {context:'landing', cta_source: ctaSources[c.name]});
+          }
           // A/B conversion tracking on specific CTA clicks
           if(window.AIMathABTest){
             if(c.name === 'hero_cta_click') window.AIMathABTest.trackConversion('hero_cta', 'click');

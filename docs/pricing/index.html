@@ -507,6 +507,10 @@ function handleCheckout(plan, source){
     alert('您已經是' + sub.plan_name + '用戶！');
     return;
   }
+  if (window.AIMathSubscription && !window.AIMathSubscription.canStartTrial()){
+    alert('目前方案狀態無法開始試用，請聯繫客服。');
+    return;
+  }
 
   var planInfo = window.AIMathSubscription ? window.AIMathSubscription.PLANS[plan] : null;
   var name = planInfo ? planInfo.name : plan;

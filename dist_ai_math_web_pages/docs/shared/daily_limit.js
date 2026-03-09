@@ -7,11 +7,16 @@
   'use strict';
   var KEY = 'aimath_daily_limit_v1';
   var FREE_LIMIT = 10;
-  
+
+  // A/B test: lazily override FREE_LIMIT when free_limit test is available
   function getLimit(){
     try {
       if (window.AIMathSubscription && window.AIMathSubscription.PLANS && window.AIMathSubscription.PLANS.free) {
         return Number(window.AIMathSubscription.PLANS.free.limit || FREE_LIMIT);
+      }
+      if (window.AIMathABTest) {
+        var cfg = window.AIMathABTest.getVariantConfig('free_limit');
+        if (cfg && typeof cfg.limit === 'number') return cfg.limit;
       }
     } catch(e){}
     return FREE_LIMIT;

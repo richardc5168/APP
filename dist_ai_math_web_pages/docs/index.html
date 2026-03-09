@@ -541,8 +541,8 @@
       <h2>&#x1F62B; 這些場景，你家也有嗎？</h2>
       <p>我們解決的，就是每天都在發生的真實問題</p>
     </div>
-    <div class="quest-grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr));">
-      <div class="quest-card stagger-1" style="border-left:3px solid #f85149;">
+    <div class="quest-grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr));" id="painGrid">
+      <div class="quest-card stagger-1" data-pain="1" style="border-left:3px solid #f85149;">
         <div class="quest-header">
           <div class="quest-icon">&#x1F4A2;</div>
           <div>
@@ -790,7 +790,7 @@
   </section>
 
   <!-- ── 明星題組入口 ── -->
-  <section class="section-quest reveal" style="padding-top:0;">
+  <section class="section-quest reveal" style="padding-top:0;" id="starPackEntry">
     <div style="text-align:center;margin-bottom:8px;">
       <a href="./star-pack/" style="display:inline-block;background:linear-gradient(135deg,#f0e68c,#daa520);color:#0d1117;padding:14px 32px;border-radius:12px;font-weight:800;font-size:1.05rem;text-decoration:none;box-shadow:0 4px 16px rgba(240,230,140,.3);">&#x2B50; 明星題組 — 1,296 題段考高頻精選 →</a>
     </div>
@@ -1460,12 +1460,69 @@ onmouseover="this.style.color='#3ddb6a'" onmouseout="this.style.color='#06C755'"
   document.addEventListener('DOMContentLoaded', function(){
     if (window.AIMathAnalytics) window.AIMathAnalytics.track('landing_page_view', {});
 
-    // A/B Test: hero_cta
+    // ── CTA click tracking ──
+    var ctaSelectors = [
+      { sel: '.cta-primary', name: 'hero_cta_click' },
+      { sel: '.cta-secondary', name: 'hero_report_click' },
+      { sel: '.cta-child', name: 'cta_child_click' },
+      { sel: '.cta-parent', name: 'cta_parent_click' },
+      { sel: '.mode-cta', name: 'mode_cta_click' },
+      { sel: '.nav-cta', name: 'nav_cta_click' },
+      { sel: '#starPackEntry a', name: 'star_pack_entry_click' }
+    ];
+    ctaSelectors.forEach(function(c){
+      document.querySelectorAll(c.sel).forEach(function(el){
+        el.addEventListener('click', function(){
+          if(window.AIMathAnalytics) window.AIMathAnalytics.track(c.name, { href: el.href || '' });
+          // Subscription funnel: wire CTA clicks through trackUpgradeClick
+          if(window.AIMathSubscription && typeof window.AIMathSubscription.trackUpgradeClick === 'function'){
+            var ctaSources = {
+              'hero_cta_click': 'landing_hero_cta',
+              'cta_child_click': 'landing_child_cta',
+              'cta_parent_click': 'landing_parent_cta',
+              'mode_cta_click': 'landing_mode_cta',
+              'nav_cta_click': 'landing_nav_cta',
+              'star_pack_entry_click': 'landing_star_pack'
+            };
+            if(ctaSources[c.name]) window.AIMathSubscription.trackUpgradeClick('standard', {context:'landing', cta_source: ctaSources[c.name]});
+          }
+          // A/B conversion tracking on specific CTA clicks
+          if(window.AIMathABTest){
+            if(c.name === 'hero_cta_click') window.AIMathABTest.trackConversion('hero_cta', 'click');
+            if(c.name === 'star_pack_entry_click') window.AIMathABTest.trackConversion('star_pack_position', 'click');
+            if(c.name === 'hero_cta_click' || c.name === 'cta_child_click') window.AIMathABTest.trackConversion('pain_order', 'click');
+          }
+        });
+      });
+    });
+
+    // ── A/B Test: hero_cta ──
     if (window.AIMathABTest){
       var heroConfig = window.AIMathABTest.getVariantConfig('hero_cta');
       if (heroConfig && heroConfig.label){
         var heroBtn = document.querySelector('.cta-primary');
         if (heroBtn) heroBtn.textContent = heroConfig.label;
+      }
+
+      // ── A/B Test: pain_order (reverse pain cards) ──
+      var painConfig = window.AIMathABTest.getVariantConfig('pain_order');
+      if (painConfig && painConfig.order === 'reversed'){
+        var painGrid = document.getElementById('painGrid');
+        if (painGrid){
+          var cards = Array.from(painGrid.children);
+          cards.reverse();
+          cards.forEach(function(c){ painGrid.appendChild(c); });
+        }
+      }
+
+      // ── A/B Test: star_pack_position (move after hero) ──
+      var spConfig = window.AIMathABTest.getVariantConfig('star_pack_position');
+      if (spConfig && spConfig.position === 'after-hero'){
+        var starSec = document.getElementById('starPackEntry');
+        var heroSec = document.getElementById('hero');
+        if (starSec && heroSec && heroSec.nextElementSibling){
+          heroSec.parentNode.insertBefore(starSec, heroSec.nextElementSibling);
+        }
       }
     }
   });

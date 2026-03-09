@@ -179,6 +179,15 @@
     return getEffectiveSub().plan_status === 'expired';
   }
 
+  function isFreePlan(){
+    return getEffectiveSub().plan_status === 'free';
+  }
+
+  function canStartTrial(){
+    var s = getEffectiveSub().plan_status;
+    return s === 'free' || s === 'expired';
+  }
+
   function getPlanInfo(){
     var sub = getEffectiveSub();
     var plan = PLANS[sub.plan_type] || PLANS.free;
@@ -354,6 +363,8 @@
     isPaid: isPaid,
     isTrial: isTrial,
     isExpired: isExpired,
+    isFreePlan: isFreePlan,
+    canStartTrial: canStartTrial,
     startTrial: startTrial,
     startCheckout: startCheckout,
     confirmPayment: confirmPayment,
