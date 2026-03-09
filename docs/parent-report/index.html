@@ -123,6 +123,19 @@
       <div id="h24Empty" class="banner muted" style="display:none;margin-top:8px">最近 24 小時沒有作答紀錄</div>
     </div>
 
+    <div class="card" style="border-color:var(--warn)" id="weeklyFocusCard">
+      <div style="font-weight:800">🧭 本週重點摘要</div>
+      <div class="small">先看四個最重要的訊號，家長可以快速判斷這週是進步、停滯，還是需要補救。</div>
+      <div class="kpi" id="weeklyFocusGrid"></div>
+      <div id="weeklyFocusNarrative" class="banner muted" style="margin-top:12px"></div>
+    </div>
+
+    <div class="card" style="border-color:var(--ok)" id="weeklyAiCard">
+      <div style="font-weight:800">🤖 本週 AI 補救建議</div>
+      <div class="small">只列 3 件最值得先做的事，每件都能直接點進推薦題組。</div>
+      <div id="aiActionList" style="margin-top:10px"></div>
+    </div>
+
     <!-- KPI -->
     <div class="card">
       <div style="font-weight:800">📈 最近 <span class="rptDaysInline">7</span> 天總覽</div>
@@ -963,6 +976,131 @@
     } else {
       weakTable.innerHTML = '<div class="banner ok">目前沒有明顯弱點！繼續保持 🎉</div>';
     }
+
+    (function renderWeeklyFocus(){
+      const focusGrid = document.getElementById('weeklyFocusGrid');
+      const focusNarrative = document.getElementById('weeklyFocusNarrative');
+      const activeDays = days.filter(day => daily[day] && daily[day].n > 0).length;
+      const hintRate = r.total ? Math.round(((hd[1] || 0) + (hd[2] || 0) + (hd[3] || 0)) / r.total * 100) : 0;
+      const focusItems = [
+        { label: '完成題數', value: String(r.total || 0), desc: '本週總作答量' },
+        { label: '正確率', value: r.total ? (r.accuracy + '%') : '—', desc: '理解是否穩定' },
+        { label: '主動完成天數', value: String(activeDays), desc: '有練習的天數' },
+        { label: '提示使用比例', value: hintRate + '%', desc: '是否過度依賴提示' }
+      ];
+      focusGrid.innerHTML = focusItems.map(function(item){
+        return '<div class="box"><div class="label">' + esc(item.label) + '</div><div class="value">' + esc(item.value) + '</div><div class="small">' + esc(item.desc) + '</div></div>';
+      }).join('');
+
+      let narrative = '本週資料還不夠，建議先累積 3 天以上練習，再看趨勢會更準。';
+      let cls = 'muted';
+      if (r.total >= 5) {
+        if (r.accuracy >= 80 && hintRate < 35 && activeDays >= 3) {
+          narrative = '這週狀態穩定：正確率高、提示依賴低，適合進入更多生活應用題整合。';
+          cls = 'ok';
+        } else if (stuckLv >= 2 || hintRate >= 45 || weak.length) {
+          narrative = '這週最需要處理的是「先看懂題意，再列式」：建議優先做下方 3 個補救動作。';
+          cls = 'warn';
+        } else {
+          narrative = '有基本進度，但仍有幾個觀念需要加強；先把最常錯的題型練穩，再追速度。';
+          cls = 'warn';
+        }
+      }
+      focusNarrative.className = 'banner ' + cls;
+      focusNarrative.textContent = narrative;
+    })();
+
+    (function renderAiActions(){
+      const aiActionList = document.getElementById('aiActionList');
+      const topicLinkMap = {
+        'fraction-word': '../fraction-word-g5/',
+        'fraction': '../fraction-g5/',
+        'mixed-multiply': '../mixed-multiply/',
+        'decimal': '../interactive-decimal-g5/',
+        'decimal-unit4': '../decimal-unit4/',
+        'ratio': '../ratio-percent-g5/',
+        'percent': '../ratio-percent-g5/',
+        'volume': '../volume-g5/',
+        'life': '../life-applications-g5/'
+      };
+
+      function resolveTopicLink(topic){
+        const key = String(topic || '').toLowerCase();
+        const keys = Object.keys(topicLinkMap);
+        for (let i = 0; i < keys.length; i++) {
+          if (key.indexOf(keys[i]) >= 0) return topicLinkMap[keys[i]];
+        }
+        return '../star-pack/';
+      }
+
+      const actions = [];
+      if (weak.length) {
+        actions.push({
+          title: '先補最常錯的題型',
+          body: '先從「' + weak[0].t + ' / ' + weak[0].k + '」開始，因為它同時有錯題與提示依賴。',
+          href: resolveTopicLink(weak[0].t),
+          topic: weak[0].t
+        });
+      }
+      if (stuckLv >= 3) {
+        actions.push({
+          title: '先做基礎觀念重建',
+          body: '孩子常到完整提示才解得開，建議先回到較基礎的同類題，把步驟抄寫一次再做。',
+          href: weak.length ? resolveTopicLink(weak[0].t) : '../star-pack/',
+          topic: weak.length ? weak[0].t : '觀念重建'
+        });
+      } else if (stuckLv >= 2) {
+        actions.push({
+          title: '加強列式與拆題',
+          body: '目前最像是看得懂方向，但列式容易卡住，適合多做分數文字題與生活題。',
+          href: '../fraction-word-g5/',
+          topic: '列式與拆題'
+        });
+      }
+      if (r.accuracy < 70) {
+        actions.push({
+          title: '先顧正確率，再追速度',
+          body: '本週先把正確率拉回 70% 以上，每天練 5 到 10 題即可，不必一次做太多。',
+          href: '../interactive-g56-core-foundation/',
+          topic: '正確率'
+        });
+      } else if ((days.filter(day => daily[day] && daily[day].n > 0).length) < 3) {
+        actions.push({
+          title: '先養成穩定節奏',
+          body: '目前作答天數偏少，建議連續 3 天每天固定做一小段，週報才會更有代表性。',
+          href: '../task-center/',
+          topic: '學習節奏'
+        });
+      }
+      if (!actions.length) {
+        actions.push({
+          title: '維持本週進度',
+          body: '目前整體狀態穩定，下一步可以進入明星題組，練生活應用題做整合。',
+          href: '../star-pack/',
+          topic: '整體表現'
+        });
+      }
+
+      aiActionList.innerHTML = actions.slice(0, 3).map(function(action, index){
+        return '<div class="banner ' + (index === 0 ? 'bad' : index === 1 ? 'warn' : 'ok') + '" style="margin-top:' + (index ? '8' : '0') + 'px">'
+          + '<div style="font-weight:800">' + (index + 1) + '. ' + esc(action.title) + '</div>'
+          + '<div class="small" style="margin-top:4px">' + esc(action.body) + '</div>'
+          + '<a class="ai-action-link" data-topic="' + esc(action.topic) + '" href="' + action.href + '" style="display:inline-block;margin-top:8px;color:#58a6ff;text-decoration:none;font-weight:700">→ 直接開始這組練習</a>'
+          + '</div>';
+      }).join('');
+
+      aiActionList.querySelectorAll('.ai-action-link').forEach(function(link){
+        link.addEventListener('click', function(){
+          if (window.AIMathAnalytics) {
+            window.AIMathAnalytics.track('remedial_recommendation_click', {
+              topic: link.getAttribute('data-topic') || '',
+              href: link.href,
+              action_source: 'weekly_ai_action'
+            });
+          }
+        });
+      });
+    })();
 
     /* wrong list */
     const wrongList = document.getElementById('wrongList');
