@@ -140,20 +140,47 @@
 ## 5. 目前關鍵實作
 
 ### 收費閉環
-- `docs/shared/subscription.js`
-- `docs/pricing/index.html`
-- `docs/shared/daily_limit.js`
+- `docs/shared/subscription.js` — 狀態機 (free→trial→checkout_pending→paid_active→expired)
+- `docs/pricing/index.html` — 三級方案頁 (Free/Standard NT$299/Family NT$499)
+- `docs/shared/daily_limit.js` — 免費 10 題/天
+- `docs/shared/daily_limit_wire.js` — 通用自動掛載（18/18 模組已啟用）
+- `docs/shared/upgrade_banner.js` — 5 次提交或 2 分鐘後觸發
+- `docs/shared/completion_upsell.js` — 帝國模組結束時觸發
 
 ### 事件追蹤與 KPI
-- `docs/shared/analytics.js`
-- `docs/shared/attempt_telemetry.js`
-- `docs/kpi/index.html`
+- `docs/shared/analytics.js` — 16 事件定義，localStorage 10K 上限
+- `docs/shared/attempt_telemetry.js` — 每題作答追蹤
+- `docs/shared/coach_event_log.js` — 教練事件日誌
+- `docs/kpi/index.html` — 12 KPI 卡片 + 轉換漏斗 + A/B 儀表板
 
 ### 明星場景
-- `docs/star-pack/index.html`
+- `docs/star-pack/index.html` — 4 主題包 (分數 483、小數 334、百分率 179、生活應用 300)
 
 ### 家長週報 V2
-- `docs/parent-report/index.html`
+- `docs/parent-report/index.html` — 14 區塊含雷達圖、弱點診斷、補救建議、練習實驗室
+- `docs/shared/report/aggregate.js` — 象限分析 (A/B/C/D)
+- `docs/shared/report/unit_report_widget.js` — 嵌入式單元報告
+
+### A/B 測試
+- `docs/shared/abtest.js` — 5 實驗 (hero_cta, trial_btn_color, pain_order, star_pack_position, free_limit)
+
+### 學生驗證
+- `docs/shared/student_auth.js` — localStorage + GitHub Gist 雲端同步
+
+## 6. 完成度評估（2026-03-09）
+
+| 領域 | 完成度 | 關鍵缺口 |
+|------|:------:|----------|
+| 訂閱/收費 | 75% | 無正式金流；localStorage-only |
+| 每日限制/權限 | 95% | 18/18 模組已掛載 |
+| 事件追蹤 | 70% | 6 事件已定義但未實作 |
+| 明星場景 | 85% | 缺進度條、完成事件 |
+| 家長週報 | 90% | 缺週對週比較；GIST_PAT 暴露 |
+| Landing Page | 80% | CTA 無追蹤；2 A/B 測試未接線 |
+| A/B 測試 | 40% | 3/5 測試已分組但無效果 |
+| 文件 | 95% | 新增 MVP_GAP_LIST.md |
+
+> 詳細缺口清單見 MVP_GAP_LIST.md
 
 ### Landing Page
 - `docs/index.html`
