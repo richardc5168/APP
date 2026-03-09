@@ -40,6 +40,11 @@ body{font-family:'Segoe UI','Microsoft JhengHei',sans-serif;background:#0d1117;c
 .module-link .m-icon{font-size:1.2rem}
 .module-link .m-name{font-size:.85rem;font-weight:600}
 .module-link .m-count{font-size:.75rem;color:#8b949e;margin-left:auto}
+.module-link .m-progress{font-size:.72rem;color:#3fb950;margin-left:4px;font-weight:700}
+.pack-progress{margin-top:10px;margin-bottom:4px}
+.pack-progress-bar{height:6px;border-radius:3px;background:#21262d;overflow:hidden}
+.pack-progress-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#238636,#3fb950);transition:width .3s}
+.pack-progress-label{font-size:.75rem;color:#8b949e;margin-top:3px;text-align:right}
 .hint-levels{margin-top:12px;padding-top:12px;border-top:1px solid #21262d}
 .hint-levels h3{font-size:.85rem;color:#8b949e;margin-bottom:6px}
 .hint-steps{display:flex;gap:6px}
@@ -198,6 +203,8 @@ body{font-family:'Segoe UI','Microsoft JhengHei',sans-serif;background:#0d1117;c
 
 <script src="../shared/analytics.js"></script>
 <script src="../shared/subscription.js"></script>
+<script src="../shared/attempt_telemetry.js"></script>
+<script src="../shared/student_auth.js"></script>
 <script>
 (function(){
   'use strict';
@@ -235,6 +242,72 @@ body{font-family:'Segoe UI','Microsoft JhengHei',sans-serif;background:#0d1117;c
           });
         }
       });
+    });
+
+    // ─── Per-pack progress indicators ───
+    var packModules = {
+      'pack-fraction': ['fraction-g5','fraction-word-g5','commercial-pack1-fraction-sprint'],
+      'pack-decimal': ['interactive-decimal-g5','decimal-unit4'],
+      'pack-percent': ['ratio-percent-g5'],
+      'pack-life': ['life-applications-g5']
+    };
+
+    function getUid(){
+      if(window.AIMathStudentAuth && window.AIMathStudentAuth.isLoggedIn()){
+        var s = window.AIMathStudentAuth.getCurrentStudent();
+        return s ? s.name : null;
+      }
+      return null;
+    }
+
+    function computePackProgress(uid){
+      if(!uid || !window.AIMathAttemptTelemetry) return {};
+      var attempts = window.AIMathAttemptTelemetry.listAttempts(uid, {});
+      var byUnit = {};
+      attempts.forEach(function(a){
+        if(!a.unit_id) return;
+        if(!byUnit[a.unit_id]) byUnit[a.unit_id] = { total: 0, correct: 0, uniqueQ: {} };
+        byUnit[a.unit_id].total++;
+        if(a.is_correct){
+          byUnit[a.unit_id].correct++;
+          byUnit[a.unit_id].uniqueQ[a.question_id || a.ts_end] = 1;
+        }
+      });
+      return byUnit;
+    }
+
+    var uid = getUid();
+    var progress = computePackProgress(uid);
+
+    Object.keys(packModules).forEach(function(packId){
+      var card = document.getElementById(packId);
+      if(!card) return;
+      var modules = packModules[packId];
+      var totalCorrect = 0;
+      modules.forEach(function(unitId){
+        var p = progress[unitId];
+        if(p) totalCorrect += Object.keys(p.uniqueQ).length;
+      });
+
+      // Parse total questions from .tag-count
+      var countTag = card.querySelector('.tag-count');
+      var totalQ = countTag ? parseInt(countTag.textContent) : 0;
+      var pct = totalQ > 0 ? Math.min(100, Math.round(totalCorrect / totalQ * 100)) : 0;
+
+      // Insert progress bar before hint-levels
+      var hintDiv = card.querySelector('.hint-levels');
+      if(hintDiv){
+        var progDiv = document.createElement('div');
+        progDiv.className = 'pack-progress';
+        progDiv.innerHTML = '<div class="pack-progress-bar"><div class="pack-progress-fill" style="width:'+pct+'%"></div></div>'
+          + '<div class="pack-progress-label">' + totalCorrect + ' / ' + totalQ + ' 題 (' + pct + '%)</div>';
+        card.insertBefore(progDiv, hintDiv);
+      }
+
+      // Fire star_pack_complete when 100%
+      if(pct >= 100 && window.AIMathAnalytics){
+        window.AIMathAnalytics.track('star_pack_complete', { pack: packId, questions: totalCorrect });
+      }
     });
   });
 })();
