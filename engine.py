@@ -1779,6 +1779,22 @@ def gen_fraction_commondenom():
             "question": question,
             "answer": answer,
             "explanation": "\n".join(explanation),
+            "steps": [
+                f"先找 {b1} 和 {b2} 的最小公倍數，所以共同分母是 {lcm_val}。",
+                f"再把 {a1}/{b1} 擴成 {na1}/{lcm_val}。",
+                f"最後把 {a2}/{b2} 擴成 {na2}/{lcm_val}，依序寫出答案 {answer}。",
+            ],
+            "parent_summary": "這題在看孩子是否能先找共同分母，再把兩個分數同步放大。若常錯，建議先練『找最小公倍數』再做通分。",
+            "chart_config": {
+                "type": "fraction_bar",
+                "labels": ["原分數 1", "原分數 2", "共同分母"],
+                "fractions": [
+                    {"numerator": a1, "denominator": b1},
+                    {"numerator": a2, "denominator": b2},
+                    {"numerator": na1, "denominator": lcm_val},
+                    {"numerator": na2, "denominator": lcm_val},
+                ],
+            },
         }
 
     return {"topic": "分數通分", "difficulty": "easy", "question": "（生成失敗）請重試。", "answer": "0 0 0", "explanation": "生成失敗"}
@@ -1802,7 +1818,27 @@ def gen_fraction_reduction():
         f"{original_num}/{original_den} -> {simplified_num}/{simplified_den}",
         f"答案：{answer}"
     ]
-    return {"topic": "分數約分", "difficulty": "easy", "question": question, "answer": answer, "explanation": "\n".join(explanation)}
+    return {
+        "topic": "分數約分",
+        "difficulty": "easy",
+        "question": question,
+        "answer": answer,
+        "explanation": "\n".join(explanation),
+        "steps": [
+            f"先找 {original_num} 和 {original_den} 的最大公因數，所以公因數是 {gcd_val}。",
+            f"再把分子和分母同時除以 {gcd_val}。",
+            f"最後得到最簡分數 {simplified_num}/{simplified_den}，依序寫出答案 {answer}。",
+        ],
+        "parent_summary": "這題在看孩子是否能先找最大公因數，再把分子分母同時縮小到最簡。若常錯，建議先練『最大公因數』再做約分。",
+        "chart_config": {
+            "type": "fraction_bar",
+            "labels": ["原分數", "約分後"],
+            "fractions": [
+                {"numerator": original_num, "denominator": original_den},
+                {"numerator": simplified_num, "denominator": simplified_den},
+            ],
+        },
+    }
 
 def _fraction_core(a1, b1, a2, b2, op):
     f1 = Fraction(a1, b1)
@@ -2035,16 +2071,56 @@ def gen_volume_area():
     height = random.randint(2, 10)
     q_type = random.choice(["volume", "surface_area"])
 
+    def make_parent_summary(shape_name, question_kind):
+        if question_kind == "volume":
+            return f"這題在看孩子是否能分清 {shape_name} 的體積公式，並把長、寬、高依序代入。若常錯，建議先畫圖標出三個邊再列式。"
+        return f"這題在看孩子是否能分清 {shape_name} 的表面積公式，並完整算到每一組面。若常錯，建議先畫出各面再檢查有沒有漏乘 2。"
+
+    def make_geometry_payload(shape_name, question_kind, answer_value, labels, values):
+        if question_kind == "volume":
+            hints = [
+                "先確認題目問的是體積，不是表面積，並圈出需要用到的邊長。",
+                "長方體體積用 長×寬×高；正方體體積用 邊長×邊長×邊長。",
+                f"把數字依序乘起來，答案是 {answer_value}，最後記得寫成『立方公分』。",
+            ]
+        else:
+            hints = [
+                "先確認題目問的是表面積，不是體積，並找出每一組面的邊長。",
+                "正方體表面積用 6×邊長×邊長；長方體表面積用 2×(長寬+長高+寬高)。",
+                f"先算每一組面的面積再合併，答案是 {answer_value}，最後記得寫成『平方公分』。",
+            ]
+
+        return {
+            "hints": hints,
+            "parent_summary": make_parent_summary(shape_name, question_kind),
+            "chart_config": {
+                "type": "cube" if shape_name == "正方體" else "rect_prism",
+                "labels": labels,
+                "dims": values,
+            },
+        }
+
     if length == width == height:
         shape = "正方體"
         if q_type == "volume":
             ans = length ** 3
             q_text = f"邊長為 {length} 公分的{shape}，體積是多少立方公分？"
             expl = f"體積=邊長³={length}×{length}×{length}={ans}"
+            steps = [
+                "先確認題目要算的是體積，所以要用邊長乘邊長再乘邊長。",
+                f"把邊長 {length} 代入：{length}×{length}×{length}。",
+                f"算出體積是 {ans}，單位寫成立方公分。",
+            ]
         else:
             ans = 6 * (length ** 2)
             q_text = f"邊長為 {length} 公分的{shape}，表面積是多少平方公分？"
             expl = f"表面積=6×邊長²=6×({length}×{length})={ans}"
+            steps = [
+                "先確認題目要算的是表面積，所以要算 6 個相同的正方形面。",
+                f"先算一個面的面積：{length}×{length}。",
+                f"再乘 6，得到表面積 {ans}，單位寫成平方公分。",
+            ]
+        extra = make_geometry_payload(shape, q_type, ans, ["邊長"], {"edge": length})
     else:
         shape = "長方體"
         dims = f"長 {length}、寬 {width}、高 {height}"
@@ -2052,6 +2128,11 @@ def gen_volume_area():
             ans = length * width * height
             q_text = f"{dims} 公分的{shape}，體積是多少立方公分？"
             expl = f"體積=長×寬×高={length}×{width}×{height}={ans}"
+            steps = [
+                "先確認題目要算的是體積，所以要把長、寬、高三個邊長相乘。",
+                f"依序代入：{length}×{width}×{height}。",
+                f"算出體積是 {ans}，單位寫成立方公分。",
+            ]
         else:
             lw = length * width
             lh = length * height
@@ -2059,9 +2140,27 @@ def gen_volume_area():
             ans = 2 * (lw + lh + wh)
             q_text = f"{dims} 公分的{shape}，表面積是多少平方公分？"
             expl = f"表面積=2×(長寬+長高+寬高)=2×({lw}+{lh}+{wh})={ans}"
+            steps = [
+                "先確認題目要算的是表面積，所以要把三組不同的面都算進去。",
+                f"先算長寬、長高、寬高三組面積：{lw}、{lh}、{wh}。",
+                f"把三組面積相加後再乘 2，得到表面積 {ans}，單位寫成平方公分。",
+            ]
+        extra = make_geometry_payload(shape, q_type, ans, ["長", "寬", "高"], {"length": length, "width": width, "height": height})
 
-    return {"topic": f"{shape} {q_type.replace('_',' ')}", "difficulty": "easy",
-            "question": q_text, "answer": str(ans), "explanation": expl}
+    return {
+        "topic": f"{shape} {q_type.replace('_',' ')}",
+        "difficulty": "easy",
+        "question": q_text,
+        "answer": str(ans),
+        "explanation": expl,
+        "steps": steps,
+        "meta": {
+            "shape": shape,
+            "kind": q_type,
+            "unit": "立方公分" if q_type == "volume" else "平方公分",
+        },
+        **extra,
+    }
 
 def gen_linear_equation():
     x_val = random.randint(-9, 9)

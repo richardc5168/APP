@@ -33,6 +33,8 @@ const scorecard = readJson('scorecard.json', null);
 const e2e = readJson('e2e_results.json', null);
 const errorSummary = readJson('error_memory_summary.json', null);
 const improvement = readJson('improvement_check.json', null);
+const reviewerBatch = readJson('reviewer_batch/reviewer_batch_latest.json', null);
+const reviewerAudit = readJson('reviewer_batch/solution_logic_audit_latest.json', null);
 
 const checks = [];
 if (scorecard?.tests) {
@@ -62,6 +64,31 @@ if (scorecard?.golden) {
 if (scorecard?.e2e) {
   checks.push({ name: 'e2e.flaky_rate<=0.02', ok: Number(scorecard.e2e.flaky_rate ?? 1) <= 0.02, value: scorecard.e2e.flaky_rate });
 }
+if (reviewerBatch) {
+  checks.push({
+    name: 'reviewer.reviewer_pass',
+    ok: !!reviewerBatch.reviewer_pass,
+    value: reviewerBatch.reviewer_pass,
+  });
+  checks.push({
+    name: 'reviewer.avg_score>=threshold',
+    ok: Number(reviewerBatch.avg_score || 0) >= Number(reviewerBatch.threshold || 0),
+    value: {
+      avg_score: reviewerBatch.avg_score,
+      threshold: reviewerBatch.threshold,
+    },
+  });
+  checks.push({
+    name: 'reviewer.failed_count==0',
+    ok: Number(reviewerBatch.failed_count || 0) === 0,
+    value: reviewerBatch.failed_count,
+  });
+  checks.push({
+    name: 'reviewer.verify_all_pass',
+    ok: !!reviewerBatch.verify_all_pass,
+    value: reviewerBatch.verify_all_pass,
+  });
+}
 
 const failedChecks = checks.filter((c) => !c.ok);
 
@@ -70,6 +97,12 @@ if (e2e && e2e.pass === false) {
   likelyRootCause = 'e2e_failure';
 } else if (e2e?.flaky_recovered === true) {
   likelyRootCause = 'e2e_flaky_recovered';
+} else if (reviewerBatch && !reviewerBatch.reviewer_pass) {
+  likelyRootCause = 'reviewer_runner_failed';
+} else if (reviewerBatch && Number(reviewerBatch.failed_count || 0) > 0) {
+  likelyRootCause = 'reviewer_low_score_items';
+} else if (reviewerBatch && reviewerBatch.hint_ladder_pass === false) {
+  likelyRootCause = 'reviewer_hint_ladder_failed';
 } else if (failedChecks.length > 0) {
   likelyRootCause = `scorecard_gate:${failedChecks[0].name}`;
 } else if (improvement?.non_regression === false) {
@@ -104,8 +137,30 @@ if (failedChecks.length > 0) {
 if (errorSummary?.latest) {
   evidence.push({ source: 'error_memory_summary.latest', latest: errorSummary.latest.slice(0, 5) });
 }
+if (reviewerBatch) {
+  evidence.push({
+    source: 'reviewer_batch.summary',
+    avg_score: Number(reviewerBatch.avg_score || 0),
+    threshold: Number(reviewerBatch.threshold || 0),
+    failed_count: Number(reviewerBatch.failed_count || 0),
+    hint_ladder_pass: !!reviewerBatch.hint_ladder_pass,
+    verify_all_pass: !!reviewerBatch.verify_all_pass,
+    top_issues: Array.isArray(reviewerBatch.top_issues) ? reviewerBatch.top_issues.slice(0, 5) : [],
+  });
+}
+if (reviewerAudit?.items) {
+  evidence.push({
+    source: 'reviewer_batch.audit_sample',
+    sample: reviewerAudit.items.slice(0, 3).map((item) => ({
+      id: item.id,
+      avg_score: item.avg_score,
+      issue_types: Array.isArray(item.issues) ? item.issues.map((issue) => issue.type) : [],
+    })),
+  });
+}
 
 const nextCommands = [
+  'npm run reviewer:solution-logic:once',
   'npm run test:e2e',
   'npm run verify:all',
   'node tools/build_agent_triage_report.cjs',
@@ -121,6 +176,15 @@ const report = {
     flaky_recovered: e2e?.flaky_recovered,
     flaky_rate: e2e?.flaky_rate,
     attempt_count: e2e?.attempt_count,
+  },
+  reviewer: {
+    pass: reviewerBatch ? !!reviewerBatch.reviewer_pass : null,
+    avg_score: reviewerBatch ? Number(reviewerBatch.avg_score || 0) : null,
+    threshold: reviewerBatch ? Number(reviewerBatch.threshold || 0) : null,
+    failed_count: reviewerBatch ? Number(reviewerBatch.failed_count || 0) : null,
+    hint_ladder_pass: reviewerBatch ? !!reviewerBatch.hint_ladder_pass : null,
+    verify_all_pass: reviewerBatch ? !!reviewerBatch.verify_all_pass : null,
+    top_issues: Array.isArray(reviewerBatch?.top_issues) ? reviewerBatch.top_issues.slice(0, 5) : [],
   },
   improvement: improvement || null,
   error_memory: {
@@ -147,6 +211,17 @@ const md = [
   `- flaky_recovered: ${report.e2e.flaky_recovered}`,
   `- flaky_rate: ${report.e2e.flaky_rate}`,
   `- attempt_count: ${report.e2e.attempt_count}`,
+  '',
+  '## Reviewer',
+  `- pass: ${report.reviewer.pass}`,
+  `- avg_score: ${report.reviewer.avg_score}`,
+  `- threshold: ${report.reviewer.threshold}`,
+  `- failed_count: ${report.reviewer.failed_count}`,
+  `- hint_ladder_pass: ${report.reviewer.hint_ladder_pass}`,
+  `- verify_all_pass: ${report.reviewer.verify_all_pass}`,
+  ...(report.reviewer.top_issues.length
+    ? report.reviewer.top_issues.map((item) => `- top_issue ${item.id}: avg=${item.avg_score}, issues=${item.issue_count}`)
+    : ['- top_issue: none']),
   '',
   '## Next Commands',
   ...nextCommands.map((cmd) => `- ${cmd}`),

@@ -200,6 +200,7 @@ def export_all_questions(
 
                 obj: Dict[str, Any] = {
                     "topic_id": topic_id,
+                    "topic": str(q.get("topic") or topic_id),
                     "template_id": t.template_id,
                     "template_name": t.name,
                     "seed": item_seed,
@@ -207,6 +208,8 @@ def export_all_questions(
                     "answer": answer,
                     "hints": hints,
                     "solution_steps": steps,
+                    "parent_summary": str(q.get("parent_summary") or ""),
+                    "chart_config": q.get("chart_config") if isinstance(q.get("chart_config"), dict) else None,
                     "checks": checks,
                 }
 

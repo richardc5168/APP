@@ -23,6 +23,8 @@ const improvement = readJson('artifacts/improvement_check.json', null);
 const trend = readJson('artifacts/improvement_trend.json', { points: [] });
 const triage = readJson('artifacts/agent_triage.json', null);
 const topicAlign = readJson('artifacts/web_topic_alignment.json', null);
+const reviewerBatch = readJson('artifacts/reviewer_batch/reviewer_batch_latest.json', null);
+const reviewerAudit = readJson('artifacts/reviewer_batch/solution_logic_audit_latest.json', null);
 
 const summary = {
   generated_at: new Date().toISOString(),
@@ -47,6 +49,11 @@ const summary = {
     lighthouse_accessibility: Number(scorecard?.lighthouse?.accessibility || 0),
     lighthouse_performance: Number(scorecard?.lighthouse?.performance || 0),
     axe_critical: Number(scorecard?.axe?.critical || 0),
+    reviewer_avg_score: Number(reviewerBatch?.avg_score || 0),
+    reviewer_threshold: Number(reviewerBatch?.threshold || 0),
+    reviewer_failed_count: Number(reviewerBatch?.failed_count || 0),
+    reviewer_hint_ladder_pass: reviewerBatch ? !!reviewerBatch.hint_ladder_pass : null,
+    reviewer_verify_all_pass: reviewerBatch ? !!reviewerBatch.verify_all_pass : null,
   },
   improvement: {
     non_regression: improvement ? !!improvement.non_regression : null,
@@ -58,6 +65,8 @@ const summary = {
     likely_root_cause: triage?.likely_root_cause || 'unknown',
     failed_checks: Array.isArray(triage?.failed_checks) ? triage.failed_checks : [],
     topic_alignment_avg_coverage: Number(topicAlign?.summary?.avg_coverage_rate || 0),
+    reviewer_top_issues: Array.isArray(reviewerBatch?.top_issues) ? reviewerBatch.top_issues.slice(0, 5) : [],
+    reviewer_item_count: Number(reviewerAudit?.total_items || 0),
   },
   artifact_links: {
     autotune_report: 'artifacts/autotune_report.json',
@@ -71,6 +80,9 @@ const summary = {
     triage_md: 'artifacts/agent_triage.md',
     topic_alignment_json: 'artifacts/web_topic_alignment.json',
     topic_alignment_md: 'artifacts/web_topic_alignment.md',
+    reviewer_batch_json: 'artifacts/reviewer_batch/reviewer_batch_latest.json',
+    reviewer_batch_md: 'artifacts/reviewer_batch/reviewer_batch_latest.md',
+    reviewer_audit_json: 'artifacts/reviewer_batch/solution_logic_audit_latest.json',
   },
 };
 
@@ -92,11 +104,21 @@ const md = [
   `- lighthouse_accessibility: ${summary.quality.lighthouse_accessibility}`,
   `- lighthouse_performance: ${summary.quality.lighthouse_performance}`,
   `- axe_critical: ${summary.quality.axe_critical}`,
+  `- reviewer_avg_score: ${summary.quality.reviewer_avg_score}`,
+  `- reviewer_threshold: ${summary.quality.reviewer_threshold}`,
+  `- reviewer_failed_count: ${summary.quality.reviewer_failed_count}`,
+  `- reviewer_hint_ladder_pass: ${summary.quality.reviewer_hint_ladder_pass}`,
+  `- reviewer_verify_all_pass: ${summary.quality.reviewer_verify_all_pass}`,
   '',
   '## Improvement',
   `- non_regression: ${summary.improvement.non_regression}`,
   `- improved: ${summary.improvement.improved}`,
   `- mode: ${summary.improvement.mode}`,
+  '',
+  '## Reviewer Top Issues',
+  ...(summary.diagnostics.reviewer_top_issues.length
+    ? summary.diagnostics.reviewer_top_issues.map((item) => `- ${item.id}: avg=${item.avg_score}, issues=${item.issue_count}`)
+    : ['- none']),
   '',
   '## Topic Alignment',
   `- avg_coverage_rate: ${summary.diagnostics.topic_alignment_avg_coverage}`,
@@ -120,6 +142,8 @@ console.log(
       path_md: 'artifacts/iteration_output_summary.md',
       hint_autotune_changed: summary.optimization.hint_autotune_changed,
       report_signal_changed: summary.optimization.report_signal_changed,
+      reviewer_avg_score: summary.quality.reviewer_avg_score,
+      reviewer_failed_count: summary.quality.reviewer_failed_count,
       improved: summary.improvement.improved,
       non_regression: summary.improvement.non_regression,
     },

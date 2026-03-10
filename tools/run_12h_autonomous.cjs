@@ -346,6 +346,7 @@ function runAgentLoop(logs) {
 // ── Summary helpers ───────────────────────────────────────
 
 function writeSummary(logs) {
+  runStep('npm', ['run', 'triage:agent'], logs, 0);
   runStep('npm', ['run', 'summary:iteration'], logs, 0);
   runStep('npm', ['run', 'summary:hints'], logs, 0);
   runStep('npm', ['run', 'summary:kpi'], logs, 0);
