@@ -1,55 +1,51 @@
-# MVP Gap List — Monetization Validation MVP
+# MVP Gap List
 
-> Last updated: 2026-03-09 (Post Sprint — Phases 2-7)
-> Purpose: Track actionable gaps blocking paid conversion, retention, parent value, and future expansion.
+> Updated: 2026-03-10
+> Purpose: track the remaining gaps that block trustworthy monetization validation, not cosmetic completeness.
 
-## 1. 阻礙付費轉換的缺口
+## P0
 
-| # | Gap | Severity | Status | Fix |
-|---|-----|----------|--------|-----|
-| G1 | 5/5 A/B tests wired + conversion tracking | P0 | ✅ CLOSED | Phase 2+6+7: free_limit via getLimit(); pain_order + star_pack_position on landing; hero_cta + trial_btn_color already wired; trackConversion on all 5 |
-| G2 | Landing page CTAs fire click events | P0 | ✅ CLOSED | Phase 6: 7 CTA selectors tracked (hero, report, child, parent, mode, nav, star_pack) |
-| G3 | No real payment gateway | P1 | ⬜ OPEN | Phase 2: integrate ECPay/LinePay |
-| G4 | Subscription in localStorage only | P1 | ⬜ OPEN | Phase 2: server-side with Gist or Supabase |
-| G5 | `completion_upsell.js` only triggers on empire modules | P2 | ⬜ OPEN | Extend to standard modules |
+| ID | Gap | Why it matters | Current evidence | Recommended next step |
+|---|---|---|---|---|
+| P0-1 | No provider-backed web payment flow | Without real payment and webhook-style reconciliation, paid conversion data is not trustworthy | `docs/shared/subscription.js` still drives a mock-first status transition | Wire one real provider path and reconcile plan state on server |
+| P0-2 | Parent-report cloud sync security risk | Client-visible secret patterns undermine trust and production readiness | Existing docs and implementation history still flag GIST_PAT exposure concern | Move secret use behind backend proxy or service endpoint |
+| P0-3 | Public web subscription not fully server-backed | Local plan state is easy to reset or desync | Front-end plan state exists; `server.py` already has subscriptions table and auth hooks | Connect pricing and purchase completion to server-backed subscription records |
+| P0-4 | No dedicated sub test agent for explanation quality | Monetization fails if hints are confusing, answer-leaky, or parent reports are hard to read | Generic reviewer automation exists, but no narrower agent loop for child readability and parent clarity | Add a focused reviewer agent around hint ladder, solution logic, wording, parent report clarity, and diagram checks |
 
-## 2. 阻礙留存追蹤的缺口
+## P1
 
-| # | Gap | Severity | Status | Fix |
-|---|-----|----------|--------|-----|
-| R1 | `return_next_day` / `return_next_week` events | P0 | ✅ CLOSED | Phase 3: implemented in analytics.js via lastVisit localStorage |
-| R2 | `session_complete` event | P1 | ✅ CLOSED | Phase 3: fires on beforeunload with duration_sec |
-| R3 | `question_start` event | P1 | ✅ CLOSED | Phase 3: fires in daily_limit_wire.js on btnNew click |
-| R4 | `retry_start` event | P2 | ⬜ OPEN | No retry-same-question UX exists yet |
-| R5 | All analytics in localStorage → data loss risk | P1 | ⬜ OPEN | Phase 2: batch export to Gist/API |
-| R6 | No `topic` / `grade` enrichment on events | P2 | ⬜ OPEN | Add to attempt_telemetry bridge |
+| ID | Gap | Why it matters | Current evidence | Recommended next step |
+|---|---|---|---|---|
+| P1-1 | Analytics durability is still local-first | Cohort and funnel truth degrades when data is browser-local only | `docs/shared/analytics.js` stores locally and drives KPI page | Add batch export or server write path for core events |
+| P1-2 | Event enrichment is not yet fully normalized across surfaces | Topic, module, plan, and CTA analysis becomes noisy | Analytics and attempt telemetry exist, but older docs still note enrichment inconsistency | Standardize `topic`, `grade`, `module_id`, `plan_type`, `plan_status`, `cta_source` |
+| P1-3 | Completion upsell coverage is uneven | Some modules convert better because they have stronger end-state upsell than others | `docs/shared/completion_upsell.js` is strongest on empire-style experiences | Reuse the upsell pattern across standard practice surfaces |
+| P1-4 | Parent report to practice return loop can be tighter | Retention improves when parents can act directly from the report | `docs/parent-report/index.html` and learning pipeline already support recommendation surfaces | Strengthen direct links into star packs and weak-skill practice modules |
+| P1-5 | KPI page is useful but still pilot-grade | Internal visibility exists, but not yet durable for production decision-making | `docs/kpi/index.html` depends on local event pool | Add export, server aggregation, or snapshot sync |
 
-## 3. 阻礙家長感知價值的缺口
+## P2
 
-| # | Gap | Severity | Status | Fix |
-|---|-----|----------|--------|-----|
-| P1 | `weekly_report_view` event fires correctly | P0 | ✅ CLOSED | Verified in parent-report/index.html |
-| P2 | `remedial_recommendation_click` tracked | P1 | ✅ CLOSED | Phase 3: onclick events on recommendation links with topic data |
-| P3 | "比上週進步/退步" trend card | P1 | ✅ CLOSED | Phase 5: week-over-week comparison with delta arrows |
-| P4 | Star pack per-pack progress indicators | P1 | ✅ CLOSED | Phase 4: progress bars + completion event |
-| P5 | GIST_PAT exposed in client-side JS | P0 | ⬜ OPEN | Move to environment variable or backend proxy |
+| ID | Gap | Why it matters | Current evidence | Recommended next step |
+|---|---|---|---|---|
+| P2-1 | Retry-specific telemetry is incomplete | Useful for mastery loops, but not required for first paid validation | No dedicated retry event flow is consistently documented | Add when retry UX is standardized |
+| P2-2 | Pack outcome summaries can be more explicit | Better merchandising and parent communication | Star-pack exists, but per-pack outcome summaries can go deeper | Add completion card and “what improved” summary |
+| P2-3 | Grade expansion is not parameterized | Important later, but not before G5-G6 loop is proven | Current surfaces are strongly G5-centered | Generalize only after the paid loop stabilizes |
+| P2-4 | Recommendation engine is still mostly deterministic rules | Good enough for MVP, but not differentiated long-term | `learning/remediation.py` is rule-driven | Keep rules for MVP; improve after data durability work |
 
-## 4. 阻礙擴充到更多年級的缺口
+## Recommended Order
 
-| # | Gap | Severity | Status | Fix |
-|---|-----|----------|--------|-----|
-| E1 | Grade detection hardcoded to G5 | P2 | ⬜ OPEN | Add grade param to question schema |
-| E2 | Module naming not grade-parameterized | P2 | ⬜ OPEN | Future: `fraction-g{N}` pattern |
-| E3 | No question bank import pipeline for new grades | P2 | ⬜ OPEN | Need template→bank generator |
+1. `P0-1` real payment path
+2. `P0-2` parent-report sync hardening
+3. `P0-3` server-backed subscription state
+4. `P0-4` dedicated sub test agent for quality
+5. `P1-1` durable analytics export or ingestion
+6. `P1-2` event field normalization
+7. `P1-3` and `P1-4` conversion and retention optimization
 
-## Sprint Summary
+## Definition Of “Closed”
 
-```
-Closed: 11/18 gaps (61%)
-├─ P0: 4/5 closed (G1, G2, R1, P1) — GIST_PAT remains open
-├─ P1: 5/7 closed (R2, R3, P2, P3, P4) — G3, R5 remain open
-└─ P2: 0/6 closed — all deferred to Month 2
+A gap is only closed when:
 
-Remaining P0: P5 (GIST_PAT security)
-Remaining P1: G3 (real payment), G4 (server subscription), R5 (analytics backend)
-```
+1. the code path exists in the repo
+2. its main event or state transition is measurable
+3. the change survives the current validation workflow
+4. the change improves the actual monetization loop rather than just the docs

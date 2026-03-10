@@ -1,187 +1,92 @@
 # Roadmap 12 Weeks
 
-原則：先驗證商業，再擴產品。所有功能先求能跑、能追蹤、能驗證。
+> Updated: 2026-03-10
+> Principle: do not rebuild the product. Harden the existing loop until conversion and retention numbers are believable.
 
-**Last updated**: Monetization MVP Sprint (Phases 2-7 completed)
+## Current Baseline
 
-| Milestone | Target | Status |
-|-----------|--------|--------|
-| 兩週版 — 收費閉環 | pricing + mock payment + gating + CTA | ✅ DONE |
-| 四週版 — 漏斗追蹤 | analytics + events + KPI dashboard | ✅ DONE |
-| 八週版 — 明星場景 | Star Pack + 週報 V2 + recommendation | ✅ DONE |
-| 十二週版 — 轉換優化 | landing + A/B test + data-driven iteration | ✅ DONE |
+Already present in the repo today:
 
-## 兩週版本
+- landing, pricing, star-pack, parent-report, KPI surfaces
+- front-end subscription state and gating
+- local-first analytics and A/B testing
+- learning analytics, remediation, and report assembly
+- backend auth and subscription extension points
+- reviewer automation for iterative quality work
 
-### 目標
+That means the next 12 weeks are not “build MVP from zero”. They are “turn the existing MVP into a trustworthy validation machine”.
 
-- 打通最小收費閉環
-- 讓家長看得懂免費 / 付費差異
+## Weeks 1-2
 
-### 功能範圍
+Focus: payment and subscription truth
 
-- pricing page
-- mock payment flow
-- subscription status storage
-- feature gating
-- 至少 3 個 upgrade CTA 入口
+- connect one real payment provider path from pricing to backend reconciliation
+- map purchase completion into server-backed subscription state
+- keep front-end state only as cache or UX convenience, not source of truth
+- define failure and expiry behavior clearly
 
-### 涉及檔案
+Success criteria:
 
-- `docs/shared/subscription.js`
-- `docs/pricing/index.html`
-- `docs/shared/daily_limit.js`
-- `docs/index.html`
-- `docs/parent-report/index.html`
+- one real purchase path can move a user from free to paid
+- paid state survives browser reset
+- pricing, report gating, and pack gating reflect the same plan truth
 
-### 風險
+## Weeks 3-4
 
-- localStorage 狀態可被重設
-- mock payment 不代表真實金流穩定度
+Focus: analytics durability and normalized event shape
 
-### 驗收條件
+- export or persist core monetization events beyond browser-only storage
+- standardize event fields across landing, pricing, report, packs, and practice
+- verify funnel steps from landing to pricing to trial or checkout to paid
+- add internal snapshots or exports that make KPI review reproducible
 
-- 看得到清楚方案差異
-- 可從至少 3 個頁面進入升級流程
-- status 能影響功能顯示
+Success criteria:
 
-### 建議順序
+- the same user journey produces consistent records across sessions
+- topic, module, plan, and CTA source are queryable
+- KPI review no longer depends on a single browser session
 
-- 先做：subscription model -> pricing -> gating -> CTA
-- 後做：真金流串接
+## Weeks 5-8
 
-## 四週版本
+Focus: strengthen the paid value loop
 
-### 目標
+- tighten star-pack merchandising around fractions, decimals, percentages, and life applications
+- tighten parent-report to practice click-through
+- extend upsell patterns beyond empire modules
+- keep parent report centered on “weakest concepts, what to do next, did it improve”
 
-- 看懂漏斗與基礎轉換
+Success criteria:
 
-### 功能範圍
+- parent report directly sends traffic into targeted practice
+- star-pack pages present a clearer reason to pay
+- premium differences are obvious without feeling arbitrary
 
-- analytics schema
-- event logger
-- KPI dashboard
-- 主要頁面事件掛載
+## Weeks 9-12
 
-### 涉及檔案
+Focus: safer scale and reviewer-driven optimization
 
-- `docs/shared/analytics.js`
-- `docs/shared/attempt_telemetry.js`
-- `docs/kpi/index.html`
-- `docs/index.html`
-- `docs/pricing/index.html`
+- add the dedicated sub test agent for child-readable explanation quality and parent-report clarity
+- run repeated reviewer batches against hints, solution logic, diagrams, and report copy
+- expand A/B iteration only after payment and analytics truth are stable
+- use data to simplify or remove weak CTA positions
 
-### 風險
+Success criteria:
 
-- topic / grade 標記不一致會影響統計品質
+- explanation quality is guarded by automation, not ad hoc review
+- parent-facing copy is measured and revised systematically
+- A/B changes are evaluated on durable data, not browser-local noise
 
-### 驗收條件
+## Priority Summary
 
-- 能看 landing -> pricing -> trial -> paid 漏斗
-- 能匯出事件 JSON
-- 能看到主要事件分布
+1. payment truth
+2. subscription truth
+3. analytics truth
+4. pack and report conversion loop
+5. dedicated sub test agent and reviewer optimization
 
-### 建議順序
+## What Not To Do In This Window
 
-- 先做：logger -> core events -> dashboard
-- 後做：cohort retention 精算
-
-## 八週版本
-
-### 目標
-
-- 聚焦四大主題，做出付費主打內容與家長可理解的結果頁
-
-### 功能範圍
-
-- Star Pack
-- 家長週報 V2
-- recommendation engine v1
-- 主題包 gating
-
-### 涉及檔案
-
-- `docs/star-pack/index.html`
-- `docs/parent-report/index.html`
-- `docs/shared/subscription.js`
-
-### 風險
-
-- pack metadata 仍偏模組層，不夠到單題層
-- recommendation 邏輯仍為規則式
-
-### 驗收條件
-
-- 首頁能明確導到明星場景
-- 家長看得懂弱點與建議
-- 免費 / 付費差異明顯
-
-### 建議順序
-
-- 先做：Star Pack -> 報表 V2 -> recommendation
-- 後做：更細緻單題標記與自動化推薦
-
-## 十二週版本
-
-### 目標
-
-- 用 landing page 與 A/B 測試優化轉換
-- 開始進入商業驗證迭代期
-
-### 功能範圍
-
-- landing page 改版
-- A/B testing framework
-- KPI A/B dashboard
-- 依測試結果優化 CTA、文案、入口位置
-
-### 涉及檔案
-
-- `docs/index.html`
-- `docs/shared/abtest.js`
-- `docs/pricing/index.html`
-- `docs/kpi/index.html`
-
-### 風險
-
-- 流量不足時，A/B 結果容易失真
-- 若沒有正式支付，後段轉換仍受限制
-
-### 驗收條件
-
-- CTA 與試用入口都能追蹤
-- variant 與 conversion 可關聯
-- 能依數據調整首頁與 pricing
-
-### 建議順序
-
-- 先做：首頁關鍵訊息清楚化
-- 再做：A/B test 小步快跑
-- 最後做：正式金流與 retention 優化
-
-## 總結順序
-
-1. 先把收費閉環打通
-2. 再把事件與 KPI 接上
-3. 再聚焦四大明星場景
-4. 再讓家長週報變成續訂理由
-5. 最後用 landing 與 A/B test 優化轉換
-
-## 8 小時自主優化建議
-
-若要讓 Copilot 或自動化流程持續跑 8 小時，建議只在已完成的 12 週 MVP 上做小步優化，不再擴需求。
-
-每輪建議順序：
-
-1. 跑 hint / wording reviewer
-2. 只修一種問題
-3. 跑 local validation
-4. 同步 docs/dist
-5. 再進下一輪
-
-優先優化項目：
-
-1. 學生看不懂的提示語句
-2. 家長週報首屏摘要
-3. 明星題組入口文案
-4. 首頁 CTA 清晰度
+- do not rebuild all content packs
+- do not redesign the whole site visual system
+- do not generalize to more grades before G5-G6 monetization is measured cleanly
+- do not treat local-only KPI signals as final business truth
