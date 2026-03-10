@@ -1,24 +1,24 @@
 {
-  "generated_at": "2026-03-09T23:32:17.736Z",
+  "generated_at": "2026-03-10T00:04:26.768Z",
   "current": {
-    "date": "2026-03-09",
+    "date": "2026-03-10",
     "hint_avg": 10,
     "hint_min": 10,
     "e2e_flaky_rate": 0
   },
   "previous": {
-    "date": "2026-03-07",
+    "date": "2026-03-09",
     "hint_avg": 10,
     "hint_min": 10,
-    "e2e_flaky_rate": 1
+    "e2e_flaky_rate": 0
   },
   "delta": {
     "hint_avg": 0,
     "hint_min": 0,
-    "e2e_flaky_rate": -1
+    "e2e_flaky_rate": 0
   },
   "improved_points": [
-    "e2e_flaky_rate 下降 -1"
+    "本次無明顯提升（持平或微幅波動）"
   ],
   "points": [
     {
@@ -107,6 +107,12 @@
     },
     {
       "date": "2026-03-09",
+      "hint_avg": 10,
+      "hint_min": 10,
+      "e2e_flaky_rate": 0
+    },
+    {
+      "date": "2026-03-10",
       "hint_avg": 10,
       "hint_min": 10,
       "e2e_flaky_rate": 0
