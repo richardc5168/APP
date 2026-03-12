@@ -142,7 +142,9 @@ def hint_leak(ans: str, hints: list[str], strict: bool) -> bool:
         return False
     target = hints[-1]
     if strict:
-        return ans in target
+        # Use word-boundary matching to avoid false positives like "4" in "24"
+        esc = re.escape(ans)
+        return bool(re.search(r"(?<!\d)" + esc + r"(?!\d)", target))
     return bool(
         re.search(r"答案[：:是為]\s*" + re.escape(ans) + r"(\b|\s|。|$)", target)
         or re.search(r"=\s*" + re.escape(ans) + r"(\b|\s|。|$)", target)
