@@ -2113,5 +2113,1705 @@ window.FRACTION_WORD_G5_BANK = [
       "72% 換算成 7.2。",
       "250×72 忘記÷100。"
     ]
+  },
+  {
+    "id": "g5_national_exp_55",
+    "kind": "unit_convert",
+    "topic": "unit_convert",
+    "question": "5.2 公里 = 幾公尺？",
+    "answer": "5200",
+    "hints": [
+      "⭐ 觀念提醒\n1 公里 = 1000 公尺。",
+      "🔍 列式引導\n5.2 × 1000。",
+      "📐 一步步算：\n① 5.2 × 1000 = ？ ✅",
+      "👉 小數點右移三位。"
+    ],
+    "common_mistakes": [
+      "乘 100。",
+      "5200 寫成 520。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_56",
+    "kind": "unit_convert",
+    "topic": "unit_convert",
+    "question": "3600 公克 = 幾公斤？",
+    "answer": "3.6",
+    "hints": [
+      "⭐ 觀念提醒\n1 公斤 = 1000 公克。",
+      "🔍 列式引導\n3600 ÷ 1000。",
+      "📐 一步步算：\n① 3600 ÷ 1000 = ？ ✅",
+      "👉 小數點左移三位。"
+    ],
+    "common_mistakes": [
+      "除 100。",
+      "36 多了一位。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_57",
+    "kind": "unit_convert",
+    "topic": "unit_convert",
+    "question": "0.85 公尺 = 幾公分？",
+    "answer": "85",
+    "hints": [
+      "⭐ 觀念提醒\n1 公尺 = 100 公分。",
+      "🔍 列式引導\n0.85 × 100。",
+      "📐 一步步算：\n① 0.85 × 100 = ？ ✅",
+      "👉 小數點右移兩位。"
+    ],
+    "common_mistakes": [
+      "乘 1000。",
+      "8.5 小數點錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_58",
+    "kind": "unit_convert",
+    "topic": "unit_convert",
+    "question": "4.75 公噸 = 幾公斤？",
+    "answer": "4750",
+    "hints": [
+      "⭐ 觀念提醒\n1 公噸 = 1000 公斤。",
+      "🔍 列式引導\n4.75 × 1000。",
+      "📐 一步步算：\n① 4.75 × 1000 = ？ ✅",
+      "👉 小數點右移三位。"
+    ],
+    "common_mistakes": [
+      "乘 100。",
+      "475 少一位。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_59",
+    "kind": "unit_convert",
+    "topic": "unit_convert",
+    "question": "2500 毫升 = 幾公升？",
+    "answer": "2.5",
+    "hints": [
+      "⭐ 觀念提醒\n1 公升 = 1000 毫升。",
+      "🔍 列式引導\n2500 ÷ 1000。",
+      "📐 一步步算：\n① 2500 ÷ 1000 = ？ ✅",
+      "👉 小數點左移三位。"
+    ],
+    "common_mistakes": [
+      "除 100。",
+      "25 小數點沒對。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_60",
+    "kind": "unit_convert",
+    "topic": "unit_convert",
+    "question": "1.8 公頃 = 幾平方公尺？",
+    "answer": "18000",
+    "hints": [
+      "⭐ 觀念提醒\n1 公頃 = 10000 平方公尺。",
+      "🔍 列式引導\n1.8 × 10000。",
+      "📐 一步步算：\n① 1.8 × 10000 = ？ ✅",
+      "👉 小數點右移四位。"
+    ],
+    "common_mistakes": [
+      "乘 1000。",
+      "1800 少一個 0。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_61",
+    "kind": "average_division",
+    "topic": "average_division",
+    "question": "4 次跳遠成績分別是 3.2、3.5、3.8、3.5 公尺，平均跳多遠？",
+    "answer": "3.5",
+    "hints": [
+      "⭐ 觀念提醒\n平均 = 總和 ÷ 次數。",
+      "🔍 列式引導\n(3.2+3.5+3.8+3.5) ÷ 4。",
+      "📐 一步步算：\n① 加總 = 14\n② 14 ÷ 4 = ？ ✅",
+      "👉 先加再除。"
+    ],
+    "common_mistakes": [
+      "加總算錯。",
+      "除 3 不是 4。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_62",
+    "kind": "average_division",
+    "topic": "average_division",
+    "question": "6 天讀了 324 頁書，平均每天讀幾頁？",
+    "answer": "54",
+    "hints": [
+      "⭐ 觀念提醒\n平均 = 總量 ÷ 天數。",
+      "🔍 列式引導\n324 ÷ 6。",
+      "📐 一步步算：\n① 324 ÷ 6 = ？ ✅",
+      "👉 直式除法。"
+    ],
+    "common_mistakes": [
+      "天數記錯。",
+      "除法算錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_63",
+    "kind": "average_division",
+    "topic": "average_division",
+    "question": "5 個班級人數分別是 32、28、30、35、25 人，平均每班幾人？",
+    "answer": "30",
+    "hints": [
+      "⭐ 觀念提醒\n平均 = 總和 ÷ 班數。",
+      "🔍 列式引導\n(32+28+30+35+25) ÷ 5。",
+      "📐 一步步算：\n① 加總 = 150\n② 150 ÷ 5 = ？ ✅",
+      "👉 先加再除。"
+    ],
+    "common_mistakes": [
+      "加總算錯。",
+      "除 4。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_64",
+    "kind": "average_division",
+    "topic": "average_division",
+    "question": "8 場比賽共得 456 分，平均每場幾分？",
+    "answer": "57",
+    "hints": [
+      "⭐ 觀念提醒\n平均 = 總分 ÷ 場數。",
+      "🔍 列式引導\n456 ÷ 8。",
+      "📐 一步步算：\n① 456 ÷ 8 = ？ ✅",
+      "👉 直式除法。"
+    ],
+    "common_mistakes": [
+      "÷8 算錯。",
+      "場數記錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_65",
+    "kind": "average_division",
+    "topic": "average_division",
+    "question": "農場 3 天收穫 594 公斤蔬菜，平均每天幾公斤？",
+    "answer": "198",
+    "hints": [
+      "⭐ 觀念提醒\n平均每天 = 總量 ÷ 天數。",
+      "🔍 列式引導\n594 ÷ 3。",
+      "📐 一步步算：\n① 594 ÷ 3 = ？ ✅",
+      "👉 直式。"
+    ],
+    "common_mistakes": [
+      "÷3 算錯。",
+      "天數記錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_66",
+    "kind": "average_division",
+    "topic": "average_division",
+    "question": "7 天營業額分別是 4200、4900、4500、5100、4800、4700、4700 元，平均每天幾元？",
+    "answer": "4700",
+    "hints": [
+      "⭐ 觀念提醒\n全加 ÷ 7。",
+      "🔍 列式引導\n加總 ÷ 7。",
+      "📐 一步步算：\n① 加總 = 32900\n② 32900 ÷ 7 = ？ ✅",
+      "👉 先加總。"
+    ],
+    "common_mistakes": [
+      "加總漏某天。",
+      "除法小數錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_67",
+    "kind": "perimeter_fence",
+    "topic": "perimeter_fence",
+    "question": "長方形花圃長 22 公尺、寬 14 公尺，圍籬笆一圈需幾公尺？",
+    "answer": "72",
+    "hints": [
+      "⭐ 觀念提醒\n周長 = (長+寬)×2。",
+      "🔍 列式引導\n(22+14)×2。",
+      "📐 一步步算：\n① 22+14=36\n② 36×2=？ ✅",
+      "👉 別忘 ×2。"
+    ],
+    "common_mistakes": [
+      "忘 ×2。",
+      "22×14 算面積。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_68",
+    "kind": "perimeter_fence",
+    "topic": "perimeter_fence",
+    "question": "正方形菜園邊長 11 公尺，周長多少公尺？",
+    "answer": "44",
+    "hints": [
+      "⭐ 觀念提醒\n正方形周長 = 邊長×4。",
+      "🔍 列式引導\n11×4。",
+      "📐 一步步算：\n① 11×4=？ ✅",
+      "👉 4 條邊等長。"
+    ],
+    "common_mistakes": [
+      "×2 不是 ×4。",
+      "11×11 算面積。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_69",
+    "kind": "perimeter_fence",
+    "topic": "perimeter_fence",
+    "question": "長方形操場長 100 公尺、寬 60 公尺，跑 3 圈共幾公尺？",
+    "answer": "960",
+    "hints": [
+      "⭐ 觀念提醒\n先算一圈再 ×3。",
+      "🔍 列式引導\n(100+60)×2×3。",
+      "📐 一步步算：\n① 一圈=(100+60)×2=320\n② 320×3=？ ✅",
+      "👉 周長×圈數。"
+    ],
+    "common_mistakes": [
+      "忘乘 3。",
+      "周長算錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_70",
+    "kind": "perimeter_fence",
+    "topic": "perimeter_fence",
+    "question": "正方形水池邊長 8 公尺，一邊靠牆不圍，籬笆需幾公尺？",
+    "answer": "24",
+    "hints": [
+      "⭐ 觀念提醒\n一邊靠牆只圍 3 邊。",
+      "🔍 列式引導\n8×3。",
+      "📐 一步步算：\n① 8×3=？ ✅",
+      "👉 4−1=3 邊。"
+    ],
+    "common_mistakes": [
+      "算 4 邊。",
+      "8×2。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_71",
+    "kind": "perimeter_fence",
+    "topic": "perimeter_fence",
+    "question": "長方形草地長 30 公尺、寬 18 公尺，鐵絲圍 2 圈需幾公尺？",
+    "answer": "192",
+    "hints": [
+      "⭐ 觀念提醒\n周長×2。",
+      "🔍 列式引導\n(30+18)×2×2。",
+      "📐 一步步算：\n① 一圈=96\n② 96×2=？ ✅",
+      "👉 先算一圈。"
+    ],
+    "common_mistakes": [
+      "忘乘圈數。",
+      "加法算錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_72",
+    "kind": "perimeter_fence",
+    "topic": "perimeter_fence",
+    "question": "長方形花壇長 25 公尺、寬 15 公尺，一條長邊靠牆，圍籬笆需幾公尺？",
+    "answer": "55",
+    "hints": [
+      "⭐ 觀念提醒\n靠牆的邊不圍。",
+      "🔍 列式引導\n25+15+15。",
+      "📐 一步步算：\n① 剩 3 邊：1長+2寬\n② 25+15+15=？ ✅",
+      "👉 少圍一條長邊。"
+    ],
+    "common_mistakes": [
+      "少圍短邊而非長邊。",
+      "全部都算。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_73",
+    "kind": "perimeter_fence",
+    "topic": "perimeter_fence",
+    "question": "正方形花園邊長 13 公尺，周長多少？",
+    "answer": "52",
+    "hints": [
+      "⭐ 觀念提醒\n邊長×4。",
+      "🔍 列式引導\n13×4。",
+      "📐 一步步算：\n① 13×4=？ ✅",
+      "👉 四邊相等。"
+    ],
+    "common_mistakes": [
+      "×2。",
+      "13×13。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_74",
+    "kind": "d_div_int",
+    "topic": "d_div_int",
+    "question": "計算 18.4 ÷ 8 = ？",
+    "answer": "2.3",
+    "hints": [
+      "⭐ 觀念提醒\n小數 ÷ 整數。",
+      "🔍 列式引導\n直式除法。",
+      "📐 一步步算：\n① 18÷8=2...2\n② 24÷8=3\n③ 商=？ ✅",
+      "👉 小數點對齊。"
+    ],
+    "common_mistakes": [
+      "小數點錯位。",
+      "餘數處理錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_75",
+    "kind": "d_div_int",
+    "topic": "d_div_int",
+    "question": "計算 25.5 ÷ 5 = ？",
+    "answer": "5.1",
+    "hints": [
+      "⭐ 觀念提醒\n小數 ÷ 整數。",
+      "🔍 列式引導\n直式除法。",
+      "📐 一步步算：\n① 25÷5=5\n② 5÷5=1\n③ 商=？ ✅",
+      "👉 小數點位置。"
+    ],
+    "common_mistakes": [
+      "小數點忘記。",
+      "商位數錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_76",
+    "kind": "d_div_int",
+    "topic": "d_div_int",
+    "question": "計算 36.9 ÷ 3 = ？",
+    "answer": "12.3",
+    "hints": [
+      "⭐ 觀念提醒\n小數 ÷ 整數。",
+      "🔍 列式引導\n直式除法。",
+      "📐 一步步算：\n① 36÷3=12\n② 9÷3=3\n③ 商=？ ✅",
+      "👉 逐位商。"
+    ],
+    "common_mistakes": [
+      "36÷3 算錯。",
+      "小數點忘記。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_77",
+    "kind": "d_div_int",
+    "topic": "d_div_int",
+    "question": "計算 7.56 ÷ 6 = ？",
+    "answer": "1.26",
+    "hints": [
+      "⭐ 觀念提醒\n兩位小數除以整數。",
+      "🔍 列式引導\n直式除法。",
+      "📐 一步步算：\n① 7÷6=1...1\n② 15÷6=2...3\n③ 36÷6=6\n商=？ ✅",
+      "👉 逐位算。"
+    ],
+    "common_mistakes": [
+      "小數位數錯。",
+      "進位錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_78",
+    "kind": "d_div_int",
+    "topic": "d_div_int",
+    "question": "計算 4.48 ÷ 7 = ？",
+    "answer": "0.64",
+    "hints": [
+      "⭐ 觀念提醒\n商小於 1。",
+      "🔍 列式引導\n直式除法。",
+      "📐 一步步算：\n① 4÷7=0...4\n② 44÷7=6...2\n③ 28÷7=4\n商=？ ✅",
+      "👉 個位商 0。"
+    ],
+    "common_mistakes": [
+      "忘商 0。",
+      "44÷7 試商錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_79",
+    "kind": "d_div_int",
+    "topic": "d_div_int",
+    "question": "計算 42.4 ÷ 8 = ？",
+    "answer": "5.3",
+    "hints": [
+      "⭐ 觀念提醒\n小數 ÷ 整數。",
+      "🔍 列式引導\n直式除法。",
+      "📐 一步步算：\n① 42÷8=5...2\n② 24÷8=3\n商=？ ✅",
+      "👉 逐位商。"
+    ],
+    "common_mistakes": [
+      "42÷8 試商錯。",
+      "小數點漏。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_80",
+    "kind": "d_div_int",
+    "topic": "d_div_int",
+    "question": "計算 54.6 ÷ 6 = ？",
+    "answer": "9.1",
+    "hints": [
+      "⭐ 觀念提醒\n小數 ÷ 整數。",
+      "🔍 列式引導\n直式除法。",
+      "📐 一步步算：\n① 54÷6=9\n② 6÷6=1\n商=？ ✅",
+      "👉 逐位商。"
+    ],
+    "common_mistakes": [
+      "54÷6 算錯。",
+      "小數點忘。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_81",
+    "kind": "remain_then_fraction",
+    "topic": "remain_then_fraction",
+    "question": "有 90 顆糖，先吃了 1/3，剩下的 2/5 分給弟弟，弟弟得幾顆？",
+    "answer": "24",
+    "hints": [
+      "⭐ 觀念提醒\n先算剩下再取分數。",
+      "🔍 列式引導\n剩 = 90×2/3 = 60；弟弟 = 60×2/5。",
+      "📐 一步步算：\n① 90×2/3=60\n② 60×2/5=？ ✅",
+      "👉 兩步驟。"
+    ],
+    "common_mistakes": [
+      "直接 90×2/5。",
+      "沒先算剩下。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_82",
+    "kind": "remain_then_fraction",
+    "topic": "remain_then_fraction",
+    "question": "水缸有 80 公升水，用掉 3/8，剩下的 1/2 拿來澆花，澆花用了幾公升？",
+    "answer": "25",
+    "hints": [
+      "⭐ 觀念提醒\n先算剩下再取 1/2。",
+      "🔍 列式引導\n剩 = 80×5/8 = 50；澆花 = 50×1/2。",
+      "📐 一步步算：\n① 80×5/8=50\n② 50×1/2=？ ✅",
+      "👉 先減再取。"
+    ],
+    "common_mistakes": [
+      "80×3/8×1/2。",
+      "分數順序搞錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_83",
+    "kind": "remain_then_fraction",
+    "topic": "remain_then_fraction",
+    "question": "有 120 本書，捐出 1/4，剩下的 2/3 放教室，教室放了幾本？",
+    "answer": "60",
+    "hints": [
+      "⭐ 觀念提醒\n剩下 = 3/4。",
+      "🔍 列式引導\n120×3/4×2/3。",
+      "📐 一步步算：\n① 120×3/4=90\n② 90×2/3=？ ✅",
+      "👉 連乘兩步。"
+    ],
+    "common_mistakes": [
+      "120×1/4×2/3。",
+      "分數順序搞反。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_84",
+    "kind": "remain_then_fraction",
+    "topic": "remain_then_fraction",
+    "question": "一條繩子 60 公尺，用掉 2/5，剩下的 1/3 染成紅色，紅色繩子幾公尺？",
+    "answer": "12",
+    "hints": [
+      "⭐ 觀念提醒\n先算剩下。",
+      "🔍 列式引導\n剩 = 60×3/5 = 36；紅 = 36×1/3。",
+      "📐 一步步算：\n① 60×3/5=36\n② 36×1/3=？ ✅",
+      "👉 兩步驟。"
+    ],
+    "common_mistakes": [
+      "60×2/5×1/3。",
+      "沒有先扣掉用掉的。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_85",
+    "kind": "remain_then_fraction",
+    "topic": "remain_then_fraction",
+    "question": "果園有 150 棵果樹，移走 1/5，剩下的 3/4 結了果，結果的有幾棵？",
+    "answer": "90",
+    "hints": [
+      "⭐ 觀念提醒\n先減再乘。",
+      "🔍 列式引導\n150×4/5×3/4。",
+      "📐 一步步算：\n① 150×4/5=120\n② 120×3/4=？ ✅",
+      "👉 連乘。"
+    ],
+    "common_mistakes": [
+      "150×1/5×3/4。",
+      "分數概念搞混。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_86",
+    "kind": "remain_then_fraction",
+    "topic": "remain_then_fraction",
+    "question": "有 48 個蛋糕，送出 1/6，剩下的 5/8 賣出，賣了幾個？",
+    "answer": "25",
+    "hints": [
+      "⭐ 觀念提醒\n先求剩下再算賣出。",
+      "🔍 列式引導\n48×5/6×5/8。",
+      "📐 一步步算：\n① 48×5/6=40\n② 40×5/8=？ ✅",
+      "👉 兩次分數乘法。"
+    ],
+    "common_mistakes": [
+      "48×1/6×5/8。",
+      "順序弄反。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_87",
+    "kind": "surface_area_rect_prism",
+    "topic": "surface_area_rect_prism",
+    "question": "長方體長 8 公分、寬 5 公分、高 3 公分，表面積多少平方公分？",
+    "answer": "158",
+    "hints": [
+      "⭐ 觀念提醒\n2(長×寬+長×高+寬×高)。",
+      "🔍 列式引導\n2(40+24+15)。",
+      "📐 一步步算：\n① 40+24+15=79\n② 79×2=？ ✅",
+      "👉 三組面。"
+    ],
+    "common_mistakes": [
+      "忘 ×2。",
+      "漏一組。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_88",
+    "kind": "surface_area_rect_prism",
+    "topic": "surface_area_rect_prism",
+    "question": "正方體邊長 6 公分，表面積多少平方公分？",
+    "answer": "216",
+    "hints": [
+      "⭐ 觀念提醒\n6×邊長²。",
+      "🔍 列式引導\n6×36。",
+      "📐 一步步算：\n① 6×6=36\n② 36×6=？ ✅",
+      "👉 6 個面。"
+    ],
+    "common_mistakes": [
+      "4×36。",
+      "36×6 算錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_89",
+    "kind": "surface_area_rect_prism",
+    "topic": "surface_area_rect_prism",
+    "question": "長方體長 14 公分、寬 10 公分、高 7 公分，表面積多少？",
+    "answer": "616",
+    "hints": [
+      "⭐ 觀念提醒\n表面積公式。",
+      "🔍 列式引導\n2(140+98+70)。",
+      "📐 一步步算：\n① 140+98+70=308\n② 308×2=？ ✅",
+      "👉 三組面×2。"
+    ],
+    "common_mistakes": [
+      "乘法算錯。",
+      "忘 ×2。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_90",
+    "kind": "surface_area_rect_prism",
+    "topic": "surface_area_rect_prism",
+    "question": "正方體邊長 11 公分，表面積多少平方公分？",
+    "answer": "726",
+    "hints": [
+      "⭐ 觀念提醒\n6×邊長²。",
+      "🔍 列式引導\n6×121。",
+      "📐 一步步算：\n① 11×11=121\n② 121×6=？ ✅",
+      "👉 6 面。"
+    ],
+    "common_mistakes": [
+      "×4 不是 ×6。",
+      "121×6 算錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_91",
+    "kind": "surface_area_rect_prism",
+    "topic": "surface_area_rect_prism",
+    "question": "長方體長 18 公分、寬 9 公分、高 6 公分，表面積多少？",
+    "answer": "648",
+    "hints": [
+      "⭐ 觀念提醒\n2(長×寬+長×高+寬×高)。",
+      "🔍 列式引導\n2(162+108+54)。",
+      "📐 一步步算：\n① 162+108+54=324\n② 324×2=？ ✅",
+      "👉 三組面。"
+    ],
+    "common_mistakes": [
+      "加總算錯。",
+      "忘 ×2。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_92",
+    "kind": "surface_area_rect_prism",
+    "topic": "surface_area_rect_prism",
+    "question": "長方體長 16 公分、寬 12 公分、高 4 公分，表面積多少？",
+    "answer": "608",
+    "hints": [
+      "⭐ 觀念提醒\n表面積。",
+      "🔍 列式引導\n2(192+64+48)。",
+      "📐 一步步算：\n① 192+64+48=304\n② 304×2=？ ✅",
+      "👉 三組面×2。"
+    ],
+    "common_mistakes": [
+      "某組面算錯。",
+      "忘 ×2。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_93",
+    "kind": "percent_of",
+    "topic": "percent_of",
+    "question": "商品原價 600 元，打 75 折，售價多少元？",
+    "answer": "450",
+    "hints": [
+      "⭐ 觀念提醒\n75 折 = ×0.75。",
+      "🔍 列式引導\n600×0.75。",
+      "📐 一步步算：\n① 600×0.75=？ ✅",
+      "👉 百分比化小數。"
+    ],
+    "common_mistakes": [
+      "×0.25 算折扣。",
+      "小數位錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_94",
+    "kind": "percent_of",
+    "topic": "percent_of",
+    "question": "全班 40 人，出席率 85%，出席幾人？",
+    "answer": "34",
+    "hints": [
+      "⭐ 觀念提醒\n出席 = 全班×出席率。",
+      "🔍 列式引導\n40×0.85。",
+      "📐 一步步算：\n① 40×0.85=？ ✅",
+      "👉 百分比化小數。"
+    ],
+    "common_mistakes": [
+      "40×85。",
+      "小數點錯位。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_95",
+    "kind": "percent_of",
+    "topic": "percent_of",
+    "question": "果園收 500 公斤水果，20% 是芒果，芒果幾公斤？",
+    "answer": "100",
+    "hints": [
+      "⭐ 觀念提醒\n20%=0.2。",
+      "🔍 列式引導\n500×0.2。",
+      "📐 一步步算：\n① 500×0.2=？ ✅",
+      "👉 百分比化小數。"
+    ],
+    "common_mistakes": [
+      "500×20。",
+      "小數位錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_96",
+    "kind": "percent_of",
+    "topic": "percent_of",
+    "question": "書店有 1200 本書，賣掉 35%，賣了幾本？",
+    "answer": "420",
+    "hints": [
+      "⭐ 觀念提醒\n35%=0.35。",
+      "🔍 列式引導\n1200×0.35。",
+      "📐 一步步算：\n① 1200×0.35=？ ✅",
+      "👉 百分比→小數。"
+    ],
+    "common_mistakes": [
+      "1200×35。",
+      "小數位搞錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_97",
+    "kind": "percent_of",
+    "topic": "percent_of",
+    "question": "一件外套原價 2000 元，打 6 折，要付多少元？",
+    "answer": "1200",
+    "hints": [
+      "⭐ 觀念提醒\n6 折=60%=0.6。",
+      "🔍 列式引導\n2000×0.6。",
+      "📐 一步步算：\n① 2000×0.6=？ ✅",
+      "👉 折 → 百分比。"
+    ],
+    "common_mistakes": [
+      "×0.4 算折扣。",
+      "2000×6。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_98",
+    "kind": "percent_of",
+    "topic": "percent_of",
+    "question": "學校 800 位學生，45% 參加社團，參加幾人？",
+    "answer": "360",
+    "hints": [
+      "⭐ 觀念提醒\n45%=0.45。",
+      "🔍 列式引導\n800×0.45。",
+      "📐 一步步算：\n① 800×0.45=？ ✅",
+      "👉 百分比化小數。"
+    ],
+    "common_mistakes": [
+      "800×45。",
+      "小數錯位。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_99",
+    "kind": "large_numbers_comparison",
+    "topic": "large_numbers_comparison",
+    "question": "比較 56789 和 56879 的大小，用 > 或 < 作答。",
+    "answer": "<",
+    "hints": [
+      "⭐ 觀念提醒\n逐位比。",
+      "🔍 列式引導\n萬位同、千位同、百位 7 vs 8。",
+      "📐 一步步算：\n① 百位 7<8\n→ 56789 ？ 56879 ✅",
+      "👉 從最高位比。"
+    ],
+    "common_mistakes": [
+      "從個位比。",
+      "符號寫反。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_100",
+    "kind": "large_numbers_comparison",
+    "topic": "large_numbers_comparison",
+    "question": "3.456 的百分位數字是多少？",
+    "answer": "5",
+    "hints": [
+      "⭐ 觀念提醒\n百分位 = 小數點右邊第二位。",
+      "🔍 列式引導\n3.456 → 十分位4、百分位？、千分位6。",
+      "📐 一步步算：\n① 百分位=？ ✅",
+      "👉 小數點後第二位。"
+    ],
+    "common_mistakes": [
+      "看成十分位。",
+      "看成千分位。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_101",
+    "kind": "large_numbers_comparison",
+    "topic": "large_numbers_comparison",
+    "question": "把 84350 四捨五入到千位，答案是多少？",
+    "answer": "84000",
+    "hints": [
+      "⭐ 觀念提醒\n看百位決定進退。",
+      "🔍 列式引導\n百位 3<5 → 捨去。",
+      "📐 一步步算：\n① 千位 4，百位 3<5\n② 84350 → ？ ✅",
+      "👉 百位<5 捨。"
+    ],
+    "common_mistakes": [
+      "看十位而非百位。",
+      "進位而非捨。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_102",
+    "kind": "large_numbers_comparison",
+    "topic": "large_numbers_comparison",
+    "question": "比較 7.083 和 7.038，用 > 或 < 作答。",
+    "answer": ">",
+    "hints": [
+      "⭐ 觀念提醒\n小數逐位比。",
+      "🔍 列式引導\n個位同、十分位同、百分位 8 vs 3。",
+      "📐 一步步算：\n① 百分位 8>3\n→ 7.083 ？ 7.038 ✅",
+      "👉 百分位不同。"
+    ],
+    "common_mistakes": [
+      "只比最後位。",
+      "符號寫反。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_103",
+    "kind": "large_numbers_comparison",
+    "topic": "large_numbers_comparison",
+    "question": "93256、93265、93526 三個數，最小的是哪個？",
+    "answer": "93256",
+    "hints": [
+      "⭐ 觀念提醒\n逐位比。",
+      "🔍 列式引導\n萬千位相同 93，百位 2,2,5。",
+      "📐 一步步算：\n① 93526 最大\n② 93256 vs 93265 → 十位 5<6\n③ 最小=？ ✅",
+      "👉 先看百位再看十位。"
+    ],
+    "common_mistakes": [
+      "看錯位數。",
+      "比錯方向。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_104",
+    "kind": "large_numbers_comparison",
+    "topic": "large_numbers_comparison",
+    "question": "0.507、0.57、0.075 三數中最大的是？",
+    "answer": "0.57",
+    "hints": [
+      "⭐ 觀念提醒\n補 0 比較。",
+      "🔍 列式引導\n0.507, 0.570, 0.075 → 十分位 5,5,0。",
+      "📐 一步步算：\n① 0.075 最小\n② 0.507 vs 0.570 → 百分位 0<7\n③ 最大=？ ✅",
+      "👉 補 0 逐位比。"
+    ],
+    "common_mistakes": [
+      "沒補 0。",
+      "0.57 當成 0.057。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_105",
+    "kind": "large_numbers_comparison",
+    "topic": "large_numbers_comparison",
+    "question": "把 45678 四捨五入到萬位，答案是多少？",
+    "answer": "50000",
+    "hints": [
+      "⭐ 觀念提醒\n看千位。",
+      "🔍 列式引導\n千位 5≥5 → 進位。",
+      "📐 一步步算：\n① 萬位 4，千位 5≥5\n② 45678 → ？ ✅",
+      "👉 千位≥5 進位。"
+    ],
+    "common_mistakes": [
+      "看百位。",
+      "4 保持不進位。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_106",
+    "kind": "reverse_fraction",
+    "topic": "reverse_fraction",
+    "question": "一個數的 3/5 是 42，這個數是多少？",
+    "answer": "70",
+    "hints": [
+      "⭐ 觀念提醒\n反推：已知部分求全部。",
+      "🔍 列式引導\n42 ÷ 3/5 = 42 × 5/3。",
+      "📐 一步步算：\n① 42 × 5/3\n② 42÷3=14\n③ 14×5=？ ✅",
+      "👉 除以分數 = 乘以倒數。"
+    ],
+    "common_mistakes": [
+      "42×3/5。",
+      "分子分母弄反。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_107",
+    "kind": "reverse_fraction",
+    "topic": "reverse_fraction",
+    "question": "一條繩子用掉 2/7 後還剩 30 公尺，原來幾公尺？",
+    "answer": "42",
+    "hints": [
+      "⭐ 觀念提醒\n剩下 = 5/7。",
+      "🔍 列式引導\n30 ÷ 5/7 = 30 × 7/5。",
+      "📐 一步步算：\n① 30÷5=6\n② 6×7=？ ✅",
+      "👉 反推全部。"
+    ],
+    "common_mistakes": [
+      "30÷2/7。",
+      "沒先算剩下佔幾分之幾。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_108",
+    "kind": "reverse_fraction",
+    "topic": "reverse_fraction",
+    "question": "一包米用掉 1/4 後還有 36 公斤，原來幾公斤？",
+    "answer": "48",
+    "hints": [
+      "⭐ 觀念提醒\n剩 3/4。",
+      "🔍 列式引導\n36 ÷ 3/4 = 36 × 4/3。",
+      "📐 一步步算：\n① 36÷3=12\n② 12×4=？ ✅",
+      "👉 反推。"
+    ],
+    "common_mistakes": [
+      "36÷1/4。",
+      "分數搞混。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_109",
+    "kind": "reverse_fraction",
+    "topic": "reverse_fraction",
+    "question": "一個數的 4/9 是 32，這個數是多少？",
+    "answer": "72",
+    "hints": [
+      "⭐ 觀念提醒\n反推全部。",
+      "🔍 列式引導\n32 ÷ 4/9 = 32 × 9/4。",
+      "📐 一步步算：\n① 32÷4=8\n② 8×9=？ ✅",
+      "👉 除以分數。"
+    ],
+    "common_mistakes": [
+      "32×4/9。",
+      "倒數弄反。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_110",
+    "kind": "reverse_fraction",
+    "topic": "reverse_fraction",
+    "question": "賣掉 3/8 後還剩 50 個蘋果，原來有幾個？",
+    "answer": "80",
+    "hints": [
+      "⭐ 觀念提醒\n剩 5/8。",
+      "🔍 列式引導\n50 ÷ 5/8 = 50 × 8/5。",
+      "📐 一步步算：\n① 50÷5=10\n② 10×8=？ ✅",
+      "👉 反推。"
+    ],
+    "common_mistakes": [
+      "50÷3/8。",
+      "分數搞反。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_111",
+    "kind": "area_difference",
+    "topic": "area_difference",
+    "question": "長方形草地長 55 公尺、寬 30 公尺，裡面有正方形花壇邊長 12 公尺，剩餘面積多少？",
+    "answer": "1506",
+    "hints": [
+      "⭐ 觀念提醒\n大−小。",
+      "🔍 列式引導\n55×30−12×12。",
+      "📐 一步步算：\n① 1650−144=？ ✅",
+      "👉 面積相減。"
+    ],
+    "common_mistakes": [
+      "忘減花壇。",
+      "12×12 算錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_112",
+    "kind": "area_difference",
+    "topic": "area_difference",
+    "question": "正方形庭院邊長 20 公尺，其中長方形水池長 8 公尺寬 5 公尺，院子剩餘面積多少？",
+    "answer": "360",
+    "hints": [
+      "⭐ 觀念提醒\n正方形−長方形。",
+      "🔍 列式引導\n20×20−8×5。",
+      "📐 一步步算：\n① 400−40=？ ✅",
+      "👉 大扣小。"
+    ],
+    "common_mistakes": [
+      "忘減水池。",
+      "8×5 算成 8+5。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_113",
+    "kind": "area_difference",
+    "topic": "area_difference",
+    "question": "長方形操場長 90 公尺、寬 50 公尺，一塊正方形沙坑邊長 7 公尺，操場扣沙坑的面積？",
+    "answer": "4451",
+    "hints": [
+      "⭐ 觀念提醒\n大−小。",
+      "🔍 列式引導\n90×50−7×7。",
+      "📐 一步步算：\n① 4500−49=？ ✅",
+      "👉 面積相減。"
+    ],
+    "common_mistakes": [
+      "忘減。",
+      "7×7 算錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_114",
+    "kind": "area_difference",
+    "topic": "area_difference",
+    "question": "長方形教室長 15 公尺、寬 10 公尺，放一塊正方形地毯邊長 6 公尺，地毯外面積多少？",
+    "answer": "114",
+    "hints": [
+      "⭐ 觀念提醒\n面積差。",
+      "🔍 列式引導\n15×10−6×6。",
+      "📐 一步步算：\n① 150−36=？ ✅",
+      "👉 大面積−小面積。"
+    ],
+    "common_mistakes": [
+      "忘減。",
+      "6×6 寫成 6+6。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_115",
+    "kind": "area_difference",
+    "topic": "area_difference",
+    "question": "一塊長方形農地長 70 公尺、寬 40 公尺，中間蓋了正方形倉庫邊長 9 公尺，可種植面積多少？",
+    "answer": "2719",
+    "hints": [
+      "⭐ 觀念提醒\n大−小。",
+      "🔍 列式引導\n70×40−9×9。",
+      "📐 一步步算：\n① 2800−81=？ ✅",
+      "👉 面積差。"
+    ],
+    "common_mistakes": [
+      "忘減倉庫。",
+      "9×9 算錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_116",
+    "kind": "fraction_of_fraction",
+    "topic": "fraction_of_fraction",
+    "question": "圖書館有 360 本書，2/3 是小說，小說中 1/4 是推理小說，推理小說幾本？",
+    "answer": "60",
+    "hints": [
+      "⭐ 觀念提醒\n連乘。",
+      "🔍 列式引導\n360×2/3×1/4。",
+      "📐 一步步算：\n① 360×2/3=240\n② 240×1/4=？ ✅",
+      "👉 兩次分數乘法。"
+    ],
+    "common_mistakes": [
+      "兩步混成加法。",
+      "240÷4 算錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_117",
+    "kind": "fraction_of_fraction",
+    "topic": "fraction_of_fraction",
+    "question": "果園有 180 棵樹，5/9 是橘子樹，橘子樹的 2/5 正在結果，結果的有幾棵？",
+    "answer": "40",
+    "hints": [
+      "⭐ 觀念提醒\n分數連乘。",
+      "🔍 列式引導\n180×5/9×2/5。",
+      "📐 一步步算：\n① 180×5/9=100\n② 100×2/5=？ ✅",
+      "👉 連乘。"
+    ],
+    "common_mistakes": [
+      "分子分母搞反。",
+      "÷9 算錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_118",
+    "kind": "fraction_of_fraction",
+    "topic": "fraction_of_fraction",
+    "question": "商店有 240 件衣服，其中 3/8 是上衣，上衣中 2/3 是白色，白色上衣幾件？",
+    "answer": "60",
+    "hints": [
+      "⭐ 觀念提醒\n連乘兩個分數。",
+      "🔍 列式引導\n240×3/8×2/3。",
+      "📐 一步步算：\n① 240×3/8=90\n② 90×2/3=？ ✅",
+      "👉 分數乘法。"
+    ],
+    "common_mistakes": [
+      "240÷8 算錯。",
+      "乘法順序搞混。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_119",
+    "kind": "fraction_of_fraction",
+    "topic": "fraction_of_fraction",
+    "question": "班上 42 人，4/7 是男生，男生中 1/3 戴眼鏡，戴眼鏡男生幾人？",
+    "answer": "8",
+    "hints": [
+      "⭐ 觀念提醒\n連乘。",
+      "🔍 列式引導\n42×4/7×1/3。",
+      "📐 一步步算：\n① 42×4/7=24\n② 24×1/3=？ ✅",
+      "👉 兩步乘法。"
+    ],
+    "common_mistakes": [
+      "42÷7 算錯。",
+      "乘 ÷ 混淆。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_120",
+    "kind": "fraction_of_fraction",
+    "topic": "fraction_of_fraction",
+    "question": "工廠有 280 個零件，3/4 合格，合格品中 2/7 是 A 級，A 級幾個？",
+    "answer": "60",
+    "hints": [
+      "⭐ 觀念提醒\n連乘。",
+      "🔍 列式引導\n280×3/4×2/7。",
+      "📐 一步步算：\n① 280×3/4=210\n② 210×2/7=？ ✅",
+      "👉 分數乘法。"
+    ],
+    "common_mistakes": [
+      "280÷4 算錯。",
+      "兩步順序混亂。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_121",
+    "kind": "division_application",
+    "topic": "division_application",
+    "question": "工廠生產 864 個杯子，每箱裝 36 個，需幾箱？",
+    "answer": "24",
+    "hints": [
+      "⭐ 觀念提醒\n求箱數=除法。",
+      "🔍 列式引導\n864÷36。",
+      "📐 一步步算：\n① 864÷36=？\n驗算 ✅",
+      "👉 直式除法。"
+    ],
+    "common_mistakes": [
+      "除數被除數弄反。",
+      "試商錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_122",
+    "kind": "division_application",
+    "topic": "division_application",
+    "question": "農場收了 720 公斤蘿蔔，每袋裝 16 公斤，可裝幾袋？",
+    "answer": "45",
+    "hints": [
+      "⭐ 觀念提醒\n除法。",
+      "🔍 列式引導\n720÷16。",
+      "📐 一步步算：\n① 720÷16=？ ✅",
+      "👉 直式。"
+    ],
+    "common_mistakes": [
+      "720÷16 試商錯。",
+      "位數算錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_123",
+    "kind": "division_application",
+    "topic": "division_application",
+    "question": "學校訂了 1050 本筆記本，平均分給 25 班，每班幾本？",
+    "answer": "42",
+    "hints": [
+      "⭐ 觀念提醒\n平均分配。",
+      "🔍 列式引導\n1050÷25。",
+      "📐 一步步算：\n① 1050÷25=？ ✅",
+      "👉 直式除法。"
+    ],
+    "common_mistakes": [
+      "÷25 算錯。",
+      "位數錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_124",
+    "kind": "division_application",
+    "topic": "division_application",
+    "question": "媽媽帶了 2400 元，每件衣服 80 元，最多買幾件？",
+    "answer": "30",
+    "hints": [
+      "⭐ 觀念提醒\n最多=看商。",
+      "🔍 列式引導\n2400÷80。",
+      "📐 一步步算：\n① 2400÷80=？ ✅",
+      "👉 整除。"
+    ],
+    "common_mistakes": [
+      "÷80 算錯。",
+      "除數被除數反。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_125",
+    "kind": "division_application",
+    "topic": "division_application",
+    "question": "果農採了 1350 個橘子，每箱裝 45 個，需幾箱？",
+    "answer": "30",
+    "hints": [
+      "⭐ 觀念提醒\n除法。",
+      "🔍 列式引導\n1350÷45。",
+      "📐 一步步算：\n① 1350÷45=？ ✅",
+      "👉 直式。"
+    ],
+    "common_mistakes": [
+      "÷45 試商錯。",
+      "位數算錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_126",
+    "kind": "decimal_multiplication",
+    "topic": "decimal_multiplication",
+    "question": "每瓶飲料 4.25 元，買 8 瓶要付幾元？",
+    "answer": "34",
+    "hints": [
+      "⭐ 觀念提醒\n小數×整數。",
+      "🔍 列式引導\n4.25×8。",
+      "📐 一步步算：\n① 425×8=3400\n② 小數點左移兩位=？ ✅",
+      "👉 先整數算再移小數點。"
+    ],
+    "common_mistakes": [
+      "小數位錯。",
+      "425×8 算錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_127",
+    "kind": "decimal_multiplication",
+    "topic": "decimal_multiplication",
+    "question": "每條繩子長 2.35 公尺，買 6 條共幾公尺？",
+    "answer": "14.1",
+    "hints": [
+      "⭐ 觀念提醒\n小數乘法。",
+      "🔍 列式引導\n2.35×6。",
+      "📐 一步步算：\n① 235×6=1410\n② 小數左移兩位=？ ✅",
+      "👉 先整數乘再補小數點。"
+    ],
+    "common_mistakes": [
+      "235×6 進位錯。",
+      "小數位數搞錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_128",
+    "kind": "decimal_multiplication",
+    "topic": "decimal_multiplication",
+    "question": "跑一圈 0.75 公里，跑 12 圈共幾公里？",
+    "answer": "9",
+    "hints": [
+      "⭐ 觀念提醒\n小數×整數。",
+      "🔍 列式引導\n0.75×12。",
+      "📐 一步步算：\n① 75×12=900\n② 小數左移兩位=？ ✅",
+      "👉 尾數 00 可省。"
+    ],
+    "common_mistakes": [
+      "75×12 算錯。",
+      "小數位錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_129",
+    "kind": "decimal_multiplication",
+    "topic": "decimal_multiplication",
+    "question": "磁磚長 1.5 公尺，排 14 塊的總長度是多少公尺？",
+    "answer": "21",
+    "hints": [
+      "⭐ 觀念提醒\n小數乘整數。",
+      "🔍 列式引導\n1.5×14。",
+      "📐 一步步算：\n① 15×14=210\n② 小數左移一位=？ ✅",
+      "👉 先算整數再補點。"
+    ],
+    "common_mistakes": [
+      "15×14 進位錯。",
+      "小數位數錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_130",
+    "kind": "decimal_multiplication",
+    "topic": "decimal_multiplication",
+    "question": "每包糖果重 0.625 公斤，買 8 包共幾公斤？",
+    "answer": "5",
+    "hints": [
+      "⭐ 觀念提醒\n三位小數乘法。",
+      "🔍 列式引導\n0.625×8。",
+      "📐 一步步算：\n① 625×8=5000\n② 小數左移三位=？ ✅",
+      "👉 三位小數。"
+    ],
+    "common_mistakes": [
+      "小數位數錯。",
+      "625×8 算錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_131",
+    "kind": "volume_calculation",
+    "topic": "volume_calculation",
+    "question": "長方體魚缸長 45 公分、寬 30 公分、高 25 公分，容積多少立方公分？",
+    "answer": "33750",
+    "hints": [
+      "⭐ 觀念提醒\n長×寬×高。",
+      "🔍 列式引導\n45×30×25。",
+      "📐 一步步算：\n① 45×30=1350\n② 1350×25=？ ✅",
+      "👉 三數連乘。"
+    ],
+    "common_mistakes": [
+      "少乘一邊。",
+      "1350×25 進位錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_132",
+    "kind": "volume_calculation",
+    "topic": "volume_calculation",
+    "question": "正方體積木邊長 9 公分，體積多少立方公分？",
+    "answer": "729",
+    "hints": [
+      "⭐ 觀念提醒\n邊長³。",
+      "🔍 列式引導\n9×9×9。",
+      "📐 一步步算：\n① 9×9=81\n② 81×9=？ ✅",
+      "👉 三次方。"
+    ],
+    "common_mistakes": [
+      "只乘兩次。",
+      "81×9 算錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_133",
+    "kind": "volume_calculation",
+    "topic": "volume_calculation",
+    "question": "長方體收納箱長 40 公分、寬 25 公分、高 20 公分，體積多少？",
+    "answer": "20000",
+    "hints": [
+      "⭐ 觀念提醒\n長×寬×高。",
+      "🔍 列式引導\n40×25×20。",
+      "📐 一步步算：\n① 40×25=1000\n② 1000×20=？ ✅",
+      "👉 連乘。"
+    ],
+    "common_mistakes": [
+      "少乘一邊。",
+      "連乘錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_134",
+    "kind": "volume_calculation",
+    "topic": "volume_calculation",
+    "question": "正方體禮物盒邊長 11 公分，體積多少立方公分？",
+    "answer": "1331",
+    "hints": [
+      "⭐ 觀念提醒\n邊長³。",
+      "🔍 列式引導\n11×11×11。",
+      "📐 一步步算：\n① 11×11=121\n② 121×11=？ ✅",
+      "👉 三次方。"
+    ],
+    "common_mistakes": [
+      "121×11 算錯。",
+      "只乘兩次。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_135",
+    "kind": "volume_calculation",
+    "topic": "volume_calculation",
+    "question": "長方體水箱長 60 公分、寬 35 公分、高 30 公分，體積多少立方公分？",
+    "answer": "63000",
+    "hints": [
+      "⭐ 觀念提醒\n長×寬×高。",
+      "🔍 列式引導\n60×35×30。",
+      "📐 一步步算：\n① 60×35=2100\n② 2100×30=？ ✅",
+      "👉 連乘。"
+    ],
+    "common_mistakes": [
+      "少乘一邊。",
+      "乘法進位錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_136",
+    "kind": "fraction_of_quantity",
+    "topic": "fraction_of_quantity",
+    "question": "一桶果汁有 64 公升，喝了 3/8，喝了幾公升？",
+    "answer": "24",
+    "hints": [
+      "⭐ 觀念提醒\n整數×分數。",
+      "🔍 列式引導\n64×3/8。",
+      "📐 一步步算：\n① 64÷8=8\n② 8×3=？ ✅",
+      "👉 先除後乘。"
+    ],
+    "common_mistakes": [
+      "64÷3。",
+      "分子分母弄反。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_137",
+    "kind": "fraction_of_quantity",
+    "topic": "fraction_of_quantity",
+    "question": "有 270 顆珠子，其中 2/9 是紅色，紅珠幾顆？",
+    "answer": "60",
+    "hints": [
+      "⭐ 觀念提醒\n求分數量。",
+      "🔍 列式引導\n270×2/9。",
+      "📐 一步步算：\n① 270÷9=30\n② 30×2=？ ✅",
+      "👉 先除分母再乘分子。"
+    ],
+    "common_mistakes": [
+      "270÷2。",
+      "÷9 算錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_138",
+    "kind": "fraction_of_quantity",
+    "topic": "fraction_of_quantity",
+    "question": "一條路全長 360 公里，修了 5/12，修了幾公里？",
+    "answer": "150",
+    "hints": [
+      "⭐ 觀念提醒\n整×分。",
+      "🔍 列式引導\n360×5/12。",
+      "📐 一步步算：\n① 360÷12=30\n② 30×5=？ ✅",
+      "👉 先除後乘。"
+    ],
+    "common_mistakes": [
+      "360÷5。",
+      "÷12 算錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_139",
+    "kind": "fraction_of_quantity",
+    "topic": "fraction_of_quantity",
+    "question": "有 112 個蘋果，5/7 賣出，賣了幾個？",
+    "answer": "80",
+    "hints": [
+      "⭐ 觀念提醒\n整×分。",
+      "🔍 列式引導\n112×5/7。",
+      "📐 一步步算：\n① 112÷7=16\n② 16×5=？ ✅",
+      "👉 先除後乘。"
+    ],
+    "common_mistakes": [
+      "112÷5。",
+      "÷7 算錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_140",
+    "kind": "fraction_of_quantity",
+    "topic": "fraction_of_quantity",
+    "question": "池塘有 96 條魚，2/3 是鯽魚，鯽魚幾條？",
+    "answer": "64",
+    "hints": [
+      "⭐ 觀念提醒\n整×分。",
+      "🔍 列式引導\n96×2/3。",
+      "📐 一步步算：\n① 96÷3=32\n② 32×2=？ ✅",
+      "👉 先除後乘。"
+    ],
+    "common_mistakes": [
+      "96÷2。",
+      "÷3 算錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_141",
+    "kind": "remaining_after_fraction",
+    "topic": "remaining_after_fraction",
+    "question": "有 75 個蛋糕，賣掉 2/5，還剩幾個？",
+    "answer": "45",
+    "hints": [
+      "⭐ 觀念提醒\n剩 3/5。",
+      "🔍 列式引導\n75×3/5。",
+      "📐 一步步算：\n① 75÷5=15\n② 15×3=？ ✅",
+      "👉 先求剩餘比例。"
+    ],
+    "common_mistakes": [
+      "75×2/5 當答案。",
+      "÷5 算錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_142",
+    "kind": "remaining_after_fraction",
+    "topic": "remaining_after_fraction",
+    "question": "一袋米 48 公斤，用掉 5/8，還剩幾公斤？",
+    "answer": "18",
+    "hints": [
+      "⭐ 觀念提醒\n剩 3/8。",
+      "🔍 列式引導\n48×3/8。",
+      "📐 一步步算：\n① 48÷8=6\n② 6×3=？ ✅",
+      "👉 先算剩餘比例。"
+    ],
+    "common_mistakes": [
+      "48×5/8 當答案。",
+      "÷8 算錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_143",
+    "kind": "remaining_after_fraction",
+    "topic": "remaining_after_fraction",
+    "question": "水桶有 120 公升水，倒出 7/10，還剩幾公升？",
+    "answer": "36",
+    "hints": [
+      "⭐ 觀念提醒\n剩 3/10。",
+      "🔍 列式引導\n120×3/10。",
+      "📐 一步步算：\n① 120÷10=12\n② 12×3=？ ✅",
+      "👉 先算 3/10。"
+    ],
+    "common_mistakes": [
+      "120×7/10 當答案。",
+      "分母弄錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_144",
+    "kind": "remaining_after_fraction",
+    "topic": "remaining_after_fraction",
+    "question": "書架有 63 本書，借走 4/7，還剩幾本？",
+    "answer": "27",
+    "hints": [
+      "⭐ 觀念提醒\n剩 3/7。",
+      "🔍 列式引導\n63×3/7。",
+      "📐 一步步算：\n① 63÷7=9\n② 9×3=？ ✅",
+      "👉 先除後乘。"
+    ],
+    "common_mistakes": [
+      "63×4/7 當答案。",
+      "÷7 算錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_145",
+    "kind": "remaining_after_fraction",
+    "topic": "remaining_after_fraction",
+    "question": "有 108 顆糖，分掉 5/9，還剩幾顆？",
+    "answer": "48",
+    "hints": [
+      "⭐ 觀念提醒\n剩 4/9。",
+      "🔍 列式引導\n108×4/9。",
+      "📐 一步步算：\n① 108÷9=12\n② 12×4=？ ✅",
+      "👉 先算剩餘比例。"
+    ],
+    "common_mistakes": [
+      "108×5/9 當答案。",
+      "÷9 算錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_146",
+    "kind": "fraction_addsub",
+    "topic": "fraction_addsub",
+    "question": "計算 5/6 + 1/4 = ？（最簡分數）",
+    "answer": "13/12",
+    "hints": [
+      "⭐ 觀念提醒\n通分。",
+      "🔍 列式引導\nLCM(6,4)=12。",
+      "📐 一步步算：\n① 5/6=10/12\n② 1/4=3/12\n③ 10/12+3/12=？ ✅",
+      "👉 通分再加。"
+    ],
+    "common_mistakes": [
+      "分子加分母加。",
+      "LCM 算錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_147",
+    "kind": "fraction_addsub",
+    "topic": "fraction_addsub",
+    "question": "計算 7/9 − 1/3 = ？（最簡分數）",
+    "answer": "4/9",
+    "hints": [
+      "⭐ 觀念提醒\n通分。",
+      "🔍 列式引導\nLCM(9,3)=9。",
+      "📐 一步步算：\n① 1/3=3/9\n② 7/9−3/9=？ ✅",
+      "👉 通分再減。"
+    ],
+    "common_mistakes": [
+      "分母直接減。",
+      "LCM 錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_148",
+    "kind": "fraction_addsub",
+    "topic": "fraction_addsub",
+    "question": "計算 3/8 + 1/6 = ？（最簡分數）",
+    "answer": "13/24",
+    "hints": [
+      "⭐ 觀念提醒\n通分。",
+      "🔍 列式引導\nLCM(8,6)=24。",
+      "📐 一步步算：\n① 3/8=9/24\n② 1/6=4/24\n③ 9+4=？/24 ✅",
+      "👉 通分。"
+    ],
+    "common_mistakes": [
+      "LCM 算成 48。",
+      "分子加錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_149",
+    "kind": "fraction_addsub",
+    "topic": "fraction_addsub",
+    "question": "計算 5/7 − 2/5 = ？（最簡分數）",
+    "answer": "11/35",
+    "hints": [
+      "⭐ 觀念提醒\n通分。",
+      "🔍 列式引導\nLCM(7,5)=35。",
+      "📐 一步步算：\n① 5/7=25/35\n② 2/5=14/35\n③ 25−14=？/35 ✅",
+      "👉 通分再減。"
+    ],
+    "common_mistakes": [
+      "LCM 算錯。",
+      "分子減錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_150",
+    "kind": "fraction_addsub",
+    "topic": "fraction_addsub",
+    "question": "計算 2/3 + 3/8 = ？（最簡分數）",
+    "answer": "25/24",
+    "hints": [
+      "⭐ 觀念提醒\n通分。",
+      "🔍 列式引導\nLCM(3,8)=24。",
+      "📐 一步步算：\n① 2/3=16/24\n② 3/8=9/24\n③ 16+9=？/24 ✅",
+      "👉 通分再加。"
+    ],
+    "common_mistakes": [
+      "LCM 算錯。",
+      "分子加錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_151",
+    "kind": "fraction_mul",
+    "topic": "fraction_mul",
+    "question": "計算 3/7 × 7/9 = ？（最簡分數）",
+    "answer": "1/3",
+    "hints": [
+      "⭐ 觀念提醒\n交叉約分。",
+      "🔍 列式引導\n7 和 7 約掉，3 和 9 約掉。",
+      "📐 一步步算：\n① 約分後：1/1 × 1/3\n② =？ ✅",
+      "👉 先約再乘。"
+    ],
+    "common_mistakes": [
+      "不約分。",
+      "分子分母搞混。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_152",
+    "kind": "fraction_mul",
+    "topic": "fraction_mul",
+    "question": "計算 4/5 × 5/12 = ？（最簡分數）",
+    "answer": "1/3",
+    "hints": [
+      "⭐ 觀念提醒\n先約分。",
+      "🔍 列式引導\n5 和 5 約，4 和 12 約。",
+      "📐 一步步算：\n① 1/1 × 1/3\n② =？ ✅",
+      "👉 交叉約分。"
+    ],
+    "common_mistakes": [
+      "忘約分。",
+      "分母乘錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_153",
+    "kind": "fraction_mul",
+    "topic": "fraction_mul",
+    "question": "計算 2/9 × 3/4 = ？（最簡分數）",
+    "answer": "1/6",
+    "hints": [
+      "⭐ 觀念提醒\n先約分。",
+      "🔍 列式引導\n2 和 4 約，3 和 9 約。",
+      "📐 一步步算：\n① 1/3 × 1/2\n② =？ ✅",
+      "👉 交叉約分。"
+    ],
+    "common_mistakes": [
+      "不約分。",
+      "約分約錯。"
+    ]
+  },
+  {
+    "id": "g5_national_exp_154",
+    "kind": "fraction_mul",
+    "topic": "fraction_mul",
+    "question": "計算 6/11 × 11/18 = ？（最簡分數）",
+    "answer": "1/3",
+    "hints": [
+      "⭐ 觀念提醒\n交叉約分。",
+      "🔍 列式引導\n11 和 11 約，6 和 18 約。",
+      "📐 一步步算：\n① 1/1 × 1/3\n② =？ ✅",
+      "👉 先約再乘。"
+    ],
+    "common_mistakes": [
+      "忘約分。",
+      "分母搞混。"
+    ]
   }
-];
+];\n
