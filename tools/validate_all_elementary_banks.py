@@ -29,6 +29,8 @@ MODULES: dict[str, tuple[str, str | None]] = {
     "interactive-g56-core-foundation": ("g56_core_foundation.json", None),
     "exam-sprint": ("bank.js", "EXAM_SPRINT_BANK"),
     "commercial-pack1-fraction-sprint": ("bank.js", "COMMERCIAL_PACK1_FRACTION_SPRINT_BANK"),
+    "interactive-g5-midterm1": ("bank.js", "FRACTION_WORD_G5_BANK"),
+    "interactive-g5-national-bank": ("bank.js", "FRACTION_WORD_G5_BANK"),
 }
 
 SEMANTIC_UNIT_GUARD_MODULES = {
