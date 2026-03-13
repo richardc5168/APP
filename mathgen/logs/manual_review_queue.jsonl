@@ -1,0 +1,8 @@
+{"case_id": "fraction_word_problem[15]", "topic": "fraction_word_problem", "risk_score": 30, "risk_level": "medium", "risk_factors": ["improper_fraction", "needs_simplification"], "sample_reason": "sampled_at_20%_rate"}
+{"case_id": "fraction_word_problem[17]", "topic": "fraction_word_problem", "risk_score": 20, "risk_level": "low", "risk_factors": ["needs_simplification"], "sample_reason": "sampled_at_5%_rate"}
+{"case_id": "fraction_word_problem[25]", "topic": "fraction_word_problem", "risk_score": 30, "risk_level": "medium", "risk_factors": ["improper_fraction", "needs_simplification"], "sample_reason": "sampled_at_20%_rate"}
+{"case_id": "decimal_word_problem[6]", "topic": "decimal_word_problem", "risk_score": 25, "risk_level": "low", "risk_factors": ["carry_across_tens"], "sample_reason": "sampled_at_5%_rate"}
+{"case_id": "decimal_word_problem[21]", "topic": "decimal_word_problem", "risk_score": 25, "risk_level": "low", "risk_factors": ["carry_across_tens"], "sample_reason": "sampled_at_5%_rate"}
+{"case_id": "decimal_word_problem[27]", "topic": "decimal_word_problem", "risk_score": 25, "risk_level": "low", "risk_factors": ["carry_across_tens"], "sample_reason": "sampled_at_5%_rate"}
+{"case_id": "unit_conversion[16]", "topic": "unit_conversion", "risk_score": 30, "risk_level": "medium", "risk_factors": ["reverse_direction", "non_integer_result"], "sample_reason": "sampled_at_20%_rate"}
+{"case_id": "unit_conversion[25]", "topic": "unit_conversion", "risk_score": 30, "risk_level": "medium", "risk_factors": ["reverse_direction", "non_integer_result"], "sample_reason": "sampled_at_20%_rate"}
