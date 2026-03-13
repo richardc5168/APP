@@ -100,6 +100,7 @@ function checkLadderPolicy(banks) {
       if (hints[2] && answer) {
         const l3Text = String(hints[2]).replace(/^Hint\s*\d[｜|].+?\n/i, '').trim();
         const ansNorm = answer.replace(/\s+/g, '');
+        const qText = String(q.question || '');
         if (ansNorm.length >= 1) {
           // Build answer variants
           const variants = [answer.trim()];
@@ -107,7 +108,14 @@ function checkLadderPolicy(banks) {
           const fMatch = answer.match(/^(\d+)\s*[\/／]\s*(\d+)$/);
           if (fMatch) {
             const dec = parseInt(fMatch[1], 10) / parseInt(fMatch[2], 10);
-            if (isFinite(dec)) variants.push(String(Math.round(dec * 10000) / 10000));
+            if (isFinite(dec)) {
+              const decStr = String(Math.round(dec * 10000) / 10000);
+              // Skip if the decimal already appears in the question text
+              // (e.g. "把小數 0.532 寫成最簡分數" — student already sees it)
+              if (!qText.includes(decStr)) {
+                variants.push(decStr);
+              }
+            }
           }
           // With unit stripped
           const uMatch = answer.match(/^([\d.\/]+)\s*([^\d.\/]+)$/);
