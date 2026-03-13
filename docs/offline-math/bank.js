@@ -9955,5 +9955,1385 @@ window.OFFLINE_MATH_BANK = [
       "小數位數數錯。",
       "放小數點位置錯。"
     ]
-  }
+  },
+{
+  "id": "offline_time-031",
+  "grade": 5,
+  "topic": "time",
+  "type": "time_calc",
+  "params": {},
+  "prompt": "2小時15分 + 3小時50分 = ?小時?分",
+  "answer": "6小時5分",
+  "teacherSteps": [
+    {
+      "k": "concept",
+      "say": "時間加法要分開小時和分鐘算"
+    },
+    {
+      "k": "compute",
+      "say": "2+3=5小時"
+    },
+    {
+      "k": "compute",
+      "say": "15+50=65分=1小時5分"
+    },
+    {
+      "k": "compute",
+      "say": "合計5+1=6小時5分"
+    }
+  ],
+  "source": "generated",
+  "meta": {},
+  "question": "2小時15分 + 3小時50分 = ?小時?分",
+  "kind": "general",
+  "difficulty": "medium",
+  "hints": [
+    "時間加法要分開小時和分鐘算",
+    "2+3=5小時",
+    "📐 一步步算：\n① 2+3=5小時\n① 15+50=65分=1小時5分\n① 合計5+1=6小時5分\n算完記得回頭檢查喔！✅",
+    "👉 60分=1小時，進位搞錯。"
+  ],
+  "steps": [
+    "2+3=5小時",
+    "15+50=65分=1小時5分",
+    "合計5+1=6小時5分"
+  ],
+  "explanation": "2小時15分 + 3小時50分小時?分 = 6小時5分。",
+  "common_mistakes": [
+    "60分=1小時，進位搞錯。",
+    "計算粗心。"
+  ]
+},
+{
+  "id": "offline_time-032",
+  "grade": 5,
+  "topic": "time",
+  "type": "time_calc",
+  "params": {},
+  "prompt": "5小時20分 − 2小時45分 = ?小時?分",
+  "answer": "2小時35分",
+  "teacherSteps": [
+    {
+      "k": "concept",
+      "say": "時間減法不夠減要借位"
+    },
+    {
+      "k": "compute",
+      "say": "20分不夠減45分"
+    },
+    {
+      "k": "compute",
+      "say": "借1小時=60分，80−45=35分"
+    },
+    {
+      "k": "compute",
+      "say": "5−1−2=2小時"
+    }
+  ],
+  "source": "generated",
+  "meta": {},
+  "question": "5小時20分 − 2小時45分 = ?小時?分",
+  "kind": "general",
+  "difficulty": "medium",
+  "hints": [
+    "時間減法不夠減要借位",
+    "20分不夠減45分",
+    "📐 一步步算：\n① 20分不夠減45分\n① 借1小時=60分，80−45=35分\n① 5−1−2=2小時\n算完記得回頭檢查喔！✅",
+    "👉 借位忘了從小時減1。"
+  ],
+  "steps": [
+    "20分不夠減45分",
+    "借1小時=60分，80−45=35分",
+    "5−1−2=2小時"
+  ],
+  "explanation": "5小時20分 − 2小時45分小時?分 = 2小時35分。",
+  "common_mistakes": [
+    "借位忘了從小時減1。",
+    "計算粗心。"
+  ]
+},
+{
+  "id": "offline_time-033",
+  "grade": 5,
+  "topic": "time",
+  "type": "time_calc",
+  "params": {},
+  "prompt": "上午9:40出發，走了2小時30分，到達時間是幾點？",
+  "answer": "12:10",
+  "teacherSteps": [
+    {
+      "k": "concept",
+      "say": "出發時間+經過時間=到達時間"
+    },
+    {
+      "k": "compute",
+      "say": "9:40+2小時=11:40"
+    },
+    {
+      "k": "compute",
+      "say": "11:40+30分=12:10"
+    }
+  ],
+  "source": "generated",
+  "meta": {},
+  "question": "上午9:40出發，走了2小時30分，到達時間是幾點？",
+  "kind": "general",
+  "difficulty": "medium",
+  "hints": [
+    "出發時間+經過時間=到達時間",
+    "9:40+2小時=11:40",
+    "📐 一步步算：\n① 9:40+2小時=11:40\n① 11:40+30分=12:10\n算完記得回頭檢查喔！✅",
+    "👉 跨12點時忘了換成下午。"
+  ],
+  "steps": [
+    "9:40+2小時=11:40",
+    "11:40+30分=12:10"
+  ],
+  "explanation": "上午9:40出發，走了2小時30分，到達時間是幾點 = 12:10。",
+  "common_mistakes": [
+    "跨12點時忘了換成下午。",
+    "計算粗心。"
+  ]
+},
+{
+  "id": "offline_time-034",
+  "grade": 5,
+  "topic": "time",
+  "type": "time_calc",
+  "params": {},
+  "prompt": "下午1:50到3:25一共經過多少分鐘？",
+  "answer": "95",
+  "teacherSteps": [
+    {
+      "k": "concept",
+      "say": "結束時間−開始時間=經過時間"
+    },
+    {
+      "k": "compute",
+      "say": "3小時25分−1小時50分"
+    },
+    {
+      "k": "compute",
+      "say": "2小時85分−1小時50分=1小時35分"
+    },
+    {
+      "k": "compute",
+      "say": "1×60+35=95分鐘"
+    }
+  ],
+  "source": "generated",
+  "meta": {},
+  "question": "下午1:50到3:25一共經過多少分鐘？",
+  "kind": "general",
+  "difficulty": "medium",
+  "hints": [
+    "結束時間−開始時間=經過時間",
+    "3小時25分−1小時50分",
+    "📐 一步步算：\n① 3小時25分−1小時50分\n① 2小時85分−1小時50分=1小時35分\n① 1×60+35=95分鐘\n算完記得回頭檢查喔！✅",
+    "👉 小時和分鐘的換算搞錯。"
+  ],
+  "steps": [
+    "3小時25分−1小時50分",
+    "2小時85分−1小時50分=1小時35分",
+    "1×60+35=95分鐘"
+  ],
+  "explanation": "下午1:50到3:25一共經過多少分鐘 = 95。",
+  "common_mistakes": [
+    "小時和分鐘的換算搞錯。",
+    "計算粗心。"
+  ]
+},
+{
+  "id": "offline_time-035",
+  "grade": 5,
+  "topic": "time",
+  "type": "time_calc",
+  "params": {},
+  "prompt": "每節課40分鐘，下課10分鐘，連上3節後是幾分鐘？",
+  "answer": "140",
+  "teacherSteps": [
+    {
+      "k": "concept",
+      "say": "3節課+2次下課"
+    },
+    {
+      "k": "compute",
+      "say": "3×40=120分鐘"
+    },
+    {
+      "k": "compute",
+      "say": "2×10=20分鐘（最後一節後不下課）"
+    },
+    {
+      "k": "compute",
+      "say": "120+20=140分鐘"
+    }
+  ],
+  "source": "generated",
+  "meta": {},
+  "question": "每節課40分鐘，下課10分鐘，連上3節後是幾分鐘？",
+  "kind": "general",
+  "difficulty": "medium",
+  "hints": [
+    "3節課+2次下課",
+    "3×40=120分鐘",
+    "📐 一步步算：\n① 3×40=120分鐘\n① 2×10=20分鐘（最後一節後不下課）\n① 120+20=140分鐘\n算完記得回頭檢查喔！✅",
+    "👉 下課次數多算一次。"
+  ],
+  "steps": [
+    "3×40=120分鐘",
+    "2×10=20分鐘（最後一節後不下課）",
+    "120+20=140分鐘"
+  ],
+  "explanation": "每節課40分鐘，下課10分鐘，連上3節後是幾分鐘 = 140。",
+  "common_mistakes": [
+    "下課次數多算一次。",
+    "計算粗心。"
+  ]
+},
+{
+  "id": "offline_time-036",
+  "grade": 5,
+  "topic": "time",
+  "type": "time_calc",
+  "params": {},
+  "prompt": "一部電影2小時15分，從下午2:30開始播，幾點結束？",
+  "answer": "4:45",
+  "teacherSteps": [
+    {
+      "k": "concept",
+      "say": "開始時間+播放時間"
+    },
+    {
+      "k": "compute",
+      "say": "2:30+2小時=4:30"
+    },
+    {
+      "k": "compute",
+      "say": "4:30+15分=4:45"
+    }
+  ],
+  "source": "generated",
+  "meta": {},
+  "question": "一部電影2小時15分，從下午2:30開始播，幾點結束？",
+  "kind": "general",
+  "difficulty": "medium",
+  "hints": [
+    "開始時間+播放時間",
+    "2:30+2小時=4:30",
+    "📐 一步步算：\n① 2:30+2小時=4:30\n① 4:30+15分=4:45\n算完記得回頭檢查喔！✅",
+    "👉 跨整點加法出錯。"
+  ],
+  "steps": [
+    "2:30+2小時=4:30",
+    "4:30+15分=4:45"
+  ],
+  "explanation": "一部電影2小時15分，從下午2:30開始播，幾點結束 = 4:45。",
+  "common_mistakes": [
+    "跨整點加法出錯。",
+    "計算粗心。"
+  ]
+},
+{
+  "id": "offline_div-036",
+  "grade": 5,
+  "topic": "division",
+  "type": "long_div",
+  "params": {},
+  "prompt": "756 ÷ 12 = ?",
+  "answer": "63",
+  "teacherSteps": [
+    {
+      "k": "concept",
+      "say": "先估商：756÷12"
+    },
+    {
+      "k": "compute",
+      "say": "75÷12≈6，放十位"
+    },
+    {
+      "k": "compute",
+      "say": "756−720=36"
+    },
+    {
+      "k": "compute",
+      "say": "36÷12=3，放個位"
+    },
+    {
+      "k": "compute",
+      "say": "商=63"
+    }
+  ],
+  "source": "generated",
+  "meta": {},
+  "question": "756 ÷ 12 = ?",
+  "kind": "general",
+  "difficulty": "medium",
+  "hints": [
+    "先估商：756÷12",
+    "75÷12≈6，放十位",
+    "📐 一步步算：\n① 75÷12≈6，放十位\n① 756−720=36\n① 36÷12=3，放個位\n① 商=63\n算完記得回頭檢查喔！✅",
+    "👉 估商時位值放錯。"
+  ],
+  "steps": [
+    "75÷12≈6，放十位",
+    "756−720=36",
+    "36÷12=3，放個位",
+    "商=63"
+  ],
+  "explanation": "756 ÷ 12 = 63。",
+  "common_mistakes": [
+    "估商時位值放錯。",
+    "計算粗心。"
+  ]
+},
+{
+  "id": "offline_div-037",
+  "grade": 5,
+  "topic": "division",
+  "type": "long_div",
+  "params": {},
+  "prompt": "918 ÷ 27 = ?",
+  "answer": "34",
+  "teacherSteps": [
+    {
+      "k": "concept",
+      "say": "先估商：918÷27"
+    },
+    {
+      "k": "compute",
+      "say": "91÷27≈3，放十位"
+    },
+    {
+      "k": "compute",
+      "say": "918−810=108"
+    },
+    {
+      "k": "compute",
+      "say": "108÷27=4，放個位"
+    },
+    {
+      "k": "compute",
+      "say": "商=34"
+    }
+  ],
+  "source": "generated",
+  "meta": {},
+  "question": "918 ÷ 27 = ?",
+  "kind": "general",
+  "difficulty": "medium",
+  "hints": [
+    "先估商：918÷27",
+    "91÷27≈3，放十位",
+    "📐 一步步算：\n① 91÷27≈3，放十位\n① 918−810=108\n① 108÷27=4，放個位\n① 商=34\n算完記得回頭檢查喔！✅",
+    "👉 兩位數除法估商不夠精準。"
+  ],
+  "steps": [
+    "91÷27≈3，放十位",
+    "918−810=108",
+    "108÷27=4，放個位",
+    "商=34"
+  ],
+  "explanation": "918 ÷ 27 = 34。",
+  "common_mistakes": [
+    "兩位數除法估商不夠精準。",
+    "計算粗心。"
+  ]
+},
+{
+  "id": "offline_div-038",
+  "grade": 5,
+  "topic": "division",
+  "type": "long_div",
+  "params": {},
+  "prompt": "624 ÷ 16 = ?",
+  "answer": "39",
+  "teacherSteps": [
+    {
+      "k": "concept",
+      "say": "先估商：624÷16"
+    },
+    {
+      "k": "compute",
+      "say": "62÷16≈3，放十位"
+    },
+    {
+      "k": "compute",
+      "say": "624−480=144"
+    },
+    {
+      "k": "compute",
+      "say": "144÷16=9，放個位"
+    },
+    {
+      "k": "compute",
+      "say": "商=39"
+    }
+  ],
+  "source": "generated",
+  "meta": {},
+  "question": "624 ÷ 16 = ?",
+  "kind": "general",
+  "difficulty": "medium",
+  "hints": [
+    "先估商：624÷16",
+    "62÷16≈3，放十位",
+    "📐 一步步算：\n① 62÷16≈3，放十位\n① 624−480=144\n① 144÷16=9，放個位\n① 商=39\n算完記得回頭檢查喔！✅",
+    "👉 減法算錯導致餘數錯誤。"
+  ],
+  "steps": [
+    "62÷16≈3，放十位",
+    "624−480=144",
+    "144÷16=9，放個位",
+    "商=39"
+  ],
+  "explanation": "624 ÷ 16 = 39。",
+  "common_mistakes": [
+    "減法算錯導致餘數錯誤。",
+    "計算粗心。"
+  ]
+},
+{
+  "id": "offline_div-039",
+  "grade": 5,
+  "topic": "division",
+  "type": "long_div",
+  "params": {},
+  "prompt": "1050 ÷ 25 = ?",
+  "answer": "42",
+  "teacherSteps": [
+    {
+      "k": "concept",
+      "say": "先估商：1050÷25"
+    },
+    {
+      "k": "compute",
+      "say": "105÷25≈4，放十位"
+    },
+    {
+      "k": "compute",
+      "say": "1050−1000=50"
+    },
+    {
+      "k": "compute",
+      "say": "50÷25=2，放個位"
+    },
+    {
+      "k": "compute",
+      "say": "商=42"
+    }
+  ],
+  "source": "generated",
+  "meta": {},
+  "question": "1050 ÷ 25 = ?",
+  "kind": "general",
+  "difficulty": "medium",
+  "hints": [
+    "先估商：1050÷25",
+    "105÷25≈4，放十位",
+    "📐 一步步算：\n① 105÷25≈4，放十位\n① 1050−1000=50\n① 50÷25=2，放個位\n① 商=42\n算完記得回頭檢查喔！✅",
+    "👉 四位數除法容易看錯位數。"
+  ],
+  "steps": [
+    "105÷25≈4，放十位",
+    "1050−1000=50",
+    "50÷25=2，放個位",
+    "商=42"
+  ],
+  "explanation": "1050 ÷ 25 = 42。",
+  "common_mistakes": [
+    "四位數除法容易看錯位數。",
+    "計算粗心。"
+  ]
+},
+{
+  "id": "offline_div-040",
+  "grade": 5,
+  "topic": "division",
+  "type": "long_div",
+  "params": {},
+  "prompt": "864 ÷ 18 = ?",
+  "answer": "48",
+  "teacherSteps": [
+    {
+      "k": "concept",
+      "say": "先估商：864÷18"
+    },
+    {
+      "k": "compute",
+      "say": "86÷18≈4，放十位"
+    },
+    {
+      "k": "compute",
+      "say": "864−720=144"
+    },
+    {
+      "k": "compute",
+      "say": "144÷18=8，放個位"
+    },
+    {
+      "k": "compute",
+      "say": "商=48"
+    }
+  ],
+  "source": "generated",
+  "meta": {},
+  "question": "864 ÷ 18 = ?",
+  "kind": "general",
+  "difficulty": "medium",
+  "hints": [
+    "先估商：864÷18",
+    "86÷18≈4，放十位",
+    "📐 一步步算：\n① 86÷18≈4，放十位\n① 864−720=144\n① 144÷18=8，放個位\n① 商=48\n算完記得回頭檢查喔！✅",
+    "👉 乘法驗算沒做，商少了一位。"
+  ],
+  "steps": [
+    "86÷18≈4，放十位",
+    "864−720=144",
+    "144÷18=8，放個位",
+    "商=48"
+  ],
+  "explanation": "864 ÷ 18 = 48。",
+  "common_mistakes": [
+    "乘法驗算沒做，商少了一位。",
+    "計算粗心。"
+  ]
+},
+{
+  "id": "offline_div-041",
+  "grade": 5,
+  "topic": "division",
+  "type": "long_div",
+  "params": {},
+  "prompt": "575 ÷ 23 = ?",
+  "answer": "25",
+  "teacherSteps": [
+    {
+      "k": "concept",
+      "say": "先估商：575÷23"
+    },
+    {
+      "k": "compute",
+      "say": "57÷23≈2，放十位"
+    },
+    {
+      "k": "compute",
+      "say": "575−460=115"
+    },
+    {
+      "k": "compute",
+      "say": "115÷23=5，放個位"
+    },
+    {
+      "k": "compute",
+      "say": "商=25"
+    }
+  ],
+  "source": "generated",
+  "meta": {},
+  "question": "575 ÷ 23 = ?",
+  "kind": "general",
+  "difficulty": "medium",
+  "hints": [
+    "先估商：575÷23",
+    "57÷23≈2，放十位",
+    "📐 一步步算：\n① 57÷23≈2，放十位\n① 575−460=115\n① 115÷23=5，放個位\n① 商=25\n算完記得回頭檢查喔！✅",
+    "👉 除數是兩位數時估商容易偏大。"
+  ],
+  "steps": [
+    "57÷23≈2，放十位",
+    "575−460=115",
+    "115÷23=5，放個位",
+    "商=25"
+  ],
+  "explanation": "575 ÷ 23 = 25。",
+  "common_mistakes": [
+    "除數是兩位數時估商容易偏大。",
+    "計算粗心。"
+  ]
+},
+{
+  "id": "offline_dist-036",
+  "grade": 5,
+  "topic": "distance",
+  "type": "dist_calc",
+  "params": {},
+  "prompt": "時速80公里，開了3小時，行了多少公里？",
+  "answer": "240",
+  "teacherSteps": [
+    {
+      "k": "concept",
+      "say": "速度×時間=距離"
+    },
+    {
+      "k": "compute",
+      "say": "80×3=240公里"
+    },
+    {
+      "k": "compute",
+      "say": "距離=240"
+    }
+  ],
+  "source": "generated",
+  "meta": {},
+  "question": "時速80公里，開了3小時，行了多少公里？",
+  "kind": "general",
+  "difficulty": "medium",
+  "hints": [
+    "速度×時間=距離",
+    "80×3=240公里",
+    "📐 一步步算：\n① 80×3=240公里\n① 距離=240\n算完記得回頭檢查喔！✅",
+    "👉 速度和時間的乘法算錯。"
+  ],
+  "steps": [
+    "80×3=240公里",
+    "距離=240"
+  ],
+  "explanation": "時速80公里，開了3小時，行了多少公里 = 240。",
+  "common_mistakes": [
+    "速度和時間的乘法算錯。",
+    "計算粗心。"
+  ]
+},
+{
+  "id": "offline_dist-037",
+  "grade": 5,
+  "topic": "distance",
+  "type": "dist_calc",
+  "params": {},
+  "prompt": "跑了450公尺用了90秒，每秒跑幾公尺？",
+  "answer": "5",
+  "teacherSteps": [
+    {
+      "k": "concept",
+      "say": "速度=距離÷時間"
+    },
+    {
+      "k": "compute",
+      "say": "450÷90=5"
+    },
+    {
+      "k": "compute",
+      "say": "每秒5公尺"
+    }
+  ],
+  "source": "generated",
+  "meta": {},
+  "question": "跑了450公尺用了90秒，每秒跑幾公尺？",
+  "kind": "general",
+  "difficulty": "medium",
+  "hints": [
+    "速度=距離÷時間",
+    "450÷90=5",
+    "📐 一步步算：\n① 450÷90=5\n① 每秒5公尺\n算完記得回頭檢查喔！✅",
+    "👉 除法方向搞反。"
+  ],
+  "steps": [
+    "450÷90=5",
+    "每秒5公尺"
+  ],
+  "explanation": "跑了450公尺用了90秒，每秒跑幾公尺 = 5。",
+  "common_mistakes": [
+    "除法方向搞反。",
+    "計算粗心。"
+  ]
+},
+{
+  "id": "offline_dist-038",
+  "grade": 5,
+  "topic": "distance",
+  "type": "dist_calc",
+  "params": {},
+  "prompt": "腳踏車時速15公里，騎了60公里，花了幾小時？",
+  "answer": "4",
+  "teacherSteps": [
+    {
+      "k": "concept",
+      "say": "時間=距離÷速度"
+    },
+    {
+      "k": "compute",
+      "say": "60÷15=4"
+    },
+    {
+      "k": "compute",
+      "say": "花了4小時"
+    }
+  ],
+  "source": "generated",
+  "meta": {},
+  "question": "腳踏車時速15公里，騎了60公里，花了幾小時？",
+  "kind": "general",
+  "difficulty": "medium",
+  "hints": [
+    "時間=距離÷速度",
+    "60÷15=4",
+    "📐 一步步算：\n① 60÷15=4\n① 花了4小時\n算完記得回頭檢查喔！✅",
+    "👉 用速度÷距離搞反了。"
+  ],
+  "steps": [
+    "60÷15=4",
+    "花了4小時"
+  ],
+  "explanation": "腳踏車時速15公里，騎了60公里，花了幾小時 = 4。",
+  "common_mistakes": [
+    "用速度÷距離搞反了。",
+    "計算粗心。"
+  ]
+},
+{
+  "id": "offline_dist-039",
+  "grade": 5,
+  "topic": "distance",
+  "type": "dist_calc",
+  "params": {},
+  "prompt": "甲車時速60公里，乙車時速40公里，同向出發2小時後相距多少公里？",
+  "answer": "40",
+  "teacherSteps": [
+    {
+      "k": "concept",
+      "say": "速度差×時間=距離差"
+    },
+    {
+      "k": "compute",
+      "say": "60−40=20公里/時"
+    },
+    {
+      "k": "compute",
+      "say": "20×2=40公里"
+    }
+  ],
+  "source": "generated",
+  "meta": {},
+  "question": "甲車時速60公里，乙車時速40公里，同向出發2小時後相距多少公里？",
+  "kind": "general",
+  "difficulty": "medium",
+  "hints": [
+    "速度差×時間=距離差",
+    "60−40=20公里/時",
+    "📐 一步步算：\n① 60−40=20公里/時\n① 20×2=40公里\n算完記得回頭檢查喔！✅",
+    "👉 忘了用速度差而是用速度和。"
+  ],
+  "steps": [
+    "60−40=20公里/時",
+    "20×2=40公里"
+  ],
+  "explanation": "甲車時速60公里，乙車時速40公里，同向出發2小時後相距多少公里 = 40。",
+  "common_mistakes": [
+    "忘了用速度差而是用速度和。",
+    "計算粗心。"
+  ]
+},
+{
+  "id": "offline_dist-040",
+  "grade": 5,
+  "topic": "distance",
+  "type": "dist_calc",
+  "params": {},
+  "prompt": "火車時速120公里，客車時速80公里，相向出發3小時後相距多少公里（原本相距600公里）？",
+  "answer": "0",
+  "teacherSteps": [
+    {
+      "k": "concept",
+      "say": "速度和×時間=靠近距離"
+    },
+    {
+      "k": "compute",
+      "say": "120+80=200公里/時"
+    },
+    {
+      "k": "compute",
+      "say": "200×3=600公里"
+    },
+    {
+      "k": "compute",
+      "say": "600−600=0，剛好相遇"
+    }
+  ],
+  "source": "generated",
+  "meta": {},
+  "question": "火車時速120公里，客車時速80公里，相向出發3小時後相距多少公里（原本相距600公里）？",
+  "kind": "general",
+  "difficulty": "medium",
+  "hints": [
+    "速度和×時間=靠近距離",
+    "120+80=200公里/時",
+    "📐 一步步算：\n① 120+80=200公里/時\n① 200×3=600公里\n① 600−600=0，剛好相遇\n算完記得回頭檢查喔！✅",
+    "👉 相向應該用速度和，不是速度差。"
+  ],
+  "steps": [
+    "120+80=200公里/時",
+    "200×3=600公里",
+    "600−600=0，剛好相遇"
+  ],
+  "explanation": "火車時速120公里，客車時速80公里，相向出發3小時後相距多少公里（原本相距600公里） = 0。",
+  "common_mistakes": [
+    "相向應該用速度和，不是速度差。",
+    "計算粗心。"
+  ]
+},
+{
+  "id": "offline_dist-041",
+  "grade": 5,
+  "topic": "distance",
+  "type": "dist_calc",
+  "params": {},
+  "prompt": "從家到學校1200公尺，走路每分鐘80公尺，幾分鐘到？",
+  "answer": "15",
+  "teacherSteps": [
+    {
+      "k": "concept",
+      "say": "時間=距離÷速度"
+    },
+    {
+      "k": "compute",
+      "say": "1200÷80=15"
+    },
+    {
+      "k": "compute",
+      "say": "走15分鐘"
+    }
+  ],
+  "source": "generated",
+  "meta": {},
+  "question": "從家到學校1200公尺，走路每分鐘80公尺，幾分鐘到？",
+  "kind": "general",
+  "difficulty": "medium",
+  "hints": [
+    "時間=距離÷速度",
+    "1200÷80=15",
+    "📐 一步步算：\n① 1200÷80=15\n① 走15分鐘\n算完記得回頭檢查喔！✅",
+    "👉 距離和速度的單位不統一。"
+  ],
+  "steps": [
+    "1200÷80=15",
+    "走15分鐘"
+  ],
+  "explanation": "從家到學校1200公尺，走路每分鐘80公尺，幾分鐘到 = 15。",
+  "common_mistakes": [
+    "距離和速度的單位不統一。",
+    "計算粗心。"
+  ]
+},
+{
+  "id": "offline_frac-036",
+  "grade": 5,
+  "topic": "fraction",
+  "type": "frac_calc",
+  "params": {},
+  "prompt": "2/5 + 1/3 = ?",
+  "answer": "11/15",
+  "teacherSteps": [
+    {
+      "k": "concept",
+      "say": "異分母加法先通分"
+    },
+    {
+      "k": "compute",
+      "say": "lcm(5,3)=15"
+    },
+    {
+      "k": "compute",
+      "say": "2/5=6/15，1/3=5/15"
+    },
+    {
+      "k": "compute",
+      "say": "6+5=11，分母15"
+    }
+  ],
+  "source": "generated",
+  "meta": {},
+  "question": "2/5 + 1/3 = ?",
+  "kind": "general",
+  "difficulty": "medium",
+  "hints": [
+    "異分母加法先通分",
+    "lcm(5,3)=15",
+    "📐 一步步算：\n① lcm(5,3)=15\n① 2/5=6/15，1/3=5/15\n① 6+5=11，分母15\n算完記得回頭檢查喔！✅",
+    "👉 通分時分子忘了同倍數。"
+  ],
+  "steps": [
+    "lcm(5,3)=15",
+    "2/5=6/15，1/3=5/15",
+    "6+5=11，分母15"
+  ],
+  "explanation": "2/5 + 1/3 = 11/15。",
+  "common_mistakes": [
+    "通分時分子忘了同倍數。",
+    "計算粗心。"
+  ]
+},
+{
+  "id": "offline_frac-037",
+  "grade": 5,
+  "topic": "fraction",
+  "type": "frac_calc",
+  "params": {},
+  "prompt": "7/8 − 1/2 = ?",
+  "answer": "3/8",
+  "teacherSteps": [
+    {
+      "k": "concept",
+      "say": "異分母減法先通分"
+    },
+    {
+      "k": "compute",
+      "say": "lcm(8,2)=8"
+    },
+    {
+      "k": "compute",
+      "say": "7/8=7/8，1/2=4/8"
+    },
+    {
+      "k": "compute",
+      "say": "7−4=3，分母8"
+    }
+  ],
+  "source": "generated",
+  "meta": {},
+  "question": "7/8 − 1/2 = ?",
+  "kind": "general",
+  "difficulty": "medium",
+  "hints": [
+    "異分母減法先通分",
+    "lcm(8,2)=8",
+    "📐 一步步算：\n① lcm(8,2)=8\n① 7/8=7/8，1/2=4/8\n① 7−4=3，分母8\n算完記得回頭檢查喔！✅",
+    "👉 分母不同不能直接減。"
+  ],
+  "steps": [
+    "lcm(8,2)=8",
+    "7/8=7/8，1/2=4/8",
+    "7−4=3，分母8"
+  ],
+  "explanation": "7/8 − 1/2 = 3/8。",
+  "common_mistakes": [
+    "分母不同不能直接減。",
+    "計算粗心。"
+  ]
+},
+{
+  "id": "offline_frac-038",
+  "grade": 5,
+  "topic": "fraction",
+  "type": "frac_calc",
+  "params": {},
+  "prompt": "3/4 × 2/5 = ?",
+  "answer": "3/10",
+  "teacherSteps": [
+    {
+      "k": "concept",
+      "say": "分數乘法：分子×分子、分母×分母"
+    },
+    {
+      "k": "compute",
+      "say": "3×2=6，4×5=20"
+    },
+    {
+      "k": "compute",
+      "say": "6/20約分=3/10"
+    }
+  ],
+  "source": "generated",
+  "meta": {},
+  "question": "3/4 × 2/5 = ?",
+  "kind": "general",
+  "difficulty": "medium",
+  "hints": [
+    "分數乘法：分子×分子、分母×分母",
+    "3×2=6，4×5=20",
+    "📐 一步步算：\n① 3×2=6，4×5=20\n① 6/20約分=3/10\n算完記得回頭檢查喔！✅",
+    "👉 忘了約分到最簡。"
+  ],
+  "steps": [
+    "3×2=6，4×5=20",
+    "6/20約分=3/10"
+  ],
+  "explanation": "3/4 × 2/5 = 3/10。",
+  "common_mistakes": [
+    "忘了約分到最簡。",
+    "計算粗心。"
+  ]
+},
+{
+  "id": "offline_frac-039",
+  "grade": 5,
+  "topic": "fraction",
+  "type": "frac_calc",
+  "params": {},
+  "prompt": "5/6 ÷ 2 = ?",
+  "answer": "5/12",
+  "teacherSteps": [
+    {
+      "k": "concept",
+      "say": "分數÷整數=分母×整數"
+    },
+    {
+      "k": "compute",
+      "say": "5/6 ÷ 2 = 5/(6×2)"
+    },
+    {
+      "k": "compute",
+      "say": "= 5/12"
+    }
+  ],
+  "source": "generated",
+  "meta": {},
+  "question": "5/6 ÷ 2 = ?",
+  "kind": "general",
+  "difficulty": "medium",
+  "hints": [
+    "分數÷整數=分母×整數",
+    "5/6 ÷ 2 = 5/(6×2)",
+    "📐 一步步算：\n① 5/6 ÷ 2 = 5/(6×2)\n① = 5/12\n算完記得回頭檢查喔！✅",
+    "👉 把分子也乘了2。"
+  ],
+  "steps": [
+    "5/6 ÷ 2 = 5/(6×2)",
+    "= 5/12"
+  ],
+  "explanation": "5/6 ÷ 2 = 5/12。",
+  "common_mistakes": [
+    "把分子也乘了2。",
+    "計算粗心。"
+  ]
+},
+{
+  "id": "offline_frac-040",
+  "grade": 5,
+  "topic": "fraction",
+  "type": "frac_calc",
+  "params": {},
+  "prompt": "1 − 3/7 = ?",
+  "answer": "4/7",
+  "teacherSteps": [
+    {
+      "k": "concept",
+      "say": "1化成7/7"
+    },
+    {
+      "k": "compute",
+      "say": "7/7 − 3/7 = 4/7"
+    }
+  ],
+  "source": "generated",
+  "meta": {},
+  "question": "1 − 3/7 = ?",
+  "kind": "general",
+  "difficulty": "medium",
+  "hints": [
+    "1化成7/7",
+    "7/7 − 3/7 = 4/7",
+    "📐 一步步算：\n① 7/7 − 3/7 = 4/7\n算完記得回頭檢查喔！✅",
+    "👉 1忘了化成同分母分數。"
+  ],
+  "steps": [
+    "7/7 − 3/7 = 4/7"
+  ],
+  "explanation": "1 − 3/7 = 4/7。",
+  "common_mistakes": [
+    "1忘了化成同分母分數。",
+    "計算粗心。"
+  ]
+},
+{
+  "id": "offline_frac-041",
+  "grade": 5,
+  "topic": "fraction",
+  "type": "frac_calc",
+  "params": {},
+  "prompt": "2/3 + 1/6 + 1/2 = ?",
+  "answer": "4/3",
+  "teacherSteps": [
+    {
+      "k": "concept",
+      "say": "找三個分母的lcm=6"
+    },
+    {
+      "k": "compute",
+      "say": "2/3=4/6，1/6=1/6，1/2=3/6"
+    },
+    {
+      "k": "compute",
+      "say": "4+1+3=8，分母6"
+    },
+    {
+      "k": "compute",
+      "say": "8/6約分=4/3"
+    }
+  ],
+  "source": "generated",
+  "meta": {},
+  "question": "2/3 + 1/6 + 1/2 = ?",
+  "kind": "general",
+  "difficulty": "medium",
+  "hints": [
+    "找三個分母的lcm=6",
+    "2/3=4/6，1/6=1/6，1/2=3/6",
+    "📐 一步步算：\n① 2/3=4/6，1/6=1/6，1/2=3/6\n① 4+1+3=8，分母6\n① 8/6約分=4/3\n算完記得回頭檢查喔！✅",
+    "👉 三個分數通分錯誤。"
+  ],
+  "steps": [
+    "2/3=4/6，1/6=1/6，1/2=3/6",
+    "4+1+3=8，分母6",
+    "8/6約分=4/3"
+  ],
+  "explanation": "2/3 + 1/6 + 1/2 = 4/3。",
+  "common_mistakes": [
+    "三個分數通分錯誤。",
+    "計算粗心。"
+  ]
+},
+{
+  "id": "offline_dec-036",
+  "grade": 5,
+  "topic": "decimal",
+  "type": "dec_calc",
+  "params": {},
+  "prompt": "3.6 + 2.45 = ?",
+  "answer": "6.05",
+  "teacherSteps": [
+    {
+      "k": "concept",
+      "say": "小數加法要小數點對齊"
+    },
+    {
+      "k": "compute",
+      "say": "3.60+2.45"
+    },
+    {
+      "k": "compute",
+      "say": "= 6.05"
+    }
+  ],
+  "source": "generated",
+  "meta": {},
+  "question": "3.6 + 2.45 = ?",
+  "kind": "general",
+  "difficulty": "medium",
+  "hints": [
+    "小數加法要小數點對齊",
+    "3.60+2.45",
+    "📐 一步步算：\n① 3.60+2.45\n① = 6.05\n算完記得回頭檢查喔！✅",
+    "👉 小數點沒對齊。"
+  ],
+  "steps": [
+    "3.60+2.45",
+    "= 6.05"
+  ],
+  "explanation": "3.6 + 2.45 = 6.05。",
+  "common_mistakes": [
+    "小數點沒對齊。",
+    "計算粗心。"
+  ]
+},
+{
+  "id": "offline_dec-037",
+  "grade": 5,
+  "topic": "decimal",
+  "type": "dec_calc",
+  "params": {},
+  "prompt": "7.2 − 3.85 = ?",
+  "answer": "3.35",
+  "teacherSteps": [
+    {
+      "k": "concept",
+      "say": "小數減法要小數點對齊"
+    },
+    {
+      "k": "compute",
+      "say": "7.20−3.85"
+    },
+    {
+      "k": "compute",
+      "say": "十分位借位後計算"
+    }
+  ],
+  "source": "generated",
+  "meta": {},
+  "question": "7.2 − 3.85 = ?",
+  "kind": "general",
+  "difficulty": "medium",
+  "hints": [
+    "小數減法要小數點對齊",
+    "7.20−3.85",
+    "📐 一步步算：\n① 7.20−3.85\n① 十分位借位後計算\n算完記得回頭檢查喔！✅",
+    "👉 借位搞錯。"
+  ],
+  "steps": [
+    "7.20−3.85",
+    "十分位借位後計算"
+  ],
+  "explanation": "7.2 − 3.85 = 3.35。",
+  "common_mistakes": [
+    "借位搞錯。",
+    "計算粗心。"
+  ]
+},
+{
+  "id": "offline_dec-038",
+  "grade": 5,
+  "topic": "decimal",
+  "type": "dec_calc",
+  "params": {},
+  "prompt": "0.4 × 0.3 = ?",
+  "answer": "0.12",
+  "teacherSteps": [
+    {
+      "k": "concept",
+      "say": "先當整數乘：4×3=12"
+    },
+    {
+      "k": "compute",
+      "say": "兩個因數各一位小數，共兩位"
+    },
+    {
+      "k": "compute",
+      "say": "放回小數點→0.12"
+    }
+  ],
+  "source": "generated",
+  "meta": {},
+  "question": "0.4 × 0.3 = ?",
+  "kind": "general",
+  "difficulty": "medium",
+  "hints": [
+    "先當整數乘：4×3=12",
+    "兩個因數各一位小數，共兩位",
+    "📐 一步步算：\n① 兩個因數各一位小數，共兩位\n① 放回小數點→0.12\n算完記得回頭檢查喔！✅",
+    "👉 小數位數數錯。"
+  ],
+  "steps": [
+    "兩個因數各一位小數，共兩位",
+    "放回小數點→0.12"
+  ],
+  "explanation": "0.4 × 0.3 = 0.12。",
+  "common_mistakes": [
+    "小數位數數錯。",
+    "計算粗心。"
+  ]
+},
+{
+  "id": "offline_dec-039",
+  "grade": 5,
+  "topic": "decimal",
+  "type": "dec_calc",
+  "params": {},
+  "prompt": "6.3 ÷ 7 = ?",
+  "answer": "0.9",
+  "teacherSteps": [
+    {
+      "k": "concept",
+      "say": "小數÷整數直接除"
+    },
+    {
+      "k": "compute",
+      "say": "63÷7=9"
+    },
+    {
+      "k": "compute",
+      "say": "小數點對齊→0.9"
+    }
+  ],
+  "source": "generated",
+  "meta": {},
+  "question": "6.3 ÷ 7 = ?",
+  "kind": "general",
+  "difficulty": "medium",
+  "hints": [
+    "小數÷整數直接除",
+    "63÷7=9",
+    "📐 一步步算：\n① 63÷7=9\n① 小數點對齊→0.9\n算完記得回頭檢查喔！✅",
+    "👉 小數點忘了對齊。"
+  ],
+  "steps": [
+    "63÷7=9",
+    "小數點對齊→0.9"
+  ],
+  "explanation": "6.3 ÷ 7 = 0.9。",
+  "common_mistakes": [
+    "小數點忘了對齊。",
+    "計算粗心。"
+  ]
+},
+{
+  "id": "offline_dec-040",
+  "grade": 5,
+  "topic": "decimal",
+  "type": "dec_calc",
+  "params": {},
+  "prompt": "2.5 × 4 = ?",
+  "answer": "10",
+  "teacherSteps": [
+    {
+      "k": "concept",
+      "say": "先當整數：25×4=100"
+    },
+    {
+      "k": "compute",
+      "say": "一位小數→10.0=10"
+    }
+  ],
+  "source": "generated",
+  "meta": {},
+  "question": "2.5 × 4 = ?",
+  "kind": "general",
+  "difficulty": "medium",
+  "hints": [
+    "先當整數：25×4=100",
+    "一位小數→10.0=10",
+    "📐 一步步算：\n① 一位小數→10.0=10\n算完記得回頭檢查喔！✅",
+    "👉 忘了移回小數點。"
+  ],
+  "steps": [
+    "一位小數→10.0=10"
+  ],
+  "explanation": "2.5 × 4 = 10。",
+  "common_mistakes": [
+    "忘了移回小數點。",
+    "計算粗心。"
+  ]
+},
+{
+  "id": "offline_dec-041",
+  "grade": 5,
+  "topic": "decimal",
+  "type": "dec_calc",
+  "params": {},
+  "prompt": "0.75 + 0.25 = ?",
+  "answer": "1",
+  "teacherSteps": [
+    {
+      "k": "concept",
+      "say": "小數加法：小數點對齊"
+    },
+    {
+      "k": "compute",
+      "say": "0.75+0.25=1.00"
+    },
+    {
+      "k": "compute",
+      "say": "=1"
+    }
+  ],
+  "source": "generated",
+  "meta": {},
+  "question": "0.75 + 0.25 = ?",
+  "kind": "general",
+  "difficulty": "medium",
+  "hints": [
+    "小數加法：小數點對齊",
+    "0.75+0.25=1.00",
+    "📐 一步步算：\n① 0.75+0.25=1.00\n① =1\n算完記得回頭檢查喔！✅",
+    "👉 進位沒處理好。"
+  ],
+  "steps": [
+    "0.75+0.25=1.00",
+    "=1"
+  ],
+  "explanation": "0.75 + 0.25 = 1。",
+  "common_mistakes": [
+    "進位沒處理好。",
+    "計算粗心。"
+  ]
+}
 ];
