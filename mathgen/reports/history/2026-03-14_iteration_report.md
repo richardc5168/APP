@@ -1,7 +1,7 @@
 # Iteration Report — 2026-03-14
 
 ## 本輪修改內容
-Phase 1: expand benchmarks 40->120 (30 per topic). Added metadata: pattern_type (normal/edge/boundary/adversarial/wording_variation), risk_level (low/medium/high), source_reason. Discovered hint leak vulnerabilities: (1) unit_conversion value=1 forward causes answer=multiplier leak, (2) decimal answer substring in operand strings. Documented but not fixed (generator changes deferred).
+Phase 2+3: risk scoring, sampling, fail clustering, fix ranking
 
 ## 新增測試數量: 0
 
@@ -37,6 +37,21 @@ Phase 1: expand benchmarks 40->120 (30 per topic). Added metadata: pattern_type 
 
 ## 已解決錯誤類型
 （無）
+
+## Risk-Based Sampling
+- 需人工審查: 8/120 (6.7%)
+- 自動信任: 112/120 (93.3%)
+- 理論節省人力: 93%
+
+| 題型 | Low | Medium | High |
+|------|-----|--------|------|
+| average_word_problem | 29 | 1 | 0 |
+| decimal_word_problem | 30 | 0 | 0 |
+| fraction_word_problem | 23 | 7 | 0 |
+| unit_conversion | 22 | 8 | 0 |
+
+## Fail Clustering
+- ✅ 無失敗群集
 
 ## 建議下一輪優先修正項目
 - 全部通過，可考慮增加更多 benchmark cases

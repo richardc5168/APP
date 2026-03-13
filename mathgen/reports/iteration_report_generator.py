@@ -81,6 +81,42 @@ def generate_iteration_report(benchmark_results, changes_description='',
     else:
         lines.append('（無）')
 
+    # Sampling summary (Phase 2)
+    sampling = benchmark_results.get('sampling')
+    if sampling:
+        total_sampled = sampling.get('total_sampled', 0)
+        total_skipped = sampling.get('total_skipped', 0)
+        s_total = total_sampled + total_skipped
+        review_pct = total_sampled / s_total * 100 if s_total else 0
+        lines.append('')
+        lines.append('## Risk-Based Sampling')
+        lines.append(f'- 需人工審查: {total_sampled}/{s_total} ({review_pct:.1f}%)')
+        lines.append(f'- 自動信任: {total_skipped}/{s_total} ({100 - review_pct:.1f}%)')
+        lines.append(f'- 理論節省人力: {100 - review_pct:.0f}%')
+        by_topic = sampling.get('by_topic', {})
+        if by_topic:
+            lines.append('')
+            lines.append('| 題型 | Low | Medium | High |')
+            lines.append('|------|-----|--------|------|')
+            for t in sorted(by_topic):
+                rd = by_topic[t]
+                lines.append(f"| {t} | {rd.get('low', 0)} | {rd.get('medium', 0)} | {rd.get('high', 0)} |")
+
+    # Clustering summary (Phase 3)
+    clusters_data = benchmark_results.get('clusters')
+    if clusters_data:
+        lines.append('')
+        lines.append('## Fail Clustering')
+        if clusters_data.get('count', 0) == 0:
+            lines.append('- ✅ 無失敗群集')
+        else:
+            lines.append(f"- {clusters_data['count']} 個群集")
+            top_fix = clusters_data.get('top_fix')
+            if top_fix:
+                lines.append(f"- 最高槓桿修正: {top_fix['root_cause']} "
+                             f"(影響 {top_fix['cases_affected']} 個 case, "
+                             f"leverage={top_fix['leverage_score']:.1f})")
+
     lines.append('')
     lines.append('## 建議下一輪優先修正項目')
     if benchmark_results.get('fail_cases'):

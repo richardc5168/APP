@@ -34,7 +34,19 @@ from mathgen.reports.iteration_report_generator import (
     generate_iteration_report,
     save_iteration_report,
 )
-from mathgen.scripts.run_benchmarks import load_benchmark
+from mathgen.manual_sampler import (
+    select_for_review,
+    build_review_queue,
+    write_review_queue,
+    generate_sampling_report,
+)
+from mathgen.fail_clusterer import (
+    cluster_failures,
+    rank_fixes,
+    load_failure_history,
+    analyze_failure_trends,
+    generate_cluster_report,
+)
 
 LOG_DIR = os.path.join(_MATHGEN, 'logs')
 REPORTS_DIR = os.path.join(_MATHGEN, 'reports')
@@ -255,6 +267,66 @@ def main():
         print(f'  pattern:{k} = {pattern_stats[k]}')
     for k in sorted(risk_stats):
         print(f'  risk:{k} = {risk_stats[k]}')
+
+    # Step 2c: Risk scoring & adaptive sampling
+    print('\n── Risk Scoring & Sampling ──')
+    sampling_results = []
+    for topic in ALL_GENERATORS:
+        cases = load_benchmark(topic)
+        if cases is None:
+            continue
+        topic_sampling = select_for_review(topic, cases, baseline=baseline)
+        sampling_results.append(topic_sampling)
+        print(f'  {topic}: {topic_sampling["review_count"]}/{topic_sampling["total_cases"]} '
+              f'sampled (L:{topic_sampling["risk_distribution"].get("low", 0)} '
+              f'M:{topic_sampling["risk_distribution"].get("medium", 0)} '
+              f'H:{topic_sampling["risk_distribution"].get("high", 0)})')
+
+    queue = build_review_queue(sampling_results)
+    queue_path = write_review_queue(queue)
+    print(f'  Review queue: {len(queue)} cases → {queue_path}')
+
+    sampling_report_md = generate_sampling_report(sampling_results)
+    sampling_report_path = os.path.join(REPORTS_DIR, 'manual_sampling_report.md')
+    os.makedirs(REPORTS_DIR, exist_ok=True)
+    with open(sampling_report_path, 'w', encoding='utf-8') as f:
+        f.write(sampling_report_md)
+    print(f'  Sampling report: {sampling_report_path}')
+
+    results['sampling'] = {
+        'total_sampled': sum(r['review_count'] for r in sampling_results),
+        'total_skipped': sum(r['skip_count'] for r in sampling_results),
+        'by_topic': {r['topic']: r['risk_distribution'] for r in sampling_results},
+    }
+
+    # Step 2d: Fail clustering & fix ranking
+    print('\n── Fail Clustering ──')
+    if results['fail_cases']:
+        clusters = cluster_failures(results['fail_cases'])
+        ranked_fixes = rank_fixes(clusters)
+        fail_history = load_failure_history()
+        trends = analyze_failure_trends(fail_history)
+        cluster_report = generate_cluster_report(clusters, ranked_fixes, trends)
+
+        cluster_report_path = os.path.join(REPORTS_DIR, 'cluster_report.md')
+        with open(cluster_report_path, 'w', encoding='utf-8') as f:
+            f.write(cluster_report)
+        print(f'  {len(clusters)} cluster(s) found, top fix: {ranked_fixes[0]["root_cause"]}')
+        print(f'  Cluster report: {cluster_report_path}')
+
+        results['clusters'] = {
+            'count': len(clusters),
+            'top_fix': ranked_fixes[0] if ranked_fixes else None,
+            'ranked_fixes': ranked_fixes,
+        }
+    else:
+        # Generate clean report even when no failures
+        cluster_report = generate_cluster_report({}, [], None)
+        cluster_report_path = os.path.join(REPORTS_DIR, 'cluster_report.md')
+        with open(cluster_report_path, 'w', encoding='utf-8') as f:
+            f.write(cluster_report)
+        print('  ✅ No failures to cluster')
+        results['clusters'] = {'count': 0, 'top_fix': None, 'ranked_fixes': []}
 
     # Step 3: Regression check
     print('\n── Regression Check ──')
