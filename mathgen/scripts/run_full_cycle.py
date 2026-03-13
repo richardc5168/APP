@@ -52,6 +52,11 @@ from mathgen.mutator import (
     find_promotion_candidates,
     generate_mutation_report,
 )
+from mathgen.model_sandbox import (
+    ModelSandbox,
+    batch_polish,
+    generate_sandbox_report,
+)
 
 LOG_DIR = os.path.join(_MATHGEN, 'logs')
 REPORTS_DIR = os.path.join(_MATHGEN, 'reports')
@@ -227,6 +232,8 @@ def main():
                         help='Run mutation testing (slower, optional)')
     parser.add_argument('--max-mut-cases', type=int, default=5,
                         help='Max cases per topic for mutation testing')
+    parser.add_argument('--sandbox', action='store_true',
+                        help='Run model sandbox dry-run with identity rewriter')
     args = parser.parse_args()
 
     print('=' * 60)
@@ -401,6 +408,44 @@ def main():
             'survived': mut_results['survived'],
             'score': mut_results['mutation_score'],
             'candidates': len(candidates),
+        }
+
+    # Step 5c: Model sandbox dry-run (optional)
+    if args.sandbox and failed == 0:
+        print('\n── Model Sandbox (dry-run) ──')
+        # Identity rewriter — returns text unchanged; tests the framework
+        identity_rewriter = lambda text: text
+        sandbox = ModelSandbox(rewriter=identity_rewriter, dry_run=True)
+
+        sandbox_questions = []
+        for topic in ALL_GENERATORS:
+            cases = load_benchmark(topic)
+            if cases is None:
+                continue
+            for c in cases[:2]:  # sample 2 per topic
+                sandbox_questions.append({
+                    'problem_text': c.get('expected_text', ''),
+                    'correct_answer': c.get('expected_answer', ''),
+                    'unit': c.get('expected_unit', ''),
+                    'parameters': c.get('params', {}),
+                    'steps': c.get('expected_steps', []),
+                    'hint_ladder': c.get('expected_hints', {}),
+                })
+
+        sandbox_batch = batch_polish(sandbox_questions, identity_rewriter, dry_run=True)
+        sandbox_report = generate_sandbox_report(sandbox_batch)
+
+        sandbox_report_path = os.path.join(REPORTS_DIR, 'sandbox_report.md')
+        with open(sandbox_report_path, 'w', encoding='utf-8') as f:
+            f.write(sandbox_report)
+
+        print(f'  Processed: {sandbox_batch["total"]} questions')
+        print(f'  All safe: {sandbox_batch["safe"]}/{sandbox_batch["total"]}')
+        print(f'  Report: {sandbox_report_path}')
+
+        results['sandbox'] = {
+            'processed': sandbox_batch['total'],
+            'all_safe': sandbox_batch['safe'],
         }
 
     # Step 6: Generate iteration report

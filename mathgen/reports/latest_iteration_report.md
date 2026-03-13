@@ -1,7 +1,7 @@
 # Iteration Report — 2026-03-14
 
 ## 本輪修改內容
-Phase 4: mutation testing + auto-promotion
+(first full cycle run)
 
 ## 新增測試數量: 0
 
