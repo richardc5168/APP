@@ -47,6 +47,11 @@ from mathgen.fail_clusterer import (
     analyze_failure_trends,
     generate_cluster_report,
 )
+from mathgen.mutator import (
+    run_all_mutations,
+    find_promotion_candidates,
+    generate_mutation_report,
+)
 
 LOG_DIR = os.path.join(_MATHGEN, 'logs')
 REPORTS_DIR = os.path.join(_MATHGEN, 'reports')
@@ -218,6 +223,10 @@ def main():
                         help='Description of changes made this iteration')
     parser.add_argument('--gate-only', action='store_true',
                         help='Only check pass/fail, no report generation')
+    parser.add_argument('--mutations', action='store_true',
+                        help='Run mutation testing (slower, optional)')
+    parser.add_argument('--max-mut-cases', type=int, default=5,
+                        help='Max cases per topic for mutation testing')
     args = parser.parse_args()
 
     print('=' * 60)
@@ -367,6 +376,32 @@ def main():
             for cat in repeat_cats:
                 print(f'  ⚠ "{cat}" was recently addressed but still failing.')
                 print(f'    → Try a DIFFERENT approach or escalate.')
+
+    # Step 5b: Mutation testing (optional)
+    if args.mutations and failed == 0:
+        print('\n── Mutation Testing ──')
+        mut_results = run_all_mutations(max_cases_per_topic=args.max_mut_cases)
+        candidates = find_promotion_candidates(mut_results)
+
+        print(f'  Mutations: {mut_results["killed"]}/{mut_results["total_mutations"]} killed '
+              f'({mut_results["mutation_score"]:.1%})')
+        print(f'  Survivors: {mut_results["survived"]} (potential weaknesses)')
+        print(f'  Gold candidates: {len(candidates)}')
+
+        # Save mutation report
+        mut_report = generate_mutation_report(mut_results, candidates)
+        mut_report_path = os.path.join(REPORTS_DIR, 'mutation_report.md')
+        with open(mut_report_path, 'w', encoding='utf-8') as f:
+            f.write(mut_report)
+        print(f'  Report: {mut_report_path}')
+
+        results['mutations'] = {
+            'total': mut_results['total_mutations'],
+            'killed': mut_results['killed'],
+            'survived': mut_results['survived'],
+            'score': mut_results['mutation_score'],
+            'candidates': len(candidates),
+        }
 
     # Step 6: Generate iteration report
     report_md = generate_iteration_report(
