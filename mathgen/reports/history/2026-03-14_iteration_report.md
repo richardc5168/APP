@@ -1,7 +1,7 @@
 # Iteration Report — 2026-03-14
 
 ## 本輪修改內容
-Iteration 10: Average mutation kill rate 84%% -> 100%%. Added too_few_values_for_average quality check (values count < 3 is too trivial). Overall mutation kill rate 64.2%% -> 67.5%%. Average is first topic to reach 100%% mutation kill rate.
+Iteration 11: difficulty drift detection
 
 ## 新增測試數量: 0
 

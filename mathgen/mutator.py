@@ -291,6 +291,17 @@ def run_mutation_test(topic: str, case_index: int, case: dict) -> List[Dict]:
         # Topic-specific quality checks
         errors.extend(_quality_checks(topic, q, mut_params))
 
+        # Difficulty drift detection: if mutation changes problem
+        # difficulty dramatically, it's pedagogically inappropriate.
+        original_diff = _estimate_difficulty(topic, case.get('input', {}))
+        mutated_diff = _estimate_difficulty(topic, mut_params)
+        if original_diff > 0 and mutated_diff > 0:
+            drift_ratio = (mutated_diff / original_diff
+                           if mutated_diff > original_diff
+                           else original_diff / mutated_diff)
+            if drift_ratio > 3.0:
+                errors.append(f'quality:difficulty_drift_{drift_ratio:.1f}x')
+
         # Equivalent mutation detection: if mutation produces the
         # exact same answer as the original, the test cannot
         # distinguish mutant from original → flag as equivalent.
@@ -308,6 +319,53 @@ def run_mutation_test(topic: str, case_index: int, case: dict) -> List[Dict]:
         })
 
     return results
+
+
+# ── Difficulty estimator ────────────────────────────────────────
+
+def _estimate_difficulty(topic: str, params: dict) -> float:
+    """Estimate problem difficulty from input parameters.
+
+    Returns a positive float. Higher = harder.
+    Used to detect difficulty drift in mutations.
+    """
+    from math import gcd as _gcd
+
+    if topic == 'fraction_word_problem':
+        a_den = params.get('a_den', 1)
+        b_den = params.get('b_den', 1)
+        lcd = a_den * b_den // _gcd(a_den, b_den) if a_den and b_den else 1
+        # Subtract is slightly harder than add (requires comparison)
+        tpl_idx = params.get('template_index', 0)
+        op_factor = 1.2 if tpl_idx in (0, 2, 4) else 1.0
+        return max(lcd * op_factor, 1.0)
+
+    elif topic == 'decimal_word_problem':
+        a_str = str(params.get('a', '0'))
+        b_str = str(params.get('b', '0'))
+        a_places = len(a_str.split('.')[-1]) if '.' in a_str else 0
+        b_places = len(b_str.split('.')[-1]) if '.' in b_str else 0
+        max_places = max(a_places, b_places, 1)
+        op = params.get('operation', 'add')
+        op_factor = {'add': 1.0, 'subtract': 1.2, 'multiply': 2.0}.get(op, 1.0)
+        return max_places * op_factor
+
+    elif topic == 'average_word_problem':
+        values = params.get('values', [0])
+        count = max(len(values), 1)
+        spread = (max(values) - min(values)) if values else 0
+        return count * (1 + spread / 100.0)
+
+    elif topic == 'unit_conversion':
+        # Conversion multiplier is the main difficulty driver
+        _CONV_MULTIPLIERS = [1000, 100, 10, 1000, 1000, 1000, 10000, 60, 60]
+        conv_idx = params.get('conversion_index', 0) % 9
+        multiplier = _CONV_MULTIPLIERS[conv_idx]
+        direction = params.get('direction', 'forward')
+        dir_factor = 1.5 if direction == 'reverse' else 1.0
+        return multiplier * dir_factor
+
+    return 1.0
 
 
 def _quality_checks(topic: str, q: dict, params: dict) -> List[str]:
