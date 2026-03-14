@@ -325,6 +325,9 @@ def _quality_checks(topic: str, q: dict, params: dict) -> List[str]:
         positive_vals = [v for v in values if v > 0]
         if positive_vals and max(values) > 10 * min(positive_vals):
             errors.append('quality:extreme_outlier_value')
+        # Too few values for a meaningful average problem
+        if len(values) < 3:
+            errors.append('quality:too_few_values_for_average')
 
     elif topic == 'decimal_word_problem':
         b_str = params.get('b', '0')
