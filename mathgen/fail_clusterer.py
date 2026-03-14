@@ -283,6 +283,7 @@ def generate_cluster_report(
     clusters: Dict[str, Dict],
     ranked_fixes: List[Dict],
     trends: Optional[Dict] = None,
+    total_cases: Optional[int] = None,
 ) -> str:
     """Generate a markdown report of failure clusters and fix priorities."""
     lines = [
@@ -293,7 +294,8 @@ def generate_cluster_report(
     if not clusters:
         lines.append('## Status: ✅ No failures to cluster')
         lines.append('')
-        lines.append('All 120 benchmark cases pass. No action needed.')
+        case_count = total_cases if total_cases is not None else 0
+        lines.append(f'All {case_count} benchmark cases pass. No action needed.')
         return '\n'.join(lines)
 
     total_failures = sum(c['count'] for c in clusters.values())

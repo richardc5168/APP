@@ -356,7 +356,7 @@ def main():
         ranked_fixes = rank_fixes(clusters)
         fail_history = load_failure_history()
         trends = analyze_failure_trends(fail_history)
-        cluster_report = generate_cluster_report(clusters, ranked_fixes, trends)
+        cluster_report = generate_cluster_report(clusters, ranked_fixes, trends, results['total'])
 
         cluster_report_path = os.path.join(REPORTS_DIR, 'cluster_report.md')
         with open(cluster_report_path, 'w', encoding='utf-8') as f:
@@ -371,7 +371,7 @@ def main():
         }
     else:
         # Generate clean report even when no failures
-        cluster_report = generate_cluster_report({}, [], None)
+        cluster_report = generate_cluster_report({}, [], None, results['total'])
         cluster_report_path = os.path.join(REPORTS_DIR, 'cluster_report.md')
         with open(cluster_report_path, 'w', encoding='utf-8') as f:
             f.write(cluster_report)

@@ -369,6 +369,7 @@ function Write-FinalSummary {
     )
 
     $success = (@($Results | Where-Object { -not $_.pass }).Count -eq 0)
+    $isFullVerify = ($VerifyMode -eq 'full')
     $lines = @()
     $lines += '# 10h Run Summary'
     $lines += ''
@@ -388,15 +389,33 @@ function Write-FinalSummary {
     $lines += @($Results | ForEach-Object { "- $($_.name): pass=$($_.pass) | stdout=$($_.stdout) | stderr=$($_.stderr)" })
     $lines += ''
     $lines += '## Next Action'
-    $lines += '- If baseline passes, start the run_10h task for the 20-minute autonomous loop.'
-    $lines += '- If full_verify passes, proceed to commit.'
-    $lines += ''
-    $lines += '## Stability Checklist'
-    if ($success) {
-        $lines += "- [x] Full gate passed. Evidence: $($Results[-1].stdout)"
+    if ($isFullVerify) {
+        $lines += '- Full gate is the current source of truth for commit readiness.'
+        if ($success) {
+            $lines += '- Proceed to commit, push, and remote cross validation when deployment sync is required.'
+        }
+        else {
+            $lines += '- Fix the failing category before any commit.'
+        }
     }
     else {
+        if ($success) {
+            $lines += '- Baseline passed. Start the 20-minute autonomous loop or run full_verify before commit.'
+        }
+        else {
+            $lines += '- Baseline still has failures. Fix the failing category before escalating to full_verify.'
+        }
+    }
+    $lines += ''
+    $lines += '## Stability Checklist'
+    if ($isFullVerify -and $success) {
+        $lines += "- [x] Full gate passed. Evidence: $($Results[-1].stdout)"
+    }
+    elseif ($isFullVerify) {
         $lines += '- [ ] Full gate passed. Evidence: the latest run still has failures.'
+    }
+    else {
+        $lines += '- [ ] Full gate passed. Evidence: latest_mode=baseline; run full_verify for commit evidence.'
     }
     if ($FractionViolations -eq 0) {
         $lines += '- [x] Simplest-fraction audit passed. Evidence: tests/unit/test_mathgen_stability_contract.py'
