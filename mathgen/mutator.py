@@ -361,6 +361,22 @@ def _quality_checks(topic: str, q: dict, params: dict) -> List[str]:
         if a_den > 12 or b_den > 12:
             errors.append('quality:denominator_too_large_for_grade')
 
+        # ── Output-based checks (after generator simplification) ──
+        q_params = q.get('parameters', {})
+        out_a_den = q_params.get('a_den', 1)
+        out_b_den = q_params.get('b_den', 1)
+
+        # Either fraction simplifies to a whole number (den=1)
+        # → not a real fraction problem
+        if out_a_den == 1 or out_b_den == 1:
+            errors.append('quality:single_denominator_one_not_fraction')
+
+        # LCD too complex for grade 5
+        from math import gcd as _math_gcd
+        lcd = out_a_den * out_b_den // _math_gcd(out_a_den, out_b_den)
+        if lcd > 24:
+            errors.append('quality:lcd_too_complex_for_grade')
+
     return errors
 
 
