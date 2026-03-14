@@ -191,8 +191,8 @@
 
     <!-- weakness -->
     <div class="card">
-      <div style="font-weight:800">弱點 TOP 5（需補強）</div>
-      <div class="small">依錯題數 + 提示依賴度排序</div>
+      <div style="font-weight:800">最需要補強的主題</div>
+      <div class="small">依錯題次數與提示依賴度整理，讓家長看出孩子這週最常卡住哪裡</div>
       <div id="weakTable"></div>
     </div>
 
@@ -222,8 +222,8 @@
 
     <!-- recent wrong -->
     <div class="card">
-      <div style="font-weight:800">最近錯題摘要（最多 5 題）</div>
-      <div class="small">含學生答案、正解、錯誤類型</div>
+      <div style="font-weight:800">最近錯題（最新 5 筆）</div>
+      <div class="small">依作答時間由新到舊，顯示時間、學生答案、正解與錯誤原因</div>
       <div id="wrongList"></div>
     </div>
 
@@ -834,6 +834,32 @@
   function renderDashboard(d){
     const r = d.d;
 
+    function parseReportTs(value){
+      var num = Number(value);
+      if (isFinite(num) && num > 0) return num;
+      var parsed = Date.parse(String(value || ''));
+      return isFinite(parsed) && parsed > 0 ? parsed : 0;
+    }
+
+    function getWrongTs(w){
+      if (!w) return 0;
+      return parseReportTs(w.ts || w.answeredAt || w.submittedAt || w.createdAt);
+    }
+
+    function formatWrongTime(w){
+      var ts = getWrongTs(w);
+      if (!ts) return '時間未記錄';
+      return new Date(ts).toLocaleString('zh-TW');
+    }
+
+    function describeWeakReason(w){
+      if (!w) return '資料不足';
+      if ((w.w || 0) >= 3) return '近期連續答錯，建議優先補強';
+      if ((w.h3 || 0) >= 1) return '常需要完整提示才能解開';
+      if ((w.h2 || 0) >= 2) return '列式或步驟拆解不穩';
+      return '本週仍有零星錯題，需要再練熟';
+    }
+
     function renderPracticeSummary(){
       var box = document.getElementById('practiceSummary');
       var byKindBox = document.getElementById('practiceByKind');
@@ -1054,9 +1080,9 @@
     const weakTable = document.getElementById('weakTable');
     const weak = r.weak || [];
     if (weak.length){
-      let html = '<table><thead><tr><th>#</th><th>主題</th><th>題型</th><th>錯題</th><th>提示≥2</th></tr></thead><tbody>';
+      let html = '<table><thead><tr><th>#</th><th>主題</th><th>為何列入重點</th><th>錯題</th><th>提示依賴</th></tr></thead><tbody>';
       weak.forEach((w, i) => {
-        html += `<tr><td>${i+1}</td><td>${esc(w.t)}</td><td>${esc(w.k)}</td><td><span class="pill bad">${w.w}</span></td><td>${w.h2||0}</td></tr>`;
+        html += `<tr><td>${i+1}</td><td>${esc(w.t)}</td><td>${esc(describeWeakReason(w))}</td><td><span class="pill bad">${w.w}</span></td><td>${w.h2||0} 次</td></tr>`;
       });
       html += '</tbody></table>';
       weakTable.innerHTML = html;
@@ -1191,18 +1217,21 @@
 
     /* wrong list */
     const wrongList = document.getElementById('wrongList');
-    const wrongs = r.wrong || [];
+    const wrongs = (r.wrong || []).slice().sort(function(a, b){
+      return getWrongTs(b) - getWrongTs(a);
+    }).slice(0, 5);
     if (wrongs.length){
       let html = '';
       wrongs.forEach((w, i) => {
         html += `<div class="banner bad" style="margin-top:${i?'8':'0'}px">
           <div style="font-weight:700">${i+1}. ${esc(w.t)} / ${esc(w.k)}</div>
+          <div class="small" style="margin-top:4px;color:#ffe8bd">作答時間：${esc(formatWrongTime(w))}</div>
           <div class="small" style="margin-top:4px;color:#ffd2cf">${esc(w.q)}</div>
           <div style="margin-top:4px;font-size:13px">
             學生答案：<strong>${esc(w.sa)}</strong>　正解：<strong>${esc(w.ca)}</strong>
             ${w.et ? '　錯誤類型：<span class="pill bad">' + esc(w.et) + '</span>' : ''}
           </div>
-          ${w.ed ? '<div class="small" style="margin-top:4px;color:#ffe8bd">診斷：' + esc(w.ed) + '</div>' : ''}
+          ${w.ed ? '<div class="small" style="margin-top:4px;color:#ffe8bd">可能原因：' + esc(w.ed) + '</div>' : ''}
           <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
             <button type="button" class="btnPracticeFromWrong" data-idx="${i}">📝 再練一題（同類型）</button>
             <button type="button" class="btnQuizFromWrong" data-idx="${i}">🎯 三題小測驗</button>

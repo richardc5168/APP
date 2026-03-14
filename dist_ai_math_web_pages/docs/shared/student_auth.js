@@ -81,8 +81,27 @@
     return String(input || '').trim() === s.pin;
   }
 
+  function parseAttemptTs(value){
+    var num = Number(value);
+    if (isFinite(num) && num > 0) return num;
+    var parsed = Date.parse(String(value || ''));
+    return isFinite(parsed) && parsed > 0 ? parsed : 0;
+  }
+
   function getAttemptTs(a){
-    return Number(a && (a.ts || a.ts_end || a.timestamp) || 0);
+    if (!a) return 0;
+    return parseAttemptTs(
+      a.ts ||
+      a.ts_end ||
+      a.timestamp ||
+      a.answeredAt ||
+      a.submittedAt ||
+      a.createdAt
+    );
+  }
+
+  function isAttemptCorrect(a){
+    return !!(a && (a.ok || a.is_correct));
   }
 
   function getTimeMs(a){
@@ -146,13 +165,15 @@
   }
 
   function normalizeAttemptForCloud(a){
+    var ts = getAttemptTs(a);
     return {
-      ts: getAttemptTs(a),
+      ts: ts,
+      answeredAt: ts ? new Date(ts).toISOString() : '',
       ts_start: Number(a && a.ts_start || 0) || 0,
       ts_end: Number(a && a.ts_end || 0) || 0,
       question_id: String(a && (a.question_id || a.qid || '') || ''),
-      ok: !!(a && (a.ok || a.is_correct)),
-      is_correct: !!(a && (a.ok || a.is_correct)),
+      ok: isAttemptCorrect(a),
+      is_correct: isAttemptCorrect(a),
       time_ms: getTimeMs(a),
       max_hint: getMaxHint(a),
       unit_id: getModule(a),
@@ -225,7 +246,8 @@
     }));
 
     const total = all.length;
-    const correct = all.filter(function(a){ return a.ok || a.is_correct; }).length;
+    const correct = all.filter(isAttemptCorrect).length;
+    const incorrect = total - correct;
     const accuracy = total ? Math.round(correct / total * 100) : 0;
     const totalMs = all.reduce(function(s, a){ return s + (getTimeMs(a) || 0); }, 0);
     const avgMs = total ? Math.round(totalMs / total) : 0;
@@ -243,7 +265,7 @@
       const key = topic + '__' + kind;
       if (!byKey[key]) byKey[key] = { topic: topic, kind: kind, n: 0, wrong: 0, h2: 0, h3: 0 };
       byKey[key].n++;
-      if (!(a.ok || a.is_correct)) byKey[key].wrong++;
+      if (!isAttemptCorrect(a)) byKey[key].wrong++;
       if (getMaxHint(a) >= 2) byKey[key].h2++;
       if (getMaxHint(a) >= 3) byKey[key].h3++;
     }
@@ -255,10 +277,14 @@
       .map(function(w){ return { t: w.topic, k: w.kind, w: w.wrong, n: w.n, h2: w.h2, h3: w.h3 }; });
 
     const wrongList = all
-      .filter(function(a){ return !(a.ok || a.is_correct); })
-      .slice(-5)
+      .filter(function(a){ return !isAttemptCorrect(a); })
+      .sort(function(a, b){ return getAttemptTs(b) - getAttemptTs(a); })
+      .slice(0, 5)
       .map(function(a){
+        var ts = getAttemptTs(a);
         return {
+          ts: ts,
+          answeredAt: ts ? new Date(ts).toISOString() : '',
           q: String(getQuestionText(a)).substring(0, 60),
           sa: String(a.student_answer_raw || a.student_answer || '').substring(0, 20),
           ca: String(a.correct_answer || a.answer || '').substring(0, 20),
@@ -275,7 +301,7 @@
       const day = new Date(ts).toISOString().slice(0, 10);
       if (!daily[day]) daily[day] = { n: 0, ok: 0 };
       daily[day].n++;
-      if (a.ok || a.is_correct) daily[day].ok++;
+      if (isAttemptCorrect(a)) daily[day].ok++;
     }
 
     const byMod = {};
@@ -283,7 +309,7 @@
       const mod = getModule(a);
       if (!byMod[mod]) byMod[mod] = { n: 0, ok: 0 };
       byMod[mod].n++;
-      if (a.ok || a.is_correct) byMod[mod].ok++;
+      if (isAttemptCorrect(a)) byMod[mod].ok++;
     }
     const modules = Object.entries(byMod)
       .map(function(pair){
@@ -296,7 +322,7 @@
     var cutoff24 = Date.now() - 86400000;
     var last24 = all.filter(function(a){ return getAttemptTs(a) >= cutoff24; });
     var h24total = last24.length;
-    var h24correct = last24.filter(function(a){ return a.ok || a.is_correct; }).length;
+    var h24correct = last24.filter(isAttemptCorrect).length;
     var h24accuracy = h24total ? Math.round(h24correct / h24total * 100) : 0;
     var h24totalMs = last24.reduce(function(s, a){ return s + (getTimeMs(a) || 0); }, 0);
     var h24avgMs = h24total ? Math.round(h24totalMs / h24total) : 0;
@@ -311,7 +337,7 @@
       var mm = getModule(ma);
       if (!h24byMod[mm]) h24byMod[mm] = { n:0, ok:0 };
       h24byMod[mm].n++;
-      if (ma.ok || ma.is_correct) h24byMod[mm].ok++;
+      if (isAttemptCorrect(ma)) h24byMod[mm].ok++;
     }
     var h24modules = Object.keys(h24byMod).map(function(k){
       var v = h24byMod[k];
@@ -326,6 +352,7 @@
       d: {
         total: total,
         correct: correct,
+        incorrect: incorrect,
         accuracy: accuracy,
         avgMs: avgMs,
         hintDist: hintDist,
