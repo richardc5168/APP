@@ -19,6 +19,7 @@ sys.path.insert(0, _ROOT)
 from mathgen.question_templates import ALL_GENERATORS
 from mathgen.validators.schema_validator import validate_question_schema
 from mathgen.validators.hint_validator import validate_hint_ladder
+from mathgen.validators.answer_verifier import verify_answer
 from mathgen.error_taxonomy import classify_error
 
 
@@ -62,6 +63,12 @@ def run_topic(topic, generator_cls, cases):
         # Hint validation
         hint_valid, hint_errs = validate_hint_ladder(q)
         errs.extend(hint_errs)
+
+        # Independent answer verification
+        vr = verify_answer(topic, q.get('parameters', {}), q.get('correct_answer', ''))
+        if not vr.match:
+            errs.append(f'verifier_mismatch:expected={vr.expected},got={vr.actual}')
+        errs.extend(vr.errors)
 
         # Answer correctness
         if 'expected_answer' in case:

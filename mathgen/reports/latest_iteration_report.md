@@ -1,7 +1,7 @@
 # Iteration Report — 2026-03-14
 
 ## 本輪修改內容
-(first full cycle run)
+Iteration 6: independent answer verifier + mutation kill rate 8.3%->41.7% + fix average IEEE 754
 
 ## 新增測試數量: 0
 

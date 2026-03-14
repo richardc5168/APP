@@ -52,6 +52,7 @@ from mathgen.mutator import (
     find_promotion_candidates,
     generate_mutation_report,
 )
+from mathgen.validators.answer_verifier import verify_answer
 from mathgen.model_sandbox import (
     ModelSandbox,
     batch_polish,
@@ -263,6 +264,39 @@ def main():
 
     if args.gate_only:
         sys.exit(0 if failed == 0 else 1)
+
+    # Step 2a: Independent answer verification
+    print('\n── Answer Verification ──')
+    verifier_pass = 0
+    verifier_fail = 0
+    invariants_checked = 0
+    invariants_passed = 0
+    for topic, gen_cls in ALL_GENERATORS.items():
+        cases = load_benchmark(topic)
+        if cases is None:
+            continue
+        gen = gen_cls()
+        for case in cases:
+            try:
+                q = gen.generate(params=case['input'])
+                vr = verify_answer(topic, q.get('parameters', {}),
+                                   q.get('correct_answer', ''))
+                if vr.match and not vr.errors:
+                    verifier_pass += 1
+                else:
+                    verifier_fail += 1
+                invariants_checked += vr.invariants_checked
+                invariants_passed += vr.invariants_passed
+            except Exception:
+                verifier_fail += 1
+    print(f'  Verifier: {verifier_pass}/{verifier_pass + verifier_fail} match')
+    print(f'  Invariants: {invariants_passed}/{invariants_checked} passed')
+    results['verifier'] = {
+        'matched': verifier_pass,
+        'mismatched': verifier_fail,
+        'invariants_checked': invariants_checked,
+        'invariants_passed': invariants_passed,
+    }
 
     # Step 2b: Coverage stats by pattern_type and risk_level
     pattern_stats = {}

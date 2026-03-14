@@ -21,6 +21,7 @@ from typing import Dict, List, Optional, Tuple
 from mathgen.question_templates import ALL_GENERATORS
 from mathgen.validators.schema_validator import validate_question_schema
 from mathgen.validators.hint_validator import validate_hint_ladder
+from mathgen.validators.answer_verifier import verify_answer
 from mathgen.scripts.run_benchmarks import load_benchmark
 
 
@@ -248,6 +249,14 @@ def run_mutation_test(topic: str, case_index: int, case: dict) -> List[Dict]:
         hint_valid, hint_errs = validate_hint_ladder(q)
         errors.extend(hint_errs)
 
+        # Independent answer verification + invariant checks
+        vr = verify_answer(topic, q.get('parameters', {}),
+                           q.get('correct_answer', ''))
+        if not vr.match:
+            errors.append(f'verifier_mismatch:expected={vr.expected},'
+                          f'got={vr.actual}')
+        errors.extend(vr.errors)
+
         # Answer leak check
         answer = q.get('correct_answer', '')
         if answer and len(answer) > 1:
@@ -255,6 +264,27 @@ def run_mutation_test(topic: str, case_index: int, case: dict) -> List[Dict]:
                 hint_text = q.get('hint_ladder', {}).get(lvl, '')
                 if answer in hint_text:
                     errors.append(f'hint_leaks_answer:{lvl}')
+
+        # ── Semantic quality checks (catch degenerate mutations) ──
+
+        # Degenerate answer: "0" in a word problem is pedagogically poor
+        if answer == '0' or answer == '0/1':
+            errors.append('quality:degenerate_zero_answer')
+
+        # Negative answer in physical context (weight, distance, volume)
+        if answer.startswith('-'):
+            errors.append('quality:negative_physical_quantity')
+
+        # Extremely large answer (not grade-appropriate)
+        try:
+            ans_val = float(answer) if '/' not in answer else None
+            if ans_val is not None and abs(ans_val) > 1000000:
+                errors.append('quality:extremely_large_answer')
+        except (ValueError, TypeError):
+            pass
+
+        # Topic-specific quality checks
+        errors.extend(_quality_checks(topic, q, mut_params))
 
         survived = len(errors) == 0
         results.append({
@@ -266,6 +296,70 @@ def run_mutation_test(topic: str, case_index: int, case: dict) -> List[Dict]:
         })
 
     return results
+
+
+def _quality_checks(topic: str, q: dict, params: dict) -> List[str]:
+    """Topic-specific semantic quality checks for mutated outputs."""
+    errors = []
+    answer = q.get('correct_answer', '')
+
+    if topic == 'average_word_problem':
+        values = params.get('values', [])
+        tpl_idx = params.get('template_index', 0)
+        # Template 0 says "三次考試" but values might not have 3 items
+        if tpl_idx == 0 and len(values) != 3:
+            errors.append('quality:template_value_count_mismatch')
+        # All same values = trivial question
+        if values and len(set(values)) == 1:
+            errors.append('quality:all_same_values_trivial')
+        # Extreme value in otherwise normal range
+        positive_vals = [v for v in values if v > 0]
+        if positive_vals and max(values) > 10 * min(positive_vals):
+            errors.append('quality:extreme_outlier_value')
+
+    elif topic == 'decimal_word_problem':
+        b_str = params.get('b', '0')
+        operation = params.get('operation', 'add')
+        # Zero operand in subtraction/addition is trivial
+        try:
+            if float(b_str) == 0 and operation in ('add', 'subtract'):
+                errors.append('quality:zero_operand_trivial')
+        except ValueError:
+            pass
+        # Tiny values not grade-appropriate
+        try:
+            a_val = float(params.get('a', '0'))
+            b_val = float(b_str)
+            if a_val < 0.1 and b_val < 0.1 and a_val > 0 and b_val > 0:
+                errors.append('quality:values_too_small')
+        except ValueError:
+            pass
+
+    elif topic == 'unit_conversion':
+        value_str = params.get('value', '0')
+        direction = params.get('direction', 'forward')
+        conv_idx = params.get('conversion_index', 0)
+        # Value = 0 is degenerate
+        try:
+            if float(value_str) == 0:
+                errors.append('quality:zero_conversion_value')
+        except ValueError:
+            pass
+        # Value = 1 forward → answer = multiplier (known hint leak risk)
+        if value_str == '1' and direction == 'forward':
+            errors.append('quality:value_one_forward_leak_risk')
+
+    elif topic == 'fraction_word_problem':
+        a_den = params.get('a_den', 1)
+        b_den = params.get('b_den', 1)
+        # Denominator of 1 = integer, not really a fraction problem
+        if a_den == 1 and b_den == 1:
+            errors.append('quality:both_denominators_one_not_fraction')
+        # Very large denominators not grade-appropriate
+        if a_den > 12 or b_den > 12:
+            errors.append('quality:denominator_too_large_for_grade')
+
+    return errors
 
 
 def run_all_mutations(max_cases_per_topic: int = 5) -> Dict:

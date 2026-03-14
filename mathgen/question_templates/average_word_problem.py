@@ -58,15 +58,23 @@ class AverageWordProblemGenerator(BaseGenerator):
         vals_str = '、'.join(str(v) for v in values)
 
         # Exact division check — if not exact, present as decimal
+        # Use integer arithmetic only (IEEE 754 avoidance)
         if total % n == 0:
             answer = str(total // n)
         else:
-            # Use one decimal place (standard for G5)
-            answer_val = total / n
-            if answer_val == int(answer_val):
-                answer = str(int(answer_val))
+            # One decimal place via integer arithmetic
+            scaled = total * 10
+            quotient = scaled // n
+            remainder = scaled % n
+            # Round half-up (matches Python's f"{x:.1f}" for positives)
+            if remainder * 2 >= n:
+                quotient += 1
+            integer_part = quotient // 10
+            decimal_part = quotient % 10
+            if decimal_part == 0:
+                answer = str(integer_part)
             else:
-                answer = f'{answer_val:.1f}'.rstrip('0').rstrip('.')
+                answer = f'{integer_part}.{decimal_part}'
 
         steps = [
             f'所有數值加總：{" + ".join(str(v) for v in values)} = {total}',
