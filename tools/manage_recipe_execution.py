@@ -393,14 +393,65 @@ def finalize_active_recipe(*, artifact_root: Path, mathgen_logs: Path, run_id: s
     return {'finalized': True, 'outcome': row}
 
 
+_AUTO_APPLY_EXECUTORS = {
+    'wrong_numeric_answer': 'tools.auto_apply_wrong_numeric',
+}
+
+
+def execute_active_recipe(*, artifact_root: Path, run_id: str, dry_run: bool = True):
+    """Execute the active recipe's auto-apply executor if one is registered.
+
+    Returns a result dict with keys: executed, executor, topic, apply_result.
+    """
+    active = _read_json(artifact_root / 'active_recipe.json', {}) or {}
+    if not active or active.get('status') != 'selected':
+        return {'executed': False, 'reason': 'No selected active recipe to execute.'}
+
+    category = _normalize_error_category(active.get('error_category', ''))
+    module_name = _AUTO_APPLY_EXECUTORS.get(category)
+    if module_name is None:
+        return {'executed': False, 'reason': f'No auto-apply executor registered for category: {category}'}
+
+    topic = active.get('topic', '')
+    if not topic:
+        return {'executed': False, 'reason': 'Active recipe has no topic specified.'}
+
+    import importlib
+    mod = importlib.import_module(module_name)
+    diagnosis = mod.diagnose_benchmark(topic)
+    if 'error' in diagnosis:
+        return {'executed': False, 'reason': diagnosis['error']}
+
+    if diagnosis['auto_fixable'] == 0:
+        return {
+            'executed': False,
+            'reason': f'No auto-fixable cases found for {topic}.',
+            'diagnosis': {k: diagnosis[k] for k in ['total_cases', 'passing', 'auto_fixable', 'escalations']},
+        }
+
+    apply_result = mod.apply_fix(topic, dry_run=dry_run, artifact_root=artifact_root)
+    return {
+        'executed': True,
+        'executor': module_name,
+        'topic': topic,
+        'dry_run': dry_run,
+        'apply_result': apply_result,
+    }
+
+
 def main():
-    parser = argparse.ArgumentParser(description='Select and finalize controlled fix recipes for the 10h runner')
+    parser = argparse.ArgumentParser(description='Select, execute, and finalize controlled fix recipes for the 10h runner')
     subparsers = parser.add_subparsers(dest='command', required=True)
 
     select_parser = subparsers.add_parser('select')
     select_parser.add_argument('--artifact-root', default=str(DEFAULT_ARTIFACT_ROOT))
     select_parser.add_argument('--mathgen-logs', default=str(DEFAULT_MATHGEN_LOGS))
     select_parser.add_argument('--run-id', default='')
+
+    execute_parser = subparsers.add_parser('execute')
+    execute_parser.add_argument('--artifact-root', default=str(DEFAULT_ARTIFACT_ROOT))
+    execute_parser.add_argument('--run-id', default='')
+    execute_parser.add_argument('--dry-run', action='store_true', default=False)
 
     finalize_parser = subparsers.add_parser('finalize')
     finalize_parser.add_argument('--artifact-root', default=str(DEFAULT_ARTIFACT_ROOT))
@@ -412,11 +463,13 @@ def main():
 
     args = parser.parse_args()
     artifact_root = Path(args.artifact_root)
-    mathgen_logs = Path(args.mathgen_logs)
 
     if args.command == 'select':
         result = select_active_recipe(artifact_root=artifact_root, run_id=args.run_id)
+    elif args.command == 'execute':
+        result = execute_active_recipe(artifact_root=artifact_root, run_id=args.run_id, dry_run=args.dry_run)
     else:
+        mathgen_logs = Path(args.mathgen_logs)
         result = finalize_active_recipe(
             artifact_root=artifact_root,
             mathgen_logs=mathgen_logs,

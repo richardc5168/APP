@@ -1,7 +1,8 @@
 import json
 from pathlib import Path
+from unittest.mock import patch
 
-from tools.manage_recipe_execution import finalize_active_recipe, select_active_recipe
+from tools.manage_recipe_execution import execute_active_recipe, finalize_active_recipe, select_active_recipe
 
 
 def _write_json(path: Path, payload):
@@ -146,3 +147,74 @@ def test_finalize_active_recipe_failure_writes_anti_pattern_lesson(tmp_path):
     assert lessons[-1]['type'] == 'anti_pattern'
     assert lessons[-1]['strategy_key'] == 'validator_first'
     assert lessons[-1]['error_codes'] == ['hint_leaks_answer']
+
+
+def test_execute_active_recipe_dispatches_to_wrong_numeric_executor(tmp_path):
+    artifact_root = tmp_path / 'artifacts' / 'run_10h'
+    _write_json(
+        artifact_root / 'active_recipe.json',
+        {
+            'run_id': '20260315-exec',
+            'status': 'selected',
+            'issue_id': 'benchmark:wrong_numeric_answer:decimal_word_problem',
+            'error_category': 'wrong_numeric_answer',
+            'topic': 'decimal_word_problem',
+            'strategy_key': 'verifier_policy_first',
+            'strategy': 'Generate expected answers from verifier policy before changing generator logic.',
+            'allowed_edit_scope': ['mathgen/benchmarks/*_bench.json'],
+        },
+    )
+
+    class _MockVerifyResult:
+        def __init__(self, *, match, expected, actual):
+            self.topic = 'decimal_word_problem'
+            self.match = match
+            self.expected = expected
+            self.actual = actual
+            self.errors = []
+            self.invariants_checked = 0
+            self.invariants_passed = 0
+
+    class _MockGenerator:
+        def generate(self, params=None):
+            return {'correct_answer': '2.3', 'parameters': params, 'topic': 'decimal_word_problem'}
+
+    bench_dir = tmp_path / 'mathgen' / 'benchmarks'
+    bench_dir.mkdir(parents=True, exist_ok=True)
+    (bench_dir / 'decimal_word_problem_bench.json').write_text(
+        json.dumps([{'input': {'a': '3.5', 'b': '1.2'}, 'expected_answer': '2.30'}], ensure_ascii=False, indent=2),
+        encoding='utf-8',
+    )
+
+    def mock_verify(topic, params, actual):
+        return _MockVerifyResult(match=True, expected=actual, actual=actual)
+
+    with patch('tools.auto_apply_wrong_numeric.BENCH_DIR', bench_dir), \
+         patch('tools.auto_apply_wrong_numeric.ALL_GENERATORS', {'decimal_word_problem': _MockGenerator}), \
+         patch('tools.auto_apply_wrong_numeric.verify_answer', mock_verify):
+        result = execute_active_recipe(artifact_root=artifact_root, run_id='20260315-exec', dry_run=True)
+
+    assert result['executed'] is True
+    assert result['executor'] == 'tools.auto_apply_wrong_numeric'
+    assert result['apply_result']['applied'] == 1
+
+
+def test_execute_active_recipe_returns_not_executed_for_unknown_category(tmp_path):
+    artifact_root = tmp_path / 'artifacts' / 'run_10h'
+    _write_json(
+        artifact_root / 'active_recipe.json',
+        {
+            'run_id': '20260315-noexec',
+            'status': 'selected',
+            'issue_id': 'benchmark:sorting_semantics:some_module',
+            'error_category': 'sorting_semantics',
+            'topic': 'some_module',
+            'strategy_key': 'sort_before_slice',
+            'strategy': 'Sort raw events before slice.',
+            'allowed_edit_scope': ['scripts/*.py'],
+        },
+    )
+
+    result = execute_active_recipe(artifact_root=artifact_root, run_id='20260315-noexec')
+    assert result['executed'] is False
+    assert 'No auto-apply executor' in result['reason']

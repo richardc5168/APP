@@ -391,6 +391,17 @@ function Start-ActiveRecipe {
         $stem = ($VerifyMode + '_recipe_preflight_' + $commandSpec.program.Replace(':', '_').Replace('.', '_').Replace('\\', '_').Replace('/', '_'))
         [void](Invoke-LoggedCommand -Context $Context -Category 'recipe_preflight' -Name ('recipe_preflight:' + $recipe.strategy_key) -Stem $stem -Command ([string]$commandSpec.program) -Arguments $arguments)
     }
+
+    # Auto-apply executor: let the controller decide whether an executor exists
+    [void](Invoke-LoggedCommand -Context $Context -Category 'recipe_execute' -Name 'execute_active_recipe' -Stem ($VerifyMode + '_recipe_execute') -Command $pythonExe -Arguments @(
+        'tools/manage_recipe_execution.py',
+        'execute',
+        '--artifact-root',
+        'artifacts/run_10h',
+        '--run-id',
+        $Context.RunId
+    ))
+
     return $selectResult
 }
 
