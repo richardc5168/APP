@@ -41,3 +41,61 @@ test('recommendations are capped at top 3 and all links exist', () => {
     assert.ok(action.reason.length > 0);
   });
 });
+
+test('recommendations priority 1 targets the weakest topic', () => {
+  const report = windowObj.AIMathReportDataBuilder.buildReportData({
+    name: 'Kai',
+    days: 7,
+    nowMs: Date.parse('2026-03-16T12:00:00Z'),
+    attempts: [
+      // fraction-word-g5: 5 wrong, high hint
+      { ts: Date.parse('2026-03-15T08:00:00Z'), unit_id: 'fraction-word-g5', kind: 'addition', ok: false, max_hint: 3 },
+      { ts: Date.parse('2026-03-15T08:10:00Z'), unit_id: 'fraction-word-g5', kind: 'addition', ok: false, max_hint: 3 },
+      { ts: Date.parse('2026-03-15T08:20:00Z'), unit_id: 'fraction-word-g5', kind: 'addition', ok: false, max_hint: 2 },
+      { ts: Date.parse('2026-03-15T08:30:00Z'), unit_id: 'fraction-word-g5', kind: 'addition', ok: false, max_hint: 2 },
+      { ts: Date.parse('2026-03-15T08:40:00Z'), unit_id: 'fraction-word-g5', kind: 'addition', ok: false, max_hint: 1 },
+      // volume-g5: 1 wrong
+      { ts: Date.parse('2026-03-15T09:00:00Z'), unit_id: 'volume-g5', kind: 'rect_cm3', ok: false, max_hint: 1 },
+    ],
+    practiceEvents: []
+  });
+
+  // Top recommendation should target fraction-word-g5 (most wrong + highest hint dependency)
+  assert.ok(
+    report.d.recommendations[0].deep_link.includes('fraction'),
+    'Priority 1 recommendation should target the weakest topic (fraction)'
+  );
+});
+
+test('recommendations include action_text for each entry', () => {
+  const report = windowObj.AIMathReportDataBuilder.buildReportData({
+    name: 'Kai',
+    days: 7,
+    nowMs: Date.parse('2026-03-16T12:00:00Z'),
+    attempts: [
+      { ts: Date.parse('2026-03-15T08:00:00Z'), unit_id: 'fraction-word-g5', kind: 'addition', ok: false, max_hint: 2 },
+      { ts: Date.parse('2026-03-15T09:00:00Z'), unit_id: 'volume-g5', kind: 'rect_cm3', ok: false, max_hint: 1 },
+    ],
+    practiceEvents: []
+  });
+
+  report.d.recommendations.forEach((action, i) => {
+    assert.ok(action.action_text && action.action_text.length > 5,
+      `Recommendation ${i + 1} must have actionable text, got: "${action.action_text}"`);
+    assert.ok(action.concept && action.concept.length > 0,
+      `Recommendation ${i + 1} must have a concept label`);
+  });
+});
+
+test('recommendations produce stable links for known topics', () => {
+  const engine = windowObj.AIMathRecommendationEngine;
+  const knownTopics = [
+    'fraction-word-g5', 'fraction-g5', 'volume-g5',
+    'interactive-decimal-g5', 'ratio-percent-g5'
+  ];
+  knownTopics.forEach(topic => {
+    const link = engine.getTopicLink(topic);
+    assert.ok(link.includes(topic.split('-')[0]) || link !== '../star-pack/',
+      `known topic "${topic}" should resolve to a non-fallback link`);
+  });
+});
