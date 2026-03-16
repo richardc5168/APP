@@ -314,7 +314,7 @@
 (function(){
   'use strict';
 
-  function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
   function fmtMs(ms){
     const s = Math.round(Number(ms||0)/1000);
     if (s < 60) return s + '秒';
@@ -737,13 +737,16 @@
         return '<div class="box"><div class="label">' + esc(k.label) + '</div><div class="value">' + esc(k.value) + '</div></div>';
       }).join('');
       var h24mods = h24.modules || [];
+      var h24ModulesEl = document.getElementById('h24Modules');
       if (h24mods.length){
         var mhtml24 = '<div class="small" style="font-weight:700;margin-bottom:4px">題型分布：</div>';
         h24mods.forEach(function(m){
           var cls = m.acc >= 80 ? 'ok' : m.acc >= 60 ? 'warn' : 'bad';
           mhtml24 += '<span class="pill ' + cls + '" style="margin:2px 4px">' + esc(m.m) + ' ' + m.n + '題 ' + m.acc + '%</span>';
         });
-        document.getElementById('h24Modules').innerHTML = mhtml24;
+        h24ModulesEl.innerHTML = mhtml24;
+      } else {
+        h24ModulesEl.innerHTML = '';
       }
     } else {
       document.getElementById('h24Kpi').style.display = 'none';

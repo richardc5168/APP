@@ -117,3 +117,13 @@ test('weakness engine handles empty and edge-case rows', () => {
   assert.ok(result.null_row_reason.length > 0, 'null row should get fallback reason');
   assert.ok(result.null_row_action.length > 0, 'null row should get fallback action');
 });
+
+test('parent-report esc() escapes quotes to prevent attribute injection', () => {
+  // Verify the esc() function in index.html escapes both double and single quotes
+  const src = readFileSync(join(__dirname, '..', 'docs', 'parent-report', 'index.html'), 'utf-8');
+  const escMatch = src.match(/function\s+esc\s*\(\s*s\s*\)\s*\{[^}]+\}/);
+  assert.ok(escMatch, 'esc() function should exist in parent-report/index.html');
+  const escBody = escMatch[0];
+  assert.ok(escBody.includes('&quot;'), 'esc() must escape double quotes to &quot;');
+  assert.ok(escBody.includes('&#39;'), 'esc() must escape single quotes to &#39;');
+});

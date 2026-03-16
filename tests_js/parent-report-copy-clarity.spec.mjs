@@ -41,3 +41,21 @@ test('parent copy stays concise and action-oriented', () => {
   assert.match(text, /目前最需要補強/);
   assert.ok(text.split('\n').length <= 12);
 });
+
+test('parent copy includes up to 5 wrong items matching dashboard', () => {
+  const wrongs = Array.from({ length: 5 }, (_, i) => ({
+    t: 'topic-' + (i + 1), k: 'kind', q: 'q?', sa: 'A', ca: 'B',
+  }));
+  const text = windowObj.AIMathParentCopyEngine.buildParentCopy({
+    studentName: 'Test',
+    report: {
+      total: 20, accuracy: 60, weak: [], wrong: wrongs,
+      practice: null,
+    },
+    days: 7
+  });
+  // All 5 wrong items should appear in the copy
+  for (let i = 1; i <= 5; i++) {
+    assert.ok(text.includes('topic-' + i), 'copy should include wrong item ' + i);
+  }
+});

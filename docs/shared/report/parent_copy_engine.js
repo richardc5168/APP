@@ -11,7 +11,7 @@
     var studentName = String(input && input.studentName || input && input.name || '未知');
     var recommendations = Array.isArray(input && input.recommendations) ? input.recommendations : (Array.isArray(report.recommendations) ? report.recommendations : []);
     var weak = Array.isArray(report.weak) ? report.weak : [];
-    var wrong = Array.isArray(report.wrong) ? report.wrong.slice(0, 3) : [];
+    var wrong = Array.isArray(report.wrong) ? report.wrong.slice(0, 5) : [];
     var lines = [];
     lines.push('【家長報告】' + studentName);
     lines.push('最近 ' + String(input && input.days || report.days || 7) + ' 天：共 ' + Number(report.total || 0) + ' 題，正確率 ' + Number(report.accuracy || 0) + '%。');
