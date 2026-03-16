@@ -38,3 +38,37 @@ test('practice summary aggregates retry results in 7-day window', () => {
   assert.equal(practice.summary.correct_questions, 3);
   assert.equal(practice.summary.accuracy, 75);
 });
+
+test('practice answer checker accepts equivalent unsimplified fractions', () => {
+  // Replicate the inline fractionsEqual logic from parent-report/index.html
+  const src = fs.readFileSync(path.resolve('docs/parent-report/index.html'), 'utf8');
+  // Verify fractionsEqual function exists
+  assert.ok(src.includes('function fractionsEqual'), 'fractionsEqual helper must exist');
+  assert.ok(src.includes('function parseFrac'), 'parseFrac helper must exist');
+  // Verify checkNow uses fractionsEqual fallback
+  assert.ok(src.includes('fractionsEqual(user, corr)'), 'checkNow must call fractionsEqual');
+
+  // Unit-test the extracted logic
+  function parseFrac(s){
+    var m = String(s||'').match(/^(-?\d+)\/(\d+)$/);
+    if (!m) return null;
+    var n = parseInt(m[1], 10);
+    var d = parseInt(m[2], 10);
+    return d > 0 ? { n: n, d: d } : null;
+  }
+  function fractionsEqual(a, b){
+    var fa = parseFrac(a);
+    var fb = parseFrac(b);
+    if (!fa || !fb) return false;
+    return fa.n * fb.d === fb.n * fa.d;
+  }
+  // Equivalent fractions
+  assert.ok(fractionsEqual('2/4', '1/2'), '2/4 == 1/2');
+  assert.ok(fractionsEqual('3/9', '1/3'), '3/9 == 1/3');
+  assert.ok(fractionsEqual('6/8', '3/4'), '6/8 == 3/4');
+  // Non-equivalent
+  assert.ok(!fractionsEqual('2/3', '3/4'), '2/3 != 3/4');
+  // Non-fraction strings
+  assert.ok(!fractionsEqual('42', '42'), 'integers are not fractions');
+  assert.ok(!fractionsEqual('abc', '1/2'), 'non-numeric not a fraction');
+});

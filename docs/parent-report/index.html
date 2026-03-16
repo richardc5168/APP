@@ -1037,6 +1037,19 @@
         }
 
         function normAns(v){ return String(v || '').trim().replace(/\s+/g,'').toLowerCase(); }
+        function parseFrac(s){
+          var m = String(s||'').match(/^(-?\d+)\/(\d+)$/);
+          if (!m) return null;
+          var n = parseInt(m[1], 10);
+          var d = parseInt(m[2], 10);
+          return d > 0 ? { n: n, d: d } : null;
+        }
+        function fractionsEqual(a, b){
+          var fa = parseFrac(a);
+          var fb = parseFrac(b);
+          if (!fa || !fb) return false;
+          return fa.n * fb.d === fb.n * fa.d;
+        }
         function renderCurrentCard(feedbackHtml){
           var title = quizMode ? ('三題小測驗（第 ' + quizIndex + '/' + quizTotal + ' 題）') : '類似題練習';
           var progress = quizMode
@@ -1075,9 +1088,9 @@
               return false;
             }
             checked = true;
-            if (user === corr){
+            if (user === corr || fractionsEqual(user, corr)){
               isCorrect = true;
-              fbEl.textContent = '✅ 答對了！';
+              fbEl.textContent = (user === corr) ? '✅ 答對了！' : '✅ 答對了！（提醒：最簡分數為 ' + current.answer + '）';
               fbEl.style.color = '#2ea043';
               return true;
             }
