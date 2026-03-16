@@ -275,6 +275,7 @@
 <script src="../shared/report/parent_copy_engine.js"></script>
 <script src="../shared/report/wow_engine.js"></script>
 <script src="../shared/report/radar_engine.js"></script>
+<script src="../shared/report/progress_trend_engine.js"></script>
 <script>
 (function(){
   'use strict';
@@ -1179,32 +1180,39 @@
       }
     })();
 
-    /* ─── V2: Weekly Progress Trend ─── */
+    /* ─── V2: Weekly Progress Trend (delegates to shared progress_trend_engine) ─── */
     (function renderProgressTrend(){
       var contentEl = document.getElementById('progressTrendContent');
       var cardEl = document.getElementById('progressTrendCard');
       if (!contentEl || !cardEl) return;
 
-      // Build 4-week accuracy trend from localStorage
-      var weeks = [];
-      for (var w = 3; w >= 0; w--){
-        var weekEnd = new Date();
-        weekEnd.setDate(weekEnd.getDate() - w * 7);
-        var weekStart = new Date(weekEnd);
-        weekStart.setDate(weekStart.getDate() - 6);
-        var wTotal = 0, wCorrect = 0;
-        var allEntries = JSON.parse(localStorage.getItem('aimath_teacher_log') || '[]');
-        allEntries.forEach(function(e){
-          if (!e.ts) return;
-          var d = new Date(e.ts);
-          if (d >= weekStart && d <= weekEnd){
-            wTotal++;
-            if (e.ok) wCorrect++;
-          }
-        });
-        var label = (weekStart.getMonth()+1)+'/'+weekStart.getDate()+'~'+(weekEnd.getMonth()+1)+'/'+weekEnd.getDate();
-        weeks.push({label: label, total: wTotal, correct: wCorrect, rate: wTotal ? Math.round(wCorrect/wTotal*100) : 0});
+      var allEntries = [];
+      try { allEntries = JSON.parse(localStorage.getItem('aimath_teacher_log') || '[]'); } catch(e){}
+
+      var weeks;
+      if (window.AIMathProgressTrendEngine) {
+        weeks = window.AIMathProgressTrendEngine.computeWeeklyTrend(allEntries);
+      } else {
+        weeks = [];
+        for (var w = 3; w >= 0; w--){
+          var weekEnd = new Date();
+          weekEnd.setDate(weekEnd.getDate() - w * 7);
+          var weekStart = new Date(weekEnd);
+          weekStart.setDate(weekStart.getDate() - 6);
+          var wTotal = 0, wCorrect = 0;
+          allEntries.forEach(function(e){
+            if (!e || !e.ts) return;
+            var dd = new Date(e.ts);
+            if (dd >= weekStart && dd <= weekEnd){ wTotal++; if (e.ok) wCorrect++; }
+          });
+          var label = (weekStart.getMonth()+1)+'/'+weekStart.getDate()+'~'+(weekEnd.getMonth()+1)+'/'+weekEnd.getDate();
+          weeks.push({label: label, total: wTotal, correct: wCorrect, rate: wTotal ? Math.round(wCorrect/wTotal*100) : 0});
+        }
       }
+
+      var hasData = window.AIMathProgressTrendEngine
+        ? window.AIMathProgressTrendEngine.hasAnyData(weeks)
+        : weeks.some(function(w){ return w.total > 0; });
 
       var maxRate = Math.max.apply(null, weeks.map(function(w){return w.rate})) || 100;
 
@@ -1219,7 +1227,7 @@
         html += '<span class="small" style="min-width:45px">('+(w.total||0)+'題)</span>';
         html += '</div>';
       });
-      if (!weeks.some(function(w){return w.total>0})){
+      if (!hasData){
         html = '<div class="banner muted">尚無足夠數據顯示趨勢，請持續每日練習。</div>';
       }
       contentEl.innerHTML = html;
