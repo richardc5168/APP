@@ -277,6 +277,7 @@
 <script src="../shared/report/radar_engine.js"></script>
 <script src="../shared/report/progress_trend_engine.js"></script>
 <script src="../shared/report/practice_summary_engine.js"></script>
+<script src="../shared/report/parent_advice_engine.js"></script>
 <script>
 (function(){
   'use strict';
@@ -1322,18 +1323,27 @@
       }
     })();
 
-    /* advice */
+    /* advice (delegates to shared parent_advice_engine) */
     const adviceBox = document.getElementById('adviceBox');
-    const advices = [];
-    if (r.total < 5) advices.push('目前作答數較少，建議每天至少做 5~10 題練習。');
-    if (r.accuracy < 60) advices.push('正確率偏低，建議先做基礎題加強觀念，不要急著做進階題。');
-    else if (r.accuracy < 80) advices.push('正確率還有進步空間，建議錯題先印出來重做一次，觀念才會穩固。');
-    else advices.push('正確率不錯！可以嘗試更多進階活用題挑戰。');
-    if (stuckLv >= 3) advices.push('孩子常需要完整步驟提示才能解題，建議把錯題的「完整步驟」抄一遍再做同型 2 題。');
-    else if (stuckLv >= 2) advices.push('孩子常卡在列式階段，建議練習「把題意翻成算式」的步驟。');
-    if (weak.length) advices.push('弱點主題：' + weak.map(w => w.t).join('、') + '。建議針對這些主題多練 5~10 題。');
-    if (r.avgMs > 120000) advices.push('平均耗時偏長，可能需要加強基本運算速度。');
-    adviceBox.className = 'banner warn';
+    var advices;
+    if (window.AIMathParentAdviceEngine) {
+      advices = window.AIMathParentAdviceEngine.buildAdvice({
+        total: r.total, accuracy: r.accuracy, stuckLevel: stuckLv,
+        weaknesses: weak, avgMs: r.avgMs
+      });
+      adviceBox.className = 'banner ' + window.AIMathParentAdviceEngine.adviceTone(advices, r.accuracy);
+    } else {
+      advices = [];
+      if (r.total < 5) advices.push('目前作答數較少，建議每天至少做 5~10 題練習。');
+      if (r.accuracy < 60) advices.push('正確率偏低，建議先做基礎題加強觀念，不要急著做進階題。');
+      else if (r.accuracy < 80) advices.push('正確率還有進步空間，建議錯題先印出來重做一次，觀念才會穩固。');
+      else advices.push('正確率不錯！可以嘗試更多進階活用題挑戰。');
+      if (stuckLv >= 3) advices.push('孩子常需要完整步驟提示才能解題，建議把錯題的「完整步驟」抄一遍再做同型 2 題。');
+      else if (stuckLv >= 2) advices.push('孩子常卡在列式階段，建議練習「把題意翻成算式」的步驟。');
+      if (weak.length) advices.push('弱點主題：' + weak.map(w => w.t).join('、') + '。建議針對這些主題多練 5~10 題。');
+      if (r.avgMs > 120000) advices.push('平均耗時偏長，可能需要加強基本運算速度。');
+      adviceBox.className = 'banner warn';
+    }
     adviceBox.innerHTML = advices.map((a, i) => `${i+1}. ${esc(a)}`).join('<br>');
 
     /* copy text — delegate to shared parent copy engine */
