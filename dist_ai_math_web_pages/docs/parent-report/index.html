@@ -221,7 +221,7 @@
 
     <!-- V2: Weekly Progress Trend (paid-only with blurred preview) -->
     <details class="rpt-group">
-      <summary>🎯 進階分析 <span class="group-count">趨勢 + 雷達 + 補救</span></summary>
+      <summary>🎯 進階分析 <span class="group-count">趨勢 + 雷達 + 象限 + 補救</span></summary>
     <div class="card progress-trend-card" style="border-color:var(--accent)" id="progressTrendCard">
       <div style="font-weight:800">📈 四週正確率趨勢</div>
       <div class="small">追蹤每週正確率變化，看見孩子的進步軌跡</div>
@@ -235,6 +235,14 @@
       <div id="radarChart" style="display:flex;justify-content:center;margin-top:12px"></div>
       <div id="radarLegend" style="margin-top:8px"></div>
       <div id="radarGate" class="hidden"></div>
+    </div>
+
+    <!-- V2: 學習象限分析 (ABCD Quadrant from aggregate.js) -->
+    <div class="card" style="border-color:var(--accent)" id="quadrantCard">
+      <div style="font-weight:800">📊 學習象限分析</div>
+      <div class="small">根據提示使用與答題結果，將每次作答分為四象限：獨立答對、提示答對、提示仍錯、無提示答錯</div>
+      <div id="quadrantBar" style="margin-top:12px"></div>
+      <div id="quadrantTips" style="margin-top:10px"></div>
     </div>
 
     <!-- V2: 補救建議引擎 -->
@@ -310,6 +318,7 @@
 <script src="../shared/report/progress_trend_engine.js"></script>
 <script src="../shared/report/practice_summary_engine.js"></script>
 <script src="../shared/report/parent_advice_engine.js"></script>
+<script src="../shared/report/aggregate.js"></script>
 <script>
 (function(){
   'use strict';
@@ -1358,6 +1367,77 @@
         overlay.className = 'blur-overlay';
         overlay.innerHTML = '<div class="lock-icon">📈</div><div class="lock-text">升級即可追蹤每週進步趨勢<br>看見孩子的成長軌跡</div><a href="../pricing/" class="lock-btn" onclick="if(window.AIMathAnalytics)AIMathAnalytics.track(\'upgrade_click\',{from:\'trend_blur\'})">立即解鎖</a>';
         cardEl.appendChild(overlay);
+      }
+    })();
+
+    /* ─── Quadrant Analysis (delegates to shared aggregate.js) ─── */
+    (function renderQuadrantAnalysis(){
+      var barEl = document.getElementById('quadrantBar');
+      var tipsEl = document.getElementById('quadrantTips');
+      if (!barEl) return;
+
+      /* Collect local telemetry for last 7 days */
+      var attempts = [];
+      var DAY = 86400000;
+      var uid = getDeviceUid();
+      if (window.AIMathAttemptTelemetry) {
+        attempts = window.AIMathAttemptTelemetry.listAttempts(uid, { sinceMs: Date.now() - 7 * DAY });
+      }
+
+      if (!attempts.length){
+        barEl.innerHTML = '<div class="small" style="color:var(--muted)">尚無本機作答資料（至少完成幾題後可查看）</div>';
+        return;
+      }
+
+      if (window.AIMathReportAggregate) {
+        var stats = window.AIMathReportAggregate.computeStats(attempts);
+        var q = stats.quadrants || {};
+        var total = q.total || 0;
+        if (!total){ barEl.innerHTML = '<div class="small">資料不足</div>'; return; }
+
+        var segments = [
+          { key:'A', label:'獨立答對', rate: q.rateA || 0, color:'#2ea043' },
+          { key:'B', label:'提示答對', rate: q.rateB || 0, color:'#d29922' },
+          { key:'C', label:'提示仍錯', rate: q.rateC || 0, color:'#f85149' },
+          { key:'D', label:'無提示答錯', rate: q.rateD || 0, color:'#da3633' }
+        ];
+
+        /* stacked horizontal bar */
+        var barHtml = '<div style="display:flex;height:28px;border-radius:6px;overflow:hidden;border:1px solid var(--line)">';
+        segments.forEach(function(s){
+          var pct = Math.round(s.rate * 100);
+          if (pct < 1) return;
+          barHtml += '<div style="width:' + pct + '%;background:' + s.color + ';display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;min-width:20px" title="' + s.label + ' ' + pct + '%">' + s.key + '</div>';
+        });
+        barHtml += '</div>';
+
+        /* legend */
+        barHtml += '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;font-size:12px">';
+        segments.forEach(function(s){
+          var pct = Math.round(s.rate * 100);
+          barHtml += '<span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:' + s.color + ';vertical-align:middle;margin-right:3px"></span>' + s.label + ' ' + pct + '% (' + (q[s.key] || 0) + ')</span>';
+        });
+        barHtml += '</div>';
+
+        /* total label */
+        barHtml += '<div class="small" style="margin-top:6px;color:var(--muted)">近 7 天共 ' + total + ' 次作答（本機資料）</div>';
+        barEl.innerHTML = barHtml;
+
+        /* tips from aggregate recommend() */
+        if (tipsEl){
+          var rec = window.AIMathReportAggregate.recommend(stats);
+          var tips = rec.summary || [];
+          var focus = rec.focus || [];
+          if (tips.length || focus.length){
+            var tHtml = '';
+            tips.forEach(function(t){ tHtml += '<div class="banner muted" style="margin-top:4px;font-size:13px">' + esc(t) + '</div>'; });
+            focus.forEach(function(f){ tHtml += '<div class="banner warn" style="margin-top:4px;font-size:13px">' + esc(f) + '</div>'; });
+            tipsEl.innerHTML = tHtml;
+          }
+        }
+      } else {
+        /* fallback: just show attempt count */
+        barEl.innerHTML = '<div class="small">本週本機作答 ' + attempts.length + ' 次（aggregate 模組載入中）</div>';
       }
     })();
 
