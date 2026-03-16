@@ -625,6 +625,15 @@
       return '../star-pack/';
     }
 
+    /* Resolve device-local telemetry userId (UUID stored in localStorage).
+       Question pages store attempts under this UUID, NOT the display name. */
+    function getDeviceUid(){
+      if (window.AIMathCoachLog && window.AIMathCoachLog.getOrCreateUserId) {
+        return window.AIMathCoachLog.getOrCreateUserId();
+      }
+      return 'guest';
+    }
+
     /* ─── Practice Summary (delegates to shared practice_summary_engine) ─── */
     function renderPracticeSummary(){
       var box = document.getElementById('practiceSummary');
@@ -745,11 +754,11 @@
 
       var prevAttempts = [];
       if (window.AIMathWoWEngine) {
-        prevAttempts = window.AIMathWoWEngine.getPrevWeekAttempts(d.name);
-      } else if (d.name && window.AIMathAttemptTelemetry) {
+        prevAttempts = window.AIMathWoWEngine.getPrevWeekAttempts(getDeviceUid());
+      } else if (window.AIMathAttemptTelemetry) {
         var now = Date.now();
         var DAY = 86400000;
-        var all14 = window.AIMathAttemptTelemetry.listAttempts(d.name, { sinceMs: now - 14 * DAY });
+        var all14 = window.AIMathAttemptTelemetry.listAttempts(getDeviceUid(), { sinceMs: now - 14 * DAY });
         prevAttempts = all14.filter(function(a){ return a && Number(a.ts_end) < now - 7 * DAY; });
       }
 

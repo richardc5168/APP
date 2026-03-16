@@ -93,3 +93,39 @@ test('computeWoW handles null/undefined gracefully', () => {
   const result2 = engine.computeWoW(null);
   assert.equal(result2.hasPrev, false);
 });
+
+test('getPrevWeekAttempts queries telemetry with provided userId, not display name', () => {
+  // Simulate localStorage + telemetry with UUID-based key
+  const uuid = 'u_abc12345-aa-bb-cc-ddeeff001122';
+  const DAY = 86400000;
+  const now = Date.now();
+  const store = {};
+  // Store attempts under UUID key (as question pages do)
+  store['ai_math_attempts_v1::' + uuid] = JSON.stringify({
+    version: 1, user_id: uuid,
+    attempts: [
+      { ts_end: now - 10 * DAY, is_correct: true },  // 10 days ago - in prev week
+      { ts_end: now - 2 * DAY, is_correct: false }     // 2 days ago - current week
+    ]
+  });
+  const mockStorage = {
+    getItem: (k) => store[k] || null,
+    setItem: (k, v) => { store[k] = v; }
+  };
+  const sandbox = { window: {}, console, Date, Math, JSON, Number, localStorage: mockStorage };
+  sandbox.globalThis = sandbox.window;
+  vm.createContext(sandbox);
+  const telemetryCode = fs.readFileSync(path.resolve('docs/shared/attempt_telemetry.js'), 'utf8');
+  vm.runInContext(telemetryCode, sandbox);
+  const wowCode = fs.readFileSync(path.resolve('docs/shared/report/wow_engine.js'), 'utf8');
+  vm.runInContext(wowCode, sandbox);
+
+  // getPrevWeekAttempts with UUID should find prev-week attempts
+  const prev = sandbox.window.AIMathWoWEngine.getPrevWeekAttempts(uuid, now);
+  assert.equal(prev.length, 1, 'should find 1 prev-week attempt using UUID');
+  assert.equal(prev[0].is_correct, true);
+
+  // getPrevWeekAttempts with display name should find NOTHING (key mismatch)
+  const prevByName = sandbox.window.AIMathWoWEngine.getPrevWeekAttempts('小明', now);
+  assert.equal(prevByName.length, 0, 'display name should NOT resolve to UUID-keyed attempts');
+});
