@@ -45,6 +45,22 @@
 - Added `→ 前往練習模組` deep-link to each detailed analysis (補強方案) card
 - +1 regression test → **49 pass**
 
+### Iteration 21 (commit `bc396fe4f`)
+- **Critical fix**: Single-practice mode ("再練一題") results were silently lost — only quiz-3 mode called `persistPractice`
+- In `goNext()` for non-quiz mode: reset `quizRecorded`, call `persistPractice(isCorrect ? 1 : 0, 1)` per answered question
+- Refreshed latest_iteration_report.md to cover iters 17-20
+- +1 regression test → **50 pass**
+
+### Iteration 22 (commit `8b8c60fb3`)
+- Practice results now write to local `AIMathAttemptTelemetry.appendAttempt()` (before cloud write)
+- Events tagged `source: 'parent-report-practice'`, `unit_id: 'parent-report-practice'`
+- Uses `getDeviceUid()` for correct identity
+- +1 regression test → **51 pass**
+
+### Iteration 23 (commit `581cbcaa6`)
+- Added 3 remediation regression tests: priority targeting weakest topic, action text presence, stable links for known topics
+- Test count 51 → **54 pass**
+
 ### Current Shared Engine Inventory (11 modules)
 1. `weakness_engine.js` — `AIMathWeaknessEngine`
 2. `recommendation_engine.js` — `AIMathRecommendationEngine` (TOPIC_LINK_MAP: 17 entries)
@@ -59,7 +75,7 @@
 11. `aggregate.js` — `AIMathReportAggregate` (not yet connected to parent-report)
 
 ### Test Coverage
-- **49 regression tests** across 11 test files, all passing
+- **54 regression tests** across 11 test files, all passing
 - `validate_all_elementary_banks.py` → 7157 PASS, 0 FAIL
 - `verify_all.py` → 4/4 OK (135 files mirrored)
 
@@ -69,13 +85,12 @@
 
 ### Residual Risks
 1. `aggregate.js` not connected to parent-report (quadrant classification unused)
-2. **Single-practice results not written back** — only quiz-3 mode calls `persistPractice`
-3. **Practice results don't write to local AIMathAttemptTelemetry** — aggregate analytics can't see practice
-4. Mixed number format (1 1/2) not supported in practice answer checker
-5. Expand/collapse state not persisted across page reloads
+2. Mixed number format (1 1/2) not supported in practice answer checker
+3. Expand/collapse state not persisted across page reloads
+4. Practice events use `unit_id='parent-report-practice'` — separate from real quiz unit_ids in aggregate
 
 ### Next Iteration Priorities
-1. Fix single-practice writeback so "再練一題" results are persisted
-2. Write practice results to local attempt telemetry for aggregate analysis
-3. Add writeback regression tests
-4. Connect aggregate.js for richer weakness detection
+1. Connect aggregate.js quadrant analysis to parent-report for richer weakness detection
+2. Mixed number support in practice answer checker
+3. Practice early-exit tracking (distinguish "finished 3/3" from "quit after 1/3")
+4. Externalize kind→advice mappings to JSON for maintainability
