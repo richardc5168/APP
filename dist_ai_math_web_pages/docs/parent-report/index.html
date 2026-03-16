@@ -705,12 +705,15 @@
       }
 
       box.className = stats.acc >= 80 ? 'banner ok' : stats.acc >= 60 ? 'banner warn' : 'banner bad';
+      var completedCount = recent.filter(function(e){ return e.completed !== false; }).length;
+      var earlyExitCount = recent.length - completedCount;
       box.innerHTML =
         '最近 7 天再練：<strong>' + stats.count + '</strong> 次　' +
         '總題數：<strong>' + stats.totalQ + '</strong>　' +
         '答對：<strong>' + stats.correctQ + '</strong>　' +
-        '正確率：<strong>' + stats.acc + '%</strong><br>' +
-        '<span class="small">最近一次：' + esc(stats.latestText) + '</span>';
+        '正確率：<strong>' + stats.acc + '%</strong>' +
+        (earlyExitCount > 0 ? '　<span class="pill warn">提前結束 ' + earlyExitCount + ' 次</span>' : '') +
+        '<br><span class="small">最近一次：' + esc(stats.latestText) + '</span>';
 
       if (byKindBox){
         if (!rows.length){
@@ -1026,9 +1029,10 @@
         var quizRecorded = false;
         var current = buildPracticeFromWrong(w);
 
-        function persistPractice(score, total){
+        function persistPractice(score, total, isComplete){
           if (quizRecorded) return;
           quizRecorded = true;
+          var completed = isComplete !== false; /* default true */
 
           /* Write to local attempt telemetry so aggregate analytics includes practice */
           if (window.AIMathAttemptTelemetry && window.AIMathAttemptTelemetry.appendAttempt) {
@@ -1055,7 +1059,7 @@
           /* Always update in-page practice data regardless of cloud write */
           if (!r.practice) r.practice = { events: [] };
           if (!Array.isArray(r.practice.events)) r.practice.events = [];
-          var practiceEv = { ts: Date.now(), score: score, total: total, topic: String(w.t || ''), kind: String(w.k || ''), mode: quizMode ? 'quiz3' : 'single' };
+          var practiceEv = { ts: Date.now(), score: score, total: total, topic: String(w.t || ''), kind: String(w.k || ''), mode: quizMode ? 'quiz3' : 'single', completed: completed };
           r.practice.events.push(practiceEv);
           if (r.practice.events.length > 80) r.practice.events = r.practice.events.slice(-80);
           renderPracticeSummary();
@@ -1066,7 +1070,8 @@
             total: total,
             topic: String(w.t || ''),
             kind: String(w.k || ''),
-            mode: quizMode ? 'quiz3' : 'single'
+            mode: quizMode ? 'quiz3' : 'single',
+            completed: completed
           };
           window.AIMathStudentAuth.recordPracticeResult(d.name || '', ev).then(function(ok){
             /* cloud write is bonus persistence — UI already updated above */
@@ -1193,7 +1198,7 @@
           if (finishEl){
             finishEl.addEventListener('click', function(){
               var taken = Math.max(1, quizIndex - 1);
-              persistPractice(quizScore, taken);
+              persistPractice(quizScore, taken, false); /* early exit */
               var acc = Math.round((quizScore / taken) * 100);
               renderCurrentCard('🏁 已結束：目前 ' + quizScore + '/' + taken + '（' + acc + '%）');
               document.getElementById('practiceAnswer').disabled = true;

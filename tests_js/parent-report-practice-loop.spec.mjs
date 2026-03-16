@@ -105,6 +105,18 @@ test('single-mode practice persists each answered question individually', () => 
   assert.ok(goNextBlock.includes('persistPractice(isCorrect ? 1 : 0, 1)'), 'single mode must persist with score 0 or 1');
 });
 
+test('practice early-exit is tracked with completed:false in events', () => {
+  const src = fs.readFileSync(path.resolve('docs/parent-report/index.html'), 'utf8');
+  // persistPractice must accept isComplete param
+  assert.ok(src.includes('function persistPractice(score, total, isComplete)'), 'persistPractice must accept isComplete param');
+  // practice event must include completed field
+  assert.ok(src.includes('completed: completed'), 'practice event must record completed status');
+  // early exit path must pass false
+  assert.ok(src.includes('persistPractice(quizScore, taken, false)'), 'early exit must pass completed=false');
+  // summary must show early exit count
+  assert.ok(src.includes('提前結束'), 'practice summary must show early exit count');
+});
+
 test('persistPractice writes to local attempt telemetry', () => {
   const src = fs.readFileSync(path.resolve('docs/parent-report/index.html'), 'utf8');
   const persistBlock = src.slice(src.indexOf('function persistPractice'));
