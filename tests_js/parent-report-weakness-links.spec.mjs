@@ -68,3 +68,29 @@ test('weakness cards get ranked and each has a resolvable topic link', () => {
     assert.notEqual(link, '../star-pack/', `known topic "${w.t}" should not fall back to star-pack`);
   });
 });
+
+test('remedial cards get reason and action text from weakness engine', () => {
+  const weakEngine = windowObj.AIMathWeaknessEngine;
+
+  const rows = [
+    { t: 'fraction-word-g5', k: 'addition', w: 5, h2: 2, h3: 1, n: 10 },
+    { t: 'volume-g5', k: 'rect_cm3', w: 1, h2: 3, h3: 0, n: 8 }
+  ];
+
+  rows.forEach((row) => {
+    const reason = weakEngine.describeWeaknessReason(row);
+    const action = weakEngine.nextActionText(row);
+    assert.ok(reason.length > 5, `reason for ${row.t} should be a meaningful string`);
+    assert.ok(action.length > 5, `action for ${row.t} should be a meaningful string`);
+    assert.ok(!reason.includes('undefined'), `reason should not contain "undefined"`);
+    assert.ok(!action.includes('undefined'), `action should not contain "undefined"`);
+  });
+
+  // High wrong count → specific reason
+  const highWrong = weakEngine.describeWeaknessReason({ w: 5, h2: 0, h3: 0, n: 10 });
+  assert.ok(highWrong.includes('答錯'), `high wrong count should mention 答錯`);
+
+  // High h3 → specific reason
+  const highH3 = weakEngine.describeWeaknessReason({ w: 1, h2: 0, h3: 2, n: 5 });
+  assert.ok(highH3.includes('提示'), `high h3 should mention 提示`);
+});
