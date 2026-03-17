@@ -1,6 +1,6 @@
 # Latest Iteration Report
 
-## Session Summary (Iterations 12–28)
+## Session Summary (Iterations 12–29)
 
 ### Iteration 12 (commit `43b4417ba`)
 - Expanded TOPIC_LINK_MAP with 4 new entries: commercial-pack1-fraction-sprint, national-bank, midterm, grand-slam
@@ -91,6 +91,11 @@
 - `fractionsEqual('0.5', '1/2')` now returns `true` — unblocks decimal practice modules
 - Extended test assertions with decimal↔fraction, decimal↔whole, decimal↔mixed → **66 pass**
 
+### Iteration 29 (commit `5df57f0f2`)
+- **Remediation breadth fix**: expanded `practice_from_wrong_engine.js` coverage for the existing bank families that were still falling back to generic remediation
+- Added explicit explanation + deterministic practice generation for average, money, discount/percent, ratio, decimal, speed, area/perimeter, time, and multi-step families
+- Added 3 regression tests covering family-level explanation coverage, targeted practice generation, and integer-answer safety → **69 pass**
+
 ### Current Shared Engine Inventory (11 modules)
 1. `weakness_engine.js` — `AIMathWeaknessEngine`
 2. `recommendation_engine.js` — `AIMathRecommendationEngine` (TOPIC_LINK_MAP: 17 entries)
@@ -105,7 +110,7 @@
 11. `aggregate.js` — `AIMathReportAggregate` (**connected**: quadrant analysis card in parent-report)
 
 ### Test Coverage
-- **66 regression tests** across 12 test files, all passing
+- **69 regression tests** across 12 test files, all passing
 - `validate_all_elementary_banks.py` → 7157 PASS, 0 FAIL
 - `verify_all.py` → 4/4 OK (135 files mirrored)
 
@@ -118,9 +123,11 @@
 2. ~Mixed number format~ — **DONE** (iter 26)
 3. Expand/collapse state not persisted across page reloads
 4. Practice events use `unit_id='parent-report-practice'` — separate from real quiz unit_ids in aggregate
+5. Remediation coverage is still alias-based; future new or renamed `kind` values can still fall through until mapped
 
 ### Next Iteration Priorities
 1. ~Connect aggregate.js~ — **DONE** (iter 25)
 2. ~Mixed number support~ — **DONE** (iter 26)
 3. ~Practice early-exit tracking~ — **DONE** (iter 27)
-4. Externalize kind→advice mappings to JSON for maintainability
+4. Add a validation/audit that every current bank `kind` resolves to a non-generic remediation branch
+5. Externalize kind→advice mappings to JSON for maintainability
