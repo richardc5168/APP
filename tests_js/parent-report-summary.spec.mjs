@@ -21,6 +21,11 @@ const windowObj = loadScripts([
   'docs/shared/report/report_data_builder.js'
 ]);
 
+test('weakness engine builds compact evidence text for summary cards', () => {
+  const text = windowObj.AIMathWeaknessEngine.buildWeaknessEvidenceText({ w: 4, h2: 1, h3: 2 });
+  assert.equal(text, '本週證據：錯 4 題，提示 ≥ L2 3 次');
+});
+
 test('report summary keeps recent wrong answers newest-first', () => {
   const report = windowObj.AIMathReportDataBuilder.buildReportData({
     name: 'Kai',
@@ -58,6 +63,8 @@ test('parent report first screen exposes top 3 weakness summary cards', () => {
   assert.ok(src.includes('id="weeklyWeaknessCard"'), 'quick summary must include weekly weakness card');
   assert.ok(src.includes('id="weeklyWeaknessList"'), 'quick summary must include weekly weakness list');
   assert.ok(src.includes('var topWeak = weak.slice(0, 3);'), 'weekly weakness summary must cap to top 3');
+  assert.ok(src.includes('function weaknessEvidenceText(w)'), 'weekly weakness summary must delegate evidence formatting');
+  assert.ok(src.includes('buildWeaknessEvidenceText'), 'weekly weakness summary must reuse shared weakness engine evidence logic');
   assert.ok(src.includes('本週證據：錯 '), 'weekly weakness summary must show concrete evidence counts');
   assert.ok(src.includes('提示 ≥ L2 '), 'weekly weakness summary must show hint-dependency evidence');
   assert.ok(src.includes('為什麼判定弱：'), 'weekly weakness summary must explain why weak');

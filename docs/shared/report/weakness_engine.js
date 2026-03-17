@@ -30,6 +30,13 @@
     return '先重做最近錯題，再補 3 題同類型題。';
   }
 
+  function buildWeaknessEvidenceText(row){
+    if (!row) return '本週證據不足，先觀察下一輪作答情況。';
+    var wrong = Math.max(0, toNumber(row.w, 0));
+    var hintHeavy = Math.max(0, toNumber(row.h2, 0)) + Math.max(0, toNumber(row.h3, 0));
+    return '本週證據：錯 ' + wrong + ' 題，提示 ≥ L2 ' + hintHeavy + ' 次';
+  }
+
   function rankWeaknessRows(rows, topN){
     var limit = Math.max(1, toNumber(topN, 5));
     return (Array.isArray(rows) ? rows : [])
@@ -43,7 +50,8 @@
           h3: Math.max(0, toNumber(row && row.h3, 0)),
           score: weaknessScore(row),
           reason: describeWeaknessReason(row),
-          next_action: nextActionText(row)
+          next_action: nextActionText(row),
+          evidence_text: buildWeaknessEvidenceText(row)
         };
       })
       .filter(function(row){ return row.w > 0; })
@@ -57,6 +65,7 @@
     weaknessScore: weaknessScore,
     describeWeaknessReason: describeWeaknessReason,
     nextActionText: nextActionText,
+    buildWeaknessEvidenceText: buildWeaknessEvidenceText,
     rankWeaknessRows: rankWeaknessRows
   };
 })();

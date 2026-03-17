@@ -1,6 +1,6 @@
 # Latest Iteration Report
 
-## Session Summary (Iterations 12–33)
+## Session Summary (Iterations 12–34)
 
 ### Iteration 12 (commit `43b4417ba`)
 - Expanded TOPIC_LINK_MAP with 4 new entries: commercial-pack1-fraction-sprint, national-bank, midterm, grand-slam
@@ -111,10 +111,15 @@
 - Added a compact weekly weakness summary card that renders from the existing ranked weakness list, reuses `describeWeakReason()` and `nextAction()`, and links straight to targeted practice with a stable CTA
 - Added a summary regression test verifying the card exists, is capped at 3 items, explains why the topic is weak, and includes a direct practice CTA → **74 pass**
 
-### Iteration 33 (commit `working-tree`)
+### Iteration 33 (commit `2878ee355`)
 - **First-screen trust signal**: strengthened the weekly weakness summary card with a concrete evidence line so parents can see why the system flagged a weakness without opening deeper sections
 - Added `本週證據：錯 N 題，提示 ≥ L2 M 次` to each first-screen weakness card, while preserving the same top-3 cap, reason text, action text, and direct practice CTA
 - Strengthened the summary regression test so the first screen must keep both the evidence label and the hint-dependency count → **74 pass**
+
+### Iteration 34 (commit `working-tree`)
+- **Shared logic cleanup**: moved the first-screen weakness evidence sentence into `AIMathWeaknessEngine` so the quick summary no longer owns its own evidence-formatting rule
+- Added `buildWeaknessEvidenceText()` to the shared weakness engine, exposed `evidence_text` on ranked rows, and changed parent-report to delegate the summary evidence line to the shared helper instead of assembling it inline
+- Extended summary regression coverage with a direct weakness-engine evidence test and a source-level assertion that the page reuses the shared builder → **75 pass**
 
 ### Current Shared Engine Inventory (11 modules)
 1. `weakness_engine.js` — `AIMathWeaknessEngine`
@@ -130,7 +135,7 @@
 11. `aggregate.js` — `AIMathReportAggregate` (**connected**: quadrant analysis card in parent-report)
 
 ### Test Coverage
-- **74 regression tests** across 13 test files, all passing
+- **75 regression tests** across 13 test files, all passing
 - `validate_all_elementary_banks.py` → 7157 PASS, 0 FAIL
 - `verify_all.py` → 4/4 OK (135 files mirrored)
 
@@ -146,10 +151,11 @@
 5. Remediation coverage is now audited across all current `bank.js` modules, but the rule logic is still handwritten and must grow when new kind families are added
 6. The first screen now includes a compact weakness summary as well as deeper weakness/remedial sections; that duplication is acceptable only while both views reuse the same delegates and links
 7. The first-screen evidence line depends on the current weakness payload fields (`w`, `h2`, `h3`) staying stable; if the weakness shape changes, the summary should keep degrading gracefully
+8. The first-screen evidence sentence is now shared, but deeper weakness/remedial evidence/count copy is still formatted inline elsewhere in the page
 
 ### Next Iteration Priorities
 1. ~Connect aggregate.js~ — **DONE** (iter 25)
 2. ~Mixed number support~ — **DONE** (iter 26)
 3. ~Practice early-exit tracking~ — **DONE** (iter 27)
-4. Publish and remote-validate the first-screen weakness evidence improvement
+4. Publish and remote-validate the shared weakness-evidence refactor
 5. Externalize kind→advice mappings to JSON for maintainability

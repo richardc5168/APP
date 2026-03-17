@@ -650,6 +650,13 @@
       return '多練同類題 5 題';
     }
 
+    function weaknessEvidenceText(w){
+      if (window.AIMathWeaknessEngine && window.AIMathWeaknessEngine.buildWeaknessEvidenceText) {
+        return window.AIMathWeaknessEngine.buildWeaknessEvidenceText(w);
+      }
+      return '本週證據：錯 ' + esc(w && w.w || 0) + ' 題，提示 ≥ L2 ' + esc(((w && w.h2) || 0) + ((w && w.h3) || 0)) + ' 次';
+    }
+
     function getTopicLink(topic){
       if (window.AIMathRecommendationEngine && window.AIMathRecommendationEngine.getTopicLink) {
         return window.AIMathRecommendationEngine.getTopicLink(topic);
@@ -965,10 +972,9 @@
       }
       weeklyWeaknessList.innerHTML = topWeak.map(function(w, index){
         var link = getTopicLink(w.t);
-        var hintHeavy = (w.h2 || 0) + (w.h3 || 0);
         return '<div class="banner ' + (index === 0 ? 'bad' : index === 1 ? 'warn' : 'muted') + '" style="margin-top:' + (index ? '8' : '0') + 'px">'
           + '<div style="font-weight:800">' + (index + 1) + '. ' + esc(w.t) + (w.k ? ' / ' + esc(w.k) : '') + '</div>'
-          + '<div class="small" style="margin-top:4px;color:var(--muted)">本週證據：錯 ' + esc(w.w || 0) + ' 題，提示 ≥ L2 ' + esc(hintHeavy) + ' 次</div>'
+          + '<div class="small" style="margin-top:4px;color:var(--muted)">' + esc(weaknessEvidenceText(w)) + '</div>'
           + '<div class="small" style="margin-top:4px">為什麼判定弱：' + esc(describeWeakReason(w)) + '</div>'
           + '<div class="small" style="margin-top:4px">現在先做：' + esc(nextAction(w)) + '</div>'
           + '<a class="weekly-weakness-link" data-topic="' + esc(w.t) + '" href="' + link + '" style="display:inline-block;margin-top:8px;color:var(--accent);text-decoration:none;font-weight:700">→ 直接開始這組補強</a>'
