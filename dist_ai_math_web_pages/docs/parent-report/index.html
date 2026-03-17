@@ -162,6 +162,12 @@
       <div id="aiActionList" style="margin-top:10px"></div>
     </div>
 
+    <div class="card" style="border-color:var(--bad)" id="weeklyWeaknessCard">
+      <div style="font-weight:800">🩺 本週最需要先補的 3 個弱點</div>
+      <div class="small">先看最弱概念、為什麼卡住，以及現在就能開始的補強入口。</div>
+      <div id="weeklyWeaknessList" style="margin-top:10px"></div>
+    </div>
+
     <div class="card hidden" style="border-color:var(--accent)" id="reportUpgradePrompt">
       <div style="font-weight:800">📌 想看完整週報與歷史趨勢？</div>
       <div class="small" id="reportUpgradePromptText">升級後可解鎖完整概念雷達、更多補救建議，以及連續週次的進步比較。</div>
@@ -947,6 +953,37 @@
       }).join('');
       focusNarrative.className = 'banner ' + (wf.tone || 'muted');
       focusNarrative.textContent = wf.narrative || '';
+    })();
+
+    (function renderWeeklyWeaknessSummary(){
+      var weeklyWeaknessList = document.getElementById('weeklyWeaknessList');
+      if (!weeklyWeaknessList) return;
+      var topWeak = weak.slice(0, 3);
+      if (!topWeak.length) {
+        weeklyWeaknessList.innerHTML = '<div class="banner ok">目前沒有明顯弱點，本週可維持節奏做整合複習。</div>';
+        return;
+      }
+      weeklyWeaknessList.innerHTML = topWeak.map(function(w, index){
+        var link = getTopicLink(w.t);
+        return '<div class="banner ' + (index === 0 ? 'bad' : index === 1 ? 'warn' : 'muted') + '" style="margin-top:' + (index ? '8' : '0') + 'px">'
+          + '<div style="font-weight:800">' + (index + 1) + '. ' + esc(w.t) + (w.k ? ' / ' + esc(w.k) : '') + '</div>'
+          + '<div class="small" style="margin-top:4px">為什麼判定弱：' + esc(describeWeakReason(w)) + '</div>'
+          + '<div class="small" style="margin-top:4px">現在先做：' + esc(nextAction(w)) + '</div>'
+          + '<a class="weekly-weakness-link" data-topic="' + esc(w.t) + '" href="' + link + '" style="display:inline-block;margin-top:8px;color:var(--accent);text-decoration:none;font-weight:700">→ 直接開始這組補強</a>'
+          + '</div>';
+      }).join('');
+
+      weeklyWeaknessList.querySelectorAll('.weekly-weakness-link').forEach(function(link){
+        link.addEventListener('click', function(){
+          if (window.AIMathAnalytics) {
+            window.AIMathAnalytics.track('weekly_weakness_click', {
+              topic: link.getAttribute('data-topic') || '',
+              href: link.href,
+              action_source: 'weekly_weakness_summary'
+            });
+          }
+        });
+      });
     })();
 
     (function renderAiActions(){

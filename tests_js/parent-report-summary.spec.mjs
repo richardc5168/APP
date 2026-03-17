@@ -52,3 +52,12 @@ test('weekly focus keeps 4 key KPIs', () => {
 
   assert.equal(report.d.weeklyFocus.items.length, 4);
 });
+
+test('parent report first screen exposes top 3 weakness summary cards', () => {
+  const src = fs.readFileSync(path.resolve('docs/parent-report/index.html'), 'utf8');
+  assert.ok(src.includes('id="weeklyWeaknessCard"'), 'quick summary must include weekly weakness card');
+  assert.ok(src.includes('id="weeklyWeaknessList"'), 'quick summary must include weekly weakness list');
+  assert.ok(src.includes('var topWeak = weak.slice(0, 3);'), 'weekly weakness summary must cap to top 3');
+  assert.ok(src.includes('為什麼判定弱：'), 'weekly weakness summary must explain why weak');
+  assert.ok(src.includes('→ 直接開始這組補強'), 'weekly weakness summary must include a direct practice CTA');
+});
