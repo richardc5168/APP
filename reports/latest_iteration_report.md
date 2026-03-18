@@ -126,7 +126,7 @@
 - Replaced the deeper weakness table's inline wrong-count and hint-count sentence with `weaknessEvidenceText(w)`, stored shared `evidenceText` on remediation recommendations, and rendered that shared evidence string in detailed remedial cards
 - Added a remediation regression test that verifies the page reuses the shared formatter and no longer contains the old inline evidence template → **76 pass**
 
-### Iteration 36 (commit `working-tree`)
+### Iteration 36 (commit `fc5240021`)
 - **P0 frontend token hardening**: removed the parent-report cloud-write token path from bundle/global config and persistent localStorage so the browser only uses a session-scoped runtime token
 - Changed `AIMathStudentAuth` cloud sync to read from `sessionStorage`, migrate and clear the legacy localStorage PAT once, and expose `setCloudWriteToken()` / `clearCloudWriteToken()` helpers for explicit runtime use
 - Added `tests_js/parent-report-cloud-sync-security.spec.mjs` so the repo fails if `AIMathCloudSyncConfig.gistToken` support or persistent localStorage token lookup returns → **77 pass**
@@ -168,5 +168,5 @@
 1. ~Connect aggregate.js~ — **DONE** (iter 25)
 2. ~Mixed number support~ — **DONE** (iter 26)
 3. ~Practice early-exit tracking~ — **DONE** (iter 27)
-4. Publish and remote-validate the frontend token hardening patch
-5. Decide whether the next low-risk commercialization step is backend-owned report writeback or recommendation-data maintainability work
+4. Replace the browser-owned parent-report write path with a backend-owned endpoint or the smallest reversible proxy path
+5. After write-path hardening, externalize recommendation/advice mappings into data without changing behavior
