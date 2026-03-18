@@ -99,3 +99,11 @@ test('recommendations produce stable links for known topics', () => {
       `known topic "${topic}" should resolve to a non-fallback link`);
   });
 });
+
+test('deeper weakness and remedial cards reuse the shared evidence formatter', () => {
+  const src = fs.readFileSync(path.resolve('docs/parent-report/index.html'), 'utf8');
+  assert.ok(src.includes('${esc(weaknessEvidenceText(w))}'), 'weakness table should use the shared evidence formatter');
+  assert.ok(src.includes('evidenceText: weaknessEvidenceText(w)'), 'remedial recommendations should store shared evidence text');
+  assert.ok(src.includes("esc(rec.evidenceText || '')"), 'remedial cards should render the shared evidence text');
+  assert.ok(!src.includes('提示≥L2：${(w.h2 || 0) + (w.h3 || 0)} 次'), 'inline weakness evidence formatting should be removed to avoid drift');
+});
