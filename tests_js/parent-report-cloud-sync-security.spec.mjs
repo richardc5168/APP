@@ -66,37 +66,29 @@ test('report sync adapter credentials are session-scoped and support paid path',
   assert.ok(src.includes('_readSnapshotFree'), 'paid read failure should fall through to free path');
 });
 
-test('Gist fallback read path never attaches a write token', () => {
-  const authSrc = fs.readFileSync(path.resolve('docs/shared/student_auth.js'), 'utf8');
+test('Gist infrastructure is fully removed from student_auth.js', () => {
+  const src = fs.readFileSync(path.resolve('docs/shared/student_auth.js'), 'utf8');
 
-  /* Extract the lookupStudentReport function body */
-  const lookupStart = authSrc.indexOf('function lookupStudentReport(');
-  const lookupEnd = authSrc.indexOf('function recordPracticeResult(');
-  assert.ok(lookupStart > 0 && lookupEnd > lookupStart, 'lookupStudentReport function must exist');
-  const lookupBlock = authSrc.slice(lookupStart, lookupEnd);
+  /* No Gist constants or URLs */
+  assert.ok(!src.includes('GIST_ID'), 'GIST_ID constant must be removed');
+  assert.ok(!src.includes('GIST_API'), 'GIST_API constant must be removed');
+  assert.ok(!src.includes('api.github.com/gists'), 'Gist API URL must be removed');
+  assert.ok(!src.includes('fetch(GIST_API'), 'Gist fetch call must be removed');
 
-  /* The Gist fetch path must NOT attach Authorization header with write token */
-  const gistFetchSection = lookupBlock.slice(lookupBlock.indexOf('fetch(GIST_API'));
-  assert.ok(gistFetchSection, 'Gist fallback fetch must still exist for read-only access');
-  assert.ok(!lookupBlock.includes("headers.Authorization = 'token ' + getCloudToken()"),
-    'Gist fallback must NOT attach write token as Authorization header');
-  assert.ok(!lookupBlock.includes("headers.Authorization = 'token '"),
-    'Gist fallback must NOT attach any token as Authorization header');
-});
+  /* No Gist registry parsing helpers (dead code) */
+  assert.ok(!src.includes('collectAliasEntries'), 'collectAliasEntries helper must be removed');
+  assert.ok(!src.includes('registry.json'), 'registry.json reference must be removed');
+  assert.ok(!src.includes('getStoredAttempts'), 'getStoredAttempts helper must be removed');
+  assert.ok(!src.includes('getPracticeEventsFromData'), 'getPracticeEventsFromData helper must be removed');
 
-test('Gist fallback read never returns stored PIN to browser', () => {
-  const authSrc = fs.readFileSync(path.resolve('docs/shared/student_auth.js'), 'utf8');
-
-  const lookupStart = authSrc.indexOf('function lookupStudentReport(');
-  const lookupEnd = authSrc.indexOf('function recordPracticeResult(');
-  const lookupBlock = authSrc.slice(lookupStart, lookupEnd);
-
-  /* The Gist fallback return objects must NOT include a pin field */
-  /* The backend path is ok (server controls what to return), but raw Gist entries must be filtered */
-  const gistSection = lookupBlock.slice(lookupBlock.indexOf('fetch(GIST_API'));
-  assert.ok(gistSection, 'Gist fallback must exist');
-  assert.ok(!gistSection.includes('pin: latest.pin'), 'Gist return must not expose stored PIN');
-  assert.ok(!gistSection.includes('pin: rawEntry.pin'), 'Gist return must not expose stored PIN from raw entry');
+  /* lookupStudentReport must exist and use backend only */
+  assert.ok(src.includes('function lookupStudentReport'), 'lookupStudentReport must still exist');
+  const lookupBlock = src.slice(
+    src.indexOf('function lookupStudentReport('),
+    src.indexOf('function recordPracticeResult(')
+  );
+  assert.ok(lookupBlock.includes('/v1/parent-report/registry/fetch'), 'lookupStudentReport must use backend registry');
+  assert.ok(!lookupBlock.includes('github'), 'lookupStudentReport must not reference GitHub');
 });
 
 test('no frontend file directly constructs Gist PATCH or write requests', () => {

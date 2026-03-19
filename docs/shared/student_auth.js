@@ -213,30 +213,7 @@
     return dedupeAttempts([].concat(sprintAttempts, telAttempts)).map(normalizeAttemptForCloud);
   }
 
-  function getPracticeEventsFromData(data){
-    var events = data && data.d && data.d.practice && Array.isArray(data.d.practice.events)
-      ? data.d.practice.events
-      : [];
-    return events.slice(-80);
-  }
 
-  function getStoredAttempts(entry, days){
-    var cutoff = Date.now() - (Number(days) || 7) * 86400000;
-    var attempts = entry && entry.data && Array.isArray(entry.data._attempts) ? entry.data._attempts : [];
-    return dedupeAttempts(attempts.filter(function(a){ return getAttemptTs(a) >= cutoff; }));
-  }
-
-  function collectAliasEntries(reg, rawName){
-    var entries = reg && reg.entries ? reg.entries : {};
-    var nameKey = normalizeName(rawName);
-    return Object.keys(entries).filter(function(k){
-      var entry = entries[k] || {};
-      var entryName = entry.name || k;
-      return normalizeName(entryName) === nameKey || normalizeName(k) === nameKey;
-    }).map(function(k){
-      return { key: k, entry: entries[k] };
-    });
-  }
 
   function tryBuildReportDataWithShared(name, days, attempts, practiceEvents){
     var builder = window.AIMathReportDataBuilder;
@@ -421,71 +398,13 @@
     } catch(e) { return null; }
   }
 
-  /* ─── Cloud Sync (GitHub Gist — public read, session-scoped token write) ─── */
-  var GIST_ID   = '9d5e5645831664954c655ca84d35e0e3';
-  var GIST_API  = 'https://api.github.com/gists/' + GIST_ID;
-  var CLOUD_TOKEN_KEY = 'aimath_cloud_sync_pat_session_v1';
-  var LEGACY_CLOUD_TOKEN_KEY = 'aimath_cloud_sync_pat_v1';
+  /* ─── Cloud Sync (Backend registry) ─── */
   var PARENT_REPORT_API_BASE_KEY = 'aimath_parent_report_api_base_v1';
   var _cloudTimer = null;
   var _cloudInterval = null;
   var _syncInFlight = false;
-  var _cloudAuthWarned = false;
-  var _cloudLegacyTokenWarned = false;
   var _cloudBackendWarned = false;
   var _cloudPinWarned = false;
-
-  function getCloudToken(){
-    try {
-      var runtimeToken = String(sessionStorage.getItem(CLOUD_TOKEN_KEY) || '').trim();
-      if (runtimeToken) return runtimeToken;
-      var legacyToken = String(localStorage.getItem(LEGACY_CLOUD_TOKEN_KEY) || '').trim();
-      if (legacyToken) {
-        try { sessionStorage.setItem(CLOUD_TOKEN_KEY, legacyToken); } catch(e) {}
-        try { localStorage.removeItem(LEGACY_CLOUD_TOKEN_KEY); } catch(e) {}
-        if (!_cloudLegacyTokenWarned) {
-          _cloudLegacyTokenWarned = true;
-          console.warn('[cloud-sync] migrated legacy localStorage token to session storage');
-        }
-        return legacyToken;
-      }
-      return '';
-    } catch(e) {
-      return '';
-    }
-  }
-
-  function setCloudWriteToken(token){
-    try {
-      var normalized = String(token || '').trim();
-      if (!normalized) {
-        sessionStorage.removeItem(CLOUD_TOKEN_KEY);
-        localStorage.removeItem(LEGACY_CLOUD_TOKEN_KEY);
-        return false;
-      }
-      sessionStorage.setItem(CLOUD_TOKEN_KEY, normalized);
-      localStorage.removeItem(LEGACY_CLOUD_TOKEN_KEY);
-      return true;
-    } catch(e) {
-      return false;
-    }
-  }
-
-  function clearCloudWriteToken(){
-    try { sessionStorage.removeItem(CLOUD_TOKEN_KEY); } catch(e) {}
-    try { localStorage.removeItem(LEGACY_CLOUD_TOKEN_KEY); } catch(e) {}
-  }
-
-  function hasCloudWriteToken(){
-    return !!getCloudToken();
-  }
-
-  function buildCloudHeaders(requireAuth){
-    var headers = { 'Accept': 'application/vnd.github+json' };
-    var token = getCloudToken();
-    if (requireAuth && token) headers.Authorization = 'token ' + token;
-    return headers;
-  }
 
   function normalizeApiBase(base){
     return String(base || '').trim().replace(/\/+$/, '');
@@ -564,12 +483,6 @@
     });
   }
 
-  function warnMissingCloudToken(){
-    if (_cloudAuthWarned) return;
-    _cloudAuthWarned = true;
-    console.warn('[cloud-sync] write disabled: missing session-scoped runtime gist token');
-  }
-
   function warnMissingCloudBackend(){
     if (_cloudBackendWarned) return;
     _cloudBackendWarned = true;
@@ -598,8 +511,7 @@
   }
 
   /**
-   * Sync report data directly into the shared Gist registry.
-   * Registry structure (in registry.json): { entries: { "KAI": { pin, data, cloud_ts } } }
+   * Sync report data to the backend registry.
    */
   function doCloudSync(){
     if (!isLoggedIn()) return Promise.resolve(false);
@@ -644,8 +556,8 @@
   }
 
   /**
-   * Look up a student's report from the public Gist registry.
-   * Returns { pin, data, cloud_ts } or null.
+   * Look up a student's report from the backend registry.
+   * Returns { data, cloud_ts } or error object, or null.
    */
   function lookupStudentReport(name, pin){
     var raw = String(name || '').trim();
@@ -665,45 +577,7 @@
         return null;
       });
     }
-    var headers = buildCloudHeaders(false);
-    if (hasCloudWriteToken()) headers.Authorization = 'token ' + getCloudToken();
-    headers['If-None-Match'] = '';
-    return fetch(GIST_API, {
-      headers: headers,
-      cache: 'no-store'
-    })
-    .then(function(resp){
-      if (!resp.ok) return null;
-      return resp.json();
-    })
-    .then(function(gist){
-      if (!gist || !gist.files || !gist.files['registry.json']) return null;
-      var reg;
-      try { reg = JSON.parse(gist.files['registry.json'].content); } catch(e){ return null; }
-      if (!reg || !reg.entries) return null;
-      var aliases = collectAliasEntries(reg, raw);
-      if (!aliases.length) return null;
-      aliases.sort(function(a, b){
-        return Number((b.entry && b.entry.cloud_ts) || 0) - Number((a.entry && a.entry.cloud_ts) || 0);
-      });
-      var mergedAttempts = [];
-      var mergedPractice = [];
-      aliases.forEach(function(item){
-        mergedAttempts = mergedAttempts.concat(getStoredAttempts(item.entry, 7));
-        mergedPractice = mergedPractice.concat(getPracticeEventsFromData(item.entry && item.entry.data));
-      });
-      if (mergedAttempts.length){
-        var latest = aliases[0].entry || {};
-        return {
-          name: latest.name || raw,
-          pin: latest.pin || '',
-          data: buildReportData(latest.name || raw, 7, mergedAttempts, mergedPractice),
-          cloud_ts: latest.cloud_ts || 0
-        };
-      }
-      return aliases[0].entry || null;
-    })
-    .catch(function(){ return null; });
+    return Promise.resolve(null);
   }
 
   function recordPracticeResult(name, result, pinOverride){
@@ -909,9 +783,6 @@
     recordPracticeResult,
     getParentReportApiBase,
     setParentReportApiBase,
-    clearParentReportApiBase,
-    setCloudWriteToken,
-    clearCloudWriteToken,
-    isCloudWriteEnabled: hasCloudWriteToken
+    clearParentReportApiBase
   };
 })();
