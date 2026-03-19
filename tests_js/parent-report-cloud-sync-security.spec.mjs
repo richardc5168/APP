@@ -286,7 +286,7 @@ test('bootstrap/exchange/login endpoints have rate limiting and token cap (sourc
   /* Login endpoint must check rate limit before credential validation */
   const loginStart = serverSrc.indexOf('@app.post("/v1/app/auth/login"');
   assert.ok(loginStart > 0, 'login endpoint must exist');
-  const loginBlock = serverSrc.slice(loginStart, loginStart + 1500);
+  const loginBlock = serverSrc.slice(loginStart, loginStart + 2800);
   assert.ok(loginBlock.includes('_check_rate_limit'), 'login must call rate limiter');
   assert.ok(loginBlock.includes('429'), 'login must return 429 on rate limit');
   /* Rate limit must appear before credential check (username lookup) */
@@ -302,6 +302,18 @@ test('bootstrap/exchange/login endpoints have rate limiting and token cap (sourc
   assert.ok(loginBlock.includes('423'), 'login must return 423 on lockout');
   const lockoutPos = loginBlock.indexOf('_is_account_locked');
   assert.ok(lockoutPos < credPos, 'account lockout must fire BEFORE credential lookup');
+
+  /* Login failure logging must exist */
+  assert.ok(serverSrc.includes('_auth_logger'), 'server must have auth event logger');
+  assert.ok(loginBlock.includes('login_failure'), 'login must log failure events');
+  assert.ok(loginBlock.includes('login_success'), 'login must log success events');
+  assert.ok(loginBlock.includes('login_lockout'), 'login must log lockout events');
+
+  /* Admin login-failures audit endpoint must exist */
+  assert.ok(serverSrc.includes('/v1/app/admin/login-failures'), 'admin login-failures endpoint must exist');
+  const adminLfStart = serverSrc.indexOf('/v1/app/admin/login-failures');
+  const adminLfBlock = serverSrc.slice(adminLfStart, adminLfStart + 800);
+  assert.ok(adminLfBlock.includes('X-Admin-Token'), 'admin login-failures must require admin token');
 
   /* Bootstrap endpoint must check rate limit and token cap */
   const bsStart = serverSrc.indexOf('@app.post("/v1/app/auth/bootstrap"');

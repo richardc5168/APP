@@ -589,8 +589,36 @@
 
 **Residual Risks**:
 1. No CAPTCHA or progressive delay for persistent attackers
-2. No admin notification on lockout events
-3. No failed-attempt logging/alerting dashboard
+2. ~~No admin notification on lockout events~~ → **Logging added in iteration 49**
+3. ~~No failed-attempt logging/alerting dashboard~~ → **Admin endpoint added in iteration 49**
 4. No student selector UI
 5. OpenAI key in git history (manual action)
 6. No password recovery flow
+
+### Iteration 49 — Login Failure Logging + Admin Audit (2026-03-19)
+
+**Scope**: `login-failure-logging` | **Status**: ✅ Passed
+
+**Objective**: Add structured Python logging for all login events and an admin-gated endpoint to query recent failures.
+
+**Changes**:
+- Added `import logging` and `_auth_logger = logging.getLogger("auth")`
+- Failed logins emit WARNING with username, IP, reason (never password)
+- Lockout triggers emit WARNING `login_lockout`
+- Successful logins emit INFO `login_success`
+- Inactive user (403) now also records failure in DB
+- Added `GET /v1/app/admin/login-failures` endpoint: X-Admin-Token gated, configurable window (1–1440 min), returns up to 200 recent failures sorted DESC
+- Endpoint placed before `app.mount("/")` to avoid static catch-all shadowing
+- +3 backend tests (37 total): log emission on failure, log emission on success, admin endpoint auth+response
+- +5 JS source-level assertions (19 total): _auth_logger, logging calls, admin endpoint
+
+**Files**: `server.py`, `tests/test_report_snapshot_endpoints.py`, `tests_js/parent-report-cloud-sync-security.spec.mjs`
+
+**Validation**: 37 backend ✅ | 19 JS security ✅ | verify_all 4/4 OK (138 files mirrored)
+
+**Residual Risks**:
+1. No log rotation or external log aggregation
+2. No alerting threshold (e.g. email on 10+ failures/hour)
+3. No student selector UI
+4. OpenAI key in git history (manual action)
+5. No password recovery flow

@@ -908,3 +908,143 @@ async def test_login_lockout_response_no_credential_leak(setup_server):
             conn.execute("DELETE FROM login_failures")
             conn.commit()
             conn.close()
+
+
+# ── Login failure logging + admin endpoint tests ───────────────────────
+
+@pytest.mark.anyio
+async def test_login_failure_emits_log(setup_server):
+    """Failed login must emit a structured WARNING log with username, IP, reason (never password)."""
+    import logging
+    transport = httpx.ASGITransport(app=setup_server.app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as c:
+        await _provision(c, "log_user")
+
+        conn = setup_server.db()
+        conn.execute("DELETE FROM rate_limit_events")
+        conn.execute("DELETE FROM login_failures")
+        conn.commit()
+        conn.close()
+
+        orig_rl = setup_server._RATE_LIMIT_LOGIN
+        setup_server._RATE_LIMIT_LOGIN = 100
+        captured = []
+        handler = logging.Handler()
+        handler.emit = lambda record: captured.append(record)
+        auth_logger = logging.getLogger("auth")
+        auth_logger.addHandler(handler)
+        auth_logger.setLevel(logging.DEBUG)
+        try:
+            await c.post("/v1/app/auth/login", json={
+                "username": "log_user", "password": "wrongpass"
+            })
+            # Find failure log
+            failure_logs = [r for r in captured if r.getMessage() == "login_failure"]
+            assert len(failure_logs) >= 1, "Must emit login_failure log"
+            rec = failure_logs[0]
+            assert rec.username == "log_user"
+            assert rec.reason == "wrong_password"
+            assert rec.client_ip
+            assert rec.levelno == logging.WARNING
+
+            # Verify no password in log output
+            fmt = logging.Formatter("%(message)s %(username)s %(reason)s")
+            log_text = fmt.format(rec)
+            assert "wrongpass" not in log_text, "Log must never contain password"
+        finally:
+            auth_logger.removeHandler(handler)
+            setup_server._RATE_LIMIT_LOGIN = orig_rl
+            conn = setup_server.db()
+            conn.execute("DELETE FROM rate_limit_events")
+            conn.execute("DELETE FROM login_failures")
+            conn.commit()
+            conn.close()
+
+
+@pytest.mark.anyio
+async def test_login_success_emits_log(setup_server):
+    """Successful login must emit an INFO log."""
+    import logging
+    transport = httpx.ASGITransport(app=setup_server.app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as c:
+        await _provision(c, "log_success_user")
+
+        conn = setup_server.db()
+        conn.execute("DELETE FROM rate_limit_events")
+        conn.execute("DELETE FROM login_failures")
+        conn.commit()
+        conn.close()
+
+        captured = []
+        handler = logging.Handler()
+        handler.emit = lambda record: captured.append(record)
+        auth_logger = logging.getLogger("auth")
+        auth_logger.addHandler(handler)
+        auth_logger.setLevel(logging.DEBUG)
+        try:
+            resp = await c.post("/v1/app/auth/login", json={
+                "username": "log_success_user", "password": "pass1234"
+            })
+            assert resp.status_code == 200
+            success_logs = [r for r in captured if r.getMessage() == "login_success"]
+            assert len(success_logs) >= 1, "Must emit login_success log"
+            rec = success_logs[0]
+            assert rec.username == "log_success_user"
+            assert rec.levelno == logging.INFO
+        finally:
+            auth_logger.removeHandler(handler)
+            conn = setup_server.db()
+            conn.execute("DELETE FROM rate_limit_events")
+            conn.execute("DELETE FROM login_failures")
+            conn.commit()
+            conn.close()
+
+
+@pytest.mark.anyio
+async def test_admin_login_failures_endpoint(setup_server):
+    """Admin endpoint returns recent login failures, gated by admin token."""
+    transport = httpx.ASGITransport(app=setup_server.app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as c:
+        await _provision(c, "admin_audit_user")
+
+        conn = setup_server.db()
+        conn.execute("DELETE FROM rate_limit_events")
+        conn.execute("DELETE FROM login_failures")
+        conn.commit()
+        conn.close()
+
+        orig_rl = setup_server._RATE_LIMIT_LOGIN
+        setup_server._RATE_LIMIT_LOGIN = 100
+        try:
+            # Create some failures
+            for i in range(3):
+                await c.post("/v1/app/auth/login", json={
+                    "username": "admin_audit_user", "password": "wrong"
+                })
+
+            # Without admin token → 401
+            resp = await c.get("/v1/app/admin/login-failures")
+            assert resp.status_code == 401
+
+            # With admin token → 200
+            resp = await c.get("/v1/app/admin/login-failures", headers=ADMIN_HEADERS)
+            assert resp.status_code == 200
+            data = resp.json()
+            assert data["count"] >= 3
+            assert len(data["failures"]) >= 3
+            # Verify structure
+            entry = data["failures"][0]
+            assert "username" in entry
+            assert "client_ip" in entry
+            assert "ts" in entry
+            # Verify no password in response
+            resp_text = resp.text.lower()
+            assert "password" not in resp_text
+            assert "wrong" not in resp_text
+        finally:
+            setup_server._RATE_LIMIT_LOGIN = orig_rl
+            conn = setup_server.db()
+            conn.execute("DELETE FROM rate_limit_events")
+            conn.execute("DELETE FROM login_failures")
+            conn.commit()
+            conn.close()

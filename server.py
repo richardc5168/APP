@@ -16,6 +16,7 @@ MVP Backend: 多學生 + 訂閱 gate + 出題/交卷/報表
 
 import os
 import json
+import logging
 import sqlite3
 import hashlib
 import secrets
@@ -264,6 +265,9 @@ _RATE_LIMIT_EXCHANGE = 20   # max 20 exchange requests per IP per minute
 _LOGIN_LOCKOUT_THRESHOLD = 5    # lock after 5 consecutive failed attempts
 _LOGIN_LOCKOUT_DURATION_S = 300  # 5-minute lockout window
 
+# ─── Auth event logger ───
+_auth_logger = logging.getLogger("auth")
+
 
 def _hash_token(raw_token: str) -> str:
     """SHA-256 hash of a bootstrap token. DB stores hash, never raw token."""
@@ -308,7 +312,7 @@ def _is_account_locked(username: str) -> bool:
     return (int(row["c"]) if row else 0) >= _LOGIN_LOCKOUT_THRESHOLD
 
 
-def _record_login_failure(username: str, client_ip: str):
+def _record_login_failure(username: str, client_ip: str, reason: str = "invalid_credentials"):
     """Record a failed login attempt for account-level lockout tracking."""
     conn = db()
     conn.execute(
@@ -320,6 +324,7 @@ def _record_login_failure(username: str, client_ip: str):
     conn.execute("DELETE FROM login_failures WHERE ts < ?", (cutoff,))
     conn.commit()
     conn.close()
+    _auth_logger.warning("login_failure", extra={"username": username, "client_ip": client_ip, "reason": reason})
 
 
 def _clear_login_failures(username: str):
@@ -1333,6 +1338,7 @@ def app_auth_login(payload: AppAuthLoginRequest, request: Request):
 
     # Account-level lockout check (fires before credential validation)
     if _is_account_locked(username):
+        _auth_logger.warning("login_lockout", extra={"username": username, "client_ip": client_ip})
         raise HTTPException(status_code=423, detail="Account temporarily locked due to too many failed attempts")
 
     conn = db()
@@ -1348,14 +1354,15 @@ def app_auth_login(payload: AppAuthLoginRequest, request: Request):
 
     if not row:
         conn.close()
-        _record_login_failure(username, client_ip)
+        _record_login_failure(username, client_ip, "unknown_username")
         raise HTTPException(status_code=401, detail="Invalid username or password")
     if int(row["active"] or 0) != 1:
         conn.close()
+        _record_login_failure(username, client_ip, "inactive_user")
         raise HTTPException(status_code=403, detail="User is inactive")
     if not _pwd_ok(payload.password, str(row["password_salt"] or ""), str(row["password_hash"] or "")):
         conn.close()
-        _record_login_failure(username, client_ip)
+        _record_login_failure(username, client_ip, "wrong_password")
         raise HTTPException(status_code=401, detail="Invalid username or password")
 
     sub = conn.execute(
@@ -1374,6 +1381,7 @@ def app_auth_login(payload: AppAuthLoginRequest, request: Request):
 
     # Successful login — clear any prior failure records
     _clear_login_failures(username)
+    _auth_logger.info("login_success", extra={"username": username, "client_ip": client_ip})
 
     return {
         "ok": True,
@@ -3623,6 +3631,39 @@ async def redirect_linear():
 async def redirect_quadratic():
     return RedirectResponse(url="/quadratic/")
 
+
+# ── Admin: login failure audit ──────────────────────────────────────────
+
+@app.get("/v1/app/admin/login-failures", summary="Query recent login failures (admin only)")
+def admin_login_failures(
+    minutes: int = 60,
+    x_admin_token: str = Header("", alias="X-Admin-Token"),
+):
+    expected = os.getenv("APP_PROVISION_ADMIN_TOKEN", "").strip()
+    if not expected:
+        raise HTTPException(status_code=503, detail="Admin token not configured")
+    if not x_admin_token or x_admin_token != expected:
+        raise HTTPException(status_code=401, detail="Invalid admin token")
+
+    minutes = max(1, min(minutes, 1440))  # clamp 1min–24h
+    cutoff = datetime.now().timestamp() - (minutes * 60)
+    conn = db()
+    rows = conn.execute(
+        "SELECT username, client_ip, ts FROM login_failures WHERE ts >= ? ORDER BY ts DESC LIMIT 200",
+        (cutoff,),
+    ).fetchall()
+    conn.close()
+
+    return {
+        "window_minutes": minutes,
+        "count": len(rows),
+        "failures": [
+            {"username": r["username"], "client_ip": r["client_ip"], "ts": r["ts"]}
+            for r in rows
+        ],
+    }
+
+
 # Mount specific modules explicitly to ensure /linear/ works even if root mount misses it
 app.mount("/linear", StaticFiles(directory="docs/linear", html=True), name="static_linear")
 app.mount("/quadratic", StaticFiles(directory="docs/quadratic", html=True), name="static_quadratic")
@@ -3632,6 +3673,7 @@ app.mount("/quadratic", StaticFiles(directory="docs/quadratic", html=True), name
 app.mount("/docs", StaticFiles(directory="docs", html=True), name="static_docs_explicit")
 # 2. Allow access via root /path/to/file (Web root convenience)
 app.mount("/", StaticFiles(directory="docs", html=True), name="static_docs_root")
+
 
 if __name__ == "__main__":
     print("Starting server...")

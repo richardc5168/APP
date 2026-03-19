@@ -106,8 +106,8 @@
     "priority_band": "P2",
     "priority_score": 6,
     "risk_level": "low",
-    "status": "candidate",
-    "selected_reason": null,
+    "status": "done",
+    "selected_reason": "Next highest-scoring automatable candidate after T48. Provides operational visibility into login security events.",
     "blockers": [],
     "acceptance_criteria": [
       "Failed login attempts logged with timestamp, IP, username",
@@ -118,7 +118,7 @@
     "files_likely_involved": ["server.py"],
     "auto_merge_allowed": true,
     "manual_review_required": false,
-    "last_evaluated_ts": "2026-03-19T16:06:00+08:00",
-    "next_action": "evaluate in next iteration"
+    "last_evaluated_ts": "2026-03-19T18:00:00+08:00",
+    "next_action": "none — completed"
   }
 ]
