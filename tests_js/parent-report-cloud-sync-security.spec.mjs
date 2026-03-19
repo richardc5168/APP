@@ -396,9 +396,11 @@ test('paid login never stores raw login api_key durably', () => {
     (loginBlock.includes("sessionStorage.setItem(") && !loginBlock.includes('loginApiKey')),
     'paid login must not store raw loginApiKey in sessionStorage directly');
 
-  /* loginApiKey must be used only for X-API-Key header in bootstrap call */
+  /* loginApiKey must be used only in-scope: declare, proceedWithStudent param, bootstrap header, call sites */
   const apiKeyUsages = loginBlock.split('loginApiKey').length - 1;
-  assert.ok(apiKeyUsages <= 3, 'loginApiKey should be used minimally (declare + bootstrap header + no more)');
+  assert.ok(apiKeyUsages <= 7, 'loginApiKey should be used minimally (declare + param + header + call sites, found ' + apiKeyUsages + ')');
+  /* loginApiKey MUST NOT appear in any storage API */
+  assert.ok(!loginBlock.match(/(?:local|session)Storage\.\w+\(.*loginApiKey/), 'loginApiKey must never be stored in browser storage');
 
   /* Password must be cleared from DOM after success */
   assert.ok(loginBlock.includes("getElementById('paidPassword').value = ''"),
@@ -424,4 +426,39 @@ test('paid login handles error responses without leaking credentials', () => {
   /* Must NOT call setCredentials on error paths — only on final success */
   const setCredCalls = (loginBlock.match(/adapter\.setCredentials\(/g) || []).length;
   assert.ok(setCredCalls === 1, 'setCredentials must be called exactly once (on success), found ' + setCredCalls);
+});
+
+test('student selector UI for multi-student accounts (source-level)', () => {
+  const reportSrc = fs.readFileSync(path.resolve('docs/parent-report/index.html'), 'utf8');
+  const loginBlock = reportSrc.slice(
+    reportSrc.indexOf('initPaidLogin'),
+    reportSrc.indexOf('if (encodedData)')
+  );
+
+  /* HTML must have student selector elements */
+  assert.ok(reportSrc.includes('id="studentSelectorWrap"'), 'must have studentSelectorWrap container');
+  assert.ok(reportSrc.includes('id="studentSelector"'), 'must have studentSelector dropdown');
+  assert.ok(reportSrc.includes('id="btnSelectStudent"'), 'must have btnSelectStudent button');
+
+  /* Login block must use res.body.students array */
+  assert.ok(loginBlock.includes('res.body.students'), 'must read students array from login response');
+
+  /* Single student → auto-proceed without selector */
+  assert.ok(loginBlock.includes('students.length <= 1'), 'must auto-proceed for single-student accounts');
+
+  /* Multiple students → show selector */
+  assert.ok(loginBlock.includes('selectorWrap.style.display'), 'must toggle selector visibility');
+  assert.ok(loginBlock.includes('selectorEl.innerHTML'), 'must populate selector options');
+  assert.ok(loginBlock.includes("s.display_name"), 'must show student display_name in selector');
+
+  /* proceedWithStudent must be used for bootstrap+exchange */
+  assert.ok(loginBlock.includes('proceedWithStudent('), 'must use proceedWithStudent helper for bootstrap+exchange');
+
+  /* Backend login response must include students array */
+  const serverSrc = fs.readFileSync(path.resolve('server.py'), 'utf8');
+  const loginFn = serverSrc.slice(
+    serverSrc.indexOf('def app_auth_login'),
+    serverSrc.indexOf('def app_auth_whoami')
+  );
+  assert.ok(loginFn.includes('"students":'), 'server login response must include students array');
 });

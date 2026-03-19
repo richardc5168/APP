@@ -1048,3 +1048,63 @@ async def test_admin_login_failures_endpoint(setup_server):
             conn.execute("DELETE FROM login_failures")
             conn.commit()
             conn.close()
+
+
+@pytest.mark.anyio
+async def test_login_returns_all_students_for_multi_student_account(setup_server):
+    """Login response includes students array with all students when account has >1 student."""
+    transport = httpx.ASGITransport(app=setup_server.app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as c:
+        api_key, student_id = await _provision(c, "multi_student_user")
+
+        # Add a second student to the same account
+        conn = setup_server.db()
+        row = conn.execute("SELECT account_id FROM students WHERE id = ?", (student_id,)).fetchone()
+        account_id = int(row["account_id"])
+        conn.execute(
+            "INSERT INTO students(account_id, display_name, grade, created_at) VALUES(?,?,?,?)",
+            (account_id, "小花", "G4", "2026-01-01T00:00:00"),
+        )
+        conn.commit()
+        conn.close()
+
+        resp = await c.post("/v1/app/auth/login", json={
+            "username": "multi_student_user", "password": "pass1234"
+        })
+        assert resp.status_code == 200
+        body = resp.json()
+
+        # Must have students array with 2 entries
+        assert "students" in body, "login response must include students array"
+        assert len(body["students"]) == 2, f"expected 2 students, got {len(body['students'])}"
+
+        # Each student must have id, display_name, grade
+        for st in body["students"]:
+            assert "id" in st
+            assert "display_name" in st
+            assert "grade" in st
+
+        # default_student still present for backward compat
+        assert "default_student" in body
+        assert body["default_student"]["id"] == body["students"][0]["id"]
+
+        # Second student is the newly added one
+        names = [s["display_name"] for s in body["students"]]
+        assert "小花" in names, "second student not found in students array"
+
+
+@pytest.mark.anyio
+async def test_login_single_student_returns_students_array_with_one(setup_server):
+    """Login response includes students array with 1 entry for single-student accounts."""
+    transport = httpx.ASGITransport(app=setup_server.app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as c:
+        await _provision(c, "single_student_user")
+        resp = await c.post("/v1/app/auth/login", json={
+            "username": "single_student_user", "password": "pass1234"
+        })
+        assert resp.status_code == 200
+        body = resp.json()
+
+        assert "students" in body
+        assert len(body["students"]) == 1
+        assert body["students"][0]["id"] == body["default_student"]["id"]

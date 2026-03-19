@@ -1373,11 +1373,17 @@ def app_auth_login(payload: AppAuthLoginRequest, request: Request):
         conn.close()
         raise HTTPException(status_code=402, detail="Subscription required (inactive)")
 
-    st = conn.execute(
-        "SELECT id, display_name, grade FROM students WHERE account_id = ? ORDER BY id ASC LIMIT 1",
+    all_students = conn.execute(
+        "SELECT id, display_name, grade FROM students WHERE account_id = ? ORDER BY id ASC",
         (int(row["account_id"]),),
-    ).fetchone()
+    ).fetchall()
     conn.close()
+
+    students_list = [
+        {"id": int(s["id"]), "display_name": s["display_name"], "grade": s["grade"]}
+        for s in all_students
+    ]
+    st = all_students[0] if all_students else None
 
     # Successful login — clear any prior failure records
     _clear_login_failures(username)
@@ -1400,6 +1406,7 @@ def app_auth_login(payload: AppAuthLoginRequest, request: Request):
             "display_name": st["display_name"] if st else None,
             "grade": st["grade"] if st else None,
         },
+        "students": students_list,
     }
 
 
