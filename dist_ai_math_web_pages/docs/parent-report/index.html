@@ -110,6 +110,23 @@
     </div>
     <div id="pinError" style="color:#f85149;font-size:13px;margin-top:8px;display:none"></div>
     <div id="statusMsg" class="banner muted" style="display:none"></div>
+
+    <!-- ═══ Paid Login Section ═══ -->
+    <details id="paidLoginSection" style="margin-top:16px;border-top:1px solid var(--line);padding-top:12px">
+      <summary style="cursor:pointer;font-size:14px;font-weight:700;color:var(--accent);list-style:none;display:flex;align-items:center;gap:6px;user-select:none">
+        <span style="font-size:10px;transition:transform .2s" id="paidLoginArrow">▶</span>
+        💎 已購買帳號？點此登入
+      </summary>
+      <div style="margin-top:12px;max-width:320px">
+        <div class="small" style="margin-bottom:10px;color:var(--muted)">
+          使用購買時取得的帳號密碼登入，即可使用完整雲端報告功能。
+        </div>
+        <input id="paidUsername" type="text" placeholder="帳號（username）" autocomplete="username" />
+        <input id="paidPassword" type="password" placeholder="密碼" autocomplete="current-password" style="margin-top:6px" />
+        <button id="btnPaidLogin" class="primary" style="margin-top:8px;align-self:flex-start" type="button">🔐 登入</button>
+        <div id="paidLoginMsg" class="small" style="margin-top:8px;display:none"></div>
+      </div>
+    </details>
   </div>
 
   <!-- ═══ Report Dashboard ═══ -->
@@ -314,9 +331,12 @@
 <script src="../shared/analytics.js"></script>
 <script src="../shared/subscription.js"></script>
 <script src="../shared/student_auth.js"></script>
+<script src="../shared/report_sync_adapter.js"></script>
+<script src="../shared/report/topic_link_map.js"></script>
 <script src="../shared/report/weakness_engine.js"></script>
 <script src="../shared/report/recommendation_engine.js"></script>
 <script src="../shared/report/report_data_builder.js"></script>
+<script src="../shared/report/wrong_detail_data.js"></script>
 <script src="../shared/report/practice_from_wrong_engine.js"></script>
 <script src="../shared/report/parent_copy_engine.js"></script>
 <script src="../shared/report/wow_engine.js"></script>
@@ -425,6 +445,200 @@
   var MODE = 'name';   // 'url' | 'cloud' | 'name'
   var data = null;
 
+  /* ─── paid session bootstrap (via short-lived bootstrap token) ─── */
+  (function bootstrapPaidSession(){
+    /* Reject raw api_key in URL — must use bootstrap token */
+    if (params.get('api_key')) {
+      var rejectUrl = new URL(window.location);
+      rejectUrl.searchParams.delete('api_key');
+      rejectUrl.searchParams.delete('student_id');
+      try { history.replaceState(null, '', rejectUrl.toString()); } catch(e){}
+      showStatus('⚠️ 不安全的連結格式已被拒絕。請使用新版安全連結。', 'warn');
+      return;
+    }
+
+    var bt = params.get('bt');
+    if (!bt) return;
+
+    /* Strip bootstrap token from URL immediately */
+    var cleanUrl = new URL(window.location);
+    cleanUrl.searchParams.delete('bt');
+    try { history.replaceState(null, '', cleanUrl.toString()); } catch(e){}
+
+    var adapter = window.AIMathReportSyncAdapter;
+    if (!adapter || !adapter.setCredentials) return;
+
+    var apiBase = (adapter.getBackendBase && adapter.getBackendBase()) || '';
+    if (!apiBase) return;
+
+    /* Exchange bootstrap token for session credentials */
+    fetch(apiBase + '/v1/app/auth/exchange', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ bootstrap_token: bt })
+    })
+    .then(function(resp){ return resp.json(); })
+    .then(function(body){
+      if (body && body.ok && body.api_key && body.student_id) {
+        var stored = adapter.setCredentials(body.api_key, body.student_id);
+        if (!stored) return;
+        if (body.subscription && window.AIMathSubscription && window.AIMathSubscription.syncFromBackend) {
+          window.AIMathSubscription.syncFromBackend(body.subscription);
+        }
+        showStatus('🔐 付費帳號已連接，報告將使用安全雲端通道。', 'ok');
+      } else {
+        showStatus('⚠️ 連結已失效或過期，已切換為免費模式。', 'warn');
+      }
+    })
+    .catch(function(){
+      showStatus('⚠️ 無法驗證帳號狀態，將使用免費模式。', 'warn');
+    });
+  })();
+
+  /* ─── Paid account login (username/password → bootstrap → exchange) ─── */
+  (function initPaidLogin(){
+    var section = document.getElementById('paidLoginSection');
+    var arrow = document.getElementById('paidLoginArrow');
+    var btnLogin = document.getElementById('btnPaidLogin');
+    var msgEl = document.getElementById('paidLoginMsg');
+    if (!section || !btnLogin) return;
+
+    section.addEventListener('toggle', function(){
+      if (arrow) arrow.style.transform = section.open ? 'rotate(90deg)' : '';
+    });
+
+    function setPaidMsg(text, cls){
+      msgEl.textContent = text;
+      msgEl.style.display = 'block';
+      msgEl.style.color = cls === 'ok' ? 'var(--ok)' : cls === 'bad' ? 'var(--bad)' : 'var(--muted)';
+    }
+
+    btnLogin.addEventListener('click', function(){
+      var username = (document.getElementById('paidUsername').value || '').trim();
+      var password = (document.getElementById('paidPassword').value || '').trim();
+      if (!username || !password){
+        setPaidMsg('請輸入帳號與密碼', 'bad');
+        return;
+      }
+
+      var adapter = window.AIMathReportSyncAdapter;
+      if (!adapter || !adapter.setCredentials){
+        setPaidMsg('系統元件載入失敗，請重新整理頁面', 'bad');
+        return;
+      }
+      var apiBase = (adapter.getBackendBase && adapter.getBackendBase()) || '';
+      if (!apiBase){
+        setPaidMsg('未設定後端伺服器位址（api 參數）', 'bad');
+        return;
+      }
+
+      setPaidMsg('登入中…', 'muted');
+      btnLogin.disabled = true;
+
+      /* Step 1: POST /v1/app/auth/login → {api_key, default_student, subscription} */
+      fetch(apiBase + '/v1/app/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ username: username, password: password })
+      })
+      .then(function(r){ return r.json().then(function(b){ return { status: r.status, body: b }; }); })
+      .then(function(res){
+        if (res.status === 401){
+          setPaidMsg('帳號或密碼錯誤', 'bad');
+          btnLogin.disabled = false;
+          return;
+        }
+        if (res.status === 402){
+          setPaidMsg('訂閱已過期，請先續訂', 'bad');
+          btnLogin.disabled = false;
+          return;
+        }
+        if (res.status === 403){
+          setPaidMsg('帳號已停用', 'bad');
+          btnLogin.disabled = false;
+          return;
+        }
+        if (!res.body || !res.body.ok || !res.body.api_key){
+          setPaidMsg(res.body && res.body.detail ? String(res.body.detail) : '登入失敗', 'bad');
+          btnLogin.disabled = false;
+          return;
+        }
+
+        var loginApiKey = res.body.api_key;
+        var studentId = (res.body.default_student && res.body.default_student.id) || null;
+        if (!studentId){
+          setPaidMsg('此帳號尚未綁定學生', 'bad');
+          btnLogin.disabled = false;
+          return;
+        }
+
+        setPaidMsg('正在建立安全連線…', 'muted');
+
+        /* Step 2: POST /v1/app/auth/bootstrap → {bootstrap_token} */
+        fetch(apiBase + '/v1/app/auth/bootstrap', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-API-Key': loginApiKey },
+          body: JSON.stringify({ student_id: studentId })
+        })
+        .then(function(r2){ return r2.json().then(function(b2){ return { status: r2.status, body: b2 }; }); })
+        .then(function(res2){
+          if (!res2.body || !res2.body.bootstrap_token){
+            setPaidMsg('無法建立安全令牌', 'bad');
+            btnLogin.disabled = false;
+            return;
+          }
+
+          /* Step 3: POST /v1/app/auth/exchange → {api_key, student_id, subscription} */
+          fetch(apiBase + '/v1/app/auth/exchange', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({ bootstrap_token: res2.body.bootstrap_token })
+          })
+          .then(function(r3){ return r3.json().then(function(b3){ return { status: r3.status, body: b3 }; }); })
+          .then(function(res3){
+            if (!res3.body || !res3.body.ok || !res3.body.api_key){
+              setPaidMsg('安全令牌交換失敗', 'bad');
+              btnLogin.disabled = false;
+              return;
+            }
+
+            /* Success: store session credentials */
+            adapter.setCredentials(res3.body.api_key, res3.body.student_id);
+            if (res3.body.subscription && window.AIMathSubscription && window.AIMathSubscription.syncFromBackend) {
+              window.AIMathSubscription.syncFromBackend(res3.body.subscription);
+            }
+
+            /* Clear password from DOM */
+            document.getElementById('paidPassword').value = '';
+
+            setPaidMsg('登入成功！正在載入報告…', 'ok');
+            showStatus('🔐 付費帳號已連接，報告將使用安全雲端通道。', 'ok');
+
+            /* Auto-load report for the student if adapter can read */
+            if (typeof adapter.readReportSnapshot === 'function') {
+              adapter.readReportSnapshot('', '').then(function(entry){
+                if (entry && entry.data && entry.data.d){
+                  showDashboard(entry.data);
+                } else {
+                  setPaidMsg('登入成功！請在下方輸入暱稱和密碼查看報告。', 'ok');
+                  btnLogin.disabled = false;
+                }
+              }).catch(function(){
+                setPaidMsg('登入成功！請在下方輸入暱稱和密碼查看報告。', 'ok');
+                btnLogin.disabled = false;
+              });
+            } else {
+              btnLogin.disabled = false;
+            }
+          })
+          .catch(function(){ setPaidMsg('安全令牌交換失敗', 'bad'); btnLogin.disabled = false; });
+        })
+        .catch(function(){ setPaidMsg('無法建立安全令牌', 'bad'); btnLogin.disabled = false; });
+      })
+      .catch(function(){ setPaidMsg('網路錯誤，請檢查網路連線', 'bad'); btnLogin.disabled = false; });
+    });
+  })();
+
   if (encodedData){
     data = decodeData(encodedData);
     if (data && data.d) {
@@ -514,7 +728,11 @@
     if (!_unlockName) return;
     var btn = document.getElementById('btnRefresh');
     if (btn){ btn.disabled = true; btn.textContent = '⏳ 查詢中…'; }
-    window.AIMathStudentAuth.lookupStudentReport(_unlockName, _unlockPin)
+    var adapter = window.AIMathReportSyncAdapter;
+    var readFn = (adapter && typeof adapter.readReportSnapshot === 'function')
+      ? adapter.readReportSnapshot
+      : window.AIMathStudentAuth.lookupStudentReport;
+    readFn(_unlockName, _unlockPin)
       .then(function(entry){
         if (entry && entry.data && entry.data.d){
           data = entry.data;
@@ -576,7 +794,7 @@
     /* 2. Cloud registry lookup */
     if (!name){ showPinErr('請輸入學生暱稱'); return; }
 
-    if (!window.AIMathStudentAuth || !window.AIMathStudentAuth.lookupStudentReport){
+    if (!window.AIMathStudentAuth || (!window.AIMathStudentAuth.lookupStudentReport && !(window.AIMathReportSyncAdapter && window.AIMathReportSyncAdapter.readReportSnapshot))){
       showStatus('⚠️ 系統元件載入失敗，請重新整理頁面。', 'muted');
       return;
     }
@@ -584,7 +802,11 @@
     showStatus('☁️ 正在查詢「' + esc(name) + '」的雲端報告…', 'ok');
     document.getElementById('btnUnlock').disabled = true;
 
-    window.AIMathStudentAuth.lookupStudentReport(name, pin)
+    var adapter2 = window.AIMathReportSyncAdapter;
+    var readFn2 = (adapter2 && typeof adapter2.readReportSnapshot === 'function')
+      ? adapter2.readReportSnapshot
+      : window.AIMathStudentAuth.lookupStudentReport;
+    readFn2(name, pin)
       .then(function(entry){
         if (entry && entry.error === 'invalid_pin'){
           showPinErr('密碼錯誤，請重試');
@@ -1109,18 +1331,12 @@
           if (r.practice.events.length > 80) r.practice.events = r.practice.events.slice(-80);
           renderPracticeSummary();
 
-          if (!window.AIMathStudentAuth || !window.AIMathStudentAuth.recordPracticeResult) return;
-          var ev = {
-            score: score,
-            total: total,
-            topic: String(w.t || ''),
-            kind: String(w.k || ''),
-            mode: quizMode ? 'quiz3' : 'single',
-            completed: completed
-          };
-          window.AIMathStudentAuth.recordPracticeResult(d.name || '', ev, _unlockPin).then(function(ok){
-            /* cloud write is bonus persistence — UI already updated above */
-          });
+          var adapterP = window.AIMathReportSyncAdapter;
+          if (adapterP && typeof adapterP.writePracticeEvent === 'function') {
+            adapterP.writePracticeEvent(d.name || '', _unlockPin, practiceEv);
+          } else if (window.AIMathStudentAuth && window.AIMathStudentAuth.recordPracticeResult) {
+            window.AIMathStudentAuth.recordPracticeResult(d.name || '', practiceEv, _unlockPin);
+          }
         }
 
         function normAns(v){ return String(v || '').trim().replace(/\s+/g,' ').toLowerCase(); }

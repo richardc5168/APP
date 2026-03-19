@@ -19,6 +19,13 @@ repos:
 
   - repo: local
     hooks:
+      - id: check-no-secrets
+        name: Check for leaked secrets
+        entry: ./.venv/Scripts/python.exe tools/check_no_secrets.py
+        language: system
+        pass_filenames: false
+        stages: [pre-commit]
+
       - id: policy-json-canonical
         name: Enforce critical JSON canonical format
         entry: node tools/check_policy_json_canonical.cjs
