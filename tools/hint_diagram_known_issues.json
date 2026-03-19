@@ -115,7 +115,7 @@
       "symptom": "Single-expression decimal problems displayed number-line and place-value diagrams, causing cognitive overload and confusion.",
       "root_cause": "L2/L3 decimal branch always rendered generic visual scaffolds without checking if problem type is simple one-step operation.",
       "fix": "Added isSimpleDecimalOneStep() gate; for these kinds L2/L3 now use concise text-based operation + estimation + reverse-check prompts, no heavy diagrams.",
-      "commit": "pending",
+      "commit": "bf690c829",
       "detection_regex": "d_div_int|decimal_(div|mul)|d_mul_int|int_mul_d|decimal_times_(integer|decimal)|d_mul_d",
       "affected_levels": ["L2", "L3"]
     }

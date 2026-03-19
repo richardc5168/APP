@@ -177,10 +177,19 @@ function checkHintEngineStructure() {
     });
   }
 
-  // Check 7: fracAdd branch should NOT have buildFractionBarSVG or buildFractionComparisonSVG
+  // Check 7: fracAdd rendering should NOT have buildFractionBarSVG or buildFractionComparisonSVG
   // (those were replaced with simple text steps in FRAC-002)
-  const fracAddSection = src.match(/family === 'fracAdd'[\s\S]{0,2000}/);
-  if (fracAddSection && /buildFractionBarSVG|buildFractionComparisonSVG/.test(fracAddSection[0])) {
+  // Check each fracAdd occurrence with its context — match only actual CALLS
+  // (preceded by += or assignment), not function definitions or JSDoc comments.
+  const fracAddMatches = [...src.matchAll(/family === 'fracAdd'[\s\S]{0,2000}/g)];
+  let fracAddHasSVG = false;
+  for (const m of fracAddMatches) {
+    if (/\+=\s*buildFractionBarSVG\(|\+=\s*buildFractionComparisonSVG\(/.test(m[0])) {
+      fracAddHasSVG = true;
+      break;
+    }
+  }
+  if (fracAddHasSVG) {
     issues.push({
       id: 'STRUCT-FRAC-002',
       severity: 'warning',

@@ -196,5 +196,30 @@
     "manual_review_required": true,
     "last_evaluated_ts": "2026-03-20T10:00:00+08:00",
     "next_action": "human reviews design in iteration 53 report section and approves Option A (admin-assisted MVP) for implementation"
+  },
+  {
+    "task_id": "T54",
+    "title": "Fix audit STRUCT-FRAC-002 false positive + close DEC-001 registry",
+    "category": "hint_quality",
+    "source": "iteration_53_audit_warning",
+    "priority_band": "P4",
+    "priority_score": 2,
+    "risk_level": "low",
+    "status": "done",
+    "selected_reason": "Tiebreaker vs health check endpoint: stability (audit accuracy, priority 2) beats new feature expansion (priority 8). False positive in audit could mask future regressions.",
+    "blockers": [],
+    "acceptance_criteria": [
+      "Audit outputs 0 errors, 0 warnings",
+      "DEC-001 commit field updated from pending to bf690c829",
+      "Injected fracAdd SVG regression IS detected",
+      "No production file changes",
+      "verify_all 4/4 OK"
+    ],
+    "required_checks": ["node tools/audit_hint_diagrams.cjs", "python scripts/verify_all.py"],
+    "files_likely_involved": ["tools/audit_hint_diagrams.cjs", "tools/hint_diagram_known_issues.json"],
+    "auto_merge_allowed": true,
+    "manual_review_required": false,
+    "last_evaluated_ts": "2026-03-20T11:00:00+08:00",
+    "next_action": "none — completed"
   }
 ]

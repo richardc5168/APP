@@ -859,3 +859,37 @@ CREATE TABLE IF NOT EXISTS password_reset_tokens (
 **This iteration stops here.** Per governance Section 9, this is a high-risk task (authentication architecture change). The design is documented. Implementation requires human approval.
 
 **Recommended action**: Human reviews this design and approves Option A (admin-assisted MVP) for implementation in a future iteration. Once approved, the implementation can be auto-executed as a low-risk bounded change.
+
+---
+
+### Iteration 54 — Fix Hint Audit STRUCT-FRAC-002 False Positive + Close DEC-001 Registry (2026-03-20)
+
+**Scope**: `audit-tool-accuracy` | **Status**: ✅ Passed
+
+**Objective**: Fix a false positive in the hint diagram audit tool (`STRUCT-FRAC-002`) that was flagging the fracAdd branch as still using complex SVG diagrams, when in fact the rendering paths already use text-based steps. Also close the DEC-001 (decimal one-step hint simplification) registry entry with its actual commit hash.
+
+**Task Category**: `hint_quality` (audit tooling)
+
+**Root Cause**: The audit check used `src.match(/family === 'fracAdd'[\s\S]{0,2000}/)` which matched the FIRST occurrence of `family === 'fracAdd'` at line 333 (inside `isSimpleOneStepHint` utility function). The 2000-char window after that captured:
+1. The `buildFractionBarSVG` **function definition** at line 378
+2. A **JSDoc comment** `* buildFractionBarSVG(fracs, colors...)` at line 372
+
+Neither is an actual SVG builder CALL in a fracAdd rendering path. The actual fracAdd rendering paths (lines 1713, 1791, 1988, 2062, 2264) all correctly use text-based steps.
+
+**Changes**:
+1. `tools/audit_hint_diagrams.cjs`: Replaced the single-match regex with `matchAll` over ALL `family === 'fracAdd'` occurrences, and changed detection to look for `+= buildFractionBarSVG(` / `+= buildFractionComparisonSVG(` (actual calls producing HTML output), not function definitions or JSDoc comments.
+2. `tools/hint_diagram_known_issues.json`: Updated DEC-001 commit from `"pending"` to `"bf690c829"` (the actual commit that implemented the decimal one-step hint fix).
+
+**Validation**:
+- Audit: 0 errors, 0 warnings ✅
+- Regression injection test: injected `html += buildFractionBarSVG(fracs)` in fracAdd L2 → audit correctly raised STRUCT-FRAC-002 warning ✅
+- verify_all: 4/4 OK ✅
+- No production files changed (hint_engine.js untouched)
+
+**Residual Risks**:
+1. No external alerting integration (email/webhook) — admin must poll the endpoint
+2. Alert thresholds are hardcoded (10/50) — not configurable without code change
+3. No log rotation or external log aggregation
+4. OpenAI key in git history (manual action)
+5. Password recovery flow designed (iter 53) — implementation pending human approval
+6. Password hashing uses SHA-256, not bcrypt/argon2 — should be upgraded when touching auth
