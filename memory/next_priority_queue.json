@@ -428,5 +428,41 @@
     "manual_review_required": false,
     "last_evaluated_ts": "2026-03-21T10:30:00+08:00",
     "next_action": "none — completed"
+  },
+  {
+    "task_id": "T62-school-first-backend-foundation",
+    "title": "Implement school-first backend scope foundation",
+    "category": "architecture_authorization",
+    "source": "iteration_61_next_priorities",
+    "priority_band": "P1",
+    "priority_score": 9,
+    "risk_level": "medium",
+    "status": "done",
+    "selected_reason": "The entitlement spec is only useful if the backend enforces it. The smallest safe next step is schema + scope helpers + narrow read endpoints + denial tests.",
+    "blockers": [],
+    "acceptance_criteria": [
+      "Backend has class/link tables for parent-child and teacher-class scope",
+      "Report snapshots support lineage fields needed for before/after phases",
+      "Parent, teacher, and admin read endpoints enforce explicit scope rules",
+      "Positive and negative scope tests pass",
+      "validate_all and verify_all pass"
+    ],
+    "required_checks": [
+      "python -m pytest tests/test_report_snapshot_endpoints.py -q",
+      "python tools/validate_all_elementary_banks.py",
+      "python scripts/verify_all.py"
+    ],
+    "files_likely_involved": [
+      "server.py",
+      "tests/test_report_snapshot_endpoints.py",
+      "reports/latest_iteration_report.md",
+      "logs/change_history.jsonl",
+      "logs/lessons_learned.jsonl",
+      "memory/next_priority_queue.json"
+    ],
+    "auto_merge_allowed": true,
+    "manual_review_required": false,
+    "last_evaluated_ts": "2026-03-21T11:20:00+08:00",
+    "next_action": "none — completed"
   }
 ]

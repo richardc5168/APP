@@ -1230,3 +1230,85 @@ The repo already has strong parent-report and admin auth patterns, but it does n
 - Add minimal school link tables and reusable scope-check helpers in `server.py`
 - Add backend tests for parent-child, teacher-class, and admin-global visibility
 - Implement the smallest teacher class overview endpoint only after scope tests are passing
+
+---
+
+## Iteration 62 — School-First Backend Scope Foundation
+
+**Date**: 2026-03-21
+**Scope**: `server.py`, `tests/test_report_snapshot_endpoints.py`
+**Goal**: Turn the School-first RBAC spec into enforceable backend behavior with the smallest possible schema and endpoint surface.
+
+### Root Cause Summary
+
+Iteration 61 defined the access contract, but the backend still had no class/link tables and no reusable scope predicates for parent-child or teacher-class authorization. Without that foundation, any teacher dashboard work would have been UI-first and therefore unsafe.
+
+### Changes
+
+#### 1. Added minimal school scope tables
+- Added `classes`
+- Added `class_students`
+- Added `parent_student_links`
+- Added `teacher_class_links`
+
+These tables are enough to express the MVP scope boundaries without introducing a new auth stack.
+
+#### 2. Added lineage support to report snapshots
+- Extended snapshot write support with:
+   - `class_id`
+   - `report_phase`
+   - `window_start`
+   - `window_end`
+- Added non-breaking schema migration columns for existing DBs
+- Updated snapshot read serialization so these fields now come back in the API response
+
+#### 3. Added reusable scope helpers
+- `_verify_parent_child_scope()`
+- `_verify_teacher_class_scope()`
+- `_verify_student_in_class()`
+- `_resolve_student_class_scope()`
+- `_build_class_overview()`
+
+This keeps scope logic centralized instead of scattering raw SQL checks through handlers.
+
+#### 4. Added school-first read endpoints
+- `GET /v1/app/parent/children/{student_id}/report`
+- `GET /v1/app/teacher/classes/{class_id}/overview`
+- `GET /v1/app/teacher/classes/{class_id}/students/{student_id}/report`
+- `GET /v1/app/admin/classes/{class_id}/overview`
+
+Behavior:
+- parent path: linked child only
+- teacher path: linked class only
+- admin path: any class via admin token
+
+#### 5. Added backend scope tests
+- parent can read linked child report
+- parent is denied for unlinked child
+- teacher can read linked class overview
+- teacher is denied for unrelated class
+- teacher is denied for student outside class scope
+- admin can read any class overview
+
+### Affected Files
+- `server.py`
+- `tests/test_report_snapshot_endpoints.py`
+- `logs/change_history.jsonl`
+- `logs/lessons_learned.jsonl`
+- `reports/latest_iteration_report.md`
+- `memory/next_priority_queue.json`
+
+### Validation
+- `python -m pytest tests/test_report_snapshot_endpoints.py -q`
+- `python tools/validate_all_elementary_banks.py`
+- `python scripts/verify_all.py`
+
+### Residual Risks
+1. School scope is enforced only on the new endpoints; older endpoints are not yet class-aware.
+2. Before/after lineage now exists in snapshot storage, but no dedicated comparison endpoint exists yet.
+3. Export endpoints have not yet been added, so export-scope parity remains future work.
+
+### Next Iteration Priorities
+- Add dedicated before/after comparison endpoint using the new snapshot lineage fields
+- Add export-scope tests so export cannot exceed read entitlements
+- Only then wire the smallest teacher class overview UI

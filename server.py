@@ -233,6 +233,10 @@ class ReportSnapshotWriteRequest(BaseModel):
     student_id: int
     report_payload: Dict[str, Any]
     source: str = Field(default="frontend", max_length=40)
+    class_id: Optional[int] = None
+    report_phase: str = Field(default="current", max_length=20)
+    window_start: Optional[str] = None
+    window_end: Optional[str] = None
 
 
 class ReportSnapshotReadRequest(BaseModel):
@@ -691,6 +695,58 @@ def init_db():
     """)
 
     cur.execute("""
+    CREATE TABLE IF NOT EXISTS classes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        school_id TEXT DEFAULT '',
+        class_name TEXT NOT NULL,
+        grade TEXT DEFAULT 'G5',
+        active INTEGER NOT NULL DEFAULT 1,
+        created_at TEXT NOT NULL
+    )
+    """)
+
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS class_students (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        class_id INTEGER NOT NULL,
+        student_id INTEGER NOT NULL,
+        active_from TEXT NOT NULL,
+        active_to TEXT,
+        FOREIGN KEY(class_id) REFERENCES classes(id),
+        FOREIGN KEY(student_id) REFERENCES students(id)
+    )
+    """)
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_class_students_class_active ON class_students(class_id, active_to)")
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_class_students_student_active ON class_students(student_id, active_to)")
+
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS parent_student_links (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        parent_account_id INTEGER NOT NULL,
+        student_id INTEGER NOT NULL,
+        relation_type TEXT NOT NULL DEFAULT 'parent',
+        active INTEGER NOT NULL DEFAULT 1,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY(parent_account_id) REFERENCES accounts(id),
+        FOREIGN KEY(student_id) REFERENCES students(id)
+    )
+    """)
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_parent_student_links_parent_student ON parent_student_links(parent_account_id, student_id, active)")
+
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS teacher_class_links (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        teacher_account_id INTEGER NOT NULL,
+        class_id INTEGER NOT NULL,
+        active INTEGER NOT NULL DEFAULT 1,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY(teacher_account_id) REFERENCES accounts(id),
+        FOREIGN KEY(class_id) REFERENCES classes(id)
+    )
+    """)
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_teacher_class_links_teacher_class ON teacher_class_links(teacher_account_id, class_id, active)")
+
+    cur.execute("""
     CREATE TABLE IF NOT EXISTS subscriptions (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         account_id INTEGER NOT NULL,
@@ -856,6 +912,10 @@ def init_db():
     ensure_column("attempts", "error_detail", "TEXT")
     ensure_column("attempts", "hint_level_used", "INTEGER")
     ensure_column("attempts", "meta_json", "TEXT")
+    ensure_column("report_snapshots", "class_id", "INTEGER")
+    ensure_column("report_snapshots", "report_phase", "TEXT")
+    ensure_column("report_snapshots", "window_start", "TEXT")
+    ensure_column("report_snapshots", "window_end", "TEXT")
 
     # Track the student's current concept for the adaptive flow.
     ensure_column("students", "current_concept_id", "TEXT")
@@ -3238,6 +3298,166 @@ def _verify_student_ownership(conn: sqlite3.Connection, account_id: int, student
         raise HTTPException(status_code=404, detail="Student not found or not owned by this account")
 
 
+def _verify_parent_child_scope(conn: sqlite3.Connection, parent_account_id: int, student_id: int):
+    linked = conn.execute(
+        "SELECT id FROM parent_student_links WHERE parent_account_id = ? AND student_id = ? AND active = 1 LIMIT 1",
+        (parent_account_id, student_id),
+    ).fetchone()
+    if linked:
+        return
+    owned = conn.execute(
+        "SELECT id FROM students WHERE id = ? AND account_id = ? LIMIT 1",
+        (student_id, parent_account_id),
+    ).fetchone()
+    if owned:
+        return
+    raise HTTPException(status_code=403, detail="Parent is not entitled to this child")
+
+
+def _verify_teacher_class_scope(conn: sqlite3.Connection, teacher_account_id: int, class_id: int):
+    row = conn.execute(
+        "SELECT id FROM teacher_class_links WHERE teacher_account_id = ? AND class_id = ? AND active = 1 LIMIT 1",
+        (teacher_account_id, class_id),
+    ).fetchone()
+    if not row:
+        raise HTTPException(status_code=403, detail="Teacher is not entitled to this class")
+
+
+def _verify_student_in_class(conn: sqlite3.Connection, class_id: int, student_id: int):
+    row = conn.execute(
+        "SELECT id FROM class_students WHERE class_id = ? AND student_id = ? AND active_to IS NULL LIMIT 1",
+        (class_id, student_id),
+    ).fetchone()
+    if not row:
+        raise HTTPException(status_code=403, detail="Student is not in this class scope")
+
+
+def _resolve_student_class_scope(conn: sqlite3.Connection, actor_role: str, actor_id: int, student_id: int) -> Optional[int]:
+    if actor_role == "parent":
+        _verify_parent_child_scope(conn, actor_id, student_id)
+        row = conn.execute(
+            "SELECT class_id FROM class_students WHERE student_id = ? AND active_to IS NULL ORDER BY id DESC LIMIT 1",
+            (student_id,),
+        ).fetchone()
+        return int(row["class_id"]) if row and row["class_id"] is not None else None
+    if actor_role == "teacher":
+        row = conn.execute(
+            """
+            SELECT cs.class_id
+            FROM class_students cs
+            JOIN teacher_class_links tcl ON tcl.class_id = cs.class_id AND tcl.active = 1
+            WHERE cs.student_id = ? AND cs.active_to IS NULL AND tcl.teacher_account_id = ?
+            ORDER BY cs.id DESC
+            LIMIT 1
+            """,
+            (student_id, actor_id),
+        ).fetchone()
+        if not row:
+            raise HTTPException(status_code=403, detail="Teacher is not entitled to this student")
+        return int(row["class_id"])
+    raise HTTPException(status_code=400, detail="Unsupported actor role")
+
+
+def _get_class_row(conn: sqlite3.Connection, class_id: int) -> sqlite3.Row:
+    row = conn.execute(
+        "SELECT * FROM classes WHERE id = ? AND active = 1",
+        (class_id,),
+    ).fetchone()
+    if not row:
+        raise HTTPException(status_code=404, detail="Class not found")
+    return row
+
+
+def _load_latest_snapshot_by_student(conn: sqlite3.Connection, student_id: int) -> Optional[sqlite3.Row]:
+    return conn.execute(
+        "SELECT * FROM report_snapshots WHERE student_id = ? ORDER BY updated_at DESC LIMIT 1",
+        (student_id,),
+    ).fetchone()
+
+
+def _serialize_snapshot_row(row: sqlite3.Row) -> Dict[str, Any]:
+    payload = {}
+    try:
+        payload = json.loads(row["report_payload_json"])
+    except (json.JSONDecodeError, TypeError):
+        pass
+    return {
+        "student_id": row["student_id"],
+        "class_id": row["class_id"],
+        "report_phase": row["report_phase"] or "current",
+        "window_start": row["window_start"],
+        "window_end": row["window_end"],
+        "report_payload": payload,
+        "source": row["source"],
+        "created_at": row["created_at"],
+        "updated_at": row["updated_at"],
+    }
+
+
+def _build_class_overview(conn: sqlite3.Connection, class_id: int) -> Dict[str, Any]:
+    class_row = _get_class_row(conn, class_id)
+    student_rows = conn.execute(
+        """
+        SELECT s.id, s.display_name, s.grade
+        FROM class_students cs
+        JOIN students s ON s.id = cs.student_id
+        WHERE cs.class_id = ? AND cs.active_to IS NULL
+        ORDER BY s.id ASC
+        """,
+        (class_id,),
+    ).fetchall()
+    stats_row = conn.execute(
+        """
+        SELECT
+          COUNT(a.id) AS attempt_count,
+          SUM(CASE WHEN a.is_correct = 1 THEN 1 ELSE 0 END) AS correct_count
+        FROM class_students cs
+        LEFT JOIN attempts a ON a.student_id = cs.student_id
+        WHERE cs.class_id = ? AND cs.active_to IS NULL
+        """,
+        (class_id,),
+    ).fetchone()
+    snapshot_row = conn.execute(
+        """
+        SELECT COUNT(DISTINCT rs.student_id) AS snapshot_count
+        FROM class_students cs
+        LEFT JOIN report_snapshots rs ON rs.student_id = cs.student_id
+        WHERE cs.class_id = ? AND cs.active_to IS NULL
+        """,
+        (class_id,),
+    ).fetchone()
+    attempt_count = int((stats_row["attempt_count"] if stats_row else 0) or 0)
+    correct_count = int((stats_row["correct_count"] if stats_row else 0) or 0)
+    accuracy = int(round((correct_count / attempt_count) * 100)) if attempt_count > 0 else 0
+    return {
+        "class": {
+            "id": int(class_row["id"]),
+            "school_id": class_row["school_id"],
+            "class_name": class_row["class_name"],
+            "grade": class_row["grade"],
+        },
+        "stats": {
+            "student_count": len(student_rows),
+            "attempt_count": attempt_count,
+            "correct_count": correct_count,
+            "accuracy": accuracy,
+            "snapshot_count": int((snapshot_row["snapshot_count"] if snapshot_row else 0) or 0),
+        },
+        "students": [
+            {"id": int(r["id"]), "display_name": r["display_name"], "grade": r["grade"]}
+            for r in student_rows
+        ],
+    }
+
+
+def _require_admin_token(x_admin_token: str) -> None:
+    expected = os.getenv("APP_PROVISION_ADMIN_TOKEN", "").strip()
+    if not expected:
+        raise HTTPException(status_code=503, detail="Admin token not configured")
+    if not x_admin_token or x_admin_token != expected:
+        raise HTTPException(status_code=401, detail="Invalid admin token")
+
+
 @app.post("/v1/app/report_snapshots")
 def create_report_snapshot(
     req: ReportSnapshotWriteRequest,
@@ -3251,6 +3471,7 @@ def create_report_snapshot(
         now = now_iso()
         payload = json.dumps(req.report_payload, ensure_ascii=False)
         source = str(req.source or "frontend")[:40]
+        report_phase = str(req.report_phase or "current")[:20]
         # Upsert: one snapshot per student per account
         existing = conn.execute(
             "SELECT id FROM report_snapshots WHERE account_id = ? AND student_id = ?",
@@ -3258,13 +3479,13 @@ def create_report_snapshot(
         ).fetchone()
         if existing:
             conn.execute(
-                "UPDATE report_snapshots SET report_payload_json = ?, source = ?, updated_at = ? WHERE id = ?",
-                (payload, source, now, existing["id"]),
+                "UPDATE report_snapshots SET report_payload_json = ?, source = ?, class_id = ?, report_phase = ?, window_start = ?, window_end = ?, updated_at = ? WHERE id = ?",
+                (payload, source, req.class_id, report_phase, req.window_start, req.window_end, now, existing["id"]),
             )
         else:
             conn.execute(
-                "INSERT INTO report_snapshots (account_id, student_id, report_payload_json, source, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)",
-                (acc["id"], req.student_id, payload, source, now, now),
+                "INSERT INTO report_snapshots (account_id, student_id, class_id, report_phase, window_start, window_end, report_payload_json, source, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (acc["id"], req.student_id, req.class_id, report_phase, req.window_start, req.window_end, payload, source, now, now),
             )
         conn.commit()
         return {"ok": True, "updated_at": now}
@@ -3288,21 +3509,82 @@ def get_latest_report_snapshot(
         ).fetchone()
         if not row:
             raise HTTPException(status_code=404, detail="No snapshot found for this student")
-        payload = {}
-        try:
-            payload = json.loads(row["report_payload_json"])
-        except (json.JSONDecodeError, TypeError):
-            pass
         return {
             "ok": True,
-            "snapshot": {
-                "student_id": row["student_id"],
-                "report_payload": payload,
-                "source": row["source"],
-                "created_at": row["created_at"],
-                "updated_at": row["updated_at"],
-            },
+            "snapshot": _serialize_snapshot_row(row),
         }
+    finally:
+        conn.close()
+
+
+@app.get("/v1/app/parent/children/{student_id}/report")
+def parent_child_report(
+    student_id: int,
+    x_api_key: str = Header(..., alias="X-API-Key"),
+):
+    acc = get_account_by_api_key(x_api_key)
+    ensure_subscription_active(acc["id"])
+    conn = db()
+    try:
+        class_id = _resolve_student_class_scope(conn, "parent", int(acc["id"]), student_id)
+        row = _load_latest_snapshot_by_student(conn, student_id)
+        if not row:
+            raise HTTPException(status_code=404, detail="No snapshot found for this child")
+        snapshot = _serialize_snapshot_row(row)
+        if snapshot["class_id"] is None and class_id is not None:
+            snapshot["class_id"] = class_id
+        return {"ok": True, "scope": "parent_child", "snapshot": snapshot}
+    finally:
+        conn.close()
+
+
+@app.get("/v1/app/teacher/classes/{class_id}/overview")
+def teacher_class_overview(
+    class_id: int,
+    x_api_key: str = Header(..., alias="X-API-Key"),
+):
+    acc = get_account_by_api_key(x_api_key)
+    ensure_subscription_active(acc["id"])
+    conn = db()
+    try:
+        _verify_teacher_class_scope(conn, int(acc["id"]), class_id)
+        return {"ok": True, "scope": "teacher_class", "overview": _build_class_overview(conn, class_id)}
+    finally:
+        conn.close()
+
+
+@app.get("/v1/app/teacher/classes/{class_id}/students/{student_id}/report")
+def teacher_student_report(
+    class_id: int,
+    student_id: int,
+    x_api_key: str = Header(..., alias="X-API-Key"),
+):
+    acc = get_account_by_api_key(x_api_key)
+    ensure_subscription_active(acc["id"])
+    conn = db()
+    try:
+        _verify_teacher_class_scope(conn, int(acc["id"]), class_id)
+        _verify_student_in_class(conn, class_id, student_id)
+        row = _load_latest_snapshot_by_student(conn, student_id)
+        if not row:
+            raise HTTPException(status_code=404, detail="No snapshot found for this student")
+        snapshot = _serialize_snapshot_row(row)
+        if snapshot["class_id"] is None:
+            snapshot["class_id"] = class_id
+        return {"ok": True, "scope": "teacher_student", "snapshot": snapshot}
+    finally:
+        conn.close()
+
+
+@app.get("/v1/app/admin/classes/{class_id}/overview")
+def admin_class_overview(
+    class_id: int,
+    x_admin_token: str = Header("", alias="X-Admin-Token"),
+):
+    _require_admin_token(x_admin_token)
+    conn = db()
+    try:
+        return {"ok": True, "scope": "admin_class", "overview": _build_class_overview(conn, class_id)}
     finally:
         conn.close()
 
@@ -3656,11 +3938,7 @@ def admin_login_failures(
     minutes: int = 60,
     x_admin_token: str = Header("", alias="X-Admin-Token"),
 ):
-    expected = os.getenv("APP_PROVISION_ADMIN_TOKEN", "").strip()
-    if not expected:
-        raise HTTPException(status_code=503, detail="Admin token not configured")
-    if not x_admin_token or x_admin_token != expected:
-        raise HTTPException(status_code=401, detail="Invalid admin token")
+    _require_admin_token(x_admin_token)
 
     minutes = max(1, min(minutes, 1440))  # clamp 1min–24h
     cutoff = datetime.now().timestamp() - (minutes * 60)
@@ -3725,11 +4003,7 @@ def admin_reset_password(
     payload: AdminResetPasswordRequest,
     x_admin_token: str = Header("", alias="X-Admin-Token"),
 ):
-    expected = os.getenv("APP_PROVISION_ADMIN_TOKEN", "").strip()
-    if not expected:
-        raise HTTPException(status_code=503, detail="Admin token not configured")
-    if not x_admin_token or x_admin_token != expected:
-        raise HTTPException(status_code=401, detail="Invalid admin token")
+    _require_admin_token(x_admin_token)
 
     username = payload.username.strip().lower()
     if not username:

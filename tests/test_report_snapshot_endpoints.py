@@ -41,6 +41,59 @@ async def _provision(client, username="testuser"):
     return body["api_key"], body["default_student_id"]
 
 
+def _account_id_for_api_key(server_module, api_key):
+    conn = server_module.db()
+    row = conn.execute("SELECT id FROM accounts WHERE api_key = ?", (api_key,)).fetchone()
+    conn.close()
+    assert row is not None
+    return int(row["id"])
+
+
+def _create_class(server_module, class_name="Class A", grade="G5", school_id="SCH-1"):
+    conn = server_module.db()
+    cur = conn.cursor()
+    cur.execute(
+        "INSERT INTO classes(school_id, class_name, grade, active, created_at) VALUES(?,?,?,?,?)",
+        (school_id, class_name, grade, 1, server_module.now_iso()),
+    )
+    class_id = int(cur.lastrowid)
+    conn.commit()
+    conn.close()
+    return class_id
+
+
+def _link_student_to_class(server_module, class_id, student_id):
+    conn = server_module.db()
+    conn.execute(
+        "INSERT INTO class_students(class_id, student_id, active_from, active_to) VALUES(?,?,?,NULL)",
+        (class_id, student_id, server_module.now_iso()),
+    )
+    conn.commit()
+    conn.close()
+
+
+def _link_teacher_to_class(server_module, teacher_api_key, class_id):
+    teacher_account_id = _account_id_for_api_key(server_module, teacher_api_key)
+    conn = server_module.db()
+    conn.execute(
+        "INSERT INTO teacher_class_links(teacher_account_id, class_id, active, created_at) VALUES(?,?,1,?)",
+        (teacher_account_id, class_id, server_module.now_iso()),
+    )
+    conn.commit()
+    conn.close()
+
+
+def _link_parent_to_student(server_module, parent_api_key, student_id):
+    parent_account_id = _account_id_for_api_key(server_module, parent_api_key)
+    conn = server_module.db()
+    conn.execute(
+        "INSERT INTO parent_student_links(parent_account_id, student_id, relation_type, active, created_at) VALUES(?,?,?,1,?)",
+        (parent_account_id, student_id, "parent", server_module.now_iso()),
+    )
+    conn.commit()
+    conn.close()
+
+
 @pytest.mark.anyio
 async def test_snapshot_missing_api_key(setup_server):
     transport = httpx.ASGITransport(app=setup_server.app)
@@ -271,6 +324,150 @@ async def test_practice_event_appends_to_existing_snapshot(setup_server):
         events = payload["d"]["practice"]["events"]
         assert len(events) == 1
         assert events[0]["topic"] == "decimal"
+
+
+# ========= School-first RBAC Scope Tests =========
+
+@pytest.mark.anyio
+async def test_parent_child_report_allows_linked_child(setup_server):
+    transport = httpx.ASGITransport(app=setup_server.app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as c:
+        owner_api_key, child_student_id = await _provision(c, "scope_child_owner")
+        parent_api_key, _ = await _provision(c, "scope_parent_reader")
+
+        class_id = _create_class(setup_server, "Parent Class")
+        _link_student_to_class(setup_server, class_id, child_student_id)
+        _link_parent_to_student(setup_server, parent_api_key, child_student_id)
+
+        write_resp = await c.post(
+            "/v1/app/report_snapshots",
+            json={
+                "student_id": child_student_id,
+                "class_id": class_id,
+                "report_phase": "before",
+                "window_start": "2026-03-01T00:00:00",
+                "window_end": "2026-03-07T23:59:59",
+                "report_payload": {"v": 1, "d": {"accuracy": 88}},
+            },
+            headers={"X-API-Key": owner_api_key},
+        )
+        assert write_resp.status_code == 200
+
+        resp = await c.get(
+            f"/v1/app/parent/children/{child_student_id}/report",
+            headers={"X-API-Key": parent_api_key},
+        )
+        assert resp.status_code == 200
+        body = resp.json()
+        assert body["scope"] == "parent_child"
+        assert body["snapshot"]["student_id"] == child_student_id
+        assert body["snapshot"]["class_id"] == class_id
+        assert body["snapshot"]["report_phase"] == "before"
+
+
+@pytest.mark.anyio
+async def test_parent_child_report_denies_unlinked_child(setup_server):
+    transport = httpx.ASGITransport(app=setup_server.app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as c:
+        owner_api_key, child_student_id = await _provision(c, "scope_unlinked_owner")
+        parent_api_key, _ = await _provision(c, "scope_unlinked_parent")
+
+        await c.post(
+            "/v1/app/report_snapshots",
+            json={"student_id": child_student_id, "report_payload": {"v": 1}},
+            headers={"X-API-Key": owner_api_key},
+        )
+
+        resp = await c.get(
+            f"/v1/app/parent/children/{child_student_id}/report",
+            headers={"X-API-Key": parent_api_key},
+        )
+        assert resp.status_code == 403
+
+
+@pytest.mark.anyio
+async def test_teacher_class_overview_allows_linked_class(setup_server):
+    transport = httpx.ASGITransport(app=setup_server.app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as c:
+        owner_api_key, student_id = await _provision(c, "scope_teacher_owner")
+        teacher_api_key, _ = await _provision(c, "scope_teacher_reader")
+
+        class_id = _create_class(setup_server, "Teacher Class")
+        _link_student_to_class(setup_server, class_id, student_id)
+        _link_teacher_to_class(setup_server, teacher_api_key, class_id)
+
+        await c.post(
+            "/v1/app/report_snapshots",
+            json={"student_id": student_id, "class_id": class_id, "report_payload": {"v": 1}},
+            headers={"X-API-Key": owner_api_key},
+        )
+
+        resp = await c.get(
+            f"/v1/app/teacher/classes/{class_id}/overview",
+            headers={"X-API-Key": teacher_api_key},
+        )
+        assert resp.status_code == 200
+        body = resp.json()
+        assert body["scope"] == "teacher_class"
+        assert body["overview"]["class"]["id"] == class_id
+        assert body["overview"]["stats"]["student_count"] == 1
+        assert body["overview"]["stats"]["snapshot_count"] == 1
+
+
+@pytest.mark.anyio
+async def test_teacher_class_overview_denies_other_class(setup_server):
+    transport = httpx.ASGITransport(app=setup_server.app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as c:
+        teacher_api_key, _ = await _provision(c, "scope_teacher_denied")
+        class_id = _create_class(setup_server, "Denied Class")
+
+        resp = await c.get(
+            f"/v1/app/teacher/classes/{class_id}/overview",
+            headers={"X-API-Key": teacher_api_key},
+        )
+        assert resp.status_code == 403
+
+
+@pytest.mark.anyio
+async def test_teacher_student_report_denies_student_outside_class(setup_server):
+    transport = httpx.ASGITransport(app=setup_server.app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as c:
+        owner_api_key, student_id = await _provision(c, "scope_teacher_student_owner")
+        teacher_api_key, _ = await _provision(c, "scope_teacher_student_reader")
+
+        class_id = _create_class(setup_server, "Teacher Student Class")
+        _link_teacher_to_class(setup_server, teacher_api_key, class_id)
+
+        await c.post(
+            "/v1/app/report_snapshots",
+            json={"student_id": student_id, "report_payload": {"v": 1, "d": {"accuracy": 60}}},
+            headers={"X-API-Key": owner_api_key},
+        )
+
+        resp = await c.get(
+            f"/v1/app/teacher/classes/{class_id}/students/{student_id}/report",
+            headers={"X-API-Key": teacher_api_key},
+        )
+        assert resp.status_code == 403
+
+
+@pytest.mark.anyio
+async def test_admin_class_overview_allows_any_class(setup_server):
+    transport = httpx.ASGITransport(app=setup_server.app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as c:
+        _, student_id = await _provision(c, "scope_admin_owner")
+        class_id = _create_class(setup_server, "Admin Class")
+        _link_student_to_class(setup_server, class_id, student_id)
+
+        resp = await c.get(
+            f"/v1/app/admin/classes/{class_id}/overview",
+            headers=ADMIN_HEADERS,
+        )
+        assert resp.status_code == 200
+        body = resp.json()
+        assert body["scope"] == "admin_class"
+        assert body["overview"]["class"]["id"] == class_id
+        assert body["overview"]["stats"]["student_count"] == 1
 
 
 # ========= Bootstrap / Exchange Token Tests =========
