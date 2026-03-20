@@ -1,4 +1,4 @@
-﻿[
+[
   {
     "task_id": "T47",
     "title": "Login endpoint rate limiting",
@@ -392,6 +392,41 @@
     "auto_merge_allowed": true,
     "manual_review_required": false,
     "last_evaluated_ts": "2026-03-21T01:00:00+08:00",
+    "next_action": "none — completed"
+  },
+  {
+    "task_id": "T61-school-first-rbac-spec",
+    "title": "Define school-first RBAC entitlement boundaries",
+    "category": "architecture_authorization",
+    "source": "user_request_school_first_roles",
+    "priority_band": "P1",
+    "priority_score": 8,
+    "risk_level": "low",
+    "status": "done",
+    "selected_reason": "Teacher-class features should not proceed until parent-child, teacher-class, and admin-global visibility rules are explicit. A written entitlement contract is the lowest-risk prerequisite.",
+    "blockers": [],
+    "acceptance_criteria": [
+      "School-first RBAC spec covers parent, teacher, admin",
+      "Spec explicitly defines allow and deny boundaries for class data and before/after reports",
+      "Spec includes role matrix, resource list, action list, entitlement rules, risks, and MVP implementation guidance",
+      "docs and dist mirror remain in sync",
+      "validate_all and verify_all pass"
+    ],
+    "required_checks": [
+      "python tools/validate_all_elementary_banks.py",
+      "python scripts/verify_all.py"
+    ],
+    "files_likely_involved": [
+      "docs/rbac_entitlement_school_first.md",
+      "dist_ai_math_web_pages/docs/rbac_entitlement_school_first.md",
+      "reports/latest_iteration_report.md",
+      "logs/change_history.jsonl",
+      "logs/lessons_learned.jsonl",
+      "memory/next_priority_queue.json"
+    ],
+    "auto_merge_allowed": true,
+    "manual_review_required": false,
+    "last_evaluated_ts": "2026-03-21T10:30:00+08:00",
     "next_action": "none — completed"
   }
 ]

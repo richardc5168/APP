@@ -1162,3 +1162,71 @@ Neither is an actual SVG builder CALL in a fracAdd rendering path. The actual fr
 - Star-pack: "Try First 10 Free" unlock for habit formation
 - A/B test partial preview vs full blur on conversion rate
 - Configure Stripe test keys and run end-to-end payment flow
+
+---
+
+## Iteration 61 — School-First RBAC Entitlement Spec
+
+**Date**: 2026-03-21
+**Scope**: `docs/rbac_entitlement_school_first.md` (mirrored to dist)
+**Goal**: Define role and data boundaries before building teacher-class features, so the school-first version stays teacher-centric, parent child-only, and admin global without accidental data leakage.
+
+### Root Cause Summary
+
+The repo already has strong parent-report and admin auth patterns, but it does not yet have a single documented entitlement contract for school-first roles. Without that contract, teacher dashboard work would likely drift into UI-first implementation, where class access and before/after report visibility are implied rather than enforced.
+
+### Changes
+
+#### 1. Added a dedicated School-first RBAC spec
+- Created `docs/rbac_entitlement_school_first.md`
+- Mirrored the file to `dist_ai_math_web_pages/docs/rbac_entitlement_school_first.md`
+- Framed the product as: teacher class operation first, parent individual report second, admin global oversight third
+
+#### 2. Defined the required role boundaries
+- Roles covered: `parent`, `teacher`, `admin`
+- Explicitly answered the required product constraints:
+   - parent cannot see class data
+   - teacher cannot see other classes
+   - admin can see all scoped data
+- Defined who can see before/after reports:
+   - parent: own child only
+   - teacher: own class students only
+   - admin: all
+
+#### 3. Documented resource and action model
+- Added role matrix
+- Added resource list with current-framework alignment (`students`, `attempts`, `report_snapshots`, parent-report pipeline)
+- Added action list across `read / write / assign / export / view analytics`
+- Added deny-by-default entitlement rules and lineage requirements for before/after outcomes
+
+#### 4. Documented MVP implementation path
+- Reuse current backend patterns instead of building a second reporting system
+- Proposed minimal new link tables:
+   - `classes`
+   - `class_students`
+   - `parent_student_links`
+   - `teacher_class_links`
+- Proposed reusable backend helpers for scope verification
+- Recommended phased API rollout and implementation order before any teacher UI work
+
+### Affected Files
+- `docs/rbac_entitlement_school_first.md`
+- `dist_ai_math_web_pages/docs/rbac_entitlement_school_first.md`
+- `logs/change_history.jsonl`
+- `logs/lessons_learned.jsonl`
+- `reports/latest_iteration_report.md`
+- `memory/next_priority_queue.json`
+
+### Validation
+- `python tools/validate_all_elementary_banks.py`
+- `python scripts/verify_all.py`
+
+### Residual Risks
+1. Teacher/class authorization is still documented only — backend enforcement is not implemented yet.
+2. Before/after report visibility rules require schema support for `report_phase`, `class_id`, and report windows.
+3. Export paths will need the same backend scope checks as read APIs when implementation begins.
+
+### Next Iteration Priorities
+- Add minimal school link tables and reusable scope-check helpers in `server.py`
+- Add backend tests for parent-child, teacher-class, and admin-global visibility
+- Implement the smallest teacher class overview endpoint only after scope tests are passing
