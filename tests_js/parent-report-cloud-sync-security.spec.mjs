@@ -146,6 +146,22 @@ test('doCloudSync allows unlimited names to sync without a parent PIN', () => {
   assert.ok(doCloudSyncBlock.includes('!pin && !isUnlimited'), 'doCloudSync should only block when both pin is missing and name is not unlimited');
   assert.ok(doCloudSyncBlock.includes('pin: pin'), 'doCloudSync should still send the pin field for normal users');
   assert.ok(!doCloudSyncBlock.includes('if (!pin) {'), 'doCloudSync must not hard-block all missing-pin syncs');
+  assert.ok(doCloudSyncBlock.includes('lookupStudentReport(nameKeyRaw, pin)'), 'doCloudSync must read existing cloud data before overwrite-prone syncs');
+  assert.ok(doCloudSyncBlock.includes('getCloudAttemptsFromData(cloudData, 7)'), 'doCloudSync must merge existing cloud attempts');
+  assert.ok(doCloudSyncBlock.includes('getCloudPracticeEvents(cloudData, 7)'), 'doCloudSync must preserve existing cloud practice events');
+  assert.ok(doCloudSyncBlock.includes('mergedAttempts'), 'doCloudSync should rebuild report data from merged attempts');
+});
+
+test('recordPracticeResult allows unlimited names without a PIN', () => {
+  const authSrc = fs.readFileSync(path.resolve('docs/shared/student_auth.js'), 'utf8');
+
+  const recordBlock = authSrc.slice(
+    authSrc.indexOf('function recordPracticeResult'),
+    authSrc.indexOf('/* hook into AIMathAttemptTelemetry.appendAttempt to auto-sync */')
+  );
+
+  assert.ok(recordBlock.includes('isUnlimitedName'), 'recordPracticeResult must check unlimited-name status');
+  assert.ok(recordBlock.includes('!pin && !isUnlimited'), 'recordPracticeResult should only block missing PINs for non-unlimited names');
 });
 
 test('subscription-gated snapshot endpoints enforce deny-by-default (source-level)', () => {

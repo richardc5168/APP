@@ -5,6 +5,12 @@
 - Fixed both write-path gates: admin/unlimited identities now bypass PIN validation on registry upsert, and `doCloudSync()` now allows unlimited names to sync without a PIN while keeping the normal PIN requirement for regular users.
 - Added regressions for PIN-less richkai upsert/fetch and for the unlimited-name cloud-sync bypass so future read-only fixes do not leave the write path stale again.
 
+### Iteration 70 (commit `working-tree`)
+- **Critical overwrite fix**: after the PIN-less write fix, a second richkai device with no local attempts could still sync an empty `report_data` payload and erase the cloud report while leaving a fresh sync timestamp.
+- Root cause: `doCloudSync()` rebuilt `report_data` from local attempts only, then full-upserted that payload, so any empty device could overwrite the cross-device source of truth with a current-but-empty report.
+- Fixed the sync strategy in `docs/shared/student_auth.js`: fetch existing cloud report first, merge cloud `_attempts` with local attempts, preserve cloud `practice.events`, rebuild the summary from the merged data, then upsert the combined snapshot.
+- Also aligned `recordPracticeResult()` with the unlimited-name bypass so richkai can write parent-report practice results without a PIN.
+
 ### Iteration 67 (working-tree) — Richkai Parent-Report Unlimited Bypass
 
 **Goal**: Make the current local `richkai` admin session open its own parent report directly without payment prompts or PIN unlock friction.

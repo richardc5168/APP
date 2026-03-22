@@ -378,6 +378,45 @@
     return buildReportData(name, d, collectLocalAttempts(d), []);
   }
 
+  function getCloudAttemptsFromData(data, days){
+    var d = Number(days) || 7;
+    var cutoff = Date.now() - d * 86400000;
+    var attempts = Array.isArray(data && data._attempts) ? data._attempts : [];
+    return attempts
+      .filter(function(a){ return getAttemptTs(a) >= cutoff; })
+      .map(normalizeAttemptForCloud);
+  }
+
+  function getCloudPracticeEvents(data, days){
+    var d = Number(days) || 7;
+    var cutoff = Date.now() - d * 86400000;
+    var events = data && data.d && data.d.practice && Array.isArray(data.d.practice.events)
+      ? data.d.practice.events
+      : [];
+    return events.filter(function(event){ return parseAttemptTs(event && event.ts) >= cutoff; });
+  }
+
+  function dedupePracticeEvents(items){
+    var seen = new Set();
+    var out = [];
+    (Array.isArray(items) ? items : []).forEach(function(event){
+      var key = [
+        parseAttemptTs(event && event.ts),
+        String(event && event.topic || ''),
+        String(event && event.kind || ''),
+        Number(event && event.score || 0),
+        Number(event && event.total || 0),
+        String(event && event.mode || ''),
+        event && event.completed === false ? 0 : 1
+      ].join('|');
+      if (seen.has(key)) return;
+      seen.add(key);
+      out.push(event);
+    });
+    out.sort(function(a, b){ return parseAttemptTs(a && a.ts) - parseAttemptTs(b && b.ts); });
+    return out;
+  }
+
   /* ─── URL encoder / decoder ─── */
   function encodeReportUrl(data, pin){
     const payload = { ...data, pin: String(pin || '') };
@@ -534,14 +573,25 @@
         warnMissingCloudPin();
         return Promise.resolve(false);
       }
-      var localAttempts = collectLocalAttempts(7);
-      var reportData = buildReportData(nameKeyRaw, 7, localAttempts, []);
 
       _syncInFlight = true;
-      return postParentReportApi('/v1/parent-report/registry/upsert', {
-        name: nameKeyRaw,
-        pin: pin,
-        report_data: reportData
+      return lookupStudentReport(nameKeyRaw, pin)
+      .catch(function(){ return null; })
+      .then(function(existingEntry){
+        var cloudData = existingEntry && existingEntry.data ? existingEntry.data : null;
+        var localAttempts = collectLocalAttempts(7);
+        var mergedAttempts = dedupeAttempts([].concat(
+          getCloudAttemptsFromData(cloudData, 7),
+          localAttempts
+        )).map(normalizeAttemptForCloud);
+        var mergedPracticeEvents = dedupePracticeEvents(getCloudPracticeEvents(cloudData, 7));
+        var reportData = buildReportData(nameKeyRaw, 7, mergedAttempts, mergedPracticeEvents);
+
+        return postParentReportApi('/v1/parent-report/registry/upsert', {
+          name: nameKeyRaw,
+          pin: pin,
+          report_data: reportData
+        });
       })
       .then(function(resp){
         if (resp && resp.ok){
@@ -593,8 +643,11 @@
       warnMissingCloudBackend();
       return Promise.resolve(false);
     }
+    var isUnlimited = window.AIMathSubscription &&
+      typeof window.AIMathSubscription.isUnlimitedName === 'function' &&
+      window.AIMathSubscription.isUnlimitedName(name);
     var pin = resolveParentReportPin(name, pinOverride);
-    if (!pin) {
+    if (!pin && !isUnlimited) {
       warnMissingCloudPin();
       return Promise.resolve(false);
     }
