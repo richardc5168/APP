@@ -71,3 +71,19 @@ test('parent report first screen exposes top 3 weakness summary cards', () => {
   assert.ok(src.includes('為什麼判定弱：'), 'weekly weakness summary must explain why weak');
   assert.ok(src.includes('→ 直接開始這組補強'), 'weekly weakness summary must include a direct practice CTA');
 });
+
+test('parent report bypasses PIN unlock for current unlimited richkai session', () => {
+  const src = fs.readFileSync(path.resolve('docs/parent-report/index.html'), 'utf8');
+  const unlockBlock = src.slice(
+    src.indexOf('function unlock(){'),
+    src.indexOf('/* ─── render ─── */')
+  );
+
+  assert.ok(src.includes('function hasUnlimitedParentReportAccess(){'), 'page should define unlimited parent-report access helper');
+  assert.ok(src.includes('window.AIMathSubscription.hasUnlimitedAccess()'), 'page should reuse subscription unlimited access helper');
+  assert.ok(src.includes('function openUnlimitedLocalReport(requestedName){'), 'page should provide a local unlimited report opener');
+  assert.ok(src.includes('管理者 richkai 無限制模式'), 'page should message the richkai bypass');
+  assert.ok(unlockBlock.includes('canBypassParentPinForCurrentStudent(name)'), 'unlock flow should check the richkai/local unlimited bypass');
+  assert.ok(unlockBlock.indexOf('canBypassParentPinForCurrentStudent(name)') < unlockBlock.indexOf("if (!pin)"), 'richkai bypass must run before PIN becomes mandatory');
+  assert.ok(src.includes('if (openUnlimitedLocalReport(localStudent.name)) {'), 'page should auto-open the local richkai report on load');
+});

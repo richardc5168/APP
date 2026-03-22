@@ -749,6 +749,9 @@
       var localStudent = window.AIMathStudentAuth.getCurrentStudent();
       if (localStudent && localStudent.name) {
         document.getElementById('nameInput').value = localStudent.name;
+        if (openUnlimitedLocalReport(localStudent.name)) {
+          return;
+        }
         showStatus('📱 偵測到本機學生資料（' + esc(localStudent.name) + '），輸入家長密碼即可查看。', 'ok');
       }
     }
@@ -781,6 +784,52 @@
   var _unlockName = '';
   var _unlockPin = '';
 
+
+  function normalizeAccessName(name){
+    var value = String(name || '');
+    try {
+      if (value.normalize) value = value.normalize('NFKC');
+    } catch(e){}
+    return value.trim().replace(/\s+/g, ' ').toUpperCase();
+  }
+
+  function hasUnlimitedParentReportAccess(){
+    return !!(
+      window.AIMathSubscription &&
+      typeof window.AIMathSubscription.hasUnlimitedAccess === 'function' &&
+      window.AIMathSubscription.hasUnlimitedAccess()
+    );
+  }
+
+  function canBypassParentPinForCurrentStudent(requestedName){
+    if (!hasUnlimitedParentReportAccess()) return false;
+    if (!window.AIMathStudentAuth || !window.AIMathStudentAuth.isLoggedIn()) return false;
+    var student = window.AIMathStudentAuth.getCurrentStudent();
+    var currentName = String(student && student.name || '').trim();
+    if (!currentName) return false;
+    var askedName = String(requestedName || '').trim();
+    return !askedName || normalizeAccessName(askedName) === normalizeAccessName(currentName);
+  }
+
+  function openUnlimitedLocalReport(requestedName){
+    if (!canBypassParentPinForCurrentStudent(requestedName)) return false;
+    if (!window.AIMathStudentAuth || typeof window.AIMathStudentAuth.collectReportData !== 'function') return false;
+    var student = window.AIMathStudentAuth.getCurrentStudent();
+    var currentName = String(student && student.name || '').trim();
+    if (!currentName) return false;
+    data = window.AIMathStudentAuth.collectReportData(7);
+    _unlockName = currentName;
+    _unlockPin = '';
+    _lastCloudTs = Date.now();
+    if (window.AIMathStudentAuth.forceCloudSync){
+      window.AIMathStudentAuth.forceCloudSync();
+    } else if (window.AIMathStudentAuth.scheduleCloudSync){
+      window.AIMathStudentAuth.scheduleCloudSync();
+    }
+    showStatus('👑 已使用管理者 richkai 無限制模式，直接載入本機作答家長報告。', 'ok');
+    showDashboard(data);
+    return true;
+  }
   function showDashboard(d){
     /* Enrich cloud/URL data with weeklyFocus + recommendations from shared engines */
     if (d && d.d && window.AIMathReportDataBuilder && window.AIMathReportDataBuilder.enrichReportData) {
@@ -814,6 +863,10 @@
     if (!_unlockName) return;
     var btn = document.getElementById('btnRefresh');
     if (btn){ btn.disabled = true; btn.textContent = '⏳ 查詢中…'; }
+    if (!_unlockPin && openUnlimitedLocalReport(_unlockName)) {
+      if (btn){ btn.disabled = false; btn.textContent = '🔄 重新整理'; }
+      return;
+    }
     var adapter = window.AIMathReportSyncAdapter;
     var readFn = (adapter && typeof adapter.readReportSnapshot === 'function')
       ? adapter.readReportSnapshot
@@ -851,6 +904,11 @@
     }
 
     /* ─── name+PIN mode ─── */
+    if (canBypassParentPinForCurrentStudent(name)){
+      openUnlimitedLocalReport(name);
+      return;
+    }
+
     if (!pin){ showPinErr('請輸入家長密碼（4~6 位數字）'); return; }
 
     /* 1. Try local data first (same device, fast) */
