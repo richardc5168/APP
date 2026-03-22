@@ -134,6 +134,20 @@ test('doCloudSync and recordPracticeResult never use direct Gist writes', () => 
   assert.ok(recordBlock.includes('/v1/parent-report/registry/upsert'), 'recordPracticeResult must use backend registry');
 });
 
+test('doCloudSync allows unlimited names to sync without a parent PIN', () => {
+  const authSrc = fs.readFileSync(path.resolve('docs/shared/student_auth.js'), 'utf8');
+
+  const doCloudSyncBlock = authSrc.slice(
+    authSrc.indexOf('function doCloudSync()'),
+    authSrc.indexOf('function lookupStudentReport')
+  );
+
+  assert.ok(doCloudSyncBlock.includes('isUnlimitedName'), 'doCloudSync must check unlimited-name status');
+  assert.ok(doCloudSyncBlock.includes('!pin && !isUnlimited'), 'doCloudSync should only block when both pin is missing and name is not unlimited');
+  assert.ok(doCloudSyncBlock.includes('pin: pin'), 'doCloudSync should still send the pin field for normal users');
+  assert.ok(!doCloudSyncBlock.includes('if (!pin) {'), 'doCloudSync must not hard-block all missing-pin syncs');
+});
+
 test('subscription-gated snapshot endpoints enforce deny-by-default (source-level)', () => {
   const serverSrc = fs.readFileSync(path.resolve('server.py'), 'utf8');
 

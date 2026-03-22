@@ -84,3 +84,82 @@ async def test_parent_report_registry_upsert_and_fetch(tmp_path):
             },
         )
         assert wrong_pin.status_code == 403
+
+
+@pytest.mark.anyio
+async def test_parent_report_registry_admin_name_allows_pinless_upsert_and_fetch(tmp_path):
+    db_path = tmp_path / 'parent_report_registry_admin.db'
+    os.environ['DB_PATH'] = str(db_path)
+
+    import server
+
+    importlib.reload(server)
+
+    transport = httpx.ASGITransport(app=server.app)
+    async with httpx.AsyncClient(transport=transport, base_url='http://testserver') as client:
+        report_data = {
+            'v': 1,
+            'name': 'richkai',
+            'ts': 1700000000000,
+            'days': 7,
+            'd': {
+                'practice': {
+                    'events': [
+                        {
+                            'ts': 1700000001000,
+                            'score': 1,
+                            'total': 1,
+                            'topic': 'exam-sprint',
+                            'kind': 'fraction_compare',
+                            'mode': 'quiz',
+                            'completed': True,
+                        }
+                    ]
+                }
+            }
+        }
+
+        upsert_report = await client.post(
+            '/v1/parent-report/registry/upsert',
+            json={
+                'name': 'richkai',
+                'pin': '',
+                'report_data': report_data,
+            },
+        )
+        assert upsert_report.status_code == 200
+        assert upsert_report.json()['ok'] is True
+
+        upsert_event = await client.post(
+            '/v1/parent-report/registry/upsert',
+            json={
+                'name': 'richkai',
+                'pin': '',
+                'practice_event': {
+                    'ts': 1700000005000,
+                    'score': 2,
+                    'total': 3,
+                    'topic': 'fraction-word-g5',
+                    'kind': 'generic_fraction_word',
+                    'mode': 'quiz3',
+                    'completed': True,
+                },
+            },
+        )
+        assert upsert_event.status_code == 200
+        assert upsert_event.json()['ok'] is True
+
+        fetched = await client.post(
+            '/v1/parent-report/registry/fetch',
+            json={
+                'name': 'richkai',
+                'pin': '',
+            },
+        )
+        assert fetched.status_code == 200
+        payload = fetched.json()
+        assert payload['ok'] is True
+        assert payload['entry']['name'] == 'richkai'
+        events = payload['entry']['data']['d']['practice']['events']
+        assert len(events) == 2
+        assert events[-1]['topic'] == 'fraction-word-g5'

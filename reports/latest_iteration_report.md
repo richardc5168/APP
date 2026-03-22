@@ -1,4 +1,10 @@
 
+### Iteration 69 (commit `0db015978`)
+- **Critical cross-device freshness fix**: richkai could already read parent reports without a PIN, but could not write fresh cloud snapshots because the sync path still required a 4-6 digit PIN on both the client and backend upsert endpoint.
+- Root cause: `docs/shared/student_auth.js` `doCloudSync()` aborted on missing PIN, and `server.py` `/v1/parent-report/registry/upsert` still enforced PIN validation for every identity, leaving other devices stuck on the last successful 3/16 snapshot.
+- Fixed both write-path gates: admin/unlimited identities now bypass PIN validation on registry upsert, and `doCloudSync()` now allows unlimited names to sync without a PIN while keeping the normal PIN requirement for regular users.
+- Added regressions for PIN-less richkai upsert/fetch and for the unlimited-name cloud-sync bypass so future read-only fixes do not leave the write path stale again.
+
 ### Iteration 67 (working-tree) — Richkai Parent-Report Unlimited Bypass
 
 **Goal**: Make the current local `richkai` admin session open its own parent report directly without payment prompts or PIN unlock friction.
