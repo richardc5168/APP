@@ -361,3 +361,86 @@ The MVP is done only when:
 4. Before/after reports are scope-checked and traceable.
 5. Export follows the same scope as read.
 6. Backend tests prove deny-by-default behavior.
+
+## G. Entitlement Service / Middleware Design
+
+The school-first MVP should not scatter scope checks across pages or ad hoc SQL.
+
+Use a single backend entitlement layer with these responsibilities:
+
+1. Build `EntitlementContext`
+	- `actor_role`
+	- `actor_account_id`
+	- `class_ids`
+	- `student_ids` only when explicitly linked
+	- `subscription_state`
+
+2. Expose reusable predicates
+	- `canReadStudent(student_id)`
+	- `canReadClass(class_id)`
+	- `canReadBeforeAfter(student_id, class_id)`
+	- `canExportStudent(student_id)`
+	- `canExportClass(class_id)`
+
+3. Enforce at server-side query boundary
+	- apply scope before loading rows where possible
+	- reject with `403` when scope does not match
+	- never rely on frontend route guards as final authority
+
+4. Emit audit trail for teacher/admin scoped reads
+
+Current repo starting point:
+
+- `server.py` already has reusable helpers for:
+  - `_verify_parent_child_scope`
+  - `_verify_teacher_class_scope`
+  - `_verify_student_in_class`
+  - `_resolve_student_class_scope`
+- The next step is to wrap these helpers behind a small entitlement service so new APIs do not duplicate scope branching.
+
+Recommended MVP structure:
+
+- `entitlement_context_from_request(request)`
+- `require_parent_child(ctx, student_id)`
+- `require_teacher_class(ctx, class_id)`
+- `require_before_after_scope(ctx, student_id, class_id)`
+- `require_export_scope(ctx, scope_kind, scope_id)`
+
+## H. Impacted APIs, Pages, and Data Access
+
+### Existing backend APIs already impacted or likely impacted
+
+- `POST /v1/app/report_snapshots`
+- `POST /v1/app/report_snapshots/latest`
+- `POST /v1/app/practice_events`
+- `GET /v1/app/parent/children/{student_id}/report`
+- `GET /v1/app/teacher/classes/{class_id}/overview`
+- `GET /v1/app/teacher/classes/{class_id}/students/{student_id}/report`
+- `GET /v1/app/admin/classes/{class_id}/overview`
+- any future export endpoint for parent report, teacher class report, before/after report
+
+### Existing pages likely impacted
+
+- `docs/parent-report/index.html`
+- any future teacher dashboard page
+- any future admin dashboard page
+- `docs/shared/report_sync_adapter.js`
+- `docs/shared/student_auth.js`
+
+### Existing data access patterns likely impacted
+
+- direct account ownership checks on `students`
+- `report_snapshots` lookup by `account_id + student_id`
+- analytics assembled from `attempts` without class scoping
+- export flows that currently assume one household scope
+
+### MVP migration rule
+
+Do not rewrite old APIs all at once.
+
+Instead:
+
+1. add new school-first scoped endpoints first
+2. add RBAC tests for those endpoints
+3. move new teacher/admin UI to those endpoints only
+4. retire or wrap older household-only endpoints later when safe

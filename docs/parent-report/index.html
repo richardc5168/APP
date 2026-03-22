@@ -489,7 +489,7 @@
     var apiBase = (adapter.getBackendBase && adapter.getBackendBase()) || '';
     if (!apiBase) return;
 
-    /* Exchange bootstrap token for session credentials */
+    /* Exchange bootstrap token for scoped session credentials */
     fetch(apiBase + '/v1/app/auth/exchange', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -497,8 +497,8 @@
     })
     .then(function(resp){ return resp.json(); })
     .then(function(body){
-      if (body && body.ok && body.api_key && body.student_id) {
-        var stored = adapter.setCredentials(body.api_key, body.student_id);
+      if (body && body.ok && body.session_token && body.student_id) {
+        var stored = adapter.setCredentials(body.session_token, body.student_id);
         if (!stored) return;
         if (body.subscription && window.AIMathSubscription && window.AIMathSubscription.syncFromBackend) {
           window.AIMathSubscription.syncFromBackend(body.subscription);
@@ -558,7 +558,7 @@
           return;
         }
 
-        /* Step 3: POST /v1/app/auth/exchange → {api_key, student_id, subscription} */
+        /* Step 3: POST /v1/app/auth/exchange → {session_token, student_id, subscription} */
         fetch(apiBase + '/v1/app/auth/exchange', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -566,7 +566,7 @@
         })
         .then(function(r3){ return r3.json().then(function(b3){ return { status: r3.status, body: b3 }; }); })
         .then(function(res3){
-          if (!res3.body || !res3.body.ok || !res3.body.api_key){
+          if (!res3.body || !res3.body.ok || !res3.body.session_token){
             setPaidMsg('安全令牌交換失敗', 'bad');
             btnLogin.disabled = false;
             if (selectorWrap) selectorWrap.style.display = 'none';
@@ -574,7 +574,7 @@
           }
 
           /* Success: store session credentials */
-          adapter.setCredentials(res3.body.api_key, res3.body.student_id);
+          adapter.setCredentials(res3.body.session_token, res3.body.student_id);
           if (res3.body.subscription && window.AIMathSubscription && window.AIMathSubscription.syncFromBackend) {
             window.AIMathSubscription.syncFromBackend(res3.body.subscription);
           }

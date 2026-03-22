@@ -464,5 +464,168 @@
     "manual_review_required": false,
     "last_evaluated_ts": "2026-03-21T11:20:00+08:00",
     "next_action": "none — completed"
+  },
+  {
+    "task_id": "T63-school-first-phase0-contract",
+    "title": "Land school-first phase 0 contract docs",
+    "category": "architecture_contract",
+    "source": "user_request_school_first_phase0",
+    "priority_band": "P1",
+    "priority_score": 9,
+    "risk_level": "low",
+    "status": "done",
+    "selected_reason": "The backend scope foundation was in place, but execution still lacked the rest of the contract: RBAC tests, event model, data model, security audit, and explicit mock-first MVP definitions.",
+    "blockers": [],
+    "acceptance_criteria": [
+      "RBAC test matrix exists",
+      "School-first data model exists",
+      "School-first event model exists",
+      "Security secret audit exists",
+      "Teacher, parent, and admin MVP docs exist",
+      "Proof-pack doc exists",
+      "docs and dist remain in sync"
+    ],
+    "required_checks": [
+      "python tools/validate_all_elementary_banks.py",
+      "python scripts/verify_all.py"
+    ],
+    "files_likely_involved": [
+      "docs/*.md",
+      "dist_ai_math_web_pages/docs/*.md",
+      "reports/school_first_iteration_report.md",
+      "reports/latest_iteration_report.md",
+      "logs/change_history.jsonl",
+      "logs/lessons_learned.jsonl",
+      "memory/next_priority_queue.json"
+    ],
+    "auto_merge_allowed": true,
+    "manual_review_required": false,
+    "last_evaluated_ts": "2026-03-21T12:30:00+08:00",
+    "next_action": "none — completed"
+  },
+  {
+    "task_id": "T64-school-first-mock-data-analytics",
+    "title": "Build school-first mock data and analytics scaffold",
+    "category": "architecture_analytics",
+    "source": "iteration_63_next_step",
+    "priority_band": "P0",
+    "priority_score": 10,
+    "risk_level": "low",
+    "status": "done",
+    "selected_reason": "The strict implementation order requires mock data before UI, and before/after analytics must be proven on equivalent groups before wiring teacher/admin pages.",
+    "blockers": [],
+    "acceptance_criteria": [
+      "Deterministic mock data generator exists",
+      "Two teachers and 58 students per teacher are covered",
+      "Pre/post use different questions with the same equivalent group",
+      "Analytics scaffold classifies improved/plateau/regressed",
+      "Focused node tests pass",
+      "validate_all and verify_all pass"
+    ],
+    "required_checks": [
+      "node --test tests_js/school-first-mock-data.spec.mjs tests_js/school-first-analytics.spec.mjs",
+      "python tools/validate_all_elementary_banks.py",
+      "python scripts/verify_all.py"
+    ],
+    "files_likely_involved": [
+      "school_first/mock_data.js",
+      "school_first/analytics.js",
+      "school_first/types.ts",
+      "school_first/generate_mock_data.mjs",
+      "tests_js/school-first-mock-data.spec.mjs",
+      "tests_js/school-first-analytics.spec.mjs",
+      "artifacts/school_first_mock_data_sample.json"
+    ],
+    "auto_merge_allowed": true,
+    "manual_review_required": false,
+    "last_evaluated_ts": "2026-03-21T15:30:00+08:00",
+    "next_action": "none — completed"
+  },
+  {
+    "task_id": "T65-school-first-live-teacher-shell",
+    "title": "Connect teacher shell to live scoped APIs",
+    "category": "architecture_ui_integration",
+    "source": "iteration_64_next_step",
+    "priority_band": "P0",
+    "priority_score": 10,
+    "risk_level": "medium",
+    "status": "done",
+    "selected_reason": "The school-first contract, backend scope foundation, mock analytics scaffold, scoped sessions, and mock dashboard shells are all in place. The next smallest meaningful slice is to replace teacher-shell mock fetches with real scoped class overview and before/after API calls without broadening authorization.",
+    "blockers": [],
+    "acceptance_criteria": [
+      "Teacher shell loads class overview from live scoped teacher endpoint",
+      "Teacher shell loads class before/after summary from live scoped endpoint",
+      "Teacher shell can drill into a student before/after view through the scoped teacher student endpoint",
+      "Mock runtime remains available as fallback or development mode only",
+      "Parent-report paid flow remains green",
+      "Targeted backend and JS tests pass",
+      "validate_all and verify_all pass"
+    ],
+    "required_checks": [
+      "python -m pytest tests/test_report_snapshot_endpoints.py -q",
+      "node --test tests_js/parent-report-cloud-sync-security.spec.mjs tests_js/school-first-mock-data.spec.mjs tests_js/school-first-analytics.spec.mjs",
+      "python tools/validate_all_elementary_banks.py",
+      "python scripts/verify_all.py"
+    ],
+    "files_likely_involved": [
+      "server.py",
+      "docs/school-first-teacher/index.html",
+      "docs/shared/school_first/mock_runtime.js",
+      "dist_ai_math_web_pages/docs/school-first-teacher/index.html",
+      "tests/test_report_snapshot_endpoints.py",
+      "tests_js/school-first-analytics.spec.mjs",
+      "reports/school_first_iteration_report.md",
+      "reports/latest_iteration_report.md",
+      "logs/change_history.jsonl",
+      "logs/lessons_learned.jsonl",
+      "memory/next_priority_queue.json"
+    ],
+    "auto_merge_allowed": true,
+    "manual_review_required": false,
+    "last_evaluated_ts": "2026-03-21T18:00:00+08:00",
+    "next_action": "none — completed"
+  },
+  {
+    "task_id": "T66-school-first-teacher-session-grant",
+    "title": "Add teacher session grant and class discovery",
+    "category": "architecture_auth_integration",
+    "source": "iteration_65_next_step",
+    "priority_band": "P0",
+    "priority_score": 10,
+    "risk_level": "medium",
+    "status": "done",
+    "selected_reason": "The teacher shell is now live on scoped APIs, but it still depends on a raw api_key held in memory and a manual class id input. The next smallest meaningful slice is to replace both with a narrower teacher-browser grant plus linked-class discovery.",
+    "blockers": [],
+    "acceptance_criteria": [
+      "Teacher login no longer leaves a raw api_key in teacher page memory after the login step completes",
+      "Teacher shell can discover linked classes without manual class id entry",
+      "Teacher scoped overview and before-after endpoints accept the narrower teacher browser grant or equivalent safe session mechanism",
+      "Teacher shell still denies access outside linked classes",
+      "Mock fallback remains available",
+      "Targeted backend and JS tests pass",
+      "validate_all and verify_all pass"
+    ],
+    "required_checks": [
+      "python -m pytest tests/test_report_snapshot_endpoints.py -q",
+      "node --test tests_js/school-first-teacher-live.spec.mjs tests_js/parent-report-cloud-sync-security.spec.mjs tests_js/school-first-mock-data.spec.mjs tests_js/school-first-analytics.spec.mjs",
+      "python tools/validate_all_elementary_banks.py",
+      "python scripts/verify_all.py"
+    ],
+    "files_likely_involved": [
+      "server.py",
+      "docs/school-first-teacher/index.html",
+      "dist_ai_math_web_pages/docs/school-first-teacher/index.html",
+      "tests/test_report_snapshot_endpoints.py",
+      "tests_js/school-first-teacher-live.spec.mjs",
+      "reports/school_first_iteration_report.md",
+      "reports/latest_iteration_report.md",
+      "logs/change_history.jsonl",
+      "logs/lessons_learned.jsonl",
+      "memory/next_priority_queue.json"
+    ],
+    "auto_merge_allowed": true,
+    "manual_review_required": false,
+    "last_evaluated_ts": "2026-03-21T20:45:00+08:00",
+    "next_action": "none — completed"
   }
 ]

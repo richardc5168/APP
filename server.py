@@ -259,6 +259,7 @@ class ExchangeRequest(BaseModel):
 # ─── Bootstrap token lifecycle constants ───
 _BOOTSTRAP_TOKEN_TTL_S = 300  # 5 minutes
 _MAX_OUTSTANDING_TOKENS_PER_ACCOUNT = 5
+_APP_SESSION_TTL_S = 28800  # 8 hours
 
 # ─── Rate limiting constants ───
 _RATE_LIMIT_WINDOW_S = 60  # 1-minute window
@@ -401,6 +402,60 @@ def _cleanup_expired_tokens_db():
     conn.execute("DELETE FROM bootstrap_tokens WHERE expires_at < ?", (cutoff,))
     conn.commit()
     conn.close()
+
+
+def _store_app_session(raw_token: str, account_id: int, student_id: int, scope_kind: str):
+    """Persist a scoped browser session token for paid report access."""
+    conn = db()
+    now_iso = datetime.now().isoformat()
+    expires_iso = (datetime.now() + timedelta(seconds=_APP_SESSION_TTL_S)).isoformat()
+    conn.execute(
+        "INSERT INTO app_sessions (token_hash, account_id, student_id, scope_kind, created_at, expires_at, last_used_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        (_hash_token(raw_token), account_id, student_id, scope_kind, now_iso, expires_iso, now_iso),
+    )
+    conn.commit()
+    conn.close()
+
+
+def _issue_app_session(account_id: int, student_id: int, scope_kind: str = "parent_report_student") -> Dict[str, Any]:
+    token = secrets.token_urlsafe(32)
+    _store_app_session(token, account_id, student_id, scope_kind)
+    return {
+        "session_token": token,
+        "student_id": student_id,
+        "scope_kind": scope_kind,
+        "expires_at": (datetime.now() + timedelta(seconds=_APP_SESSION_TTL_S)).isoformat(),
+    }
+
+
+def _resolve_app_session(raw_token: str, expected_scope: Optional[str] = None) -> Dict[str, Any]:
+    conn = db()
+    token_hash = _hash_token(raw_token)
+    now_iso = datetime.now().isoformat()
+    row = conn.execute(
+        "SELECT * FROM app_sessions WHERE token_hash = ? AND revoked_at IS NULL AND expires_at > ?",
+        (token_hash, now_iso),
+    ).fetchone()
+    if not row:
+        conn.close()
+        raise HTTPException(status_code=401, detail="Invalid or expired session token")
+    if expected_scope and row["scope_kind"] != expected_scope:
+        conn.close()
+        raise HTTPException(status_code=403, detail="Session token scope mismatch")
+    conn.execute("UPDATE app_sessions SET last_used_at = ? WHERE id = ?", (now_iso, row["id"]))
+    account = conn.execute("SELECT * FROM accounts WHERE id = ?", (int(row["account_id"]),)).fetchone()
+    conn.commit()
+    conn.close()
+    if not account:
+        raise HTTPException(status_code=401, detail="Session account no longer exists")
+    ensure_subscription_active(int(row["account_id"]))
+    return {
+        "account": account,
+        "account_id": int(row["account_id"]),
+        "student_id": int(row["student_id"]),
+        "scope_kind": row["scope_kind"],
+        "expires_at": row["expires_at"],
+    }
 
 
 def _with_random_seed(seed: Optional[int]):
@@ -880,6 +935,23 @@ def init_db():
     cur.execute("CREATE INDEX IF NOT EXISTS idx_bt_hash ON bootstrap_tokens(token_hash)")
     cur.execute("CREATE INDEX IF NOT EXISTS idx_bt_account ON bootstrap_tokens(account_id, consumed_at, expires_at)")
 
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS app_sessions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        token_hash TEXT NOT NULL,
+        account_id INTEGER NOT NULL,
+        student_id INTEGER NOT NULL,
+        scope_kind TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        expires_at TEXT NOT NULL,
+        last_used_at TEXT,
+        revoked_at TEXT,
+        FOREIGN KEY(account_id) REFERENCES accounts(id)
+    )
+    """)
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_as_hash ON app_sessions(token_hash)")
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_as_account_scope ON app_sessions(account_id, scope_kind, revoked_at, expires_at)")
+
     # ─── Rate limiting durable store ───
     cur.execute("""
     CREATE TABLE IF NOT EXISTS rate_limit_events (
@@ -1137,6 +1209,73 @@ def ensure_subscription_active(account_id: int):
         raise HTTPException(status_code=402, detail="Subscription required (inactive)")
 
 
+def _resolve_paid_report_auth(
+    x_api_key: str = "",
+    x_session_token: str = "",
+    expected_scope: str = "parent_report_student",
+) -> Dict[str, Any]:
+    token = str(x_session_token or "").strip()
+    if token:
+        session = _resolve_app_session(token, expected_scope=expected_scope)
+        return {
+            "auth_kind": "session_token",
+            "account": session["account"],
+            "account_id": session["account_id"],
+            "student_id": session["student_id"],
+            "scope_kind": session["scope_kind"],
+            "expires_at": session["expires_at"],
+        }
+    api_key = str(x_api_key or "").strip()
+    if api_key:
+        acc = get_account_by_api_key(api_key)
+        ensure_subscription_active(int(acc["id"]))
+        return {
+            "auth_kind": "api_key",
+            "account": acc,
+            "account_id": int(acc["id"]),
+            "student_id": None,
+            "scope_kind": "api_key",
+            "expires_at": None,
+        }
+    raise HTTPException(status_code=401, detail="Missing paid report credentials")
+
+
+def _resolve_teacher_portal_auth(
+    x_api_key: str = "",
+    x_session_token: str = "",
+    expected_scope: str = "teacher_portal",
+) -> Dict[str, Any]:
+    token = str(x_session_token or "").strip()
+    if token:
+        session = _resolve_app_session(token, expected_scope=expected_scope)
+        return {
+            "auth_kind": "session_token",
+            "account": session["account"],
+            "account_id": session["account_id"],
+            "scope_kind": session["scope_kind"],
+            "expires_at": session["expires_at"],
+        }
+    api_key = str(x_api_key or "").strip()
+    if api_key:
+        acc = get_account_by_api_key(api_key)
+        ensure_subscription_active(int(acc["id"]))
+        return {
+            "auth_kind": "api_key",
+            "account": acc,
+            "account_id": int(acc["id"]),
+            "scope_kind": "api_key",
+            "expires_at": None,
+        }
+    raise HTTPException(status_code=401, detail="Missing teacher portal credentials")
+
+
+def _verify_paid_report_student_scope(conn: sqlite3.Connection, auth_ctx: Dict[str, Any], student_id: int) -> None:
+    session_student_id = auth_ctx.get("student_id")
+    if session_student_id is not None and int(session_student_id) != int(student_id):
+        raise HTTPException(status_code=403, detail="Session token is not entitled to this student")
+    _verify_student_ownership(conn, int(auth_ctx["account_id"]), student_id)
+
+
 def _pwd_hash(password: str, salt: str) -> str:
     raw = f"{salt}:{password}".encode("utf-8")
     return hashlib.sha256(raw).hexdigest()
@@ -1144,6 +1283,103 @@ def _pwd_hash(password: str, salt: str) -> str:
 
 def _pwd_ok(password: str, salt: str, pwd_hash: str) -> bool:
     return _pwd_hash(password, salt) == str(pwd_hash or "")
+
+
+def _load_teacher_linked_classes(conn: sqlite3.Connection, teacher_account_id: int) -> List[Dict[str, Any]]:
+    rows = conn.execute(
+        """
+        SELECT c.id, c.school_id, c.class_name, c.grade
+        FROM teacher_class_links tcl
+        JOIN classes c ON c.id = tcl.class_id
+        WHERE tcl.teacher_account_id = ? AND tcl.active = 1 AND c.active = 1
+        ORDER BY c.id ASC
+        """,
+        (teacher_account_id,),
+    ).fetchall()
+    return [
+        {
+            "id": int(row["id"]),
+            "school_id": row["school_id"],
+            "class_name": row["class_name"],
+            "grade": row["grade"],
+        }
+        for row in rows
+    ]
+
+
+def _authenticate_app_user(payload: AppAuthLoginRequest, request: Request) -> Dict[str, Any]:
+    client_ip = request.client.host if request.client else "unknown"
+    if not _check_rate_limit(f"login:{client_ip}", _RATE_LIMIT_LOGIN):
+        raise HTTPException(status_code=429, detail="Too many login attempts")
+
+    username = payload.username.strip().lower()
+
+    if _is_account_locked(username):
+        _auth_logger.warning("login_lockout", extra={"username": username, "client_ip": client_ip})
+        raise HTTPException(status_code=423, detail="Account temporarily locked due to too many failed attempts")
+
+    conn = db()
+    row = conn.execute(
+        """
+        SELECT au.*, a.id AS account_id, a.name AS account_name, a.api_key
+        FROM app_users au
+        JOIN accounts a ON a.id = au.account_id
+        WHERE au.username = ?
+        """,
+        (username,),
+    ).fetchone()
+
+    if not row:
+        conn.close()
+        _record_login_failure(username, client_ip, "unknown_username")
+        raise HTTPException(status_code=401, detail="Invalid username or password")
+    if int(row["active"] or 0) != 1:
+        conn.close()
+        _record_login_failure(username, client_ip, "inactive_user")
+        raise HTTPException(status_code=403, detail="User is inactive")
+    if not _pwd_ok(payload.password, str(row["password_salt"] or ""), str(row["password_hash"] or "")):
+        conn.close()
+        _record_login_failure(username, client_ip, "wrong_password")
+        raise HTTPException(status_code=401, detail="Invalid username or password")
+
+    sub = conn.execute(
+        "SELECT * FROM subscriptions WHERE account_id = ? ORDER BY updated_at DESC LIMIT 1",
+        (int(row["account_id"]),),
+    ).fetchone()
+    if not sub or sub["status"] != "active":
+        conn.close()
+        raise HTTPException(status_code=402, detail="Subscription required (inactive)")
+
+    all_students = conn.execute(
+        "SELECT id, display_name, grade FROM students WHERE account_id = ? ORDER BY id ASC",
+        (int(row["account_id"]),),
+    ).fetchall()
+    teacher_classes = _load_teacher_linked_classes(conn, int(row["account_id"]))
+    conn.close()
+
+    students_list = [
+        {"id": int(s["id"]), "display_name": s["display_name"], "grade": s["grade"]}
+        for s in all_students
+    ]
+
+    _clear_login_failures(username)
+    _auth_logger.info("login_success", extra={"username": username, "client_ip": client_ip})
+
+    return {
+        "ok": True,
+        "username": username,
+        "account_id": int(row["account_id"]),
+        "account_name": row["account_name"],
+        "api_key": row["api_key"],
+        "subscription": {
+            "status": sub["status"],
+            "plan": sub["plan"],
+            "seats": int(sub["seats"] or 0),
+            "current_period_end": sub["current_period_end"],
+        },
+        "students": students_list,
+        "teacher_classes": teacher_classes,
+    }
 
 # ========= 4) Helper: JSON =========
 def now_iso():
@@ -1400,83 +1636,39 @@ def app_auth_provision(
 
 @app.post("/v1/app/auth/login", summary="Login app user with purchased username/password")
 def app_auth_login(payload: AppAuthLoginRequest, request: Request):
-    client_ip = request.client.host if request.client else "unknown"
-    if not _check_rate_limit(f"login:{client_ip}", _RATE_LIMIT_LOGIN):
-        raise HTTPException(status_code=429, detail="Too many login attempts")
-
-    username = payload.username.strip().lower()
-
-    # Account-level lockout check (fires before credential validation)
-    if _is_account_locked(username):
-        _auth_logger.warning("login_lockout", extra={"username": username, "client_ip": client_ip})
-        raise HTTPException(status_code=423, detail="Account temporarily locked due to too many failed attempts")
-
-    conn = db()
-    row = conn.execute(
-        """
-        SELECT au.*, a.id AS account_id, a.name AS account_name, a.api_key
-        FROM app_users au
-        JOIN accounts a ON a.id = au.account_id
-        WHERE au.username = ?
-        """,
-        (username,),
-    ).fetchone()
-
-    if not row:
-        conn.close()
-        _record_login_failure(username, client_ip, "unknown_username")
-        raise HTTPException(status_code=401, detail="Invalid username or password")
-    if int(row["active"] or 0) != 1:
-        conn.close()
-        _record_login_failure(username, client_ip, "inactive_user")
-        raise HTTPException(status_code=403, detail="User is inactive")
-    if not _pwd_ok(payload.password, str(row["password_salt"] or ""), str(row["password_hash"] or "")):
-        conn.close()
-        _record_login_failure(username, client_ip, "wrong_password")
-        raise HTTPException(status_code=401, detail="Invalid username or password")
-
-    sub = conn.execute(
-        "SELECT * FROM subscriptions WHERE account_id = ? ORDER BY updated_at DESC LIMIT 1",
-        (int(row["account_id"]),),
-    ).fetchone()
-    if not sub or sub["status"] != "active":
-        conn.close()
-        raise HTTPException(status_code=402, detail="Subscription required (inactive)")
-
-    all_students = conn.execute(
-        "SELECT id, display_name, grade FROM students WHERE account_id = ? ORDER BY id ASC",
-        (int(row["account_id"]),),
-    ).fetchall()
-    conn.close()
-
-    students_list = [
-        {"id": int(s["id"]), "display_name": s["display_name"], "grade": s["grade"]}
-        for s in all_students
-    ]
-    st = all_students[0] if all_students else None
-
-    # Successful login — clear any prior failure records
-    _clear_login_failures(username)
-    _auth_logger.info("login_success", extra={"username": username, "client_ip": client_ip})
+    auth_ctx = _authenticate_app_user(payload, request)
+    st = auth_ctx["students"][0] if auth_ctx["students"] else None
 
     return {
         "ok": True,
-        "username": username,
-        "account_id": int(row["account_id"]),
-        "account_name": row["account_name"],
-        "api_key": row["api_key"],
-        "subscription": {
-            "status": sub["status"],
-            "plan": sub["plan"],
-            "seats": int(sub["seats"] or 0),
-            "current_period_end": sub["current_period_end"],
-        },
+        "username": auth_ctx["username"],
+        "account_id": auth_ctx["account_id"],
+        "account_name": auth_ctx["account_name"],
+        "api_key": auth_ctx["api_key"],
+        "subscription": auth_ctx["subscription"],
         "default_student": {
             "id": int(st["id"]) if st else None,
             "display_name": st["display_name"] if st else None,
             "grade": st["grade"] if st else None,
         },
-        "students": students_list,
+        "students": auth_ctx["students"],
+    }
+
+
+@app.post("/v1/app/auth/teacher-session", summary="Issue a teacher-scoped browser session and linked class list")
+def app_auth_teacher_session(payload: AppAuthLoginRequest, request: Request):
+    auth_ctx = _authenticate_app_user(payload, request)
+    if not auth_ctx["teacher_classes"]:
+        raise HTTPException(status_code=403, detail="Teacher has no linked classes")
+    session = _issue_app_session(auth_ctx["account_id"], 0, scope_kind="teacher_portal")
+    return {
+        "ok": True,
+        "username": auth_ctx["username"],
+        "account_id": auth_ctx["account_id"],
+        "session_token": session["session_token"],
+        "session_scope": session["scope_kind"],
+        "session_expires_at": session["expires_at"],
+        "classes": auth_ctx["teacher_classes"],
     }
 
 
@@ -1542,11 +1734,14 @@ def app_auth_exchange(payload: ExchangeRequest, request: Request):
 
     # Re-validate subscription is still active
     ensure_subscription_active(entry["account_id"])
+    session = _issue_app_session(entry["account_id"], entry["student_id"], scope_kind="parent_report_student")
 
     return {
         "ok": True,
-        "api_key": entry["api_key"],
+        "session_token": session["session_token"],
         "student_id": entry["student_id"],
+        "session_scope": session["scope_kind"],
+        "session_expires_at": session["expires_at"],
         "subscription": {"status": "active"},
     }
 
@@ -3375,6 +3570,13 @@ def _load_latest_snapshot_by_student(conn: sqlite3.Connection, student_id: int) 
     ).fetchone()
 
 
+def _load_phase_snapshot_by_student(conn: sqlite3.Connection, student_id: int, report_phase: str) -> Optional[sqlite3.Row]:
+    return conn.execute(
+        "SELECT * FROM report_snapshots WHERE student_id = ? AND report_phase = ? ORDER BY updated_at DESC LIMIT 1",
+        (student_id, report_phase),
+    ).fetchone()
+
+
 def _serialize_snapshot_row(row: sqlite3.Row) -> Dict[str, Any]:
     payload = {}
     try:
@@ -3391,6 +3593,200 @@ def _serialize_snapshot_row(row: sqlite3.Row) -> Dict[str, Any]:
         "source": row["source"],
         "created_at": row["created_at"],
         "updated_at": row["updated_at"],
+    }
+
+
+def _normalize_accuracy_value(value: Any) -> Optional[float]:
+    if value is None:
+        return None
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        return None
+    if number > 1:
+        number = number / 100.0
+    return max(0.0, min(1.0, number))
+
+
+def _round_metric(value: float) -> float:
+    return round(float(value), 3)
+
+
+def _status_from_delta(delta: float) -> str:
+    if delta >= 0.12:
+        return "improved"
+    if delta <= -0.05:
+        return "regressed"
+    return "plateau"
+
+
+def _extract_snapshot_metrics(snapshot: Dict[str, Any]) -> Dict[str, Any]:
+    payload = snapshot.get("report_payload") or {}
+    summary = payload.get("d") if isinstance(payload.get("d"), dict) else payload
+    return {
+        "accuracy": _normalize_accuracy_value(summary.get("accuracy")),
+        "knowledge_point_improvement": payload.get("knowledge_point_improvement") or summary.get("knowledge_point_improvement") or [],
+        "skill_tag_improvement": payload.get("skill_tag_improvement") or summary.get("skill_tag_improvement") or [],
+        "reliability_flags": payload.get("reliability_flags") or summary.get("reliability_flags") or [],
+        "teacher_summary": payload.get("teacher_summary") or summary.get("teacher_summary"),
+        "parent_summary": payload.get("parent_summary") or summary.get("parent_summary"),
+    }
+
+
+def _compare_metric_lists(before_items: List[Dict[str, Any]], after_items: List[Dict[str, Any]], key_field: str) -> List[Dict[str, Any]]:
+    before_map = {}
+    after_map = {}
+    for item in before_items or []:
+        if isinstance(item, dict) and item.get(key_field) is not None:
+            before_map[str(item[key_field])] = item
+    for item in after_items or []:
+        if isinstance(item, dict) and item.get(key_field) is not None:
+            after_map[str(item[key_field])] = item
+    rows = []
+    for key in sorted(set(before_map.keys()) | set(after_map.keys())):
+        before_accuracy = _normalize_accuracy_value((before_map.get(key) or {}).get("post_accuracy", (before_map.get(key) or {}).get("accuracy")))
+        after_accuracy = _normalize_accuracy_value((after_map.get(key) or {}).get("post_accuracy", (after_map.get(key) or {}).get("accuracy")))
+        if before_accuracy is None or after_accuracy is None:
+            continue
+        rows.append({
+            key_field: key,
+            "pre_accuracy": _round_metric(before_accuracy),
+            "post_accuracy": _round_metric(after_accuracy),
+            "delta": _round_metric(after_accuracy - before_accuracy),
+        })
+    return rows
+
+
+def _aggregate_metric_rows(rows: List[Dict[str, Any]], key_field: str) -> List[Dict[str, Any]]:
+    grouped: Dict[str, Dict[str, List[float]]] = {}
+    for row in rows or []:
+        key = row.get(key_field)
+        if key is None:
+            continue
+        entry = grouped.setdefault(str(key), {"pre": [], "post": [], "delta": []})
+        entry["pre"].append(float(row.get("pre_accuracy", 0)))
+        entry["post"].append(float(row.get("post_accuracy", 0)))
+        entry["delta"].append(float(row.get("delta", 0)))
+    out = []
+    for key in sorted(grouped.keys()):
+        entry = grouped[key]
+        count = max(1, len(entry["pre"]))
+        out.append({
+            key_field: key,
+            "pre_accuracy": _round_metric(sum(entry["pre"]) / count),
+            "post_accuracy": _round_metric(sum(entry["post"]) / count),
+            "delta": _round_metric(sum(entry["delta"]) / count),
+        })
+    return out
+
+
+def _build_student_before_after_report(before_row: sqlite3.Row, after_row: sqlite3.Row, class_id_override: Optional[int] = None) -> Dict[str, Any]:
+    before_snapshot = _serialize_snapshot_row(before_row)
+    after_snapshot = _serialize_snapshot_row(after_row)
+    before_metrics = _extract_snapshot_metrics(before_snapshot)
+    after_metrics = _extract_snapshot_metrics(after_snapshot)
+    pre_accuracy = before_metrics["accuracy"] or 0.0
+    post_accuracy = after_metrics["accuracy"] or 0.0
+    delta = post_accuracy - pre_accuracy
+    class_id = after_snapshot.get("class_id") or before_snapshot.get("class_id") or class_id_override
+    reliability_flags = list(dict.fromkeys(
+        list(before_metrics.get("reliability_flags") or []) + list(after_metrics.get("reliability_flags") or [])
+    ))
+    if before_snapshot.get("window_end") and after_snapshot.get("window_start") and before_snapshot["window_end"] > after_snapshot["window_start"]:
+        reliability_flags.append("window_overlap")
+    return {
+        "student_id": int(after_snapshot["student_id"]),
+        "class_id": class_id,
+        "status": _status_from_delta(delta),
+        "high_risk": post_accuracy < 0.5 and delta < 0.08,
+        "pre_accuracy": _round_metric(pre_accuracy),
+        "post_accuracy": _round_metric(post_accuracy),
+        "delta": _round_metric(delta),
+        "reliability_flags": reliability_flags,
+        "knowledge_point_improvement": _compare_metric_lists(
+            before_metrics.get("knowledge_point_improvement") or [],
+            after_metrics.get("knowledge_point_improvement") or [],
+            "knowledge_point",
+        ),
+        "skill_tag_improvement": _compare_metric_lists(
+            before_metrics.get("skill_tag_improvement") or [],
+            after_metrics.get("skill_tag_improvement") or [],
+            "skill_tag",
+        ),
+        "teacher_summary": after_metrics.get("teacher_summary"),
+        "parent_summary": after_metrics.get("parent_summary"),
+        "lineage": {
+            "before": {
+                "class_id": before_snapshot.get("class_id") or class_id,
+                "report_phase": before_snapshot.get("report_phase"),
+                "window_start": before_snapshot.get("window_start"),
+                "window_end": before_snapshot.get("window_end"),
+                "updated_at": before_snapshot.get("updated_at"),
+            },
+            "after": {
+                "class_id": after_snapshot.get("class_id") or class_id,
+                "report_phase": after_snapshot.get("report_phase"),
+                "window_start": after_snapshot.get("window_start"),
+                "window_end": after_snapshot.get("window_end"),
+                "updated_at": after_snapshot.get("updated_at"),
+            },
+        },
+    }
+
+
+def _build_class_before_after_report(conn: sqlite3.Connection, class_id: int) -> Dict[str, Any]:
+    class_row = _get_class_row(conn, class_id)
+    student_rows = conn.execute(
+        """
+        SELECT s.id, s.display_name, s.grade
+        FROM class_students cs
+        JOIN students s ON s.id = cs.student_id
+        WHERE cs.class_id = ? AND cs.active_to IS NULL
+        ORDER BY s.id ASC
+        """,
+        (class_id,),
+    ).fetchall()
+    student_reports = []
+    for student_row in student_rows:
+        before_row = _load_phase_snapshot_by_student(conn, int(student_row["id"]), "before")
+        after_row = _load_phase_snapshot_by_student(conn, int(student_row["id"]), "after")
+        if not before_row or not after_row:
+            continue
+        report = _build_student_before_after_report(before_row, after_row, class_id_override=class_id)
+        report["display_name"] = student_row["display_name"]
+        report["grade"] = student_row["grade"]
+        student_reports.append(report)
+    status_counts = {
+        "improved": len([row for row in student_reports if row["status"] == "improved"]),
+        "plateau": len([row for row in student_reports if row["status"] == "plateau"]),
+        "regressed": len([row for row in student_reports if row["status"] == "regressed"]),
+    }
+    pre_values = [row["pre_accuracy"] for row in student_reports]
+    post_values = [row["post_accuracy"] for row in student_reports]
+    count = max(1, len(student_reports))
+    return {
+        "class": {
+            "id": int(class_row["id"]),
+            "school_id": class_row["school_id"],
+            "class_name": class_row["class_name"],
+            "grade": class_row["grade"],
+        },
+        "student_count": len(student_rows),
+        "compared_student_count": len(student_reports),
+        "pre_accuracy": _round_metric(sum(pre_values) / count) if student_reports else 0.0,
+        "post_accuracy": _round_metric(sum(post_values) / count) if student_reports else 0.0,
+        "delta": _round_metric((sum(post_values) / count) - (sum(pre_values) / count)) if student_reports else 0.0,
+        "status_counts": status_counts,
+        "high_risk_students": [row["student_id"] for row in student_reports if row["high_risk"]],
+        "knowledge_point_improvement": _aggregate_metric_rows(
+            [item for row in student_reports for item in row.get("knowledge_point_improvement") or []],
+            "knowledge_point",
+        ),
+        "skill_tag_improvement": _aggregate_metric_rows(
+            [item for row in student_reports for item in row.get("skill_tag_improvement") or []],
+            "skill_tag",
+        ),
+        "student_reports": student_reports,
     }
 
 
@@ -3461,21 +3857,21 @@ def _require_admin_token(x_admin_token: str) -> None:
 @app.post("/v1/app/report_snapshots")
 def create_report_snapshot(
     req: ReportSnapshotWriteRequest,
-    x_api_key: str = Header(..., alias="X-API-Key"),
+    x_api_key: str = Header("", alias="X-API-Key"),
+    x_session_token: str = Header("", alias="X-Session-Token"),
 ):
-    acc = get_account_by_api_key(x_api_key)
-    ensure_subscription_active(acc["id"])
+    auth_ctx = _resolve_paid_report_auth(x_api_key=x_api_key, x_session_token=x_session_token)
     conn = db()
     try:
-        _verify_student_ownership(conn, acc["id"], req.student_id)
+        _verify_paid_report_student_scope(conn, auth_ctx, req.student_id)
         now = now_iso()
         payload = json.dumps(req.report_payload, ensure_ascii=False)
         source = str(req.source or "frontend")[:40]
         report_phase = str(req.report_phase or "current")[:20]
-        # Upsert: one snapshot per student per account
+        # Upsert: one snapshot per student/account/report phase
         existing = conn.execute(
-            "SELECT id FROM report_snapshots WHERE account_id = ? AND student_id = ?",
-            (acc["id"], req.student_id),
+            "SELECT id FROM report_snapshots WHERE account_id = ? AND student_id = ? AND report_phase = ?",
+            (auth_ctx["account_id"], req.student_id, report_phase),
         ).fetchone()
         if existing:
             conn.execute(
@@ -3485,7 +3881,7 @@ def create_report_snapshot(
         else:
             conn.execute(
                 "INSERT INTO report_snapshots (account_id, student_id, class_id, report_phase, window_start, window_end, report_payload_json, source, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                (acc["id"], req.student_id, req.class_id, report_phase, req.window_start, req.window_end, payload, source, now, now),
+                (auth_ctx["account_id"], req.student_id, req.class_id, report_phase, req.window_start, req.window_end, payload, source, now, now),
             )
         conn.commit()
         return {"ok": True, "updated_at": now}
@@ -3496,16 +3892,16 @@ def create_report_snapshot(
 @app.post("/v1/app/report_snapshots/latest")
 def get_latest_report_snapshot(
     req: ReportSnapshotReadRequest,
-    x_api_key: str = Header(..., alias="X-API-Key"),
+    x_api_key: str = Header("", alias="X-API-Key"),
+    x_session_token: str = Header("", alias="X-Session-Token"),
 ):
-    acc = get_account_by_api_key(x_api_key)
-    ensure_subscription_active(acc["id"])
+    auth_ctx = _resolve_paid_report_auth(x_api_key=x_api_key, x_session_token=x_session_token)
     conn = db()
     try:
-        _verify_student_ownership(conn, acc["id"], req.student_id)
+        _verify_paid_report_student_scope(conn, auth_ctx, req.student_id)
         row = conn.execute(
             "SELECT * FROM report_snapshots WHERE account_id = ? AND student_id = ? ORDER BY updated_at DESC LIMIT 1",
-            (acc["id"], req.student_id),
+            (auth_ctx["account_id"], req.student_id),
         ).fetchone()
         if not row:
             raise HTTPException(status_code=404, detail="No snapshot found for this student")
@@ -3541,14 +3937,27 @@ def parent_child_report(
 @app.get("/v1/app/teacher/classes/{class_id}/overview")
 def teacher_class_overview(
     class_id: int,
-    x_api_key: str = Header(..., alias="X-API-Key"),
+    x_api_key: str = Header("", alias="X-API-Key"),
+    x_session_token: str = Header("", alias="X-Session-Token"),
 ):
-    acc = get_account_by_api_key(x_api_key)
-    ensure_subscription_active(acc["id"])
+    auth_ctx = _resolve_teacher_portal_auth(x_api_key=x_api_key, x_session_token=x_session_token)
     conn = db()
     try:
-        _verify_teacher_class_scope(conn, int(acc["id"]), class_id)
+        _verify_teacher_class_scope(conn, int(auth_ctx["account_id"]), class_id)
         return {"ok": True, "scope": "teacher_class", "overview": _build_class_overview(conn, class_id)}
+    finally:
+        conn.close()
+
+
+@app.get("/v1/app/teacher/classes")
+def teacher_class_discovery(
+    x_api_key: str = Header("", alias="X-API-Key"),
+    x_session_token: str = Header("", alias="X-Session-Token"),
+):
+    auth_ctx = _resolve_teacher_portal_auth(x_api_key=x_api_key, x_session_token=x_session_token)
+    conn = db()
+    try:
+        return {"ok": True, "scope": "teacher_classes", "classes": _load_teacher_linked_classes(conn, int(auth_ctx["account_id"]))}
     finally:
         conn.close()
 
@@ -3557,13 +3966,13 @@ def teacher_class_overview(
 def teacher_student_report(
     class_id: int,
     student_id: int,
-    x_api_key: str = Header(..., alias="X-API-Key"),
+    x_api_key: str = Header("", alias="X-API-Key"),
+    x_session_token: str = Header("", alias="X-Session-Token"),
 ):
-    acc = get_account_by_api_key(x_api_key)
-    ensure_subscription_active(acc["id"])
+    auth_ctx = _resolve_teacher_portal_auth(x_api_key=x_api_key, x_session_token=x_session_token)
     conn = db()
     try:
-        _verify_teacher_class_scope(conn, int(acc["id"]), class_id)
+        _verify_teacher_class_scope(conn, int(auth_ctx["account_id"]), class_id)
         _verify_student_in_class(conn, class_id, student_id)
         row = _load_latest_snapshot_by_student(conn, student_id)
         if not row:
@@ -3572,6 +3981,82 @@ def teacher_student_report(
         if snapshot["class_id"] is None:
             snapshot["class_id"] = class_id
         return {"ok": True, "scope": "teacher_student", "snapshot": snapshot}
+    finally:
+        conn.close()
+
+
+@app.get("/v1/app/parent/children/{student_id}/before-after")
+def parent_child_before_after(
+    student_id: int,
+    x_api_key: str = Header(..., alias="X-API-Key"),
+):
+    acc = get_account_by_api_key(x_api_key)
+    ensure_subscription_active(acc["id"])
+    conn = db()
+    try:
+        class_id = _resolve_student_class_scope(conn, "parent", int(acc["id"]), student_id)
+        before_row = _load_phase_snapshot_by_student(conn, student_id, "before")
+        after_row = _load_phase_snapshot_by_student(conn, student_id, "after")
+        if not before_row or not after_row:
+            raise HTTPException(status_code=404, detail="Before/after snapshots not found for this child")
+        return {
+            "ok": True,
+            "scope": "parent_child",
+            "comparison": _build_student_before_after_report(before_row, after_row, class_id_override=class_id),
+        }
+    finally:
+        conn.close()
+
+
+@app.get("/v1/app/teacher/classes/{class_id}/before-after")
+def teacher_class_before_after(
+    class_id: int,
+    x_api_key: str = Header("", alias="X-API-Key"),
+    x_session_token: str = Header("", alias="X-Session-Token"),
+):
+    auth_ctx = _resolve_teacher_portal_auth(x_api_key=x_api_key, x_session_token=x_session_token)
+    conn = db()
+    try:
+        _verify_teacher_class_scope(conn, int(auth_ctx["account_id"]), class_id)
+        return {"ok": True, "scope": "teacher_class", "before_after": _build_class_before_after_report(conn, class_id)}
+    finally:
+        conn.close()
+
+
+@app.get("/v1/app/teacher/classes/{class_id}/students/{student_id}/before-after")
+def teacher_student_before_after(
+    class_id: int,
+    student_id: int,
+    x_api_key: str = Header("", alias="X-API-Key"),
+    x_session_token: str = Header("", alias="X-Session-Token"),
+):
+    auth_ctx = _resolve_teacher_portal_auth(x_api_key=x_api_key, x_session_token=x_session_token)
+    conn = db()
+    try:
+        _verify_teacher_class_scope(conn, int(auth_ctx["account_id"]), class_id)
+        _verify_student_in_class(conn, class_id, student_id)
+        before_row = _load_phase_snapshot_by_student(conn, student_id, "before")
+        after_row = _load_phase_snapshot_by_student(conn, student_id, "after")
+        if not before_row or not after_row:
+            raise HTTPException(status_code=404, detail="Before/after snapshots not found for this student")
+        return {
+            "ok": True,
+            "scope": "teacher_student",
+            "comparison": _build_student_before_after_report(before_row, after_row, class_id_override=class_id),
+        }
+    finally:
+        conn.close()
+
+
+@app.get("/v1/app/admin/classes/{class_id}/before-after")
+def admin_class_before_after(
+    class_id: int,
+    x_admin_token: str = Header("", alias="X-Admin-Token"),
+):
+    _require_admin_token(x_admin_token)
+    conn = db()
+    try:
+        return {"ok": True, "scope": "admin_class", "before_after": _build_class_before_after_report(conn, class_id)}
     finally:
         conn.close()
 
@@ -3592,19 +4077,19 @@ def admin_class_overview(
 @app.post("/v1/app/practice_events")
 def create_practice_event(
     req: PracticeEventWriteRequest,
-    x_api_key: str = Header(..., alias="X-API-Key"),
+    x_api_key: str = Header("", alias="X-API-Key"),
+    x_session_token: str = Header("", alias="X-Session-Token"),
 ):
-    acc = get_account_by_api_key(x_api_key)
-    ensure_subscription_active(acc["id"])
+    auth_ctx = _resolve_paid_report_auth(x_api_key=x_api_key, x_session_token=x_session_token)
     conn = db()
     try:
-        _verify_student_ownership(conn, acc["id"], req.student_id)
+        _verify_paid_report_student_scope(conn, auth_ctx, req.student_id)
         event = _sanitize_practice_event(req.event)
         now = now_iso()
         # Append to the student's report snapshot practice events
         existing = conn.execute(
             "SELECT id, report_payload_json FROM report_snapshots WHERE account_id = ? AND student_id = ?",
-            (acc["id"], req.student_id),
+            (auth_ctx["account_id"], req.student_id),
         ).fetchone()
         if existing:
             payload = {}
@@ -3629,7 +4114,7 @@ def create_practice_event(
             payload = {"d": {"practice": {"events": [event]}}}
             conn.execute(
                 "INSERT INTO report_snapshots (account_id, student_id, report_payload_json, source, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)",
-                (acc["id"], req.student_id, json.dumps(payload, ensure_ascii=False), "practice_event", now, now),
+                (auth_ctx["account_id"], req.student_id, json.dumps(payload, ensure_ascii=False), "practice_event", now, now),
             )
         conn.commit()
         return {"ok": True, "updated_at": now}

@@ -6,7 +6,7 @@
   Gist URLs or cloud-write paths directly.
 
   Paid (subscription-gated) path:
-    Uses X-API-Key + student_id credentials.
+    Uses X-Session-Token + student_id credentials.
     Write → POST /v1/app/report_snapshots
     Read  → POST /v1/app/report_snapshots/latest
 
@@ -75,14 +75,14 @@
       var raw = sessionStorage.getItem(CRED_KEY);
       if (!raw) return null;
       var c = JSON.parse(raw);
-      if (c && typeof c.apiKey === 'string' && c.apiKey && typeof c.studentId === 'number' && c.studentId > 0) return c;
+      if (c && typeof c.sessionToken === 'string' && c.sessionToken && typeof c.studentId === 'number' && c.studentId > 0) return c;
     } catch (e) { /* ignore */ }
     return null;
   }
 
-  function _saveCreds(apiKey, studentId) {
+  function _saveCreds(sessionToken, studentId) {
     try {
-      sessionStorage.setItem(CRED_KEY, JSON.stringify({ apiKey: apiKey, studentId: studentId }));
+      sessionStorage.setItem(CRED_KEY, JSON.stringify({ sessionToken: sessionToken, studentId: studentId }));
     } catch (e) { /* ignore */ }
   }
 
@@ -112,11 +112,11 @@
   /**
    * Store subscription credentials for the paid write/read path.
    * Credentials are kept in sessionStorage (cleared when tab closes).
-   * @param {string} apiKey    - the X-API-Key for the backend
+   * @param {string} sessionToken - the scoped X-Session-Token for the backend
    * @param {number} studentId - the backend student ID
    */
-  function setCredentials(apiKey, studentId) {
-    var key = String(apiKey || '').trim();
+  function setCredentials(sessionToken, studentId) {
+    var key = String(sessionToken || '').trim();
     var id = parseInt(studentId, 10);
     if (!key || !id || id <= 0) return false;
     _saveCreds(key, id);
@@ -154,7 +154,7 @@
         student_id: creds.studentId,
         report_payload: reportData,
         source: 'frontend'
-      }, { 'X-API-Key': creds.apiKey }).then(function (resp) {
+        }, { 'X-Session-Token': creds.sessionToken }).then(function (resp) {
         if (resp.ok && resp.body) {
           return { ok: true, cloud_ts: Date.now(), paid: true };
         }
@@ -206,7 +206,7 @@
       var creds = _loadCreds();
       return postApi('/v1/app/report_snapshots/latest', {
         student_id: creds.studentId
-      }, { 'X-API-Key': creds.apiKey }).then(function (resp) {
+        }, { 'X-Session-Token': creds.sessionToken }).then(function (resp) {
         if (resp.ok && resp.body && resp.body.snapshot) {
           var s = resp.body.snapshot;
           return {
@@ -257,7 +257,7 @@
       return postApi('/v1/app/practice_events', {
         student_id: creds.studentId,
         event: event
-      }, { 'X-API-Key': creds.apiKey }).then(function (resp) {
+        }, { 'X-Session-Token': creds.sessionToken }).then(function (resp) {
         if (resp.ok) return true;
         /* Fall through to free path on auth/subscription errors */
         return _writePracticeEventFree(name, pin, event);

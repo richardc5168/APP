@@ -366,6 +366,63 @@ async def test_parent_child_report_allows_linked_child(setup_server):
 
 
 @pytest.mark.anyio
+async def test_parent_child_before_after_allows_linked_child(setup_server):
+    transport = httpx.ASGITransport(app=setup_server.app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as c:
+        owner_api_key, child_student_id = await _provision(c, "scope_ba_child_owner")
+        parent_api_key, _ = await _provision(c, "scope_ba_parent_reader")
+
+        class_id = _create_class(setup_server, "Parent Before After")
+        _link_student_to_class(setup_server, class_id, child_student_id)
+        _link_parent_to_student(setup_server, parent_api_key, child_student_id)
+
+        headers = {"X-API-Key": owner_api_key}
+        await c.post(
+            "/v1/app/report_snapshots",
+            json={
+                "student_id": child_student_id,
+                "class_id": class_id,
+                "report_phase": "before",
+                "window_start": "2026-03-01T00:00:00",
+                "window_end": "2026-03-07T23:59:59",
+                "report_payload": {
+                    "d": {"accuracy": 42},
+                    "knowledge_point_improvement": [{"knowledge_point": "kp_fraction_add", "accuracy": 0.42}],
+                    "skill_tag_improvement": [{"skill_tag": "fraction_add", "accuracy": 0.42}],
+                },
+            },
+            headers=headers,
+        )
+        await c.post(
+            "/v1/app/report_snapshots",
+            json={
+                "student_id": child_student_id,
+                "class_id": class_id,
+                "report_phase": "after",
+                "window_start": "2026-03-08T00:00:00",
+                "window_end": "2026-03-14T23:59:59",
+                "report_payload": {
+                    "d": {"accuracy": 76},
+                    "knowledge_point_improvement": [{"knowledge_point": "kp_fraction_add", "accuracy": 0.76}],
+                    "skill_tag_improvement": [{"skill_tag": "fraction_add", "accuracy": 0.76}],
+                    "parent_summary": "Student is showing clear progress after practice.",
+                },
+            },
+            headers=headers,
+        )
+
+        resp = await c.get(
+            f"/v1/app/parent/children/{child_student_id}/before-after",
+            headers={"X-API-Key": parent_api_key},
+        )
+        assert resp.status_code == 200
+        body = resp.json()
+        assert body["comparison"]["status"] == "improved"
+        assert body["comparison"]["class_id"] == class_id
+        assert body["comparison"]["delta"] == 0.34
+
+
+@pytest.mark.anyio
 async def test_parent_child_report_denies_unlinked_child(setup_server):
     transport = httpx.ASGITransport(app=setup_server.app)
     async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as c:
@@ -468,6 +525,185 @@ async def test_admin_class_overview_allows_any_class(setup_server):
         assert body["scope"] == "admin_class"
         assert body["overview"]["class"]["id"] == class_id
         assert body["overview"]["stats"]["student_count"] == 1
+
+
+@pytest.mark.anyio
+async def test_teacher_class_before_after_aggregates_class_scope(setup_server):
+    transport = httpx.ASGITransport(app=setup_server.app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as c:
+        owner_api_key, student_id = await _provision(c, "scope_teacher_ba_owner")
+        teacher_api_key, _ = await _provision(c, "scope_teacher_ba_reader")
+
+        class_id = _create_class(setup_server, "Teacher Before After")
+        _link_student_to_class(setup_server, class_id, student_id)
+        _link_teacher_to_class(setup_server, teacher_api_key, class_id)
+
+        headers = {"X-API-Key": owner_api_key}
+        await c.post(
+            "/v1/app/report_snapshots",
+            json={
+                "student_id": student_id,
+                "class_id": class_id,
+                "report_phase": "before",
+                "window_start": "2026-03-01T00:00:00",
+                "window_end": "2026-03-07T23:59:59",
+                "report_payload": {
+                    "d": {"accuracy": 50},
+                    "knowledge_point_improvement": [{"knowledge_point": "kp_decimal_add_sub", "accuracy": 0.50}],
+                    "skill_tag_improvement": [{"skill_tag": "decimal_operations", "accuracy": 0.50}],
+                },
+            },
+            headers=headers,
+        )
+        await c.post(
+            "/v1/app/report_snapshots",
+            json={
+                "student_id": student_id,
+                "class_id": class_id,
+                "report_phase": "after",
+                "window_start": "2026-03-08T00:00:00",
+                "window_end": "2026-03-14T23:59:59",
+                "report_payload": {
+                    "d": {"accuracy": 80},
+                    "knowledge_point_improvement": [{"knowledge_point": "kp_decimal_add_sub", "accuracy": 0.80}],
+                    "skill_tag_improvement": [{"skill_tag": "decimal_operations", "accuracy": 0.80}],
+                },
+            },
+            headers=headers,
+        )
+
+        resp = await c.get(
+            f"/v1/app/teacher/classes/{class_id}/before-after",
+            headers={"X-API-Key": teacher_api_key},
+        )
+        assert resp.status_code == 200
+        body = resp.json()["before_after"]
+        assert body["class"]["id"] == class_id
+        assert body["compared_student_count"] == 1
+        assert body["status_counts"]["improved"] == 1
+        assert body["skill_tag_improvement"][0]["skill_tag"] == "decimal_operations"
+
+
+@pytest.mark.anyio
+async def test_teacher_student_before_after_allows_linked_class_student(setup_server):
+    transport = httpx.ASGITransport(app=setup_server.app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as c:
+        owner_api_key, student_id = await _provision(c, "scope_teacher_student_ba_owner")
+        teacher_api_key, _ = await _provision(c, "scope_teacher_student_ba_reader")
+
+        class_id = _create_class(setup_server, "Teacher Student Before After")
+        _link_student_to_class(setup_server, class_id, student_id)
+        _link_teacher_to_class(setup_server, teacher_api_key, class_id)
+
+        headers = {"X-API-Key": owner_api_key}
+        await c.post(
+            "/v1/app/report_snapshots",
+            json={
+                "student_id": student_id,
+                "class_id": class_id,
+                "report_phase": "before",
+                "window_start": "2026-03-01T00:00:00",
+                "window_end": "2026-03-07T23:59:59",
+                "report_payload": {
+                    "d": {"accuracy": 48},
+                    "knowledge_point_improvement": [{"knowledge_point": "kp_fraction_add", "accuracy": 0.48}],
+                    "skill_tag_improvement": [{"skill_tag": "fraction_add", "accuracy": 0.48}],
+                },
+            },
+            headers=headers,
+        )
+        await c.post(
+            "/v1/app/report_snapshots",
+            json={
+                "student_id": student_id,
+                "class_id": class_id,
+                "report_phase": "after",
+                "window_start": "2026-03-08T00:00:00",
+                "window_end": "2026-03-14T23:59:59",
+                "report_payload": {
+                    "d": {"accuracy": 74},
+                    "knowledge_point_improvement": [{"knowledge_point": "kp_fraction_add", "accuracy": 0.74}],
+                    "skill_tag_improvement": [{"skill_tag": "fraction_add", "accuracy": 0.74}],
+                    "teacher_summary": "Fraction addition improved after reteach.",
+                },
+            },
+            headers=headers,
+        )
+
+        resp = await c.get(
+            f"/v1/app/teacher/classes/{class_id}/students/{student_id}/before-after",
+            headers={"X-API-Key": teacher_api_key},
+        )
+        assert resp.status_code == 200
+        comparison = resp.json()["comparison"]
+        assert comparison["class_id"] == class_id
+        assert comparison["status"] == "improved"
+        assert comparison["teacher_summary"] == "Fraction addition improved after reteach."
+        assert comparison["knowledge_point_improvement"][0]["knowledge_point"] == "kp_fraction_add"
+
+
+@pytest.mark.anyio
+async def test_teacher_session_returns_linked_classes_and_session_token(setup_server):
+    transport = httpx.ASGITransport(app=setup_server.app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as c:
+        teacher_api_key, _ = await _provision(c, "scope_teacher_session_reader")
+        class_id = _create_class(setup_server, "Teacher Session Class")
+        _link_teacher_to_class(setup_server, teacher_api_key, class_id)
+
+        resp = await c.post(
+            "/v1/app/auth/teacher-session",
+            json={"username": "scope_teacher_session_reader", "password": "pass1234"},
+        )
+        assert resp.status_code == 200
+        body = resp.json()
+        assert body["session_token"]
+        assert body["session_scope"] == "teacher_portal"
+        assert body["classes"][0]["id"] == class_id
+
+
+@pytest.mark.anyio
+async def test_teacher_session_can_discover_classes_and_read_scoped_overview(setup_server):
+    transport = httpx.ASGITransport(app=setup_server.app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as c:
+        owner_api_key, student_id = await _provision(c, "scope_teacher_session_owner")
+        teacher_api_key, _ = await _provision(c, "scope_teacher_session_reader_live")
+
+        class_id = _create_class(setup_server, "Teacher Session Live Class")
+        _link_student_to_class(setup_server, class_id, student_id)
+        _link_teacher_to_class(setup_server, teacher_api_key, class_id)
+
+        headers = {"X-API-Key": owner_api_key}
+        await c.post(
+            "/v1/app/report_snapshots",
+            json={
+                "student_id": student_id,
+                "class_id": class_id,
+                "report_phase": "before",
+                "window_start": "2026-03-01T00:00:00",
+                "window_end": "2026-03-07T23:59:59",
+                "report_payload": {"d": {"accuracy": 51}},
+            },
+            headers=headers,
+        )
+
+        session_resp = await c.post(
+            "/v1/app/auth/teacher-session",
+            json={"username": "scope_teacher_session_reader_live", "password": "pass1234"},
+        )
+        assert session_resp.status_code == 200
+        session_token = session_resp.json()["session_token"]
+        session_headers = {"X-Session-Token": session_token}
+
+        classes_resp = await c.get("/v1/app/teacher/classes", headers=session_headers)
+        assert classes_resp.status_code == 200
+        assert classes_resp.json()["classes"][0]["id"] == class_id
+
+        overview_resp = await c.get(f"/v1/app/teacher/classes/{class_id}/overview", headers=session_headers)
+        assert overview_resp.status_code == 200
+        assert overview_resp.json()["overview"]["class"]["id"] == class_id
+
+        denied_resp = await c.get(f"/v1/app/teacher/classes/{class_id + 999}/overview", headers=session_headers)
+        assert denied_resp.status_code == 403
 
 
 # ========= Bootstrap / Exchange Token Tests =========
@@ -604,7 +840,7 @@ async def test_exchange_expired_token(setup_server):
 
 @pytest.mark.anyio
 async def test_exchange_happy_path(setup_server):
-    """Full bootstrap → exchange roundtrip must return credentials."""
+    """Full bootstrap → exchange roundtrip must return a scoped session token."""
     transport = httpx.ASGITransport(app=setup_server.app)
     async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as c:
         api_key, student_id = await _provision(c, "ex_happy")
@@ -619,9 +855,50 @@ async def test_exchange_happy_path(setup_server):
         assert resp.status_code == 200
         body = resp.json()
         assert body["ok"] is True
-        assert body["api_key"] == api_key
+        assert body["session_token"]
         assert body["student_id"] == student_id
+        assert body["session_scope"] == "parent_report_student"
         assert body["subscription"]["status"] == "active"
+
+
+@pytest.mark.anyio
+async def test_session_token_can_read_and_write_paid_report_endpoints(setup_server):
+    transport = httpx.ASGITransport(app=setup_server.app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as c:
+        api_key, student_id = await _provision(c, "session_paid_flow")
+        bs = await c.post(
+            "/v1/app/auth/bootstrap",
+            json={"student_id": student_id},
+            headers={"X-API-Key": api_key},
+        )
+        token = bs.json()["bootstrap_token"]
+        ex = await c.post("/v1/app/auth/exchange", json={"bootstrap_token": token})
+        session_token = ex.json()["session_token"]
+        headers = {"X-Session-Token": session_token}
+
+        write_resp = await c.post(
+            "/v1/app/report_snapshots",
+            json={"student_id": student_id, "report_payload": {"d": {"accuracy": 81}}, "source": "test"},
+            headers=headers,
+        )
+        assert write_resp.status_code == 200
+
+        read_resp = await c.post(
+            "/v1/app/report_snapshots/latest",
+            json={"student_id": student_id},
+            headers=headers,
+        )
+        assert read_resp.status_code == 200
+        assert read_resp.json()["snapshot"]["report_payload"]["d"]["accuracy"] == 81
+
+        other_api_key, other_student_id = await _provision(c, "session_paid_other")
+        assert other_api_key
+        denied = await c.post(
+            "/v1/app/report_snapshots/latest",
+            json={"student_id": other_student_id},
+            headers=headers,
+        )
+        assert denied.status_code == 403
 
 
 # ========= Rate Limiting & Token Cap Tests =========
@@ -740,7 +1017,7 @@ async def test_rate_limit_does_not_block_normal_flow(setup_server):
         # Exchange
         ex = await c.post("/v1/app/auth/exchange", json={"bootstrap_token": token})
         assert ex.status_code == 200
-        assert ex.json()["api_key"] == api_key
+        assert ex.json()["session_token"]
 
 
 @pytest.mark.anyio

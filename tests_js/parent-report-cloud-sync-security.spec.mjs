@@ -48,8 +48,8 @@ test('report sync adapter credentials are session-scoped and support paid path',
   assert.ok(src.includes('sessionStorage.removeItem(CRED_KEY'), 'clearCredentials should remove from sessionStorage');
   assert.ok(!src.includes('localStorage.setItem(CRED_KEY'), 'credentials must never be in localStorage');
 
-  /* Paid path must send X-API-Key header */
-  assert.ok(src.includes("'X-API-Key': creds.apiKey"), 'paid write path should attach X-API-Key header');
+  /* Paid path must send a scoped session token header */
+  assert.ok(src.includes("'X-Session-Token': creds.sessionToken"), 'paid write path should attach X-Session-Token header');
   assert.ok(src.includes('/v1/app/report_snapshots/latest'), 'paid read path should use subscription-gated endpoint');
   assert.ok(src.includes('/v1/app/report_snapshots'), 'paid write path should use subscription-gated endpoint');
 
@@ -147,17 +147,13 @@ test('subscription-gated snapshot endpoints enforce deny-by-default (source-leve
     serverSrc.indexOf('@app.post("/v1/app/report_snapshots/latest")') + 800
   );
 
-  /* Both must call get_account_by_api_key (auth gate) */
-  assert.ok(writeEndpoint.includes('get_account_by_api_key'), 'write endpoint must verify API key');
-  assert.ok(readEndpoint.includes('get_account_by_api_key'), 'read endpoint must verify API key');
+  /* Both must call the shared paid report auth gate */
+  assert.ok(writeEndpoint.includes('_resolve_paid_report_auth'), 'write endpoint must resolve paid report auth');
+  assert.ok(readEndpoint.includes('_resolve_paid_report_auth'), 'read endpoint must resolve paid report auth');
 
-  /* Both must call ensure_subscription_active (subscription gate) */
-  assert.ok(writeEndpoint.includes('ensure_subscription_active'), 'write endpoint must check subscription');
-  assert.ok(readEndpoint.includes('ensure_subscription_active'), 'read endpoint must check subscription');
-
-  /* Both must call _verify_student_ownership (ownership gate) */
-  assert.ok(writeEndpoint.includes('_verify_student_ownership'), 'write endpoint must verify ownership');
-  assert.ok(readEndpoint.includes('_verify_student_ownership'), 'read endpoint must verify ownership');
+  /* Both must call the scoped student verification gate */
+  assert.ok(writeEndpoint.includes('_verify_paid_report_student_scope'), 'write endpoint must verify scoped student access');
+  assert.ok(readEndpoint.includes('_verify_paid_report_student_scope'), 'read endpoint must verify scoped student access');
 });
 
 test('cloud-token setter/clearer/checker are NOT exported on the public API surface', () => {
@@ -189,7 +185,7 @@ test('adapter writePracticeEvent has subscription-gated paid path with fallback'
   /* Must check paid credentials before routing */
   assert.ok(fnBlock.includes('_isPaidAndCredentialed()'), 'must check paid credentials');
   assert.ok(fnBlock.includes('/v1/app/practice_events'), 'paid path must use subscription-gated endpoint');
-  assert.ok(fnBlock.includes("'X-API-Key': creds.apiKey"), 'paid path must send X-API-Key');
+  assert.ok(fnBlock.includes("'X-Session-Token': creds.sessionToken"), 'paid path must send X-Session-Token');
   assert.ok(fnBlock.includes('_writePracticeEventFree'), 'must fall through to free path');
 });
 
@@ -200,9 +196,8 @@ test('practice_events endpoint enforces deny-by-default (source-level)', () => {
   assert.ok(peStart > 0, 'practice_events endpoint must exist');
   const peBlock = serverSrc.slice(peStart, peStart + 1200);
 
-  assert.ok(peBlock.includes('get_account_by_api_key'), 'practice_events must verify API key');
-  assert.ok(peBlock.includes('ensure_subscription_active'), 'practice_events must check subscription');
-  assert.ok(peBlock.includes('_verify_student_ownership'), 'practice_events must verify ownership');
+  assert.ok(peBlock.includes('_resolve_paid_report_auth'), 'practice_events must resolve paid report auth');
+  assert.ok(peBlock.includes('_verify_paid_report_student_scope'), 'practice_events must verify ownership');
   assert.ok(peBlock.includes('_sanitize_practice_event'), 'practice_events must sanitize event data');
 });
 
@@ -275,31 +270,31 @@ test('bootstrap/exchange/login endpoints have rate limiting and token cap (sourc
   assert.ok(serverSrc.includes('_RATE_LIMIT_EXCHANGE'), 'server must define exchange rate limit');
   assert.ok(serverSrc.includes('_RATE_LIMIT_LOGIN'), 'server must define login rate limit');
 
-  /* Login endpoint must check rate limit before credential validation */
-  const loginStart = serverSrc.indexOf('@app.post("/v1/app/auth/login"');
-  assert.ok(loginStart > 0, 'login endpoint must exist');
-  const loginBlock = serverSrc.slice(loginStart, loginStart + 2800);
-  assert.ok(loginBlock.includes('_check_rate_limit'), 'login must call rate limiter');
-  assert.ok(loginBlock.includes('429'), 'login must return 429 on rate limit');
+  /* Shared login helper must enforce rate limit before credential validation */
+  const helperStart = serverSrc.indexOf('def _authenticate_app_user(');
+  assert.ok(helperStart > 0, 'shared app auth helper must exist');
+  const helperBlock = serverSrc.slice(helperStart, helperStart + 3600);
+  assert.ok(helperBlock.includes('_check_rate_limit'), 'shared app auth helper must call rate limiter');
+  assert.ok(helperBlock.includes('429'), 'shared app auth helper must return 429 on rate limit');
   /* Rate limit must appear before credential check (username lookup) */
-  const rlPos = loginBlock.indexOf('_check_rate_limit');
-  const credPos = loginBlock.indexOf('WHERE au.username');
+  const rlPos = helperBlock.indexOf('_check_rate_limit');
+  const credPos = helperBlock.indexOf('WHERE au.username');
   assert.ok(rlPos < credPos, 'login rate limit must fire BEFORE credential lookup');
 
   /* Account-level lockout must exist and fire before credential validation */
   assert.ok(serverSrc.includes('_LOGIN_LOCKOUT_THRESHOLD'), 'server must define lockout threshold');
   assert.ok(serverSrc.includes('_LOGIN_LOCKOUT_DURATION_S'), 'server must define lockout duration');
   assert.ok(serverSrc.includes('login_failures'), 'server must have login_failures table');
-  assert.ok(loginBlock.includes('_is_account_locked'), 'login must check account lockout');
-  assert.ok(loginBlock.includes('423'), 'login must return 423 on lockout');
-  const lockoutPos = loginBlock.indexOf('_is_account_locked');
+  assert.ok(helperBlock.includes('_is_account_locked'), 'login must check account lockout');
+  assert.ok(helperBlock.includes('423'), 'login must return 423 on lockout');
+  const lockoutPos = helperBlock.indexOf('_is_account_locked');
   assert.ok(lockoutPos < credPos, 'account lockout must fire BEFORE credential lookup');
 
   /* Login failure logging must exist */
   assert.ok(serverSrc.includes('_auth_logger'), 'server must have auth event logger');
-  assert.ok(loginBlock.includes('login_failure'), 'login must log failure events');
-  assert.ok(loginBlock.includes('login_success'), 'login must log success events');
-  assert.ok(loginBlock.includes('login_lockout'), 'login must log lockout events');
+  assert.ok(helperBlock.includes('login_failure'), 'login must log failure events');
+  assert.ok(helperBlock.includes('login_success'), 'login must log success events');
+  assert.ok(helperBlock.includes('login_lockout'), 'login must log lockout events');
 
   /* Admin login-failures audit endpoint must exist */
   assert.ok(serverSrc.includes('/v1/app/admin/login-failures'), 'admin login-failures endpoint must exist');
@@ -369,7 +364,7 @@ test('paid login UI uses 3-step auth flow (login → bootstrap → exchange)', (
   assert.ok(reportSrc.includes('/v1/app/auth/exchange'), 'paid login must call exchange endpoint');
 
   /* Must use adapter.setCredentials at the end (sessionStorage, not localStorage) */
-  assert.ok(reportSrc.includes('adapter.setCredentials(res3.body.api_key, res3.body.student_id)'),
+  assert.ok(reportSrc.includes('adapter.setCredentials(res3.body.session_token, res3.body.student_id)'),
     'paid login must store credentials via adapter at exchange step, not login step');
 
   /* Must sync subscription from exchange response */
@@ -459,4 +454,15 @@ test('student selector UI for multi-student accounts (source-level)', () => {
     serverSrc.indexOf('def app_auth_whoami')
   );
   assert.ok(loginFn.includes('"students":'), 'server login response must include students array');
+});
+
+test('school-first before-after endpoints exist across scopes (source-level)', () => {
+  const serverSrc = fs.readFileSync(path.resolve('server.py'), 'utf8');
+
+  assert.ok(serverSrc.includes('/v1/app/parent/children/{student_id}/before-after'), 'parent before-after endpoint must exist');
+  assert.ok(serverSrc.includes('/v1/app/teacher/classes/{class_id}/before-after'), 'teacher class before-after endpoint must exist');
+  assert.ok(serverSrc.includes('/v1/app/teacher/classes/{class_id}/students/{student_id}/before-after'), 'teacher student before-after endpoint must exist');
+  assert.ok(serverSrc.includes('/v1/app/admin/classes/{class_id}/before-after'), 'admin before-after endpoint must exist');
+  assert.ok(serverSrc.includes('_build_student_before_after_report'), 'server must build student before-after comparison payloads');
+  assert.ok(serverSrc.includes('_build_class_before_after_report'), 'server must build class before-after comparison payloads');
 });

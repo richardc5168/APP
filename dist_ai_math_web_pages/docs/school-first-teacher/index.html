@@ -1,0 +1,770 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>School-First Teacher Dashboard</title>
+  <style>
+    :root {
+      --paper: #f4efe6;
+      --ink: #13233a;
+      --muted: #5d6b78;
+      --line: rgba(19, 35, 58, 0.14);
+      --card: rgba(255, 255, 255, 0.84);
+      --accent: #d45b3f;
+      --accent-2: #2e8b78;
+      --warn: #c58a1e;
+      --bad: #a33f35;
+      --shadow: 0 20px 45px rgba(19, 35, 58, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Georgia, 'Times New Roman', serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(212, 91, 63, 0.16), transparent 28%),
+        radial-gradient(circle at top right, rgba(46, 139, 120, 0.2), transparent 26%),
+        linear-gradient(180deg, #fbf7f0 0%, var(--paper) 100%);
+    }
+    .shell {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 32px 20px 56px;
+    }
+    .hero {
+      display: grid;
+      grid-template-columns: 1.6fr 0.9fr;
+      gap: 18px;
+      align-items: stretch;
+      margin-bottom: 18px;
+    }
+    .panel, .metric, .table-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(6px);
+    }
+    .hero-main {
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-main:after {
+      content: '';
+      position: absolute;
+      inset: auto -40px -40px auto;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: rgba(212, 91, 63, 0.12);
+    }
+    h1, h2, h3, p { margin: 0; }
+    .eyebrow {
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-size: 12px;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    .hero-main h1 {
+      font-size: clamp(30px, 5vw, 54px);
+      line-height: 0.95;
+      max-width: 10ch;
+      margin-bottom: 14px;
+    }
+    .hero-main p {
+      max-width: 58ch;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    .hero-side {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .hero-side select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 14px;
+      font: inherit;
+      background: rgba(255,255,255,0.92);
+    }
+    .hero-side input,
+    .hero-side button {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 14px;
+      font: inherit;
+      background: rgba(255,255,255,0.92);
+    }
+    .hero-side button {
+      cursor: pointer;
+      background: linear-gradient(90deg, rgba(212, 91, 63, 0.92), rgba(46, 139, 120, 0.92));
+      color: #fff;
+      border: 0;
+      font-weight: 700;
+    }
+    .hero-side label {
+      display: block;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 0 0 6px;
+    }
+    .control-stack {
+      display: grid;
+      gap: 10px;
+    }
+    .status-note {
+      min-height: 20px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .status-note.bad {
+      color: var(--bad);
+    }
+    .status-note.ok {
+      color: var(--accent-2);
+    }
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+    .metric {
+      padding: 18px;
+      min-height: 130px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .metric strong {
+      font-size: 36px;
+      line-height: 1;
+    }
+    .metric span, .subtle { color: var(--muted); }
+    .grid {
+      display: grid;
+      grid-template-columns: 1.25fr 0.95fr;
+      gap: 18px;
+    }
+    .stack {
+      display: grid;
+      gap: 18px;
+    }
+    .table-card {
+      padding: 22px;
+    }
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: baseline;
+      margin-bottom: 14px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    th, td {
+      text-align: left;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+    th { color: var(--muted); font-weight: 600; }
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      background: rgba(19,35,58,0.08);
+    }
+    .badge.improved { background: rgba(46, 139, 120, 0.14); color: var(--accent-2); }
+    .badge.plateau { background: rgba(197, 138, 30, 0.16); color: #9a6c10; }
+    .badge.regressed, .badge.high-risk { background: rgba(163, 63, 53, 0.14); color: var(--bad); }
+    .chart-rows {
+      display: grid;
+      gap: 10px;
+    }
+    .chart-row {
+      display: grid;
+      grid-template-columns: 160px 1fr 70px;
+      gap: 12px;
+      align-items: center;
+    }
+    .bar {
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(19,35,58,0.08);
+      overflow: hidden;
+    }
+    .bar span {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%);
+    }
+    .student-detail {
+      display: grid;
+      gap: 12px;
+    }
+    .detail-select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font: inherit;
+      background: rgba(255,255,255,0.92);
+    }
+    .unit-list {
+      display: grid;
+      gap: 8px;
+    }
+    .unit-item {
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(255,255,255,0.72);
+    }
+    @media (max-width: 980px) {
+      .hero, .grid { grid-template-columns: 1fr; }
+      .metrics { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .metrics { grid-template-columns: 1fr; }
+      .chart-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="hero">
+      <section class="panel hero-main">
+        <div class="eyebrow">School-First Teacher MVP</div>
+        <h1 id="heroTitle">Teacher dashboard shell</h1>
+        <p id="heroCopy">Class-scoped operating view on deterministic mock data. No cross-class leakage, and the drill-down stays inside one teacher's class contract.</p>
+      </section>
+      <aside class="panel hero-side">
+        <div>
+          <div class="eyebrow">Teacher Context</div>
+          <select id="teacherSelect"></select>
+        </div>
+        <div class="control-stack">
+          <div>
+            <label for="teacherApiBase">Backend Base</label>
+            <input id="teacherApiBase" placeholder="http://localhost:8000">
+          </div>
+          <div>
+            <label for="teacherUsername">Teacher Username</label>
+            <input id="teacherUsername" autocomplete="username" placeholder="teacher account username">
+          </div>
+          <div>
+            <label for="teacherPassword">Password</label>
+            <input id="teacherPassword" type="password" autocomplete="current-password" placeholder="account password">
+          </div>
+          <div>
+            <label for="teacherClassSelect">Linked Class</label>
+            <select id="teacherClassSelect" disabled>
+              <option value="">Connect to load linked classes</option>
+            </select>
+          </div>
+          <button id="teacherConnectBtn" type="button">Connect Live Teacher View</button>
+          <div id="teacherLiveStatus" class="status-note">Mock mode is active until live teacher auth succeeds.</div>
+        </div>
+        <div>
+          <h3 id="classLabel">Class</h3>
+          <p class="subtle" id="classMeta"></p>
+        </div>
+      </aside>
+    </div>
+
+    <section class="metrics" id="metricGrid"></section>
+
+    <div class="grid">
+      <div class="stack">
+        <section class="table-card">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Student List</div>
+              <h2>Roster and intervention status</h2>
+            </div>
+            <span class="subtle" id="rosterCount"></span>
+          </div>
+          <div id="studentTableWrap"></div>
+        </section>
+
+        <section class="table-card">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Before / After</div>
+              <h2>Skill movement by comparable group</h2>
+            </div>
+            <span class="subtle">Equivalent-group comparison</span>
+          </div>
+          <div class="chart-rows" id="skillRows"></div>
+        </section>
+      </div>
+
+      <div class="stack">
+        <section class="table-card">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">High Risk</div>
+              <h2>Students needing follow-up</h2>
+            </div>
+          </div>
+          <div id="riskList"></div>
+        </section>
+
+        <section class="table-card student-detail">
+          <div class="section-head">
+            <div>
+              <div class="eyebrow">Student Drill-Down</div>
+              <h2>One student, one next move</h2>
+            </div>
+          </div>
+          <select id="studentSelect" class="detail-select"></select>
+          <div id="studentDetail"></div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script src="../shared/school_first/mock_runtime.js"></script>
+  <script>
+    (function () {
+      var mock = window.AIMathSchoolFirstMock;
+      var context = mock.buildMockContext();
+      var teacherSelect = document.getElementById('teacherSelect');
+      var studentSelect = document.getElementById('studentSelect');
+      var apiBaseInput = document.getElementById('teacherApiBase');
+      var usernameInput = document.getElementById('teacherUsername');
+      var passwordInput = document.getElementById('teacherPassword');
+      var classSelect = document.getElementById('teacherClassSelect');
+      var connectBtn = document.getElementById('teacherConnectBtn');
+      var liveStatus = document.getElementById('teacherLiveStatus');
+      var liveState = {
+        apiBase: '',
+        sessionToken: '',
+        classId: '',
+        mode: 'mock',
+        classOverview: null,
+        classBeforeAfter: null,
+        studentCache: {},
+        teacherClasses: []
+      };
+
+      function normalizeApiBase(base) {
+        return String(base || '').trim().replace(/\/+$/, '');
+      }
+
+      function queryParam(name) {
+        try {
+          return new URLSearchParams(window.location.search).get(name) || '';
+        } catch (error) {
+          return '';
+        }
+      }
+
+      function getStoredApiBase() {
+        try {
+          return localStorage.getItem('aimath_parent_report_api_base_v1') || '';
+        } catch (error) {
+          return '';
+        }
+      }
+
+      function resolveBackendBase() {
+        return normalizeApiBase(
+          queryParam('api') || window.AIMATH_PARENT_REPORT_API_BASE || window.AIMATH_API_BASE || getStoredApiBase() || ''
+        );
+      }
+
+      function setStatus(message, cls) {
+        liveStatus.textContent = message;
+        liveStatus.className = 'status-note' + (cls ? ' ' + cls : '');
+      }
+
+      function resetClassOptions() {
+        classSelect.innerHTML = '<option value="">Connect to load linked classes</option>';
+        classSelect.disabled = true;
+      }
+
+      function resetLiveState() {
+        liveState.sessionToken = '';
+        liveState.classId = '';
+        liveState.mode = 'mock';
+        liveState.classOverview = null;
+        liveState.classBeforeAfter = null;
+        liveState.studentCache = {};
+        liveState.teacherClasses = [];
+        resetClassOptions();
+      }
+
+      function populateTeacherClasses(classes, selectedClassId) {
+        var rows = Array.isArray(classes) ? classes : [];
+        classSelect.innerHTML = '';
+        rows.forEach(function (classRow) {
+          var option = document.createElement('option');
+          option.value = String(classRow.id);
+          option.textContent = classRow.class_name + ' (' + classRow.grade + ')';
+          classSelect.appendChild(option);
+        });
+        if (!rows.length) {
+          resetClassOptions();
+          return '';
+        }
+        classSelect.disabled = false;
+        var preferred = String(selectedClassId || '');
+        var matched = rows.filter(function (classRow) { return String(classRow.id) === preferred; })[0];
+        classSelect.value = matched ? preferred : String(rows[0].id);
+        return classSelect.value;
+      }
+
+      function interventionLabel(student) {
+        if (!student) return 'review';
+        if (student.high_risk) return 'review now';
+        if (student.status === 'improved') return 'maintain';
+        if (student.status === 'plateau') return 'reteach';
+        return 'recheck';
+      }
+
+      function mockStudentRows(view) {
+        return view.students.map(function (student) {
+          return {
+            student_id: student.student_id,
+            display_name: student.display_name,
+            grade: student.grade,
+            cohort_label: student.cohort_label,
+            status: student.status,
+            high_risk: student.high_risk,
+            post_accuracy: student.post_accuracy,
+            delta: student.delta,
+            intervention_status: student.intervention_status,
+            teacher_summary: student.teacher_summary,
+            comparable_units: student.comparable_units || []
+          };
+        });
+      }
+
+      function mockView() {
+        var baseView = mock.getTeacherDashboard(context, teacherSelect.value || context.dataset.teachers[0].teacher_id);
+        return {
+          mode: 'mock',
+          teacher: baseView.teacher,
+          class: baseView.class,
+          overview: baseView.overview,
+          students: mockStudentRows(baseView),
+          skill_summary: baseView.skill_summary || [],
+          knowledge_summary: baseView.knowledge_summary || [],
+          before_after: baseView.before_after || { high_risk_students: [] }
+        };
+      }
+
+      function buildLiveView() {
+        var overview = liveState.classOverview || { class: { class_name: 'Teacher Class', grade: 'G5', id: Number(liveState.classId || 0) }, stats: { student_count: 0 } };
+        var beforeAfter = liveState.classBeforeAfter || { status_counts: { improved: 0, plateau: 0, regressed: 0 }, high_risk_students: [], student_reports: [], skill_tag_improvement: [], knowledge_point_improvement: [] };
+        var studentMap = {};
+        (overview.students || []).forEach(function (student) {
+          studentMap[String(student.id)] = student;
+        });
+        var students = (beforeAfter.student_reports || []).map(function (report) {
+          var info = studentMap[String(report.student_id)] || {};
+          return {
+            student_id: String(report.student_id),
+            display_name: report.display_name || info.display_name || ('Student ' + report.student_id),
+            grade: report.grade || info.grade || '',
+            cohort_label: 'live scope',
+            status: report.status,
+            high_risk: !!report.high_risk,
+            post_accuracy: Number(report.post_accuracy || 0),
+            delta: Number(report.delta || 0),
+            intervention_status: interventionLabel(report),
+            teacher_summary: report.teacher_summary || '',
+            comparable_units: (report.knowledge_point_improvement || []).map(function (unit) {
+              return {
+                knowledge_point: unit.knowledge_point,
+                pre_accuracy: Number(unit.pre_accuracy || 0),
+                post_accuracy: Number(unit.post_accuracy || 0),
+                delta: Number(unit.delta || 0)
+              };
+            })
+          };
+        }).sort(function (a, b) {
+          if (a.high_risk !== b.high_risk) return a.high_risk ? -1 : 1;
+          return a.delta - b.delta;
+        });
+        return {
+          mode: 'live',
+          teacher: { display_name: usernameInput.value || 'Teacher Live View' },
+          class: overview.class,
+          overview: {
+            student_count: Number((overview.stats || {}).student_count || students.length || 0),
+            pre_accuracy: Number(beforeAfter.pre_accuracy || 0),
+            post_accuracy: Number(beforeAfter.post_accuracy || 0),
+            improved: Number((beforeAfter.status_counts || {}).improved || 0),
+            plateau: Number((beforeAfter.status_counts || {}).plateau || 0),
+            regressed: Number((beforeAfter.status_counts || {}).regressed || 0)
+          },
+          students: students,
+          skill_summary: beforeAfter.skill_tag_improvement || [],
+          knowledge_summary: beforeAfter.knowledge_point_improvement || [],
+          before_after: beforeAfter
+        };
+      }
+
+      function activeView() {
+        return liveState.mode === 'live' && liveState.classOverview && liveState.classBeforeAfter ? buildLiveView() : mockView();
+      }
+
+      function apiGet(path) {
+        return fetch(liveState.apiBase + path, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'X-Session-Token': liveState.sessionToken
+          }
+        }).then(function (resp) {
+          return resp.json().catch(function () { return {}; }).then(function (body) {
+            return { status: resp.status, body: body };
+          });
+        });
+      }
+
+      function fetchStudentComparison(studentId) {
+        if (liveState.mode !== 'live') return Promise.resolve(null);
+        if (liveState.studentCache[studentId]) return Promise.resolve(liveState.studentCache[studentId]);
+        return apiGet('/v1/app/teacher/classes/' + encodeURIComponent(liveState.classId) + '/students/' + encodeURIComponent(studentId) + '/before-after')
+          .then(function (res) {
+            if (res.status !== 200 || !res.body || !res.body.comparison) {
+              throw new Error((res.body && res.body.detail) || 'Unable to load student comparison');
+            }
+            liveState.studentCache[studentId] = res.body.comparison;
+            return res.body.comparison;
+          });
+      }
+
+      function loadLiveTeacherClass(classId) {
+        liveState.classId = String(classId || '').trim();
+        if (!liveState.classId) {
+          throw new Error('Missing linked class selection');
+        }
+        setStatus('Loading live class scope ' + liveState.classId + '...', '');
+        return Promise.all([
+          apiGet('/v1/app/teacher/classes/' + encodeURIComponent(liveState.classId) + '/overview'),
+          apiGet('/v1/app/teacher/classes/' + encodeURIComponent(liveState.classId) + '/before-after')
+        ]).then(function (responses) {
+          var overviewRes = responses[0];
+          var beforeAfterRes = responses[1];
+          if (overviewRes.status !== 200 || !overviewRes.body || !overviewRes.body.overview) {
+            throw new Error((overviewRes.body && overviewRes.body.detail) || 'Teacher class overview failed');
+          }
+          if (beforeAfterRes.status !== 200 || !beforeAfterRes.body || !beforeAfterRes.body.before_after) {
+            throw new Error((beforeAfterRes.body && beforeAfterRes.body.detail) || 'Teacher before/after load failed');
+          }
+          liveState.classOverview = overviewRes.body.overview;
+          liveState.classBeforeAfter = beforeAfterRes.body.before_after;
+          liveState.mode = 'live';
+          liveState.studentCache = {};
+          setStatus('Live teacher mode is active for class ' + liveState.classId + '.', 'ok');
+          render();
+        });
+      }
+
+      function connectLiveTeacherView() {
+        var username = String(usernameInput.value || '').trim();
+        var password = String(passwordInput.value || '').trim();
+        var requestedClassId = String(queryParam('class_id') || classSelect.value || '').trim();
+        liveState.apiBase = normalizeApiBase(apiBaseInput.value || resolveBackendBase());
+        if (!liveState.apiBase) {
+          setStatus('Missing backend base. Set it in the field or pass ?api=.', 'bad');
+          return;
+        }
+        if (!username || !password) {
+          setStatus('Teacher username and password are required for live mode.', 'bad');
+          return;
+        }
+        connectBtn.disabled = true;
+        setStatus('Connecting to teacher session and linked classes...', '');
+        fetch(liveState.apiBase + '/v1/app/auth/teacher-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({ username: username, password: password })
+        })
+          .then(function (resp) {
+            return resp.json().catch(function () { return {}; }).then(function (body) {
+              return { status: resp.status, body: body };
+            });
+          })
+          .then(function (sessionRes) {
+            if (sessionRes.status !== 200 || !sessionRes.body || !sessionRes.body.session_token) {
+              throw new Error((sessionRes.body && sessionRes.body.detail) || 'Teacher session login failed');
+            }
+            liveState.sessionToken = sessionRes.body.session_token;
+            liveState.teacherClasses = sessionRes.body.classes || [];
+            passwordInput.value = '';
+            if (!liveState.teacherClasses.length) {
+              throw new Error('Teacher has no linked classes');
+            }
+            return loadLiveTeacherClass(populateTeacherClasses(liveState.teacherClasses, requestedClassId));
+          })
+          .catch(function (error) {
+            resetLiveState();
+            setStatus(error && error.message ? error.message : 'Live teacher connection failed', 'bad');
+            render();
+          })
+          .finally(function () {
+            connectBtn.disabled = false;
+          });
+      }
+
+      function pct(value) {
+        return Math.round((Number(value) || 0) * 100) + '%';
+      }
+
+      function fillTeachers() {
+        context.dataset.teachers.forEach(function (teacher) {
+          var option = document.createElement('option');
+          option.value = teacher.teacher_id;
+          option.textContent = teacher.display_name;
+          teacherSelect.appendChild(option);
+        });
+      }
+
+      function renderMetrics(view) {
+        var metrics = [
+          { label: 'Students', value: view.overview.student_count, note: 'class-scoped roster only' },
+          { label: 'Pre accuracy', value: pct(view.overview.pre_accuracy), note: 'baseline comparable performance' },
+          { label: 'Post accuracy', value: pct(view.overview.post_accuracy), note: 'after intervention window' },
+          { label: 'Improved / plateau / regressed', value: view.overview.improved + ' / ' + view.overview.plateau + ' / ' + view.overview.regressed, note: 'status count distribution' }
+        ];
+        document.getElementById('metricGrid').innerHTML = metrics.map(function (item) {
+          return '<article class="metric"><span>' + item.label + '</span><strong>' + item.value + '</strong><span>' + item.note + '</span></article>';
+        }).join('');
+      }
+
+      function renderStudentTable(view) {
+        document.getElementById('rosterCount').textContent = view.students.length + ' students';
+        document.getElementById('studentTableWrap').innerHTML = '<table><thead><tr><th>Student</th><th>Status</th><th>Post</th><th>Delta</th><th>Intervention</th></tr></thead><tbody>' +
+          view.students.slice(0, 18).map(function (student) {
+            var statusClass = student.high_risk ? 'high-risk' : student.status;
+            return '<tr>' +
+              '<td><strong>' + student.display_name + '</strong><br><span class="subtle">' + student.cohort_label + ' cohort</span></td>' +
+              '<td><span class="badge ' + statusClass + '">' + (student.high_risk ? 'high risk' : student.status) + '</span></td>' +
+              '<td>' + pct(student.post_accuracy) + '</td>' +
+              '<td>' + pct(student.delta) + '</td>' +
+              '<td>' + student.intervention_status + '</td>' +
+            '</tr>';
+          }).join('') + '</tbody></table>';
+      }
+
+      function renderSkillRows(view) {
+        document.getElementById('skillRows').innerHTML = view.skill_summary.map(function (item) {
+          var width = Math.max(8, Math.round(item.post_accuracy * 100));
+          return '<div class="chart-row">' +
+            '<strong>' + item.skill_tag + '</strong>' +
+            '<div class="bar"><span style="width:' + width + '%"></span></div>' +
+            '<span>' + pct(item.delta) + '</span>' +
+          '</div>';
+        }).join('');
+      }
+
+      function renderRiskList(view) {
+        document.getElementById('riskList').innerHTML = view.high_risk_students.map(function (student) {
+          return '<div class="unit-item"><strong>' + student.display_name + '</strong><br><span class="subtle">Post ' + pct(student.post_accuracy) + ' · delta ' + pct(student.delta) + '</span><br><span class="badge high-risk">needs follow-up</span></div>';
+        }).join('');
+      }
+
+      function fillStudents(view) {
+        studentSelect.innerHTML = '';
+        view.students.forEach(function (student) {
+          var option = document.createElement('option');
+          option.value = student.student_id;
+          option.textContent = student.display_name;
+          studentSelect.appendChild(option);
+        });
+      }
+
+      function renderStudentDetail(view) {
+        var current = view.students.filter(function (student) { return String(student.student_id) === String(studentSelect.value); })[0] || view.students[0];
+        if (!current) {
+          document.getElementById('studentDetail').innerHTML = '';
+          return;
+        }
+
+        function paint(detail, studentLabel) {
+          var units = (detail && detail.knowledge_point_improvement && detail.knowledge_point_improvement.length ? detail.knowledge_point_improvement : current.comparable_units || []).slice();
+          var unitRows = units.sort(function (a, b) { return a.post_accuracy - b.post_accuracy; }).slice(0, 4);
+          document.getElementById('studentDetail').innerHTML =
+            '<div class="unit-item"><strong>' + studentLabel + '</strong><br><span class="badge ' + (current.high_risk ? 'high-risk' : current.status) + '">' + (current.high_risk ? 'high risk' : current.status) + '</span><p class="subtle" style="margin-top:8px">' + ((detail && detail.teacher_summary) || current.teacher_summary || 'Scoped teacher drill-down is loaded.') + '</p></div>' +
+            '<div class="unit-list">' + unitRows.map(function (unit) {
+              return '<div class="unit-item"><strong>' + unit.knowledge_point + '</strong><br><span class="subtle">Pre ' + pct(unit.pre_accuracy) + ' → Post ' + pct(unit.post_accuracy) + ' · delta ' + pct(unit.delta) + '</span></div>';
+            }).join('') + '</div>';
+        }
+
+        if (view.mode !== 'live') {
+          paint(null, current.display_name);
+          return;
+        }
+
+        document.getElementById('studentDetail').innerHTML = '<div class="unit-item"><strong>' + current.display_name + '</strong><p class="subtle">Loading scoped before/after drill-down...</p></div>';
+        fetchStudentComparison(String(current.student_id))
+          .then(function (comparison) {
+            paint(comparison, current.display_name);
+          })
+          .catch(function (error) {
+            document.getElementById('studentDetail').innerHTML = '<div class="unit-item"><strong>' + current.display_name + '</strong><p class="subtle">' + (error && error.message ? error.message : 'Unable to load drill-down.') + '</p></div>';
+          });
+      }
+
+      function render() {
+        var view = activeView();
+        document.getElementById('heroTitle').textContent = view.mode === 'live'
+          ? ('Live teacher scope for ' + view.class.class_name)
+          : (view.teacher.display_name + ' operating ' + view.class.class_name);
+        document.getElementById('heroCopy').textContent = view.mode === 'live'
+          ? 'This class is loading from live scoped teacher endpoints. If auth fails, the page falls back to deterministic mock data.'
+          : 'Class-scoped operating view on deterministic mock data. No cross-class leakage, and the drill-down stays inside one teacher\'s class contract.';
+        document.getElementById('classLabel').textContent = view.class.class_name;
+        document.getElementById('classMeta').textContent = view.class.grade + ' · ' + (view.class.class_id || view.class.id) + ' · ' + (view.before_after.high_risk_students || []).length + ' high-risk students';
+        renderMetrics(view);
+        renderStudentTable(view);
+        renderSkillRows(view);
+        renderRiskList(view);
+        fillStudents(view);
+        renderStudentDetail(view);
+        studentSelect.onchange = function () { renderStudentDetail(view); };
+      }
+
+      fillTeachers();
+      apiBaseInput.value = resolveBackendBase();
+      resetClassOptions();
+      teacherSelect.onchange = render;
+      connectBtn.onclick = connectLiveTeacherView;
+      classSelect.onchange = function () {
+        if (liveState.mode !== 'live' || !classSelect.value || String(classSelect.value) === String(liveState.classId)) {
+          return;
+        }
+        loadLiveTeacherClass(classSelect.value)
+          .catch(function (error) {
+            resetLiveState();
+            setStatus(error && error.message ? error.message : 'Live class switch failed', 'bad');
+            render();
+          });
+      };
+      render();
+    })();
+  </script>
+</body>
+</html>

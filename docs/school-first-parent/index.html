@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>School-First Parent View</title>
+  <style>
+    :root {
+      --paper: #f8f4ec;
+      --ink: #1e2a33;
+      --muted: #66757f;
+      --line: rgba(30, 42, 51, 0.14);
+      --card: rgba(255,255,255,0.88);
+      --accent: #cf6f39;
+      --accent-2: #3a8b84;
+      --shadow: 0 18px 38px rgba(30, 42, 51, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Book Antiqua', Georgia, serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at left top, rgba(207, 111, 57, 0.15), transparent 30%),
+        linear-gradient(180deg, #fcfaf5 0%, var(--paper) 100%);
+    }
+    .shell { max-width: 1100px; margin: 0 auto; padding: 28px 18px 52px; }
+    .hero, .card { background: var(--card); border: 1px solid var(--line); border-radius: 24px; box-shadow: var(--shadow); }
+    .hero { padding: 28px; margin-bottom: 16px; }
+    .eyebrow { text-transform: uppercase; letter-spacing: 0.16em; font-size: 12px; color: var(--accent); margin-bottom: 10px; }
+    h1, h2, h3, p { margin: 0; }
+    h1 { font-size: clamp(28px, 5vw, 52px); line-height: 0.98; max-width: 10ch; margin-bottom: 14px; }
+    p { color: var(--muted); line-height: 1.6; }
+    .toolbar { display: flex; justify-content: space-between; gap: 16px; align-items: end; margin-top: 18px; }
+    select { border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; font: inherit; background: rgba(255,255,255,0.94); min-width: 240px; }
+    .metrics, .grid { display: grid; gap: 16px; }
+    .metrics { grid-template-columns: repeat(3, 1fr); margin-bottom: 16px; }
+    .grid { grid-template-columns: 1.05fr 0.95fr; }
+    .card { padding: 22px; }
+    .metric strong { display: block; font-size: 38px; margin: 8px 0; }
+    .badge { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 12px; background: rgba(58,139,132,0.14); color: var(--accent-2); text-transform: uppercase; letter-spacing: 0.04em; }
+    ul { margin: 14px 0 0; padding-left: 18px; color: var(--muted); }
+    li { margin-bottom: 10px; }
+    .unit { padding: 12px 14px; border-radius: 16px; border: 1px solid var(--line); margin-top: 10px; background: rgba(255,255,255,0.7); }
+    .unit strong { display: block; margin-bottom: 4px; }
+    @media (max-width: 820px) {
+      .metrics, .grid { grid-template-columns: 1fr; }
+      .toolbar { flex-direction: column; align-items: stretch; }
+      select { min-width: 0; width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <section class="hero">
+      <div class="eyebrow">School-First Parent MVP</div>
+      <h1 id="heroTitle">Parent view shell</h1>
+      <p id="heroCopy">Single-child, parent-readable view. No class ranking, no peer leakage, and one clear action above the fold.</p>
+      <div class="toolbar">
+        <div>
+          <h3 id="studentName">Student</h3>
+          <p id="studentMeta"></p>
+        </div>
+        <select id="parentSelect"></select>
+      </div>
+    </section>
+
+    <section class="metrics" id="metricGrid"></section>
+
+    <section class="grid">
+      <article class="card">
+        <div class="eyebrow">Mastered</div>
+        <h2>What is already sticking</h2>
+        <div id="masteredList"></div>
+      </article>
+
+      <article class="card">
+        <div class="eyebrow">Needs Reinforcement</div>
+        <h2>Where this week should focus</h2>
+        <div id="weakList"></div>
+      </article>
+
+      <article class="card">
+        <div class="eyebrow">Before / After</div>
+        <h2>Simple progress story</h2>
+        <div id="beforeAfter"></div>
+      </article>
+
+      <article class="card">
+        <div class="eyebrow">Parent Actions</div>
+        <h2>What to do this week</h2>
+        <ul id="actionList"></ul>
+      </article>
+    </section>
+  </div>
+
+  <script src="../shared/school_first/mock_runtime.js"></script>
+  <script>
+    (function () {
+      var mock = window.AIMathSchoolFirstMock;
+      var context = mock.buildMockContext();
+      var parentSelect = document.getElementById('parentSelect');
+
+      function pct(value) {
+        return Math.round((Number(value) || 0) * 100) + '%';
+      }
+
+      function fillParents() {
+        context.dataset.parents.slice(0, 18).forEach(function (parent) {
+          var option = document.createElement('option');
+          option.value = parent.parent_id;
+          option.textContent = parent.display_name;
+          parentSelect.appendChild(option);
+        });
+      }
+
+      function renderView(view) {
+        document.getElementById('heroTitle').textContent = 'A clear weekly story for ' + view.student.display_name;
+        document.getElementById('studentName').textContent = view.student.display_name;
+        document.getElementById('studentMeta').textContent = view.student.grade + ' · ' + view.student.class_id + ' · ' + view.latest_assessment.status;
+        document.getElementById('metricGrid').innerHTML = [
+          { label: 'Pre accuracy', value: pct(view.latest_assessment.pre_accuracy), note: 'before intervention' },
+          { label: 'Post accuracy', value: pct(view.latest_assessment.post_accuracy), note: 'latest comparable check' },
+          { label: 'Delta', value: pct(view.latest_assessment.delta), note: 'movement across the intervention window' }
+        ].map(function (item) {
+          return '<article class="card metric"><div class="eyebrow">' + item.label + '</div><strong>' + item.value + '</strong><p>' + item.note + '</p></article>';
+        }).join('');
+        document.getElementById('masteredList').innerHTML = view.mastered.map(function (item) {
+          return '<div class="unit"><strong>' + item.knowledge_point + '</strong><span class="badge">steady strength</span><p>Post ' + pct(item.post_accuracy) + ' · delta ' + pct(item.delta) + '</p></div>';
+        }).join('');
+        document.getElementById('weakList').innerHTML = view.needs_reinforcement.map(function (item) {
+          return '<div class="unit"><strong>' + item.knowledge_point + '</strong><p>Pre ' + pct(item.pre_accuracy) + ' → Post ' + pct(item.post_accuracy) + '</p><p>Next move: repeat a short comparable set on ' + item.skill_tag + '.</p></div>';
+        }).join('');
+        document.getElementById('beforeAfter').innerHTML = '<div class="unit"><strong>Status: ' + view.before_after.status + '</strong><p>' + view.before_after.parent_summary + '</p><p>Reliability flags: ' + (view.before_after.reliability_flags.length ? view.before_after.reliability_flags.join(', ') : 'none') + '</p></div>';
+        document.getElementById('actionList').innerHTML = view.parent_actions.map(function (item) {
+          return '<li>' + item + '</li>';
+        }).join('');
+      }
+
+      function render() {
+        renderView(mock.getParentView(context, parentSelect.value || context.dataset.parents[0].parent_id));
+      }
+
+      fillParents();
+      parentSelect.onchange = render;
+      render();
+    })();
+  </script>
+</body>
+</html>

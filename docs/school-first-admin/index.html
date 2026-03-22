@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>School-First Admin Dashboard</title>
+  <style>
+    :root {
+      --ink: #12263a;
+      --muted: #627381;
+      --line: rgba(18, 38, 58, 0.14);
+      --paper: #eef2eb;
+      --card: rgba(255,255,255,0.9);
+      --accent: #8f5135;
+      --accent-2: #2b8374;
+      --shadow: 0 16px 40px rgba(18, 38, 58, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Cambria, Georgia, serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 20% 0%, rgba(43, 131, 116, 0.18), transparent 24%),
+        radial-gradient(circle at 80% 0%, rgba(143, 81, 53, 0.16), transparent 24%),
+        linear-gradient(180deg, #f7faf5 0%, var(--paper) 100%);
+    }
+    .shell { max-width: 1240px; margin: 0 auto; padding: 28px 18px 56px; }
+    .hero, .card { background: var(--card); border: 1px solid var(--line); border-radius: 24px; box-shadow: var(--shadow); }
+    .hero { padding: 28px; margin-bottom: 16px; }
+    .eyebrow { text-transform: uppercase; letter-spacing: 0.16em; font-size: 12px; color: var(--accent); margin-bottom: 10px; }
+    h1, h2, p { margin: 0; }
+    h1 { font-size: clamp(30px, 5vw, 54px); line-height: 0.98; max-width: 10ch; margin-bottom: 14px; }
+    p { color: var(--muted); line-height: 1.6; }
+    .metrics, .grid { display: grid; gap: 16px; }
+    .metrics { grid-template-columns: repeat(4, 1fr); margin-bottom: 16px; }
+    .grid { grid-template-columns: 1fr 1fr; }
+    .card { padding: 22px; }
+    .metric strong { display: block; font-size: 36px; margin: 8px 0; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { text-align: left; padding: 10px 0; border-bottom: 1px solid var(--line); }
+    th { color: var(--muted); font-weight: 600; }
+    .list-item { padding: 12px 14px; border: 1px solid var(--line); border-radius: 16px; background: rgba(255,255,255,0.76); margin-top: 10px; }
+    @media (max-width: 920px) {
+      .metrics, .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <section class="hero">
+      <div class="eyebrow">School-First Admin MVP</div>
+      <h1>Operational view across classes</h1>
+      <p>Top-level monitoring on deterministic mock data. This shell keeps school-wide visibility for outcomes and coverage, but it does not expose raw secrets or reset controls.</p>
+    </section>
+
+    <section class="metrics" id="metricGrid"></section>
+
+    <section class="grid">
+      <article class="card">
+        <div class="eyebrow">Teachers</div>
+        <h2>Class and risk overview</h2>
+        <div id="teacherTable"></div>
+      </article>
+
+      <article class="card">
+        <div class="eyebrow">Classes</div>
+        <h2>Pre / post movement</h2>
+        <div id="classTable"></div>
+      </article>
+
+      <article class="card">
+        <div class="eyebrow">Top Improving</div>
+        <h2>Knowledge points moving up</h2>
+        <div id="improvingList"></div>
+      </article>
+
+      <article class="card">
+        <div class="eyebrow">Coverage</div>
+        <h2>Report generation and gaps</h2>
+        <div id="coverageBox"></div>
+      </article>
+    </section>
+  </div>
+
+  <script src="../shared/school_first/mock_runtime.js"></script>
+  <script>
+    (function () {
+      var mock = window.AIMathSchoolFirstMock;
+      var view = mock.getAdminDashboard(mock.buildMockContext());
+
+      function pct(value) {
+        return Math.round((Number(value) || 0) * 100) + '%';
+      }
+
+      document.getElementById('metricGrid').innerHTML = [
+        { label: 'Students', value: view.summary.total_students, note: 'school-wide mock roster' },
+        { label: 'Classes', value: view.summary.total_classes, note: 'active classes in scope' },
+        { label: 'Improved', value: view.summary.improved_students, note: 'students above the delta threshold' },
+        { label: 'Regressed', value: view.summary.regressed_students, note: 'students needing review' }
+      ].map(function (item) {
+        return '<article class="card metric"><div class="eyebrow">' + item.label + '</div><strong>' + item.value + '</strong><p>' + item.note + '</p></article>';
+      }).join('');
+
+      document.getElementById('teacherTable').innerHTML = '<table><thead><tr><th>Teacher</th><th>Classes</th><th>High risk</th><th>Improved</th></tr></thead><tbody>' +
+        view.teachers.map(function (teacher) {
+          return '<tr><td>' + teacher.display_name + '</td><td>' + teacher.class_count + '</td><td>' + teacher.high_risk_students + '</td><td>' + teacher.improved + '</td></tr>';
+        }).join('') + '</tbody></table>';
+
+      document.getElementById('classTable').innerHTML = '<table><thead><tr><th>Class</th><th>Pre</th><th>Post</th><th>Delta</th></tr></thead><tbody>' +
+        view.classes.map(function (row) {
+          return '<tr><td>' + row.class_id + '</td><td>' + pct(row.pre_accuracy) + '</td><td>' + pct(row.post_accuracy) + '</td><td>' + pct(row.delta) + '</td></tr>';
+        }).join('') + '</tbody></table>';
+
+      document.getElementById('improvingList').innerHTML = view.before_after_summary.top_improving_knowledge_points.map(function (row) {
+        return '<div class="list-item"><strong>' + row.knowledge_point + '</strong><p>Pre ' + pct(row.pre_accuracy) + ' → Post ' + pct(row.post_accuracy) + ' · delta ' + pct(row.delta) + '</p></div>';
+      }).join('');
+
+      document.getElementById('coverageBox').innerHTML =
+        '<div class="list-item"><strong>Generated reports</strong><p>' + view.report_coverage.generated_count + ' generated, ' + view.report_coverage.missing_count + ' missing.</p></div>' +
+        '<div class="list-item"><strong>Status distribution</strong><p>Improved ' + view.summary.improved_students + ' · Plateau ' + view.summary.plateau_students + ' · Regressed ' + view.summary.regressed_students + '</p></div>';
+    })();
+  </script>
+</body>
+</html>

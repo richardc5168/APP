@@ -380,6 +380,113 @@
 4. No login form UI yet — paid bootstrap relies on APP passing `?bt=` in URL
 5. Remote cross-validation not yet run
 
+### Iteration 64 (working-tree) — School-First Before/After API + Scoped Session Tokens + Mock Dashboard Shells
+
+**Goal**: Complete the next school-first implementation slice by replacing browser-stored paid report API credentials with a narrower backend session token, adding dedicated before/after comparison endpoints on top of snapshot lineage, and landing mock-data-driven teacher/parent/admin shell pages.
+
+**Root Cause**:
+1. Paid parent-report storage still kept a broad `api_key` in browser session state, which was a wider capability than the frontend actually needed.
+2. School-first lineage fields existed on `report_snapshots`, but there was no dedicated before/after API surface to expose student/class comparison safely by scope.
+3. `report_snapshots` upsert semantics keyed only on `(account_id, student_id)`, so writing an `after` snapshot overwrote `before`, breaking lineage and making comparison impossible.
+4. The school-first mock-data/analytics scaffold existed only as repo-side code; no browser-visible teacher/parent/admin shell pages consumed it yet.
+
+**Changes**:
+1. **Scoped paid report sessions in `server.py`**
+   - Added durable `app_sessions` table with hashed token storage, expiry, and scope metadata.
+   - Added `_issue_app_session()`, `_resolve_app_session()`, `_resolve_paid_report_auth()`, and `_verify_paid_report_student_scope()`.
+   - Changed `POST /v1/app/auth/exchange` to return `{session_token, student_id, session_scope, session_expires_at}` instead of returning a raw `api_key` for frontend storage.
+
+2. **Paid report endpoints now accept `X-Session-Token`**
+   - Updated `POST /v1/app/report_snapshots`, `POST /v1/app/report_snapshots/latest`, and `POST /v1/app/practice_events` to resolve paid auth through the shared helper and accept either a scoped session token or a backend API key.
+   - This keeps the server-side APP/bootstrap path working while narrowing what the browser stores long-term.
+
+3. **Phase-aware snapshot lineage fix**
+   - Changed report snapshot upsert logic from `(account_id, student_id)` to `(account_id, student_id, report_phase)`.
+   - This preserves `before`, `after`, and `current` rows separately instead of silently overwriting lineage.
+
+4. **Dedicated school-first before/after APIs**
+   - Added helpers: `_load_phase_snapshot_by_student()`, `_build_student_before_after_report()`, `_build_class_before_after_report()`, plus aggregation/metric comparison utilities.
+   - Added scope-specific endpoints:
+     - `GET /v1/app/parent/children/{student_id}/before-after`
+     - `GET /v1/app/teacher/classes/{class_id}/before-after`
+     - `GET /v1/app/teacher/classes/{class_id}/students/{student_id}/before-after`
+     - `GET /v1/app/admin/classes/{class_id}/before-after`
+
+5. **Frontend paid flow narrowed to session token storage**
+   - `docs/shared/report_sync_adapter.js` now stores `{sessionToken, studentId}` in sessionStorage and sends `X-Session-Token` on paid snapshot/practice calls.
+   - `docs/parent-report/index.html` bootstrap and paid login flows now expect `session_token` from exchange and pass it into `adapter.setCredentials()`.
+
+6. **Mock-data-driven school-first shells**
+   - Added `docs/shared/school_first/mock_runtime.js` with deterministic browser-side mock dataset generation, comparable-group analytics, and role-specific view-model builders.
+   - Added new shell pages:
+     - `docs/school-first-teacher/index.html`
+     - `docs/school-first-parent/index.html`
+     - `docs/school-first-admin/index.html`
+   - Mirrored all new and changed docs files into `dist_ai_math_web_pages/docs/...`.
+
+**Validation Results**:
+- Focused JS regressions passed:
+  - `tests_js/parent-report-cloud-sync-security.spec.mjs`
+  - `tests_js/school-first-mock-data.spec.mjs`
+  - `tests_js/school-first-analytics.spec.mjs`
+- `python -m pytest tests/test_report_snapshot_endpoints.py -q` passed after the phase-aware upsert fix
+- `python tools/validate_all_elementary_banks.py` passed: 7157 PASS / 0 FAIL
+- `python scripts/verify_all.py` passed: docs/dist identical (151 files), endpoint check OK, smoke OK
+
+**Residual Risks**:
+1. Paid login still receives a raw `api_key` from `POST /v1/app/auth/login` transiently in memory so it can request a bootstrap token; the browser no longer stores it, but a deeper login-grant narrowing pass is still possible later.
+2. The new before/after API currently derives comparison from phased snapshot payloads; full event-grain parity still depends on future normalized `question_meta` / assessment tables.
+3. The three school-first dashboard shells are mock-first and not yet wired to real scoped APIs.
+4. Remote cross-validation was not run because these changes have not been deployed yet.
+
+**Next Step**:
+Connect the teacher shell to the new teacher before/after endpoints and class overview endpoint, then replace the remaining transient login `api_key` handoff with a narrower login-grant token if the APP/browser boundary needs further hardening.
+
+### Iteration 65 (working-tree) — Live Teacher Shell Integration On Scoped APIs
+
+**Goal**: Move the teacher shell from mock-only rendering to a bounded live mode that consumes the existing scoped teacher endpoints without broadening authorization or breaking the parent-report flow.
+
+**Root Cause**:
+1. Iteration 64 landed the teacher shell and the teacher-scoped overview/before-after endpoints, but the page still rendered only deterministic mock data.
+2. The backend already exposed the minimum live surface for class overview, class before/after, and teacher-student before/after drill-down, so leaving the page mock-only created unnecessary product drift.
+3. The repo still lacks a narrower teacher-specific browser grant and class discovery endpoint, so the safest immediate integration path had to keep the raw `api_key` transient and in-memory only while preserving mock fallback.
+
+**Changes**:
+1. **Teacher shell live connect controls**
+   - Added bounded live-connect inputs to `docs/school-first-teacher/index.html` for backend base, teacher username, password, and class id.
+   - Added status messaging so the page is explicit about whether it is in mock mode or live scoped mode.
+
+2. **Live teacher endpoint wiring**
+   - Added a minimal live-mode fetch path that calls:
+     - `POST /v1/app/auth/login`
+     - `GET /v1/app/teacher/classes/{class_id}/overview`
+     - `GET /v1/app/teacher/classes/{class_id}/before-after`
+     - `GET /v1/app/teacher/classes/{class_id}/students/{student_id}/before-after`
+   - The page now renders real scoped overview metrics, roster data, class before/after summaries, high-risk rows, and student drill-down when those calls succeed.
+
+3. **Mock fallback preserved**
+   - Kept the existing `AIMathSchoolFirstMock.getTeacherDashboard()` path as the default render and as the failure fallback.
+   - Live mode falls back to mock mode immediately on auth or endpoint failure.
+
+4. **Regression coverage**
+   - Added a backend happy-path test for teacher student before/after drill-down.
+   - Added a source-level teacher-shell test that fails if the live scoped endpoint wiring disappears.
+
+**Validation Results**:
+- `python -m pytest tests/test_report_snapshot_endpoints.py -q` passed
+- `node --test tests_js/school-first-teacher-live.spec.mjs tests_js/school-first-mock-data.spec.mjs tests_js/school-first-analytics.spec.mjs tests_js/parent-report-cloud-sync-security.spec.mjs` passed
+- `python tools/validate_all_elementary_banks.py` passed: 7157 PASS / 0 FAIL
+- `python scripts/verify_all.py` passed: docs/dist identical (151 files), endpoint check OK, smoke OK
+
+**Residual Risks**:
+1. The teacher shell still holds the raw `api_key` transiently in page memory after login because there is no narrower teacher-browser grant yet.
+2. The live teacher path currently requires manual `class_id` input because the backend does not yet expose teacher class discovery.
+3. Parent and admin school-first shells remain mock-first by design.
+4. Remote cross-validation was not run because the changes are not deployed yet.
+
+**Next Step**:
+Add a narrower teacher session-grant + class-discovery flow so the live teacher shell can authenticate and discover linked classes without holding a raw `api_key` in page memory or requiring manual class id entry.
+
 ### Iteration 44 (working-tree) — Bootstrap/Exchange Hardening
 
 **Goal**: Add rate limiting, per-account token cap, and abuse-oriented regression coverage to the bootstrap/exchange flow.
@@ -1056,6 +1163,36 @@ Neither is an actual SVG builder CALL in a fracAdd rendering path. The actual fr
 1. **`POST /v1/stripe/webhook`** — Stripe webhook endpoint with HMAC-SHA256 signature verification:
    - Parses `Stripe-Signature` header (`t=...,v1=...` format)
    - 5-minute timestamp tolerance (anti-replay)
+
+---
+
+## Iteration 66 — School-First Teacher Session Grant (2026-03-21)
+
+**Scope**: `school-first-teacher-session-grant` | **Status**: ✅ Passed
+
+**Objective**: Remove the last two bounded teacher-live compromises from Iteration 65: raw `api_key` retention in page memory and manual `class_id` entry.
+
+**Changes**:
+- Added shared `_authenticate_app_user(...)` in `server.py` so login rate limit, lockout, subscription check, and account loading stay centralized.
+- Added `POST /v1/app/auth/teacher-session` to issue a teacher-scoped browser session token plus linked class payload.
+- Added `GET /v1/app/teacher/classes` for linked-class discovery.
+- Updated teacher overview and before/after endpoints to accept `X-Session-Token` via a teacher-portal auth resolver.
+- Reworked `docs/school-first-teacher/index.html` and its dist mirror to use `sessionToken`, populate a class selector, switch classes from discovered links, and keep mock fallback.
+- Added backend tests for teacher-session issuance and session-token access, updated teacher shell source-level regression, and fixed the shared-auth security assertion after the login helper refactor.
+
+**Files**: `server.py`, `docs/school-first-teacher/index.html`, `dist_ai_math_web_pages/docs/school-first-teacher/index.html`, `tests/test_report_snapshot_endpoints.py`, `tests_js/school-first-teacher-live.spec.mjs`, `tests_js/parent-report-cloud-sync-security.spec.mjs`
+
+**Validation**:
+- `python -m pytest tests/test_report_snapshot_endpoints.py -q` ✅
+- `node --test tests_js/school-first-teacher-live.spec.mjs tests_js/school-first-mock-data.spec.mjs tests_js/school-first-analytics.spec.mjs tests_js/parent-report-cloud-sync-security.spec.mjs` ✅ (28/28)
+- `python tools/validate_all_elementary_banks.py` ✅
+- `python scripts/verify_all.py` ✅
+- `node tools/cross_validate_remote.cjs` ✅ (17 passed, 0 failed)
+
+**Residual Risks**:
+1. Parent and admin school-first shells remain mock-first.
+2. The generic login response still includes `api_key` for older bounded flows; this iteration only removed teacher-page retention of it.
+3. Remote cross-validation passed for the published remote baseline, but it is still narrower than a full live teacher-shell deployment verification.
    - Handles 3 event types:
      - `checkout.session.completed` → activate subscription + store stripe_customer_id/stripe_subscription_id
      - `customer.subscription.updated` → sync status (active/trialing → active; past_due/canceled → inactive)
@@ -1312,3 +1449,68 @@ Behavior:
 - Add dedicated before/after comparison endpoint using the new snapshot lineage fields
 - Add export-scope tests so export cannot exceed read entitlements
 - Only then wire the smallest teacher class overview UI
+
+---
+
+## Iteration 63 — School-First Phase 0 Contract
+
+**Date**: 2026-03-21
+**Scope**: school-first design docs and dedicated report artifacts
+**Goal**: turn the school-first direction into a repo-level implementation contract before mock data, analytics, and UI work expand further.
+
+### Root Cause Summary
+
+The repo now has a school-first RBAC document and minimal backend scope enforcement, but it still lacked the rest of the contract needed to build safely: a test matrix, a separate learning event model, a school-first data model, a security audit, and explicit MVP definitions for teacher, parent, and admin views.
+
+Without those artifacts, Phase 1 and Phase 2 work would likely drift into page-by-page implementation with mismatched assumptions.
+
+### Changes
+
+#### 1. Expanded the RBAC spec
+- updated `docs/rbac_entitlement_school_first.md`
+- added entitlement service / middleware guidance
+- added impacted API, page, and data-access inventory
+
+#### 2. Added the missing school-first contract docs
+- `docs/rbac_test_cases.md`
+- `docs/data_model_school_first.md`
+- `docs/event_model_school_first.md`
+- `docs/security_secret_audit.md`
+- `docs/teacher_dashboard_mvp.md`
+- `docs/parent_view_mvp.md`
+- `docs/admin_dashboard_mvp.md`
+- `docs/school_first_proof_pack.md`
+
+#### 3. Added a dedicated school-first report
+- created `reports/school_first_iteration_report.md`
+
+#### 4. Kept the change additive
+- no backend behavior was changed in this step
+- this iteration exists to stabilize assumptions before mock data and analytics implementation
+
+### Affected Files
+- `docs/rbac_entitlement_school_first.md`
+- `docs/rbac_test_cases.md`
+- `docs/data_model_school_first.md`
+- `docs/event_model_school_first.md`
+- `docs/security_secret_audit.md`
+- `docs/teacher_dashboard_mvp.md`
+- `docs/parent_view_mvp.md`
+- `docs/admin_dashboard_mvp.md`
+- `docs/school_first_proof_pack.md`
+- `dist_ai_math_web_pages/docs/(mirrors)`
+- `reports/school_first_iteration_report.md`
+
+### Validation
+- architecture review against current repo code, auth flows, and existing scope tests
+- docs/dist mirror validation scheduled after mirror sync in the same working pass
+
+### Residual Risks
+1. Parent-report paid flow still depends on browser-held backend credentials after exchange.
+2. Existing business analytics schema can still be misapplied unless school-first event ingestion stays separate.
+3. Teacher/admin UI is still absent by design until mock data and analytics scaffolds land.
+
+### Next Iteration Priorities
+- add deterministic school-first mock data generator
+- add analytics engine scaffold for equivalent-group before/after comparison
+- add automated tests before any teacher/admin UI implementation
