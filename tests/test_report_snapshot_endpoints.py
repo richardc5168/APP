@@ -706,6 +706,125 @@ async def test_teacher_session_can_discover_classes_and_read_scoped_overview(set
         assert denied_resp.status_code == 403
 
 
+@pytest.mark.anyio
+async def test_admin_session_allows_richkai_without_active_subscription(setup_server):
+    transport = httpx.ASGITransport(app=setup_server.app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as c:
+        admin_api_key, _ = await _provision(c, "richkai")
+        class_id = _create_class(setup_server, "Richkai Admin Class")
+
+        conn = setup_server.db()
+        conn.execute(
+            "UPDATE subscriptions SET status = 'inactive' WHERE account_id = (SELECT id FROM accounts WHERE api_key = ?)",
+            (admin_api_key,),
+        )
+        conn.commit()
+        conn.close()
+
+        resp = await c.post(
+            "/v1/app/auth/admin-session",
+            json={"username": "richkai", "password": "pass1234"},
+        )
+        assert resp.status_code == 200
+        body = resp.json()
+        assert body["session_token"]
+        assert body["session_scope"] == "admin_portal"
+        assert body["summary"]["total_classes"] >= 1
+        assert any(int(class_row["id"]) == class_id for class_row in body["classes"])
+
+
+@pytest.mark.anyio
+async def test_admin_session_rejects_non_admin_account(setup_server):
+    transport = httpx.ASGITransport(app=setup_server.app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as c:
+        await _provision(c, "scope_non_admin_reader")
+
+        resp = await c.post(
+            "/v1/app/auth/admin-session",
+            json={"username": "scope_non_admin_reader", "password": "pass1234"},
+        )
+        assert resp.status_code == 403
+
+
+@pytest.mark.anyio
+async def test_admin_session_can_read_overview_and_student_reports(setup_server):
+    transport = httpx.ASGITransport(app=setup_server.app)
+    async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as c:
+        owner_api_key, student_id = await _provision(c, "scope_admin_live_owner")
+        await _provision(c, "richkai")
+
+        class_id = _create_class(setup_server, "Admin Live Class")
+        _link_student_to_class(setup_server, class_id, student_id)
+
+        headers = {"X-API-Key": owner_api_key}
+        await c.post(
+            "/v1/app/report_snapshots",
+            json={
+                "student_id": student_id,
+                "class_id": class_id,
+                "report_phase": "before",
+                "window_start": "2026-03-01T00:00:00",
+                "window_end": "2026-03-07T23:59:59",
+                "report_payload": {
+                    "d": {"accuracy": 42},
+                    "knowledge_point_improvement": [{"knowledge_point": "kp_ratio_reasoning", "accuracy": 0.42}],
+                    "skill_tag_improvement": [{"skill_tag": "ratio_reasoning", "accuracy": 0.42}],
+                },
+            },
+            headers=headers,
+        )
+        await c.post(
+            "/v1/app/report_snapshots",
+            json={
+                "student_id": student_id,
+                "class_id": class_id,
+                "report_phase": "after",
+                "window_start": "2026-03-08T00:00:00",
+                "window_end": "2026-03-14T23:59:59",
+                "report_payload": {
+                    "d": {"accuracy": 78},
+                    "knowledge_point_improvement": [{"knowledge_point": "kp_ratio_reasoning", "accuracy": 0.78}],
+                    "skill_tag_improvement": [{"skill_tag": "ratio_reasoning", "accuracy": 0.78}],
+                    "teacher_summary": "Ratio reasoning improved strongly.",
+                },
+            },
+            headers=headers,
+        )
+
+        session_resp = await c.post(
+            "/v1/app/auth/admin-session",
+            json={"username": "richkai", "password": "pass1234"},
+        )
+        assert session_resp.status_code == 200
+        session_headers = {"X-Session-Token": session_resp.json()["session_token"]}
+
+        overview_resp = await c.get("/v1/app/admin/overview", headers=session_headers)
+        assert overview_resp.status_code == 200
+        dashboard = overview_resp.json()["dashboard"]
+        assert any(int(class_row["id"]) == class_id for class_row in dashboard["classes"])
+
+        class_overview_resp = await c.get(f"/v1/app/admin/classes/{class_id}/overview", headers=session_headers)
+        assert class_overview_resp.status_code == 200
+        assert class_overview_resp.json()["overview"]["class"]["id"] == class_id
+
+        student_report_resp = await c.get(
+            f"/v1/app/admin/classes/{class_id}/students/{student_id}/report",
+            headers=session_headers,
+        )
+        assert student_report_resp.status_code == 200
+        assert student_report_resp.json()["snapshot"]["student_id"] == student_id
+
+        student_before_after_resp = await c.get(
+            f"/v1/app/admin/classes/{class_id}/students/{student_id}/before-after",
+            headers=session_headers,
+        )
+        assert student_before_after_resp.status_code == 200
+        comparison = student_before_after_resp.json()["comparison"]
+        assert comparison["class_id"] == class_id
+        assert comparison["status"] == "improved"
+        assert comparison["teacher_summary"] == "Ratio reasoning improved strongly."
+
+
 # ========= Bootstrap / Exchange Token Tests =========
 
 @pytest.mark.anyio

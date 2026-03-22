@@ -1,3 +1,38 @@
+
+### Iteration 67 (working-tree) — Richkai Parent-Report Unlimited Bypass
+
+**Goal**: Make the current local `richkai` admin session open its own parent report directly without payment prompts or PIN unlock friction.
+
+**Root Cause**:
+1. `docs/shared/subscription.js` already marks `RICHKAI` as unlimited, so report sections are not paywalled.
+2. `docs/parent-report/index.html` still enforced a separate unlock chain: paid session token or `name + PIN`.
+3. Result: the page looked entitled, but the actual report data path for local `richkai` usage was still blocked.
+
+**Changes**:
+1. **Parent-report page unlimited access helpers**
+   - Added `normalizeAccessName()`, `hasUnlimitedParentReportAccess()`, `canBypassParentPinForCurrentStudent()`, and `openUnlimitedLocalReport()`.
+   - Reused `window.AIMathSubscription.hasUnlimitedAccess()` instead of duplicating the allow-list.
+
+2. **Auto-open current local richkai report**
+   - In default name-mode, if the current logged-in student is the unlimited local session, the page now opens `collectReportData(7)` immediately and hides the unlock gate.
+
+3. **Unlock/refresh flow bypass**
+   - `unlock()` now runs the richkai/local unlimited bypass before the `if (!pin)` gate.
+   - `refreshReport()` now refreshes from local report data when the unlimited bypass is active instead of attempting a cloud PIN fetch.
+
+4. **Regression coverage**
+   - Added a source-level regression test in `tests_js/parent-report-summary.spec.mjs` that verifies:
+     - the page defines a dedicated unlimited-access helper,
+     - the page reuses `hasUnlimitedAccess()`,
+     - the bypass executes before PIN is required,
+     - and the page auto-opens the local richkai report on load.
+
+**Validation Results**:
+- `node --test tests_js/parent-report-summary.spec.mjs` → 5 pass, 0 fail
+
+**Residual Risks**:
+1. This is intentionally limited to the current local richkai session and its own local report data.
+2. Cross-device or cross-student admin-wide report visibility should use dedicated admin/school-first surfaces, not the parent-report PIN flow.
 # Latest Iteration Report
 
 ## Session Summary (Iterations 12–34)

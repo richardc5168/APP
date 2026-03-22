@@ -41,6 +41,19 @@
     th, td { text-align: left; padding: 10px 0; border-bottom: 1px solid var(--line); }
     th { color: var(--muted); font-weight: 600; }
     .list-item { padding: 12px 14px; border: 1px solid var(--line); border-radius: 16px; background: rgba(255,255,255,0.76); margin-top: 10px; }
+    .clickable { cursor: pointer; }
+    .clickable:hover { background: rgba(43,131,116,0.06); }
+    #loginBox { max-width: 380px; margin: 0 auto 16px; }
+    #loginBox input { width: 100%; padding: 10px 14px; margin: 6px 0; border: 1px solid var(--line); border-radius: 12px; font-size: 15px; font-family: inherit; }
+    #loginBox button { width: 100%; padding: 12px; margin-top: 8px; border: none; border-radius: 12px; background: var(--accent-2); color: #fff; font-size: 15px; font-family: inherit; cursor: pointer; }
+    #loginBox button:hover { opacity: 0.9; }
+    #loginError { color: #c0392b; font-size: 13px; margin-top: 6px; }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 8px; font-size: 11px; font-weight: 600; }
+    .badge-live { background: #d5f5e3; color: #1e8449; }
+    .badge-mock { background: #fdebd0; color: #935116; }
+    .back-link { font-size: 13px; color: var(--accent-2); cursor: pointer; margin-bottom: 12px; display: inline-block; }
+    .back-link:hover { text-decoration: underline; }
+    #drillDown { display: none; }
     @media (max-width: 920px) {
       .metrics, .grid { grid-template-columns: 1fr; }
     }
@@ -49,77 +62,301 @@
 <body>
   <div class="shell">
     <section class="hero">
-      <div class="eyebrow">School-First Admin MVP</div>
+      <div class="eyebrow">School-First Admin <span id="dataBadge"></span></div>
       <h1>Operational view across classes</h1>
-      <p>Top-level monitoring on deterministic mock data. This shell keeps school-wide visibility for outcomes and coverage, but it does not expose raw secrets or reset controls.</p>
+      <p id="heroDesc">Login to view live data from the backend, or use mock data for preview.</p>
     </section>
 
-    <section class="metrics" id="metricGrid"></section>
-
-    <section class="grid">
-      <article class="card">
-        <div class="eyebrow">Teachers</div>
-        <h2>Class and risk overview</h2>
-        <div id="teacherTable"></div>
-      </article>
-
-      <article class="card">
-        <div class="eyebrow">Classes</div>
-        <h2>Pre / post movement</h2>
-        <div id="classTable"></div>
-      </article>
-
-      <article class="card">
-        <div class="eyebrow">Top Improving</div>
-        <h2>Knowledge points moving up</h2>
-        <div id="improvingList"></div>
-      </article>
-
-      <article class="card">
-        <div class="eyebrow">Coverage</div>
-        <h2>Report generation and gaps</h2>
-        <div id="coverageBox"></div>
-      </article>
+    <!-- Login Form -->
+    <section class="card" id="loginBox">
+      <div class="eyebrow">Admin Login</div>
+      <input type="text" id="loginUser" placeholder="Username" autocomplete="username">
+      <input type="password" id="loginPass" placeholder="Password" autocomplete="current-password">
+      <button id="loginBtn">Login</button>
+      <button id="mockBtn" style="background:var(--accent);margin-top:6px;">Use Mock Data</button>
+      <div id="loginError"></div>
     </section>
+
+    <!-- Dashboard (hidden until login/mock) -->
+    <div id="dashboardArea" style="display:none;">
+      <section class="metrics" id="metricGrid"></section>
+      <section class="grid" id="mainGrid">
+        <article class="card">
+          <div class="eyebrow">Teachers</div>
+          <h2>Class and risk overview</h2>
+          <div id="teacherTable"></div>
+        </article>
+        <article class="card">
+          <div class="eyebrow">Classes</div>
+          <h2>Pre / post movement</h2>
+          <div id="classTable"></div>
+        </article>
+        <article class="card">
+          <div class="eyebrow">Top Improving</div>
+          <h2>Knowledge points moving up</h2>
+          <div id="improvingList"></div>
+        </article>
+        <article class="card">
+          <div class="eyebrow">Coverage</div>
+          <h2>Report generation and gaps</h2>
+          <div id="coverageBox"></div>
+        </article>
+      </section>
+    </div>
+
+    <!-- Drill-down panel (hidden until class/student click) -->
+    <div id="drillDown">
+      <span class="back-link" id="backLink">&larr; Back to overview</span>
+      <section class="card" id="drillContent"></section>
+    </div>
   </div>
 
   <script src="../shared/school_first/mock_runtime.js"></script>
   <script>
-    (function () {
+  (function () {
+    'use strict';
+
+    /* ── state ── */
+    var _sessionToken = '';
+    var _apiBase = '';
+    var _classes = [];   // cached from login response or overview
+    var _isLive = false;
+
+    /* ── helpers ── */
+    function esc(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+    function pct(v) { return Math.round((Number(v) || 0) * 100) + '%'; }
+
+    function detectApiBase() {
+      try {
+        var p = new URLSearchParams(location.search);
+        var q = (p.get('api') || '').replace(/\/+$/, '');
+        if (q) return q;
+      } catch (e) { /* ignore */ }
+      try {
+        var s = localStorage.getItem('aimath_admin_api_base');
+        if (s) return s.replace(/\/+$/, '');
+      } catch (e) { /* ignore */ }
+      return '';
+    }
+
+    function apiFetch(method, path, body) {
+      var url = _apiBase + path;
+      var opts = {
+        method: method,
+        headers: { 'Content-Type': 'application/json' }
+      };
+      if (_sessionToken) opts.headers['X-Session-Token'] = _sessionToken;
+      if (body) opts.body = JSON.stringify(body);
+      return fetch(url, opts).then(function (r) {
+        if (!r.ok) return r.json().catch(function () { return {}; }).then(function (d) {
+          return Promise.reject({ status: r.status, detail: d.detail || r.statusText });
+        });
+        return r.json();
+      });
+    }
+
+    /* ── login ── */
+    function doLogin() {
+      var user = document.getElementById('loginUser').value.trim();
+      var pass = document.getElementById('loginPass').value;
+      var errEl = document.getElementById('loginError');
+      errEl.textContent = '';
+      if (!user || !pass) { errEl.textContent = 'Please enter username and password.'; return; }
+      _apiBase = detectApiBase();
+      if (!_apiBase) { errEl.textContent = 'No API base URL. Add ?api=http://... to the URL.'; return; }
+      try { localStorage.setItem('aimath_admin_api_base', _apiBase); } catch (e) { /* ignore */ }
+      document.getElementById('loginBtn').disabled = true;
+      apiFetch('POST', '/v1/app/auth/admin-session', { username: user, password: pass })
+        .then(function (data) {
+          _sessionToken = data.session_token || '';
+          _isLive = true;
+          _classes = data.classes || [];
+          showDashboard({
+            summary: data.summary || {},
+            classes: _classes,
+            teachers: [],
+            before_after_summary: { top_improving_knowledge_points: [] },
+            report_coverage: { generated_count: 0, missing_count: 0 }
+          });
+          // fetch full overview in background
+          apiFetch('GET', '/v1/app/admin/overview').then(function (full) {
+            if (full.ok && full.dashboard) {
+              _classes = full.dashboard.classes || _classes;
+              showDashboard(full.dashboard);
+            }
+          }).catch(function () { /* keep login-response data */ });
+        })
+        .catch(function (err) {
+          errEl.textContent = (err && err.detail) ? String(err.detail) : 'Login failed.';
+          document.getElementById('loginBtn').disabled = false;
+        });
+    }
+
+    function doMock() {
+      _isLive = false;
       var mock = window.AIMathSchoolFirstMock;
+      if (!mock) { document.getElementById('loginError').textContent = 'Mock runtime not loaded.'; return; }
       var view = mock.getAdminDashboard(mock.buildMockContext());
+      showDashboard(view);
+    }
 
-      function pct(value) {
-        return Math.round((Number(value) || 0) * 100) + '%';
-      }
+    /* ── render dashboard ── */
+    function showDashboard(view) {
+      document.getElementById('loginBox').style.display = 'none';
+      document.getElementById('dashboardArea').style.display = '';
+      document.getElementById('drillDown').style.display = 'none';
+      document.getElementById('dataBadge').innerHTML =
+        _isLive ? '<span class="badge badge-live">LIVE</span>' : '<span class="badge badge-mock">MOCK</span>';
+      document.getElementById('heroDesc').textContent =
+        _isLive ? 'Connected to live backend. Click a class for details.' : 'Viewing deterministic mock data.';
 
+      var s = view.summary || {};
       document.getElementById('metricGrid').innerHTML = [
-        { label: 'Students', value: view.summary.total_students, note: 'school-wide mock roster' },
-        { label: 'Classes', value: view.summary.total_classes, note: 'active classes in scope' },
-        { label: 'Improved', value: view.summary.improved_students, note: 'students above the delta threshold' },
-        { label: 'Regressed', value: view.summary.regressed_students, note: 'students needing review' }
-      ].map(function (item) {
-        return '<article class="card metric"><div class="eyebrow">' + item.label + '</div><strong>' + item.value + '</strong><p>' + item.note + '</p></article>';
+        { label: 'Students', value: s.total_students || 0, note: _isLive ? 'from database' : 'mock roster' },
+        { label: 'Classes', value: s.total_classes || 0, note: 'active classes' },
+        { label: 'Improved', value: s.improved_students || 0, note: 'above delta threshold' },
+        { label: 'Regressed', value: s.regressed_students || 0, note: 'needing review' }
+      ].map(function (m) {
+        return '<article class="card metric"><div class="eyebrow">' + esc(m.label) + '</div><strong>' + Number(m.value) + '</strong><p>' + esc(m.note) + '</p></article>';
       }).join('');
 
-      document.getElementById('teacherTable').innerHTML = '<table><thead><tr><th>Teacher</th><th>Classes</th><th>High risk</th><th>Improved</th></tr></thead><tbody>' +
-        view.teachers.map(function (teacher) {
-          return '<tr><td>' + teacher.display_name + '</td><td>' + teacher.class_count + '</td><td>' + teacher.high_risk_students + '</td><td>' + teacher.improved + '</td></tr>';
-        }).join('') + '</tbody></table>';
+      // Teachers
+      var teachers = view.teachers || [];
+      document.getElementById('teacherTable').innerHTML = teachers.length
+        ? '<table><thead><tr><th>Teacher</th><th>Classes</th><th>High risk</th><th>Improved</th></tr></thead><tbody>' +
+          teachers.map(function (t) {
+            return '<tr><td>' + esc(t.display_name || '') + '</td><td>' + (t.class_count || 0) + '</td><td>' + (t.high_risk_students || 0) + '</td><td>' + (t.improved || 0) + '</td></tr>';
+          }).join('') + '</tbody></table>'
+        : '<p>No teacher data available.</p>';
 
-      document.getElementById('classTable').innerHTML = '<table><thead><tr><th>Class</th><th>Pre</th><th>Post</th><th>Delta</th></tr></thead><tbody>' +
-        view.classes.map(function (row) {
-          return '<tr><td>' + row.class_id + '</td><td>' + pct(row.pre_accuracy) + '</td><td>' + pct(row.post_accuracy) + '</td><td>' + pct(row.delta) + '</td></tr>';
-        }).join('') + '</tbody></table>';
+      // Classes
+      var classes = view.classes || [];
+      _classes = classes;
+      document.getElementById('classTable').innerHTML = classes.length
+        ? '<table><thead><tr><th>Class</th><th>Students</th><th>Pre</th><th>Post</th><th>Delta</th></tr></thead><tbody>' +
+          classes.map(function (c) {
+            var cid = c.id || c.class_id || 0;
+            var name = c.class_name || c.class_id || ('Class ' + cid);
+            return '<tr class="clickable" data-class-id="' + cid + '"><td>' + esc(name) + '</td><td>' + (c.student_count || c.compared_student_count || 0) + '</td><td>' + pct(c.pre_accuracy) + '</td><td>' + pct(c.post_accuracy) + '</td><td>' + pct(c.delta) + '</td></tr>';
+          }).join('') + '</tbody></table>'
+        : '<p>No class data available.</p>';
 
-      document.getElementById('improvingList').innerHTML = view.before_after_summary.top_improving_knowledge_points.map(function (row) {
-        return '<div class="list-item"><strong>' + row.knowledge_point + '</strong><p>Pre ' + pct(row.pre_accuracy) + ' → Post ' + pct(row.post_accuracy) + ' · delta ' + pct(row.delta) + '</p></div>';
-      }).join('');
+      // Improving knowledge points
+      var kps = (view.before_after_summary || {}).top_improving_knowledge_points || [];
+      document.getElementById('improvingList').innerHTML = kps.length
+        ? kps.map(function (k) {
+            return '<div class="list-item"><strong>' + esc(k.knowledge_point || '') + '</strong><p>Pre ' + pct(k.pre_accuracy) + ' → Post ' + pct(k.post_accuracy) + ' · delta ' + pct(k.delta) + '</p></div>';
+          }).join('')
+        : '<p>No knowledge point improvement data.</p>';
 
+      // Coverage
+      var rc = view.report_coverage || {};
       document.getElementById('coverageBox').innerHTML =
-        '<div class="list-item"><strong>Generated reports</strong><p>' + view.report_coverage.generated_count + ' generated, ' + view.report_coverage.missing_count + ' missing.</p></div>' +
-        '<div class="list-item"><strong>Status distribution</strong><p>Improved ' + view.summary.improved_students + ' · Plateau ' + view.summary.plateau_students + ' · Regressed ' + view.summary.regressed_students + '</p></div>';
-    })();
+        '<div class="list-item"><strong>Generated reports</strong><p>' + (rc.generated_count || 0) + ' generated, ' + (rc.missing_count || 0) + ' missing.</p></div>' +
+        '<div class="list-item"><strong>Status distribution</strong><p>Improved ' + (s.improved_students || 0) + ' · Plateau ' + (s.plateau_students || 0) + ' · Regressed ' + (s.regressed_students || 0) + '</p></div>';
+
+      // Class click handlers (live mode only)
+      if (_isLive) {
+        var rows = document.querySelectorAll('#classTable tr[data-class-id]');
+        for (var i = 0; i < rows.length; i++) {
+          rows[i].addEventListener('click', (function (classId) {
+            return function () { drillClass(classId); };
+          })(parseInt(rows[i].getAttribute('data-class-id'), 10)));
+        }
+      }
+    }
+
+    /* ── drill-down: class ── */
+    function drillClass(classId) {
+      document.getElementById('mainGrid').style.display = 'none';
+      document.getElementById('metricGrid').style.display = 'none';
+      document.getElementById('drillDown').style.display = '';
+      document.getElementById('drillContent').innerHTML = '<p>Loading class details…</p>';
+
+      apiFetch('GET', '/v1/app/admin/classes/' + classId + '/before-after')
+        .then(function (data) {
+          var ba = data.before_after || {};
+          var cls = ba['class'] || {};
+          var students = ba.student_reports || [];
+          var html = '<div class="eyebrow">Class: ' + esc(cls.class_name || ('ID ' + classId)) + '</div>';
+          html += '<h2>Pre / Post Overview</h2>';
+          html += '<div class="list-item"><strong>Averages</strong><p>Pre ' + pct(ba.pre_accuracy) + ' → Post ' + pct(ba.post_accuracy) + ' · delta ' + pct(ba.delta) + '</p></div>';
+          html += '<div class="list-item"><strong>Status</strong><p>Improved ' + ((ba.status_counts || {}).improved || 0) + ' · Plateau ' + ((ba.status_counts || {}).plateau || 0) + ' · Regressed ' + ((ba.status_counts || {}).regressed || 0) + '</p></div>';
+          if (students.length) {
+            html += '<h2 style="margin-top:16px;">Students</h2>';
+            html += '<table><thead><tr><th>Student</th><th>Pre</th><th>Post</th><th>Delta</th><th>Status</th></tr></thead><tbody>';
+            students.forEach(function (st) {
+              var sid = st.student_id || 0;
+              html += '<tr class="clickable" data-student-id="' + sid + '" data-class-id="' + classId + '"><td>' + esc(st.display_name || ('Student ' + sid)) + '</td><td>' + pct(st.pre_accuracy) + '</td><td>' + pct(st.post_accuracy) + '</td><td>' + pct(st.delta) + '</td><td>' + esc(st.status || '') + '</td></tr>';
+            });
+            html += '</tbody></table>';
+          }
+          document.getElementById('drillContent').innerHTML = html;
+          // Student click handlers
+          var sRows = document.querySelectorAll('#drillContent tr[data-student-id]');
+          for (var i = 0; i < sRows.length; i++) {
+            sRows[i].addEventListener('click', (function (cid, sid) {
+              return function () { drillStudent(cid, sid); };
+            })(classId, parseInt(sRows[i].getAttribute('data-student-id'), 10)));
+          }
+        })
+        .catch(function (err) {
+          document.getElementById('drillContent').innerHTML = '<p style="color:#c0392b;">Failed to load: ' + esc((err && err.detail) || 'unknown error') + '</p>';
+        });
+    }
+
+    /* ── drill-down: student ── */
+    function drillStudent(classId, studentId) {
+      document.getElementById('drillContent').innerHTML = '<p>Loading student report…</p>';
+      apiFetch('GET', '/v1/app/admin/classes/' + classId + '/students/' + studentId + '/report')
+        .then(function (data) {
+          var snap = data.snapshot || {};
+          var html = '<div class="eyebrow">Student Report</div>';
+          html += '<h2>' + esc(snap.display_name || ('Student ' + studentId)) + '</h2>';
+          html += '<div class="list-item"><strong>Grade</strong><p>' + esc(snap.grade || '-') + '</p></div>';
+          if (snap.accuracy !== undefined) {
+            html += '<div class="list-item"><strong>Accuracy</strong><p>' + pct(snap.accuracy) + '</p></div>';
+          }
+          if (snap.attempt_count !== undefined) {
+            html += '<div class="list-item"><strong>Attempts</strong><p>' + snap.attempt_count + '</p></div>';
+          }
+          if (snap.data_json) {
+            try {
+              var d = typeof snap.data_json === 'string' ? JSON.parse(snap.data_json) : snap.data_json;
+              if (d && typeof d === 'object') {
+                var keys = Object.keys(d);
+                for (var i = 0; i < keys.length && i < 10; i++) {
+                  var v = d[keys[i]];
+                  if (typeof v === 'object') v = JSON.stringify(v).substring(0, 120);
+                  html += '<div class="list-item"><strong>' + esc(keys[i]) + '</strong><p>' + esc(String(v)) + '</p></div>';
+                }
+              }
+            } catch (e) { /* ignore parse error */ }
+          }
+          html += '<p style="margin-top:14px;"><span class="back-link" id="backToClass">&larr; Back to class</span></p>';
+          document.getElementById('drillContent').innerHTML = html;
+          var backToClass = document.getElementById('backToClass');
+          if (backToClass) backToClass.addEventListener('click', function () { drillClass(classId); });
+        })
+        .catch(function (err) {
+          document.getElementById('drillContent').innerHTML = '<p style="color:#c0392b;">Failed to load: ' + esc((err && err.detail) || 'unknown error') + '</p>';
+        });
+    }
+
+    /* ── back to overview ── */
+    document.getElementById('backLink').addEventListener('click', function () {
+      document.getElementById('drillDown').style.display = 'none';
+      document.getElementById('mainGrid').style.display = '';
+      document.getElementById('metricGrid').style.display = '';
+    });
+
+    /* ── bind login buttons ── */
+    document.getElementById('loginBtn').addEventListener('click', doLogin);
+    document.getElementById('mockBtn').addEventListener('click', doMock);
+    document.getElementById('loginPass').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') doLogin();
+    });
+  })();
   </script>
 </body>
 </html>

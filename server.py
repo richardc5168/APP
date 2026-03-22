@@ -448,7 +448,9 @@ def _resolve_app_session(raw_token: str, expected_scope: Optional[str] = None) -
     conn.close()
     if not account:
         raise HTTPException(status_code=401, detail="Session account no longer exists")
-    ensure_subscription_active(int(row["account_id"]))
+    # Admin portal sessions already verified identity at login; skip subscription gate
+    if row["scope_kind"] != "admin_portal":
+        ensure_subscription_active(int(row["account_id"]))
     return {
         "account": account,
         "account_id": int(row["account_id"]),
@@ -1269,6 +1271,34 @@ def _resolve_teacher_portal_auth(
     raise HTTPException(status_code=401, detail="Missing teacher portal credentials")
 
 
+def _resolve_admin_portal_auth(
+    x_admin_token: str = "",
+    x_session_token: str = "",
+    expected_scope: str = "admin_portal",
+) -> Dict[str, Any]:
+    token = str(x_session_token or "").strip()
+    if token:
+        session = _resolve_app_session(token, expected_scope=expected_scope)
+        return {
+            "auth_kind": "session_token",
+            "account": session["account"],
+            "account_id": session["account_id"],
+            "scope_kind": session["scope_kind"],
+            "expires_at": session["expires_at"],
+        }
+    admin_token = str(x_admin_token or "").strip()
+    if admin_token:
+        _require_admin_token(admin_token)
+        return {
+            "auth_kind": "admin_token",
+            "account": None,
+            "account_id": None,
+            "scope_kind": "admin_token",
+            "expires_at": None,
+        }
+    raise HTTPException(status_code=401, detail="Missing admin portal credentials")
+
+
 def _verify_paid_report_student_scope(conn: sqlite3.Connection, auth_ctx: Dict[str, Any], student_id: int) -> None:
     session_student_id = auth_ctx.get("student_id")
     if session_student_id is not None and int(session_student_id) != int(student_id):
@@ -1307,7 +1337,54 @@ def _load_teacher_linked_classes(conn: sqlite3.Connection, teacher_account_id: i
     ]
 
 
-def _authenticate_app_user(payload: AppAuthLoginRequest, request: Request) -> Dict[str, Any]:
+def _normalize_admin_portal_identity(value: str) -> str:
+    text = unicodedata.normalize("NFKC", str(value or ""))
+    text = " ".join(text.strip().split())
+    return text.upper()
+
+
+def _load_admin_portal_allowlist() -> set:
+    raw = str(os.getenv("APP_PORTAL_ADMIN_USERNAMES", "")).strip()
+    allowed = {"RICHKAI"}
+    if raw:
+        allowed.update(
+            _normalize_admin_portal_identity(item)
+            for item in raw.split(",")
+            if _normalize_admin_portal_identity(item)
+        )
+    return {item for item in allowed if item}
+
+
+def _is_admin_portal_identity(username: str = "", account_name: str = "") -> bool:
+    allowed = _load_admin_portal_allowlist()
+    candidates = {
+        _normalize_admin_portal_identity(username),
+        _normalize_admin_portal_identity(account_name),
+    }
+    return any(candidate in allowed for candidate in candidates if candidate)
+
+
+def _load_all_active_classes(conn: sqlite3.Connection) -> List[Dict[str, Any]]:
+    rows = conn.execute(
+        """
+        SELECT id, school_id, class_name, grade
+        FROM classes
+        WHERE active = 1
+        ORDER BY id ASC
+        """
+    ).fetchall()
+    return [
+        {
+            "id": int(row["id"]),
+            "school_id": row["school_id"],
+            "class_name": row["class_name"],
+            "grade": row["grade"],
+        }
+        for row in rows
+    ]
+
+
+def _authenticate_app_user(payload: AppAuthLoginRequest, request: Request, allow_admin_bypass: bool = False) -> Dict[str, Any]:
     client_ip = request.client.host if request.client else "unknown"
     if not _check_rate_limit(f"login:{client_ip}", _RATE_LIMIT_LOGIN):
         raise HTTPException(status_code=429, detail="Too many login attempts")
@@ -1347,8 +1424,24 @@ def _authenticate_app_user(payload: AppAuthLoginRequest, request: Request) -> Di
         (int(row["account_id"]),),
     ).fetchone()
     if not sub or sub["status"] != "active":
+        if not (allow_admin_bypass and _is_admin_portal_identity(username, row["account_name"])):
+            conn.close()
+            raise HTTPException(status_code=402, detail="Subscription required (inactive)")
+    if not sub:
         conn.close()
-        raise HTTPException(status_code=402, detail="Subscription required (inactive)")
+        sub_dict = {
+            "status": "inactive",
+            "plan": "admin_portal",
+            "seats": 0,
+            "current_period_end": None,
+        }
+    else:
+        sub_dict = {
+            "status": sub["status"],
+            "plan": sub["plan"],
+            "seats": int(sub["seats"] or 0),
+            "current_period_end": sub["current_period_end"],
+        }
 
     all_students = conn.execute(
         "SELECT id, display_name, grade FROM students WHERE account_id = ? ORDER BY id ASC",
@@ -1371,12 +1464,7 @@ def _authenticate_app_user(payload: AppAuthLoginRequest, request: Request) -> Di
         "account_id": int(row["account_id"]),
         "account_name": row["account_name"],
         "api_key": row["api_key"],
-        "subscription": {
-            "status": sub["status"],
-            "plan": sub["plan"],
-            "seats": int(sub["seats"] or 0),
-            "current_period_end": sub["current_period_end"],
-        },
+        "subscription": sub_dict,
         "students": students_list,
         "teacher_classes": teacher_classes,
     }
@@ -1669,6 +1757,31 @@ def app_auth_teacher_session(payload: AppAuthLoginRequest, request: Request):
         "session_scope": session["scope_kind"],
         "session_expires_at": session["expires_at"],
         "classes": auth_ctx["teacher_classes"],
+    }
+
+
+@app.post("/v1/app/auth/admin-session", summary="Issue an admin-scoped browser session and overview for richkai")
+def app_auth_admin_session(payload: AppAuthLoginRequest, request: Request):
+    auth_ctx = _authenticate_app_user(payload, request, allow_admin_bypass=True)
+    if not _is_admin_portal_identity(auth_ctx["username"], auth_ctx["account_name"]):
+        raise HTTPException(status_code=403, detail="Account is not allowed to open admin portal")
+    session = _issue_app_session(auth_ctx["account_id"], 0, scope_kind="admin_portal")
+    conn = db()
+    try:
+        overview = _build_admin_dashboard(conn)
+    finally:
+        conn.close()
+    return {
+        "ok": True,
+        "username": auth_ctx["username"],
+        "account_id": auth_ctx["account_id"],
+        "account_name": auth_ctx["account_name"],
+        "subscription": auth_ctx["subscription"],
+        "session_token": session["session_token"],
+        "session_scope": session["scope_kind"],
+        "session_expires_at": session["expires_at"],
+        "summary": overview["summary"],
+        "classes": overview["classes"],
     }
 
 
@@ -3846,6 +3959,108 @@ def _build_class_overview(conn: sqlite3.Connection, class_id: int) -> Dict[str, 
     }
 
 
+def _build_admin_dashboard(conn: sqlite3.Connection) -> Dict[str, Any]:
+    class_refs = _load_all_active_classes(conn)
+    teacher_link_rows = conn.execute(
+        """
+        SELECT tcl.class_id, tcl.teacher_account_id, COALESCE(a.name, au.username, '') AS display_name
+        FROM teacher_class_links tcl
+        LEFT JOIN accounts a ON a.id = tcl.teacher_account_id
+        LEFT JOIN app_users au ON au.account_id = tcl.teacher_account_id
+        WHERE tcl.active = 1
+        ORDER BY tcl.class_id ASC, tcl.teacher_account_id ASC
+        """
+    ).fetchall()
+    teacher_links_by_class: Dict[int, List[sqlite3.Row]] = {}
+    for row in teacher_link_rows:
+        teacher_links_by_class.setdefault(int(row["class_id"]), []).append(row)
+
+    teacher_map: Dict[int, Dict[str, Any]] = {}
+    class_rows: List[Dict[str, Any]] = []
+    aggregated_knowledge_rows: List[Dict[str, Any]] = []
+    aggregated_skill_rows: List[Dict[str, Any]] = []
+    total_students = 0
+    generated_reports = 0
+    status_counts = {"improved": 0, "plateau": 0, "regressed": 0}
+
+    for class_ref in class_refs:
+        class_id = int(class_ref["id"])
+        overview = _build_class_overview(conn, class_id)
+        before_after = _build_class_before_after_report(conn, class_id)
+        total_students += int((overview.get("stats") or {}).get("student_count") or 0)
+        generated_reports += int((overview.get("stats") or {}).get("snapshot_count") or 0)
+        status_counts["improved"] += int((before_after.get("status_counts") or {}).get("improved") or 0)
+        status_counts["plateau"] += int((before_after.get("status_counts") or {}).get("plateau") or 0)
+        status_counts["regressed"] += int((before_after.get("status_counts") or {}).get("regressed") or 0)
+        aggregated_knowledge_rows.extend(before_after.get("knowledge_point_improvement") or [])
+        aggregated_skill_rows.extend(before_after.get("skill_tag_improvement") or [])
+        high_risk_count = len(before_after.get("high_risk_students") or [])
+        class_rows.append(
+            {
+                "id": class_id,
+                "class_id": class_id,
+                "school_id": class_ref["school_id"],
+                "class_name": class_ref["class_name"],
+                "grade": class_ref["grade"],
+                "student_count": int((overview.get("stats") or {}).get("student_count") or 0),
+                "snapshot_count": int((overview.get("stats") or {}).get("snapshot_count") or 0),
+                "attempt_count": int((overview.get("stats") or {}).get("attempt_count") or 0),
+                "accuracy": int((overview.get("stats") or {}).get("accuracy") or 0),
+                "pre_accuracy": float(before_after.get("pre_accuracy") or 0.0),
+                "post_accuracy": float(before_after.get("post_accuracy") or 0.0),
+                "delta": float(before_after.get("delta") or 0.0),
+                "compared_student_count": int(before_after.get("compared_student_count") or 0),
+                "high_risk_students": high_risk_count,
+                "students": overview.get("students") or [],
+            }
+        )
+        for link_row in teacher_links_by_class.get(class_id, []):
+            teacher_account_id = int(link_row["teacher_account_id"])
+            teacher_entry = teacher_map.setdefault(
+                teacher_account_id,
+                {
+                    "teacher_account_id": teacher_account_id,
+                    "display_name": link_row["display_name"] or f"Teacher {teacher_account_id}",
+                    "class_count": 0,
+                    "high_risk_students": 0,
+                    "improved": 0,
+                    "class_ids": [],
+                },
+            )
+            if class_id not in teacher_entry["class_ids"]:
+                teacher_entry["class_ids"].append(class_id)
+                teacher_entry["class_count"] += 1
+            teacher_entry["high_risk_students"] += high_risk_count
+            teacher_entry["improved"] += int((before_after.get("status_counts") or {}).get("improved") or 0)
+
+    teacher_rows = sorted(
+        teacher_map.values(),
+        key=lambda row: (-int(row.get("high_risk_students") or 0), row.get("display_name") or ""),
+    )
+    class_rows.sort(key=lambda row: ((row.get("class_name") or ""), int(row.get("id") or 0)))
+    improving_knowledge = _aggregate_metric_rows(aggregated_knowledge_rows, "knowledge_point")[:5] if aggregated_knowledge_rows else []
+    improving_skills = _aggregate_metric_rows(aggregated_skill_rows, "skill_tag")[:5] if aggregated_skill_rows else []
+    return {
+        "summary": {
+            "total_students": total_students,
+            "total_classes": len(class_rows),
+            "improved_students": status_counts["improved"],
+            "plateau_students": status_counts["plateau"],
+            "regressed_students": status_counts["regressed"],
+        },
+        "teachers": teacher_rows,
+        "classes": class_rows,
+        "before_after_summary": {
+            "top_improving_knowledge_points": improving_knowledge,
+            "top_skill_tags": improving_skills,
+        },
+        "report_coverage": {
+            "generated_count": generated_reports,
+            "missing_count": max(0, total_students - generated_reports),
+        },
+    }
+
+
 def _require_admin_token(x_admin_token: str) -> None:
     expected = os.getenv("APP_PROVISION_ADMIN_TOKEN", "").strip()
     if not expected:
@@ -4052,8 +4267,9 @@ def teacher_student_before_after(
 def admin_class_before_after(
     class_id: int,
     x_admin_token: str = Header("", alias="X-Admin-Token"),
+    x_session_token: str = Header("", alias="X-Session-Token"),
 ):
-    _require_admin_token(x_admin_token)
+    _resolve_admin_portal_auth(x_admin_token=x_admin_token, x_session_token=x_session_token)
     conn = db()
     try:
         return {"ok": True, "scope": "admin_class", "before_after": _build_class_before_after_report(conn, class_id)}
@@ -4065,11 +4281,71 @@ def admin_class_before_after(
 def admin_class_overview(
     class_id: int,
     x_admin_token: str = Header("", alias="X-Admin-Token"),
+    x_session_token: str = Header("", alias="X-Session-Token"),
 ):
-    _require_admin_token(x_admin_token)
+    _resolve_admin_portal_auth(x_admin_token=x_admin_token, x_session_token=x_session_token)
     conn = db()
     try:
         return {"ok": True, "scope": "admin_class", "overview": _build_class_overview(conn, class_id)}
+    finally:
+        conn.close()
+
+
+@app.get("/v1/app/admin/overview")
+def admin_dashboard_overview(
+    x_admin_token: str = Header("", alias="X-Admin-Token"),
+    x_session_token: str = Header("", alias="X-Session-Token"),
+):
+    _resolve_admin_portal_auth(x_admin_token=x_admin_token, x_session_token=x_session_token)
+    conn = db()
+    try:
+        return {"ok": True, "scope": "admin_overview", "dashboard": _build_admin_dashboard(conn)}
+    finally:
+        conn.close()
+
+
+@app.get("/v1/app/admin/classes/{class_id}/students/{student_id}/report")
+def admin_student_report(
+    class_id: int,
+    student_id: int,
+    x_admin_token: str = Header("", alias="X-Admin-Token"),
+    x_session_token: str = Header("", alias="X-Session-Token"),
+):
+    _resolve_admin_portal_auth(x_admin_token=x_admin_token, x_session_token=x_session_token)
+    conn = db()
+    try:
+        _verify_student_in_class(conn, class_id, student_id)
+        row = _load_latest_snapshot_by_student(conn, student_id)
+        if not row:
+            raise HTTPException(status_code=404, detail="No snapshot found for this student")
+        snapshot = _serialize_snapshot_row(row)
+        if snapshot["class_id"] is None:
+            snapshot["class_id"] = class_id
+        return {"ok": True, "scope": "admin_student", "snapshot": snapshot}
+    finally:
+        conn.close()
+
+
+@app.get("/v1/app/admin/classes/{class_id}/students/{student_id}/before-after")
+def admin_student_before_after(
+    class_id: int,
+    student_id: int,
+    x_admin_token: str = Header("", alias="X-Admin-Token"),
+    x_session_token: str = Header("", alias="X-Session-Token"),
+):
+    _resolve_admin_portal_auth(x_admin_token=x_admin_token, x_session_token=x_session_token)
+    conn = db()
+    try:
+        _verify_student_in_class(conn, class_id, student_id)
+        before_row = _load_phase_snapshot_by_student(conn, student_id, "before")
+        after_row = _load_phase_snapshot_by_student(conn, student_id, "after")
+        if not before_row or not after_row:
+            raise HTTPException(status_code=404, detail="Before/after snapshots not found for this student")
+        return {
+            "ok": True,
+            "scope": "admin_student",
+            "comparison": _build_student_before_after_report(before_row, after_row, class_id_override=class_id),
+        }
     finally:
         conn.close()
 
