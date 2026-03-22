@@ -526,8 +526,11 @@
       var nameKeyRaw = String(student.name || '').trim();
       var nameKey = normalizeName(nameKeyRaw);
       if (!nameKey) return Promise.resolve(false);
+      var isUnlimited = window.AIMathSubscription &&
+        typeof window.AIMathSubscription.isUnlimitedName === 'function' &&
+        window.AIMathSubscription.isUnlimitedName(nameKeyRaw);
       var pin = resolveParentReportPin(nameKeyRaw, student.pin);
-      if (!pin) {
+      if (!pin && !isUnlimited) {
         warnMissingCloudPin();
         return Promise.resolve(false);
       }

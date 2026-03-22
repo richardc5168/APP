@@ -209,7 +209,7 @@ class ParentReportFetchRequest(BaseModel):
 
 class ParentReportUpsertRequest(BaseModel):
     name: str = Field(..., min_length=1, max_length=80)
-    pin: str = Field(..., min_length=4, max_length=6)
+    pin: str = Field("", max_length=6)
     report_data: Optional[Dict[str, Any]] = None
     practice_event: Optional[Dict[str, Any]] = None
 
@@ -3534,14 +3534,21 @@ def parent_report_registry_upsert(req: ParentReportUpsertRequest):
         raise HTTPException(status_code=400, detail="name is required")
     if req.report_data is None and req.practice_event is None:
         raise HTTPException(status_code=400, detail="report_data or practice_event is required")
-    pin = _validate_parent_report_pin(req.pin)
+    is_admin = _is_admin_portal_identity(display_name)
+    pin_raw = str(req.pin or "").strip()
+    if is_admin:
+        pin = pin_raw if pin_raw and pin_raw.isdigit() and 4 <= len(pin_raw) <= 6 else ""
+    else:
+        pin = _validate_parent_report_pin(pin_raw)
     normalized_name = _normalize_parent_report_name(display_name)
     now_ms = _now_ms()
     conn = db()
     try:
         row = _load_parent_report_row(conn, normalized_name)
         if row:
-            if not _pwd_ok(pin, row["pin_salt"], row["pin_hash"]):
+            if is_admin:
+                pass  # admin names skip PIN verification
+            elif not _pwd_ok(pin, row["pin_salt"], row["pin_hash"]):
                 raise HTTPException(status_code=403, detail="invalid parent report credentials")
             current_display = row["display_name"] or display_name
             data = _parse_parent_report_data(row["data_json"], fallback_name=current_display)
