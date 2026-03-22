@@ -909,6 +909,44 @@
       return;
     }
 
+    /* Unlimited name (e.g. richkai) on a different device: skip PIN, fetch from cloud */
+    var _isUnlimited = name && window.AIMathSubscription &&
+      typeof window.AIMathSubscription.isUnlimitedName === 'function' &&
+      window.AIMathSubscription.isUnlimitedName(name);
+    if (_isUnlimited && !pin){
+      showStatus('正在查詢「' + esc(name) + '」的雲端報告…', 'loading');
+      document.getElementById('btnUnlock').disabled = true;
+      var adapterU = window.AIMathReportSyncAdapter;
+      var readFnU = (adapterU && typeof adapterU.readReportSnapshot === 'function')
+        ? adapterU.readReportSnapshot
+        : (window.AIMathStudentAuth && window.AIMathStudentAuth.lookupStudentReport);
+      if (!readFnU){
+        showStatus('⚠️ 系統元件載入失敗，請重新整理頁面。', 'muted');
+        document.getElementById('btnUnlock').disabled = false;
+        return;
+      }
+      readFnU(name, '')
+        .then(function(entry){
+          if (entry && entry.data && entry.data.d){
+            data = entry.data;
+            _unlockName = name;
+            _unlockPin = '';
+            _lastCloudTs = entry.cloud_ts || 0;
+            document.getElementById('btnUnlock').disabled = false;
+            showStatus('👑 已使用管理者無限制模式，直接載入雲端家長報告。', 'ok');
+            showDashboard(data);
+          } else {
+            showStatus('⚠️ 找不到「' + esc(name) + '」的雲端報告。<br><span style="font-size:12px;color:var(--muted)">請確認孩子已完成至少 5 題作答，且裝置有網路連線（數據會自動同步）。</span>', 'muted');
+            document.getElementById('btnUnlock').disabled = false;
+          }
+        })
+        .catch(function(){
+          showStatus('⚠️ 無法連接雲端。<br><span style="font-size:12px;color:var(--muted)">請確認網路連線正常，或稍後再試。</span>', 'muted');
+          document.getElementById('btnUnlock').disabled = false;
+        });
+      return;
+    }
+
     if (!pin){ showPinErr('請輸入家長密碼（4~6 位數字）'); return; }
 
     /* 1. Try local data first (same device, fast) */

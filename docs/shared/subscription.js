@@ -136,6 +136,11 @@
     return !!name && Object.prototype.hasOwnProperty.call(UNLIMITED_STUDENT_NAMES, name);
   }
 
+  function isUnlimitedName(rawName){
+    var n = normalizeStudentName(rawName);
+    return !!n && Object.prototype.hasOwnProperty.call(UNLIMITED_STUDENT_NAMES, n);
+  }
+
   function getEffectiveSub(){
     var sub = getSub();
     if (hasUnlimitedAccess()) return {
@@ -534,6 +539,7 @@
     getPlanStatus: getPlanStatus,
     getPlanInfo: getPlanInfo,
     hasUnlimitedAccess: hasUnlimitedAccess,
+    isUnlimitedName: isUnlimitedName,
     trackUpgradeClick: trackUpgradeClick,
     isPaid: isPaid,
     isTrial: isTrial,

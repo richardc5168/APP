@@ -564,7 +564,10 @@
     var nameKey = normalizeName(raw);
     if (!nameKey) return Promise.resolve(null);
     var resolvedPin = String(pin || '').trim();
-    if (hasParentReportApiBase() && /^\d{4,6}$/.test(resolvedPin)) {
+    var isUnlimited = window.AIMathSubscription &&
+      typeof window.AIMathSubscription.isUnlimitedName === 'function' &&
+      window.AIMathSubscription.isUnlimitedName(raw);
+    if (hasParentReportApiBase() && (/^\d{4,6}$/.test(resolvedPin) || isUnlimited)) {
       return postParentReportApi('/v1/parent-report/registry/fetch', {
         name: raw,
         pin: resolvedPin

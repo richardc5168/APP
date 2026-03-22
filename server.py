@@ -204,7 +204,7 @@ class PracticeNextRequest(BaseModel):
 
 class ParentReportFetchRequest(BaseModel):
     name: str = Field(..., min_length=1, max_length=80)
-    pin: str = Field(..., min_length=4, max_length=6)
+    pin: str = Field("", max_length=6)
 
 
 class ParentReportUpsertRequest(BaseModel):
@@ -3500,15 +3500,20 @@ def parent_report_registry_fetch(req: ParentReportFetchRequest):
     display_name = str(req.name or "").strip()
     if not display_name:
         raise HTTPException(status_code=400, detail="name is required")
-    pin = _validate_parent_report_pin(req.pin)
     normalized_name = _normalize_parent_report_name(display_name)
+    is_admin = _is_admin_portal_identity(display_name)
+    pin_raw = str(req.pin or "").strip()
     conn = db()
     try:
         row = _load_parent_report_row(conn, normalized_name)
         if not row:
             raise HTTPException(status_code=404, detail="report not found")
-        if not _pwd_ok(pin, row["pin_salt"], row["pin_hash"]):
-            raise HTTPException(status_code=403, detail="invalid parent report credentials")
+        if is_admin:
+            pass  # admin names skip PIN verification
+        else:
+            pin = _validate_parent_report_pin(pin_raw)
+            if not _pwd_ok(pin, row["pin_salt"], row["pin_hash"]):
+                raise HTTPException(status_code=403, detail="invalid parent report credentials")
         data = _parse_parent_report_data(row["data_json"], fallback_name=row["display_name"])
         return {
             "ok": True,
