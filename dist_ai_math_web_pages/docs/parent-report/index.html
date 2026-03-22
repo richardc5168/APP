@@ -420,7 +420,7 @@
     var prompt = document.getElementById('reportUpgradePrompt');
     var link = document.getElementById('reportUpgradeLink');
     var promptText = document.getElementById('reportUpgradePromptText');
-    if (!prompt || !window.AIMathSubscription || window.AIMathSubscription.isPaid()) return;
+    if (!prompt || !window.AIMathSubscription || window.AIMathSubscription.isPaid() || isViewerUnlimited()) return;
     prompt.classList.remove('hidden');
 
     // Dynamic value prop based on report data
@@ -783,6 +783,14 @@
   var _lastCloudTs = 0;
   var _unlockName = '';
   var _unlockPin = '';
+  var _isUnlimitedViewer = false;
+
+  function isViewerUnlimited(){
+    if (_isUnlimitedViewer) return true;
+    return window.AIMathSubscription &&
+      typeof window.AIMathSubscription.isUnlimitedName === 'function' &&
+      _unlockName && window.AIMathSubscription.isUnlimitedName(_unlockName);
+  }
 
 
   function normalizeAccessName(name){
@@ -826,6 +834,7 @@
     } else if (window.AIMathStudentAuth.scheduleCloudSync){
       window.AIMathStudentAuth.scheduleCloudSync();
     }
+    _isUnlimitedViewer = true;
     showStatus('👑 已使用管理者 richkai 無限制模式，直接載入本機作答家長報告。', 'ok');
     showDashboard(data);
     return true;
@@ -931,6 +940,7 @@
             data = entry.data;
             _unlockName = name;
             _unlockPin = '';
+            _isUnlimitedViewer = true;
             _lastCloudTs = entry.cloud_ts || 0;
             document.getElementById('btnUnlock').disabled = false;
             showStatus('👑 已使用管理者無限制模式，直接載入雲端家長報告。', 'ok');
@@ -1770,7 +1780,7 @@
       legendEl.innerHTML = legendHtml;
 
       // Feature gate: blurred preview for free users
-      if (window.AIMathSubscription && !window.AIMathSubscription.isPaid()){
+      if (window.AIMathSubscription && !window.AIMathSubscription.isPaid() && !isViewerUnlimited()){
         var card = document.getElementById('radarCard');
         if (card) {
           card.classList.add('gated-blur');
@@ -1840,7 +1850,7 @@
       contentEl.innerHTML = html;
 
       // Gate for free users: blur with preview
-      if (window.AIMathSubscription && !window.AIMathSubscription.isPaid()){
+      if (window.AIMathSubscription && !window.AIMathSubscription.isPaid() && !isViewerUnlimited()){
         cardEl.classList.add('gated-blur');
         contentEl.classList.add('blur-content');
         var overlay = document.createElement('div');
@@ -1957,7 +1967,7 @@
         });
       });
 
-      var isPaid = window.AIMathSubscription && window.AIMathSubscription.isPaid();
+      var isPaid = (window.AIMathSubscription && window.AIMathSubscription.isPaid()) || isViewerUnlimited();
 
       var html = '';
       recs.forEach(function(rec, i){
